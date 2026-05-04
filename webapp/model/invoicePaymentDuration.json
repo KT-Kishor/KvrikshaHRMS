@@ -1,0 +1,16 @@
+{
+    "duration": [
+        {
+            "ID": 1,
+            "Code": "3 Month"
+        },
+        {
+            "ID": 2,
+            "Code": "6 Month"
+        },
+        {
+            "ID": 3,
+            "Code": "12 Month"
+        }
+    ]
+}

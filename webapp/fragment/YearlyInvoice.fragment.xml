@@ -1,0 +1,83 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Dialog
+        id="YearlyInvoiceDialog"
+        contentWidth="1000px"
+        contentHeight="500px"
+        resizable="true"
+        draggable="true">
+           <customHeader >
+        <Bar class="Coursetitle" >
+        <contentLeft>
+          <Title text="{i18n>yearlyinvoicefor} {yearPopoverData>/Year}"   />
+        </contentLeft>
+           
+            <contentRight>
+                <Button icon="sap-icon://decline" press="onCloseDialog" tooltip="Close"/>
+            </contentRight>
+        </Bar>
+    </customHeader>
+        <content>
+            <Table
+            sticky="ColumnHeaders"
+                items="{yearPopoverData>/Records}"
+                noDataText="{i18n>noyearlydata}">
+                <columns>
+                 <Column demandPopin="true" hAlign="Left"><Text text="{i18n>invoice_No}" tooltip="{i18n>invoiceNo}" /></Column>
+                    <Column demandPopin="true" hAlign="Left"><Text text="{i18n>invoice_Date}" tooltip="{i18n>invoiceDate}" /></Column>
+                     <Column demandPopin="true" hAlign="Left" minScreenWidth="Desktop"><Text text="{i18n>customer_Name}" tooltip="{i18n>customerName}" /></Column>
+                    <Column demandPopin="true" hAlign="Left" minScreenWidth="Desktop"><Text text="{i18n>transaction_Amount}" tooltip="{i18n>transactionAmount}" /></Column>
+                    <Column hAlign="End" demandPopin="true" minScreenWidth="Desktop"><Text text="{i18n>credit_Notes_Amount}" tooltip="{i18n>creditNotesAmount}" /></Column>
+                    <Column hAlign="End" demandPopin="true" minScreenWidth="Desktop"><Text text="{i18n>total_Amount}" tooltip="{i18n>yearlyinvoice}" /></Column>
+                    <Column hAlign="End" demandPopin="true" minScreenWidth="Desktop"><Text text="{i18n>actual_Amount}" tooltip="{i18n>Actual Amount}" /></Column>
+                </columns>
+                <items>
+                    <ColumnListItem type="Navigation" press="onPressInvoiceDetailsYearly">
+                        <cells>
+                            <Text text="{yearPopoverData>InvNo}" />
+                            
+                            <Text text="{path: 'yearPopoverData>InvoiceDate',formatter:'.Formatter.formatDate'}" />
+                            
+                            <Text text="{yearPopoverData>CustomerName}" />
+                            
+                            <ObjectNumber number="{parts: [{ path: 'yearPopoverData>TransactionAmount' }], formatter: '.Formatter.fromatNumber'}" unit="{yearPopoverData>Currency}" />
+                            
+                            <VBox >
+                                <Link wrapping="true" class="creditLinkStyle" press="onInvoiceCreditNotesPress" text="{parts: [{ path: 'yearPopoverData>CreditNotesTotalAmount' },{ path: 'yearPopoverData>Currency' }],formatter: '.Formatter.formatAmountWithCurrency'}"/>
+								<Link wrapping="true" visible="{= ${yearPopoverData>Currency} !== 'INR' }" class="creditLinkStyle" press="onInvoiceCreditNotesPress" text="{parts: [{ path: 'yearPopoverData>CreditNotesAmount' },{ value: 'INR' }],formatter: '.Formatter.formatAmountWithCurrency'}"/>
+							</VBox>
+                            
+                            <VBox >
+                                <ObjectNumber number="{parts: [{ path: 'yearPopoverData>Currency' },{ path: 'yearPopoverData>TotalAmount' },{ path: 'yearPopoverData>AmountInINR' }], formatter: '.Formatter.fromatNumber'}" unit="INR" />
+                                <HBox visible="{= ${yearPopoverData>Currency} !== 'INR' }">
+									<Text text="Exch. Rate: " />
+									<Text text="{path:'yearPopoverData>ExchRate', formatter: '.Formatter.fromatNumber'}"/>
+								</HBox>
+                            </VBox>
+                            
+                            <Link text="{
+                                    parts: [
+                                        { path: 'yearPopoverData>AllTotalAndActualAmount' },
+                                        { value: 'INR' }
+                                    ],
+                                    formatter: '.Formatter.paymentOrActualAmount'
+                                }" press="onYearlyPaymentAmountPress" wrapping="true" class="creditLinkStyle"/>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+       <footer>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Text text="{i18n>totalAmount} : "/>
+				<ObjectNumber number="{parts: [{ path: 'yearPopoverData>/TotalAmount' }], formatter: '.Formatter.fromatNumber'}" unit="INR" />
+                <!-- <ToolbarSpacer/> -->
+
+				<Text text="Actual Amount : "/>
+				<ObjectNumber number="{parts: [{ path: 'yearPopoverData>/AllActualAmount' }],formatter: '.Formatter.fromatNumber'}" unit="INR"/>
+        	</Toolbar>
+		</footer>
+    </Dialog>
+</core:FragmentDefinition>

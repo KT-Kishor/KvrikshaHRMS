@@ -1,0 +1,43 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+>
+    <Dialog
+        id="BugID"
+        type="Message"
+        class="sapUiContentPadding"
+        contentWidth="28rem"
+        contentHeight="auto"
+    >
+        <customHeader>
+            <Bar class="barheader">
+                <contentMiddle>
+                    <Title text="{i18n>managesupport}" />
+                </contentMiddle>
+            </Bar>
+        </customHeader>
+
+        <f:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanXL="4" labelSpanL="3" labelSpanM="4" labelSpanS="12" columnsXL="2" columnsL="2" columnsM="1">
+            <f:content>
+            
+
+                <Label text="{i18n>issueDescription}" required="true"/>
+                  <TextArea id="RB_id_Description" value="{RaiseBugModel>/Description}" placeholder="{i18n>enterDescription}" rows="3" width="100%" maxLength="120" liveChange="onDescInputLiveChange" valueStateText="{i18n>enterDescription}"
+                />
+            
+
+                <Label text="{i18n>ResolutionDate}" required="true"/>  
+                <DatePicker id="RB_id_ResolutionDate" value="{RaiseBugModel>/ResolvedDate}" displayFormat="dd/MM/yyyy" valueFormat="yyyy-MM-dd" change="onDescInputLiveChange" valueStateText="{i18n>plaeseSelectDate}"
+                />
+            </f:content>
+        </f:SimpleForm>
+
+        <beginButton>
+            <Button text="{i18n>save}" tooltip="{i18n>save}" press="BugResolveSave" class="myUnifiedBtn"/>
+        </beginButton>
+        <endButton>
+            <Button text="{i18n>CancelButton}" tooltip="{i18n>CancelButton}" press="supportCancel" class="myUnifiedBtn"/>
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

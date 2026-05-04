@@ -1,0 +1,25 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form">
+ 
+    <Dialog 
+    id="idCourseDialog"
+    class="courseDialog"
+    contentWidth="840px"
+    resizable="true"
+    draggable="true"
+    >
+  <customHeader >
+        <Bar class="Coursetitle" >
+            <contentMiddle>
+                <Title text="" class="coursetitle"/>
+            </contentMiddle>
+            <contentRight>
+                <Button icon="sap-icon://decline" press="onCloseDialog" tooltip="Close"/>
+            </contentRight>
+        </Bar>
+    </customHeader>
+      	<FlexBox id="idVBox" class="flex"></FlexBox>
+       </Dialog>
+</core:FragmentDefinition>

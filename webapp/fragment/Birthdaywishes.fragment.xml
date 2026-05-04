@@ -1,0 +1,33 @@
+<c:FragmentDefinition
+    xmlns:richtexteditor="sap.ui.richtexteditor"
+    xmlns="sap.m"
+    xmlns:c="sap.ui.core"
+>
+    <Dialog title="{i18n>BirthdayWish}"
+   
+    >
+
+        <VBox class="sapUiSmallMargin">
+            <richtexteditor:RichTextEditor
+                id="NT_id_richtexteditor"
+                value="{BirthdayMailModel>/emailBody}"
+              height="330px"
+              />
+        </VBox>
+
+        <beginButton>
+            <Button
+                text="{i18n>sendbutton}"
+                type="Transparent"
+                press="Tile_sendMail"
+            />
+        </beginButton>
+        <endButton>
+            <Button
+                text="{i18n>btnCancel}"
+                type="Transparent"
+                press="NT_BirtdayDialogCancel"
+            />
+        </endButton>
+    </Dialog>
+</c:FragmentDefinition>

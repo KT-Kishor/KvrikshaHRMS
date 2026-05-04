@@ -1,0 +1,95 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core">
+	<l:VerticalLayout  width="98%" class="sapUiTinyMargin Aboutus" >
+		<l:BlockLayout background="Dashboard" >
+			<l:BlockLayoutRow rowColorSet="ColorSet4">
+				<l:BlockLayoutCell title="We At Kvriksha Technologies Private Limited" colspan="2"
+>
+					<Text text="{i18n>aboutUscontent1}"  class="cell_Title"></Text>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell title="Services" >
+					<VBox>
+						<Link text="IT Services" class="aboutTitle" wrapping="true"/>
+						<Text text="From initial consultation to ongoing support, we offer end-to-end services that cover every aspect of your IT needs. Our dedicated support team is always here to assist you." wrapping="true" class="Recuritmentclass"/>
+					</VBox>
+					<VBox>
+						<Link text="SAP Expertise" class="aboutTitle" wrapping="true"/>
+						<Text text="Our team comprises seasoned professionals with extensive experience in SAP ECC, S/4 HANA, S/4 HANA Cloud, Rise with SAP." class="Recuritmentclass" wrapping="true"/>
+					</VBox>
+					<VBox>
+						<Link text="SAP Functional" class="aboutTitle" wrapping="true"/>
+						<Text text="Providing expert SAP Functional consulting across modules like FI, CO, SD, MM, HCM, and PS. We deliver process optimization, configuration, implementation, and integration services to drive business efficiency." wrapping="true" class="Recuritmentclass"/>
+					</VBox>
+					<VBox>
+						<Link text="SAP Technical" class="aboutTitle"  wrapping="true"/>
+						<Text text="We are efficient resource provider of SAP UI5, Fiori, CAPM, ABAP, RAP, SAP Build App, Build Process Automation, SAC, BW, AI-powered application transformation services for BTP and Functional consultant." wrapping="true" class="Recuritmentclass"/>
+					</VBox>
+					<VBox>
+						<Link text="Training" class="aboutTitle" wrapping="true"/>
+						<Text text="We also provide Training and Upskilling Programs in SAP UI5, Fiori, CAPM, and emerging SAP BTP technologies." class="Recuritmentclass" wrapping="true"/>
+					</VBox>
+					<VBox>
+						<Link text="Staffing" class="aboutTitle" wrapping="true"/>
+						<Text text="We have around 30+ SAP Consultant to provide services for our customers for Staffing process." class="Recuritmentclass" wrapping="true"/>
+					</VBox>
+					<VBox>
+						<Link text="Global Presence" class="aboutTitle" wrapping="true"/>
+						<Text text="We serve global customer from Dubai, Singapore, US, Japan, Australia and India for SAP Technologies." class="Recuritmentclass" wrapping="true"/>
+					</VBox>
+				
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell title="We are Expertise in">
+					<VBox>
+						<Link text="SAP Business Technology Platform (BTP)" class="aboutTitle" wrapping="true"/>
+						<Text text="Empowering enterprises with integration, extension, and data-to-value capabilities through SAP BTP services, enabling innovation across applications, processes, and analytics." wrapping="true" class="Recuritmentclass"/>
+					</VBox>
+					<VBox >
+						<Link text="Application Development, Modernization and DMS"  class="aboutTitle" wrapping="true" />
+						<Text text="Designing and modernizing enterprise applications with  SAP UI5, Fiori, CAPM, ABAP, RAP with file storage using DMS." wrapping="true" class="Recuritmentclass"/>
+					</VBox>
+					<VBox >
+						<Link text="Intelligent Automation"  class="aboutTitle" wrapping="true"/>
+						<Text text="Implementing SAP Build Apps, Build Process Automation, IRPA and AI-powered transformation services BTP and Functional consultant." wrapping="true" class="Recuritmentclass"/>
+					</VBox>
+					<VBox >
+						<Link text="Analytics and Business Insights"  class="aboutTitle" wrapping="true"/>
+						<Text text="Unlocking real-time business value with SAP SAC and BW for smarter decision-making." wrapping="true" class="Recuritmentclass"/>
+					</VBox>
+					<VBox >
+						<Link text="Enterprise Transformation"  wrapping="true" class="aboutTitle" />
+						<Text text="Our team comprises seasoned professionals with extensive experience in SAP ECC, S/4 HANA, S/4 HANA Cloud, Rise with SAP." wrapping="true" class="Recuritmentclass"/>
+					</VBox>
+						<VBox>
+						<Link text="OCR Services" class="aboutTitle" wrapping="true"/>
+						<Text text="We offer Optical Character Recognition (OCR) solutions to digitize documents, automate data extraction, and streamline business processes with high accuracy with Document AI." class="Recuritmentclass" wrapping="true"/>
+					</VBox>
+					<VBox>
+					<Link text="Project Delivery" class="aboutTitle" wrapping="true"/>
+					<Text text="We take complete ownership of projects and deliver high-quality, end-to-end solutions on time, ensuring maximum value and customer satisfaction." wrapping="true" class="Recuritmentclass"/>
+					</VBox>
+					<!-- <core:HTML content='&lt;div class=&quot;content&quot;&gt;&lt;gt;&lt;div&gt;{i18n>aboutUsSecondcontent5}&lt;br&gt;&lt;br&gt;{i18n>aboutUsSecondcontent9}&lt;br&gt;&lt;br&gt;{i18n>aboutSecondDes}&lt;br&gt;&lt;br&gt;{i18n>aboutSecondDes1}&lt;br&gt;&lt;br&gt;{i18n>aboutSecondDes2}&lt;/a&gt;&lt;/div&gt;'></core:HTML> -->
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+		</l:BlockLayout>
+	</l:VerticalLayout>
+	<HBox class="footer-bar" alignItems="Center" justifyContent="SpaceBetween" >
+		<!-- Left: Copyright -->
+		<Text text="{i18n>companynameKT}" class="footer-text"/>
+		<HBox class="footer-social" justifyContent="End">
+			<core:HTML content="&lt;a href='https://www.instagram.com/kalpavrikshatechnologies/' target='_blank'&gt;
+                                  &lt;i class='fab fa-instagram social-icon'&gt;&lt;/i&gt;
+                                &lt;/a&gt;"/>
+			<core:HTML content="&lt;a href='https://www.linkedin.com/company/kalpavriksha-technologies/' target='_blank'&gt;
+                                  &lt;i class='fab fa-linkedin-in social-icon'&gt;&lt;/i&gt;
+                                &lt;/a&gt;"/>
+			<core:HTML content="&lt;a href='https://www.youtube.com/@KalpavrikshaTechnologies' target='_blank'&gt;
+                                  &lt;i class='fab fa-youtube social-icon'&gt;&lt;/i&gt;
+                                &lt;/a&gt;"/>
+		</HBox>
+	</HBox>
+</mvc:View>

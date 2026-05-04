@@ -1,0 +1,28 @@
+<core:FragmentDefinition 
+	xmlns="sap.m" 
+	xmlns:core="sap.ui.core" 
+	xmlns:rte="sap.ui.richtexteditor" 
+	xmlns:f="sap.ui.layout.form" 
+	xmlns:l="sap.ui.layout">
+	<Dialog id="idMailDialog" title="Email MSA" afterClose="onCloseMailDialog" draggable="true" resizable="true" stretch="false" contentWidth="60%">
+		<content>
+			<l:VerticalLayout width="100%">
+			<MessageStrip  class="sapUiTinyMarginBeginEnd sapUiTinyMarginTop sapUiContentPadding" text="{i18n>sendMailFragMsg}" type="Information" showIcon="true" />       
+				<f:SimpleForm id="MSA_MailForm" editable="true" layout="ResponsiveGridLayout" columnsL="1" columnsM="1" class="sapUiContentPadding">
+					<f:content>
+						<Label class="sapUiSmallMarginTop" text="{i18n>toMailText}" required="true"/>
+						<!-- <Input class="sapUiSmallMarginTop" id="idEmailTo" type="Email" placeholder="Enter email address" liveChange="onLiveChangeEmail" value="{MSAEmailModel>/to}" valueStateText="Invalid email address"/> -->
+						<TextArea class="sapUiSmallMarginTop" id="idEmailTo" placeholder="Enter email address (es)" liveChange="onLiveChangeEmail" value="{MSAEmailModel>/to}" rows="3" valueStateText="Invalid email address (es)"/>
+
+						<Label/>
+						<rte:RichTextEditor class="sapUiSmallMarginTop" id="idEmailBody" change="onRTEChange" width="100%" height="400px" value="{MSAEmailModel>/body}" editorType="TinyMCE4" showGroupFont="true" showGroupTextAlign="true" showGroupLink="true" showGroupInsert="true"/>
+					</f:content>
+				</f:SimpleForm>
+			</l:VerticalLayout>
+		</content>
+		<buttons>
+        	<Button id="idSendMail" text="{i18n>sendMail}" class="sapUiSmallMarginEnd" type="Transparent" press="onSendMail"/>
+			<Button id="idCancelMail" text="{i18n>cancel}" type="Transparent" press="onCancelMail"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

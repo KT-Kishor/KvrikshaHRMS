@@ -1,0 +1,269 @@
+<mvc:View
+    controllerName="sap.kt.com.minihrsolution.controller.HP_View"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
+    xmlns:fb="sap.ui.comp.filterbar"
+    xmlns:svm="sap.ui.comp.smartvariants"
+    height="100%"
+>
+    <Page>
+        <customHeader>
+            <core:Fragment
+                fragmentName="sap.kt.com.minihrsolution.fragment.Header"
+                type="XML"
+            />
+        </customHeader>
+        <content>
+            <fb:FilterBar
+                id="filterBar"
+                clear="v1_filClear"
+                search="onFilterSearch"
+                showClearOnFB="true"
+                showFilterConfiguration="false"
+                showAllFilters="true"
+                filtersDialogCancel="false"
+                persistencyKey="myPersKey"
+                useToolbar="false"
+                filterChange=".onFilterChange"
+                afterVariantLoad=".onAfterVariantLoad"
+                class="sapUiTinyMargin CommonRoundedTable"
+            >
+                <fb:filterGroupItems>
+                    <!-- Primary Skills -->
+                    <fb:FilterGroupItem
+                        name="Skills"
+                        label="Primary Skills"
+                        groupName="Group1"
+                        visibleInFilterBar="true"
+                    >
+                        <fb:control>
+                            <Input
+                                id="filterPrimarySkills"
+                                placeholder="Type a skill"
+                                showClearIcon="true"
+                                showSuggestion="true"
+                                suggest="onSuggestSkills"
+                                suggestionItems="{path: 'skillModel>/skills'}"
+                            >
+                                <core:Item
+                                    key="{skillModel>skill}"
+                                    text="{skillModel>skill}"
+                                />
+                            </Input>
+                        </fb:control>
+                    </fb:FilterGroupItem>
+                    <!-- Location -->
+                    <fb:FilterGroupItem
+                        name="Location"
+                        label="Location"
+                        groupName="Group1"
+                        visibleInFilterBar="true"
+                    >
+                        <fb:control>
+                            <ComboBox
+                                id="HP_id_LocationFilter"
+                                placeholder="Choose Location"
+                                showClearIcon="true"
+                                showSecondaryValues="true"
+                                items="{path:'FilterJobModel>/LocationSet', length:1000}"
+                            >
+                                <core:ListItem
+                                    key="{FilterJobModel>Location}"
+                                    text="{FilterJobModel>Location}"
+                                />
+                            </ComboBox>
+                        </fb:control>
+                    </fb:FilterGroupItem>
+
+                    <!-- Experience -->
+                    <fb:FilterGroupItem
+                        name="Experience"
+                        label="Experience"
+                        groupName="Group1"
+                        visibleInFilterBar="true"
+                    >
+                        <fb:control>
+                            <ComboBox
+                                showClearIcon="true"
+                                placeholder="Select Experience"
+                                id="filterExperienceJP"
+                                items="{ExperienceModel>/data}"
+                            >
+                                <core:Item
+                                    key="{ExperienceModel>key}"
+                                    text="{ExperienceModel>value}"
+                                />
+                            </ComboBox>
+                        </fb:control>
+                    </fb:FilterGroupItem>
+                    <!-- Status -->
+                    <fb:FilterGroupItem
+                        name="Status"
+                        label="Status"
+                        groupName="Group1"
+                        visibleInFilterBar="true"
+                    >
+                        <fb:control>
+                            <ComboBox
+                                showClearIcon="true"
+                                placeholder="Choose Status"
+                                id="filterStatus"
+                                items="{BackendStatusModel>/}"
+                            >
+                                <core:Item
+                                    key="{BackendStatusModel>key}"
+                                    text="{BackendStatusModel>text}"
+                                />
+                            </ComboBox>
+                        </fb:control>
+                    </fb:FilterGroupItem>
+                    <!-- Date Filter -->
+                    <fb:FilterGroupItem
+                        name="PostDate"
+                        label="Post Date"
+                        groupName="Group1"
+                        visibleInFilterBar="true"
+                    >
+                        <fb:control>
+                            <DateRangeSelection
+                                id="filterPostDate"
+                                valueFormat="yyyy-MM-dd"
+                                displayFormat="dd/MM/yyyy"
+                            />
+                        </fb:control>
+                    </fb:FilterGroupItem>
+                </fb:filterGroupItems>
+            </fb:FilterBar>
+            <Table
+                id="jobPostingTable"
+                mode="SingleSelectLeft"
+                sticky="ColumnHeaders,HeaderToolbar"
+                items="{path: 'JobApplicationModel>/Candidates', sorter: [{ path: 'RecruitmentType', descending: false, group: true }, { path: 'PostDate', descending: true }]}"
+                selectionChange="onJobSelectionChange"
+                class="sapUiTinyMargin CommonRoundedTable"
+                width="auto"
+            >
+                <headerToolbar>
+                    <OverflowToolbar>
+                        <Title
+                            text="{i18n>HP_Table_TB}({= ${JobApplicationModel>/Candidates}.length})"
+                            level="H2"
+                        />
+                        <ToolbarSpacer />
+                        <Button
+                            id="HP_id_create"
+                            text="Create"
+                            press="onOpenAddJobDialog"
+                            type="Transparent"
+                        />
+                        <Button
+                            id="HP_id_edit"
+                            text="Edit"
+                            press="onOpenEditJobDialog"
+                            type="Transparent"
+                        />
+                        <Button
+                            id="HP_id_delete"
+                            text="Delete"
+                            press="onDeleteJob"
+                            type="Transparent"
+                        />
+                        <Button
+                            text="{i18n>download}"
+                            press="HP_DownloadTableData"
+                        />
+                    </OverflowToolbar>
+                </headerToolbar>
+                <columns>
+                    <Column demandPopin="true" width="250px">
+                        <Text text="{i18n>HP_t_job_title}" />
+                    </Column>
+                    <Column demandPopin="true">
+                        <Text text="{i18n>branch}" />
+                    </Column>
+                    <Column demandPopin="true" width="250px">
+                        <Text text="{i18n>HP_t_PriSkill}" />
+                    </Column>
+                    <Column demandPopin="true">
+                        <Text text="{i18n>HP_t_Workmode}" />
+                    </Column>
+                    <Column
+                        hAlign="Center"
+                        minScreenWidth="Desktop"
+                        demandPopin="true"
+                    >
+                        <Text text="{i18n>HP_t_Exp}" />
+                    </Column>
+                    <Column
+                        minScreenWidth="Desktop"
+                        demandPopin="true"
+                    >
+                        <Text text="{i18n>HP_t_loc}" />
+                    </Column>
+                    <Column
+                        minScreenWidth="Desktop"
+                        demandPopin="true"
+                    >
+                        <Text text="{i18n>HP_t_NoOfPos}" />
+                    </Column>
+                    <!-- <Column
+                        minScreenWidth="Desktop"
+                        demandPopin="true"
+                    >
+                        <Text text="{i18n>HP_t_PostDate}" />
+                    </Column> -->
+                    <Column
+                        hAlign="Center"
+                        minScreenWidth="Desktop"
+                        demandPopin="true"
+                    >
+                        <Text text="Status" />
+                    </Column>
+                </columns>
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <!-- <Text text="{JobApplicationModel>JobTitle}" /> -->
+                            <ObjectIdentifier title="{JobApplicationModel>JobTitle} " text="{JobApplicationModel>ClientName}" />
+                            <Text text="{=${JobApplicationModel>BranchCode} === 'KLB01'? 'Kalaburagi':'Bangalore'}" />
+                            <!-- <ExpandableText
+                                text="{JobApplicationModel>PrimarySkills}"
+                                maxCharacters="20"
+                            /> -->
+                            <Text
+                                text="{JobApplicationModel>PrimarySkills}"
+                            />
+
+                            <Text
+                                text="{JobApplicationModel>LocationService}"
+                            />
+                            <Text text="{= ${JobApplicationModel>Experience} === '0' || ${JobApplicationModel>Experience} === 0 ? 'Fresher' : ${JobApplicationModel>Experience} + ' Years' }" />
+                            <Text text="{JobApplicationModel>Location}" />
+                            <Text text="{JobApplicationModel>NoOfPositions}" />
+                            <!-- <Text
+                                text="{path: 'JobApplicationModel>PostDate', formatter: '.formatter.formatDate'}"
+                            /> -->
+                            <ObjectStatus
+                                text="{= ${JobApplicationModel>Status} === 'true' ? 'Active' : 'Inactive' }"
+                                state="{= ${JobApplicationModel>Status} === 'true' ? 'Success' : 'Error' }"
+                                inverted="true"
+                            />
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+        <footer>
+            <Bar id="JP_id_FooterBar">
+                <contentLeft>
+                    <core:Fragment
+                        fragmentName="sap.kt.com.minihrsolution.fragment.Footer"
+                        type="XML"
+                    />
+                </contentLeft>
+            </Bar>
+        </footer>
+    </Page>
+</mvc:View>

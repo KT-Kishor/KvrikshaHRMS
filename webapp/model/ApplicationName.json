@@ -1,0 +1,146 @@
+[
+    {
+        "ID": 1,
+        "AppName": "My Inbox"
+    },
+    {
+        "ID": 2,
+        "AppName": "Self Service"
+    },
+    {
+        "ID": 3,
+        "AppName": "Employee Details"
+    },
+    {
+        "ID": 4,
+        "AppName": "Apply Leave"
+    },
+    {
+        "ID": 5,
+        "AppName": "Apply Overtime"
+    },
+    {
+        "ID": 6,
+        "AppName": "Leave Overview"
+    },
+    {
+        "ID": 7,
+        "AppName": "List of Holidays"
+    },
+    {
+        "ID": 8,
+        "AppName": "Send Greetings"
+    },
+    {
+        "ID": 9,
+        "AppName": "My Timesheet"
+    },
+    {
+        "ID": 10,
+        "AppName": "Manage Assignment"
+    },
+    {
+        "ID": 11,
+        "AppName": "Timesheet Approval"
+    },
+    {
+        "ID": 12,
+        "AppName": "Generate Payslip"
+    },
+    {
+        "ID": 13,
+        "AppName": "Generate Salary"
+    },
+    {
+        "ID": 14,
+        "AppName": "Manage Payroll Data"
+    },
+    {
+        "ID": 15,
+        "AppName": "Generate Trainee Offer"
+    },
+    {
+        "ID": 16,
+        "AppName": "Generate Employee Offer"
+    },
+    {
+        "ID": 17,
+        "AppName": "Generate Contract"
+    },
+    {
+        "ID": 18,
+        "AppName": "Generate MSA & NDA"
+    },
+    {
+        "ID": 19,
+        "AppName": "Manage Customer"
+    },
+    {
+        "ID": 20,
+        "AppName": "Company Invoice"
+    },
+    {
+        "ID": 21,
+        "AppName": "Contractor Invoice"
+    },
+    {
+        "ID": 22,
+        "AppName": "PO Generate"
+    },
+    {
+        "ID": 23,
+        "AppName": "Invoice Dashboard"
+    },
+    {
+        "ID": 24,
+        "AppName": "Credit Note"
+    },
+    {
+        "ID": 25,
+        "AppName": "Manage Quotation"
+    },
+    {
+        "ID": 26,
+        "AppName": "Create Expense"
+    },
+    {
+        "ID": 27,
+        "AppName": "Expense Invoice"
+    },
+    {
+        "ID": 28,
+        "AppName": "Create Allowance"
+    },
+    {
+        "ID": 29,
+        "AppName": "My Asset"
+    },
+    {
+        "ID": 30,
+        "AppName": "Company Asset"
+    },
+    {
+        "ID": 31,
+        "AppName": "Asset Assignment"
+    },
+    {
+        "ID": 32,
+        "AppName": "Recruitment Details"
+    },
+    {
+        "ID": 33,
+        "AppName": "Job Posting"
+    },
+    {
+        "ID": 34,
+        "AppName": "Maintain Data"
+    },
+      {
+        "ID": 34,
+        "AppName": "Login Issue"    
+    },
+     {
+        "ID": 35,
+        "AppName": "Others"
+    }
+]

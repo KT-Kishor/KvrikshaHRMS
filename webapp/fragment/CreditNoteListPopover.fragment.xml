@@ -1,0 +1,59 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<Dialog
+        contentWidth="1000px"
+        contentHeight="500px"
+        resizable="true"
+        draggable="true">
+		<customHeader >
+			<Bar class="Coursetitle" >
+				<contentLeft>
+					<Title  text="{i18n>invoiceForCredit} {CreditNoteListPopoverData>/Status}"  />
+				</contentLeft>
+				<contentRight>
+					<Button icon="sap-icon://decline" press="onCloseDialog" tooltip="Close"/>
+				</contentRight>
+			</Bar>
+		</customHeader>
+		<content>
+			<Table
+                inset="false"
+                sticky="ColumnHeaders"
+                items="{CreditNoteListPopoverData>/Records}"
+                noDataText="{i18n>noInvoiceStatus}">
+				<columns>
+					<Column demandPopin="true" hAlign="Left"><Text text="{i18n>invoiceNo}" /></Column>
+					<Column demandPopin="true" hAlign="Left" minScreenWidth="Desktop"><Text text="{i18n>creditMemoNo}" /></Column>
+					<Column demandPopin="true" hAlign="Left"><Text text="{i18n>invoiceDate}" /></Column>
+					<Column demandPopin="true" hAlign="Left" minScreenWidth="Desktop"><Text text="{i18n>customerName}" /></Column>
+					<Column hAlign="End" demandPopin="true" minScreenWidth="Desktop"><Text text="{i18n>totalAmount}" /></Column>
+					
+				</columns>
+				<items>
+					<ColumnListItem type="Navigation" press="onPressCreditNoteInvoice">
+						<cells>
+							<Text text="{CreditNoteListPopoverData>InvNo}" />
+							<Text text="{CreditNoteListPopoverData>CCInvNo}" />
+							<Text text="{path: 'CreditNoteListPopoverData>InvoiceDate',formatter:'.Formatter.formatDate'}" />
+							<Text text="{CreditNoteListPopoverData>CustomerName}" />
+							<VBox >
+								<ObjectNumber number="{parts: [{ path: 'CreditNoteListPopoverData>TotalAmount' }], formatter: '.Formatter.fromatNumber'}" unit="{CreditNoteListPopoverData>Currency}" />
+								<ObjectNumber visible="{= ${CreditNoteListPopoverData>Currency} !== 'INR' }" number="{parts: [{ path: 'CreditNoteListPopoverData>AmountInINR' }], formatter: '.Formatter.fromatNumber'}" unit="INR" />
+							</VBox>
+							</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
+		<footer>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Text text="Total Amount : "/>
+				<ObjectNumber 
+						number="{parts: [{ path: 'CreditNoteListPopoverData>/TotalAmount' }], formatter: '.Formatter.fromatNumber'}"
+						unit="INR" />
+        	</Toolbar>
+		</footer>
+	</Dialog>
+</core:FragmentDefinition>

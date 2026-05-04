@@ -1,0 +1,64 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+>
+    <Dialog
+        title="{i18n>Download Payslip}"
+        contentHeight="auto"
+        contentWidth="auto"
+        draggable="true"
+    >
+        <f:SimpleForm
+            editable="true"
+            layout="ResponsiveGridLayout"
+            labelSpanXL="4"
+            labelSpanL="3"
+            labelSpanM="4"
+            labelSpanS="12"
+            adjustLabelSpan="false"
+            emptySpanXL="0"
+            emptySpanL="0"
+            emptySpanM="0"
+            emptySpanS="0"
+            columnsXL="2"
+            columnsL="2"
+            columnsM="1"
+        >
+            <f:content>
+                <Label
+                    text="{i18n>Financial Year}"
+                    required="true"
+                    showColon="true"
+                />
+                <ComboBox
+                    value="{PaySlip>/SelectedFinancialYear}"
+                    items="{FinancialYears>/}"
+                    required="true"
+                    width="auto"
+                    showClearIcon="true"
+                >
+                    <core:ListItem
+                        key="{FinancialYears>ID}"
+                        text="{FinancialYears>FinancialYear}"
+                    />
+                </ComboBox>
+            </f:content>
+        </f:SimpleForm>
+        <beginButton>
+            <Button
+                type="Emphasized"
+                text="Download"
+                press="BPD_onPressDownload"
+                enabled="{= !!${PaySlip>/SelectedFinancialYear}}"
+            />
+        </beginButton>
+        <endButton>
+            <Button
+                type="Transparent"
+                text="Close"
+                press="BPD_onPressClose"
+            />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

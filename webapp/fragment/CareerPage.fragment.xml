@@ -1,0 +1,140 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	displayBlock="true"
+	xmlns:g="sap.f"
+	xmlns:f="sap.ui.layout.form"
+	height="100%"
+	busyIndicatorDelay="0">
+	<!-- Main Flex Box Container -->
+	<FlexBox direction="Column" fitContainer="true" height="100%">
+		<!-- Scrollable Main Content -->
+		<ScrollContainer horizontal="false" vertical="true">
+			<l:VerticalLayout width="100%">
+				<!-- BlockLayout -->
+			<l:BlockLayout background="Dashboard">
+    <l:BlockLayoutRow>
+        <l:BlockLayoutCell width="2" title="{i18n>careersJointeam}" class="cell-bgcolor">
+            <VBox> <Text text="{i18n>careersDes}" class="cell_Title"/>
+			<!-- <Link text="Explore Current Openings"  class="sapUiTinyMarginTop cell_Title1" press="onOpenjob" /> -->
+			  <Button 
+                    text="Explore Current Openings" 
+                    press="onOpenjob" 
+                    icon="sap-icon://locate-me" 
+                    type="Emphasized" 
+                    class="openingbutton sapUiTinyMarginTop" 
+                />
+                </VBox>
+        </l:BlockLayoutCell>
+    </l:BlockLayoutRow>
+</l:BlockLayout>
+				<VBox height="1rem"/>
+				<!-- <Table id="V1_ID_Table"
+                        sticky="ColumnHeaders"
+                        items="{JobApplicationModel>/Candidates}"
+                        mode="SingleSelectMaster"
+                        alternateRowColors="true"
+                        class="sapUiSmallMargin myRoundedTable"
+						busyIndicatorDelay="0"
+                        width="auto">
+					<headerToolbar>
+						<OverflowToolbar>
+							<SearchField search="onSearch" placeholder="Type a skill" width="17.5rem"/>
+						</OverflowToolbar>
+					</headerToolbar>
+					<columns>
+						<Column demandPopin="true">
+							<Text text="{i18n>v1_jobTitle}" />
+						</Column>
+						<Column minScreenWidth="Desktop" demandPopin="true">
+							<Text text="{i18n>v1_PriSkills}" />
+						</Column>
+						<Column demandPopin="true">
+							<Text text="{i18n>v1_s_postDate}" />
+						</Column>
+						<Column minScreenWidth="Desktop" demandPopin="true">
+							<Text text="{i18n>V1_L_Location}" />
+						</Column>
+						<Column minScreenWidth="Desktop" demandPopin="true">
+							<Text text="{i18n>v1_s_Exp}" />
+						</Column>
+						<Column minScreenWidth="Desktop" demandPopin="true"></Column>
+					</columns>
+					<items>
+						<ColumnListItem>
+							<cells>
+								<Link text="{JobApplicationModel>JobTitle}" wrapping="true" press="v1_onViewItem" />
+								<ExpandableText text="{JobApplicationModel>PrimarySkills}" maxCharacters="25"/>
+								<Text text="{path: 'JobApplicationModel>PostDate', formatter:'.Formatter.formatDate'}" />
+								<Text text="{JobApplicationModel>Location}" />
+								<Text text="{JobApplicationModel>Experience}" />
+								<Button text="{i18n>v1_s_ViewJob}"
+                                        icon="sap-icon://opportunities"
+                                        press="v1_onViewItem"
+                                        type="Emphasized" />
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table> -->
+
+
+                <g:GridContainer class="carrer-office-tour sapUiSmallMargin">
+						<g:layout>
+							<g:GridContainerSettings columnSize="49.5%" gap="10px" />
+						</g:layout>
+						<g:layoutXS>
+							<g:GridContainerSettings columnSize="100%" gap="10px" />
+						</g:layoutXS>
+						<g:layoutS>
+							<g:GridContainerSettings columnSize="100%" gap="10px" />
+						</g:layoutS>
+						<g:layoutM>
+							<g:GridContainerSettings columnSize="100%" gap="10px" />
+						</g:layoutM>
+						<!-- Left Column -->
+						<VBox alignItems="Start" justifyContent="Center">
+							<Title text="{i18n>officeTour}" level="H1" class="carrer-Heading" />
+							<Text text="{i18n>aboutCompany}" class="carrer-Paragraph" />
+						</VBox>
+						<!-- Right Column -->
+						<VBox id="videoBoxoffice" class="sapUiMediumMarginTop">
+							<core:HTML id="videoFrametour"
+        content="&lt;div style='width:560px;height:315px;overflow:hidden;border-radius:15px;background:#f3f3f3;'&gt;
+                    &lt;iframe src='../Videos/Office Tour.mp4' 
+                             allowfullscreen 
+                             style='width:100%;height:100%;border:none;'&gt;
+                    &lt;/iframe&gt;
+                 &lt;/div&gt;" />
+						</VBox>
+					</g:GridContainer>
+                      <!-- Footer -->
+    <HBox class="footer-bar" alignItems="Center" justifyContent="SpaceBetween" width="100%" >
+        <!-- Left: Copyright -->
+        <Text text="{i18n>companynameKT}" class="footer-text"/>
+        <HBox class="footer-social" justifyContent="End">
+            <core:HTML content="&lt;a href='https://www.instagram.com/kalpavrikshatechnologies/' target='_blank'&gt;
+                                  &lt;i class='fab fa-instagram social-icon'&gt;&lt;/i&gt;
+                                &lt;/a&gt;"/>
+            <core:HTML content="&lt;a href='https://www.linkedin.com/company/kalpavriksha-technologies/' target='_blank'&gt;
+                                  &lt;i class='fab fa-linkedin-in social-icon'&gt;&lt;/i&gt;
+                                &lt;/a&gt;"/>
+            <core:HTML content="&lt;a href='https://www.youtube.com/@KalpavrikshaTechnologies' target='_blank'&gt;
+                                  &lt;i class='fab fa-youtube social-icon'&gt;&lt;/i&gt;
+                                &lt;/a&gt;"/>
+        </HBox>
+    </HBox>
+			</l:VerticalLayout>
+		</ScrollContainer>
+		<!-- <Image
+		text="{i18n>requestDemo}"
+        class="floatingButton"
+        press="onOpenForm"
+      /> -->
+	  <!-- <Button 
+	  text="View job"
+	   class="demoBtn"
+        press="onOpenjob"/> -->
+	</FlexBox>
+</core:FragmentDefinition>

@@ -1,0 +1,55 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Dialog
+        id="paymentDetailsDialog"
+        contentWidth="1000px"
+        contentHeight="500px"
+        resizable="true"
+        draggable="true">
+          <customHeader >
+        <Bar class="Coursetitle" >
+        <contentLeft>
+           <Title text="{i18n>brktitle} {PaymentBreakdownPopoverData>/Company}" />
+        </contentLeft>
+          
+            <contentRight>
+                <Button icon="sap-icon://decline" press="onCloseDialog" tooltip="Close"/>
+            </contentRight>
+        </Bar>
+    </customHeader>
+        <content>
+            <Table
+                items="{PaymentBreakdownPopoverData>/Records}"
+                sticky="ColumnHeaders"
+                noDataText="{i18n>noBData}">
+                <columns>
+                    <Column demandPopin="true" hAlign="Left"><Text text="{i18n>invoice_No}" tooltip="{i18n>invoiceNo}" /></Column>
+                    <Column hAlign="End" demandPopin="true"><Text text="{i18n>taxableAmount}" /></Column>
+                    <Column hAlign="End" demandPopin="true" minScreenWidth="Desktop"><Text text="{i18n>credit_Notes_Amount}" tooltip="{i18n>creditNotesAmount}" /></Column>
+                    <Column hAlign="End" demandPopin="true" minScreenWidth="Desktop"><Text text="{i18n>gstAmount}" /></Column>
+                    <Column hAlign="End" demandPopin="true" minScreenWidth="Desktop"><Text text="{i18n>colTotalAmount}" /></Column>
+                  
+                </columns>
+                <items>
+                    <ColumnListItem type="Navigation" press="onPaymentBreakdownPress">
+                        <cells>
+                            <Text text="{PaymentBreakdownPopoverData>InvNo}" />
+                            <ObjectNumber number="{path: 'PaymentBreakdownPopoverData>SubTotalInGST',formatter: '.Formatter.fromatNumber'}" unit="INR" />
+                            <Link wrapping="true" class="creditLinkStyle" press="onInvoiceCreditNotesPressPaymentBreakdown" text="{parts: [{ path: 'PaymentBreakdownPopoverData>CreditNotesTotal' },{ value: 'INR' }],formatter: '.Formatter.formatAmountWithCurrency'}"/>
+                           	<ObjectNumber number="{parts: [{ path: 'PaymentBreakdownPopoverData>GSTAmount' }],formatter: '.Formatter.fromatNumber'}"/>
+                            <ObjectNumber number="{path: 'PaymentBreakdownPopoverData>TotalAmountInINR',formatter: '.Formatter.fromatNumber'}" unit="INR"/>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+         <footer>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Text text="Total Amount : "/>
+				<ObjectNumber number="{parts: [{ path: 'PaymentBreakdownPopoverData>/TotalAmount' }], formatter: '.Formatter.fromatNumber'}" unit="INR" />
+        	</Toolbar>
+		</footer>
+    </Dialog>
+</core:FragmentDefinition>

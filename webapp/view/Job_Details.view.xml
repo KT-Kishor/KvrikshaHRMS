@@ -1,0 +1,116 @@
+<mvc:View
+	controllerName="sap.kt.com.minihrsolution.controller.Job_Details"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+    xmlns:core="sap.ui.core"
+     xmlns:fb="sap.ui.comp.filterbar"
+	displayBlock="true"
+	height="100%"
+	busyIndicatorDelay="0"
+>
+ <Page class="career-background">
+ <headerContent>
+			<Avatar src="./image/KPVL_logo.jpeg" displaySize="XS" press="onAvatarPressed" tooltip="Company Logo"/>
+			<Title level="H1" text="{i18n>companynameKT}" class="custom-text" wrapping="false"/>
+			<ToolbarSpacer/>
+			<Button icon="sap-icon://home" press="onpresshome" class="sapUiTinyMarginEnd" tooltip="{i18n>toolHome}"/>
+		</headerContent>
+        <content>
+		<VBox height="2rem"/>
+		<fb:FilterBar id="V1_ID_filterbar" class="sapUiTinyMargin CommonRoundedTable" clear="v1_filClear" search="V1_onSearch" showClearOnFB="true" showAllFilters="true" showFilterConfiguration="false" filtersDialogCancel="false" persistencyKey="myPersKey" useToolbar="false" filterChange=".onFilterChange" afterVariantLoad=".onAfterVariantLoad">
+								<fb:filterGroupItems>
+									<fb:FilterGroupItem name="Skills" label="{i18n>V1_L_Skills}" groupName="Group1" visibleInFilterBar="true">
+										<fb:control>
+											<Input id="V1_ID_SkillsInput" placeholder="Type a skill" showSuggestion="true" showClearIcon="true" suggest="onSuggestSkills" suggestionItems="{skillModel>/skills}">
+												<core:Item key="{skillModel>skill}" text="{skillModel>skill}" />
+											</Input>
+										</fb:control>
+									</fb:FilterGroupItem>
+									<fb:FilterGroupItem name="Location" label="{i18n>V1_L_Location}" groupName="Group1" visibleInFilterBar="true">
+										<fb:control>
+											<ComboBox id="V1_ID_LocationComboBox" placeholder="Select Location" items="{BaseLocationModel>/}" showClearIcon="true" showSecondaryValues="true" filterSecondaryValues="true">
+												<core:ListItem key="{BaseLocationModel>id}" text="{BaseLocationModel>city}" additionalText="{BaseLocationModel>branchCode}" />
+											</ComboBox>
+										</fb:control>
+									</fb:FilterGroupItem>
+									<fb:FilterGroupItem name="ExpYears" label="{i18n>v1_L_EXP}" groupName="Group1" visibleInFilterBar="true">
+										<fb:control>
+											<ComboBox id="V1_ID_ExpComboBox" items="{ExpYears>/}" selectedKey="" placeholder="Select Experience" showClearIcon="true">
+												<core:Item key="{ExpYears>key}" text="{ExpYears>text}" />
+											</ComboBox>
+										</fb:control>
+									</fb:FilterGroupItem>
+									<fb:FilterGroupItem name="RequirementType" label="{i18n>requirementtype}" groupName="Group1" visibleInFilterBar="true">
+										<fb:control>
+											<ComboBox id="V1_ID_RequirtmentType" items="" selectedKey="" placeholder="Select Recruitment Type" showClearIcon="true">
+												<core:Item key="ourcompany" text="Our Company" />
+												<core:Item key="client" text="Client Recruitment" />
+											</ComboBox>
+										</fb:control>
+									</fb:FilterGroupItem>
+								</fb:filterGroupItems>
+							</fb:FilterBar>
+							<VBox height="1rem"/>
+          <Table id="V1_ID_Table"
+                        sticky="ColumnHeaders"
+                        items="{JobApplicationModel>/Candidates}"
+                        mode="SingleSelectMaster"
+                        alternateRowColors="true"
+                        class="sapUiTinyMargin myRoundedTable"
+						busyIndicatorDelay="0"
+                        width="auto">
+					<columns>
+						<Column demandPopin="true">
+							<Text text="{i18n>v1_jobTitle}" />
+						</Column>
+						<Column minScreenWidth="Desktop" demandPopin="true">
+							<Text text="{i18n>v1_PriSkills}" />
+						</Column>
+						<Column demandPopin="true">
+							<Text text="{i18n>v1_s_postDate}" />
+						</Column>
+						<Column minScreenWidth="Desktop" demandPopin="true">
+							<Text text="{i18n>V1_L_Location}" />
+						</Column>
+						<Column minScreenWidth="Desktop" demandPopin="true">
+							<Text text="{i18n>numberofpositions}" />
+						</Column>
+						<Column minScreenWidth="Desktop" demandPopin="true">
+							<Text text="{i18n>v1_s_Exp}" />
+						</Column>
+						<Column minScreenWidth="Desktop" demandPopin="true"></Column>
+					</columns>
+					<items>
+						<ColumnListItem>
+							<cells>
+								<Link text="{JobApplicationModel>JobTitle}" wrapping="true" press="v1_onViewItem" />
+								<ExpandableText text="{JobApplicationModel>PrimarySkills}" maxCharacters="25"/>
+								<Text text="{path: 'JobApplicationModel>PostDate', formatter:'.Formatter.formatDate'}" />
+								<Text text="{JobApplicationModel>Location}" />
+								<Text text="{JobApplicationModel>NoOfPositions}" />
+								<!-- <Text text="{JobApplicationModel>Experience}" /> -->
+								 <Text text="{= ${JobApplicationModel>Experience} === '0' || ${JobApplicationModel>Experience} === 0 ? 'Fresher' : ${JobApplicationModel>Experience} + ' Years' }" />
+								<Button text="{i18n>v1_s_ViewJob}"
+                                        icon="sap-icon://opportunities"
+                                        press="v1_onViewItem"
+                                        type="Transparent" />
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+            
+        </content>
+        <footer>
+            <Bar>
+                <contentLeft>
+                    <core:Fragment
+                        fragmentName="sap.kt.com.minihrsolution.fragment.Footer"
+                        type="XML"
+                    />
+                </contentLeft>
+                <contentRight />
+            </Bar>
+        </footer>
+    </Page>
+</mvc:View>

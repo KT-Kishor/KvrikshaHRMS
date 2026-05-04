@@ -1,0 +1,112 @@
+<core:FragmentDefinition xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form" xmlns:layout="sap.ui.layout">
+
+ <Dialog title="{=${modeModel>/isCreate}? 'Create Allowance' : 'Update Allowance'}" draggable="true" resizable="false" contentWidth="20%">
+    <form:SimpleForm
+        id="AllowanceSimpleForm"
+        editable="true"
+        layout="ResponsiveGridLayout"  labelSpanXL="12"
+    labelSpanL="12"
+    labelSpanM="12"
+    labelSpanS="12"
+    emptySpanXL="0"
+    emptySpanL="0"
+    emptySpanM="0"
+    emptySpanS="0"
+    columnsXL="1"
+    columnsL="1"
+    columnsM="1"
+    singleContainerFullSize="false">
+
+        <!-- Allowance Name -->
+ <Label text="Allowance Name" required="true"/>
+        <Input
+        id="ID_AllowanceTypeInput"
+        liveChange="onAllowanceTypeLiveChange"
+        valueStateText="{i18n>enterAllowanceType}"
+            value="{AllowanceformModel>/AllowanceType}"
+            placeholder="Enter allowance type"  maxLength="50"/>
+      
+        <!-- Allowance Description -->
+        <Label text="Allowance Description" required="true"/>
+        <TextArea
+        id="ID_AllowanceDescriptionInput"
+        liveChange="onAllowanceDescriptionLiveChange"
+        valueStateText="{i18n>enterAllowanceDescription}"
+            value="{AllowanceformModel>/AllowanceDescription}"
+            placeholder="Enter description"
+            rows="4" maxLength="200"/>
+
+        <!-- Amount -->
+     <Label text="Amount (Per Day)" required="true"/>
+
+<HBox width="100%" alignItems="Center" renderType="Bare">
+
+    <Input
+        id="ID_AllowanceAmountInput"
+        liveChange="onAllowanceAmountLiveChange"
+        valueStateText="{i18n>enterValidAmount}"
+        value="{AllowanceformModel>/Amount}"
+        type="Number"
+        placeholder="Enter amount"
+        width="60%" 
+        class="sapUiTinyMarginEnd customTightGap" />
+
+    <ComboBox
+        id="ID_CurrencyComboBox"
+        selectedKey="{AllowanceformModel>/Currency}"
+        change="onCurrencyChange"
+        required="true"
+        valueStateText="{i18n>enterValidAmount}"
+        items="{CurrencyModel>/}"
+        placeholder="Select Currency"
+        width="40%"
+        class="sapUiSmallMarginBegin customComboTight" >
+
+        <items>
+            <core:Item key="{CurrencyModel>currency}" text="{CurrencyModel>currency}" />
+        </items>
+
+    </ComboBox>
+
+</HBox>
+        <!-- Employee ID (MultiComboBox) -->
+        <Label text="Select Employees" required="true"/>
+        <MultiComboBox
+        id="ID_EmployeeMultiComboBox"
+            valueStateText="{i18n>selectEmployeeID}"
+            selectedKeys="{AllowanceformModel>/EmployeeID}"
+            change="onEmployeeSelectionChange"
+            items="{
+            path: 'EmpModel>/',
+            sorter: [
+            {
+                path: 'Role', 
+                group: true  
+            },
+            {
+            path: 'EmployeeID',
+            descending: false
+        } 
+        ]
+            }"   showSecondaryValues="true">
+
+            <items>
+                <core:ListItem key="{EmpModel>EmployeeID}" text="{EmpModel>EmployeeName}"  additionalText="{EmpModel>EmployeeID}"/>
+            </items>
+        </MultiComboBox>
+       
+
+    </form:SimpleForm>
+    <footer>
+			<Toolbar>
+				<ToolbarSpacer/>
+				 <Button text="Create" press="onCreateAllowance"  visible="{modeModel>/isCreate}" />
+				 <Button text="Save" press="onUpdateAllowance" visible="{modeModel>/isUpdate}" />
+                 <Button text="Cancel" press="onCancelAllowance" />
+			</Toolbar>
+		</footer>
+    </Dialog>
+
+</core:FragmentDefinition>

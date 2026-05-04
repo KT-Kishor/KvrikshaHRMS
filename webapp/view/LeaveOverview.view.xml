@@ -1,0 +1,44 @@
+<mvc:View
+    controllerName="sap.kt.com.minihrsolution.controller.LeaveOverview"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:unified="sap.ui.unified"
+    displayBlock="true"
+    class="sapUiSizeCompact">
+	<Page>
+		<customHeader>
+			<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Header" type="XML" />
+		</customHeader>
+		<content>
+			<VBox class="sapUiSmallMargin">
+				<PlanningCalendar id="LO_id_PlanningCalendar" startDate="{viewModel>/startDate}" rows="{path: 'PlanningModel>/people'}" appointmentsVisualization="Filled" appointmentSelect="handleAppointmentSelect" showEmptyIntervalHeaders="false" showWeekNumbers="true" showDayNamesLine="true" viewKey="{viewModel>/viewKey}">
+				<toolbarContent>
+				<Button text="{i18n>btnLegend}"  press=".onOpenMessagePopover"/>
+				<Button text="Resource Planning"  press=".AL_onPressApplyLeave"/>
+			</toolbarContent>
+					<rows>
+						<PlanningCalendarRow icon="{PlanningModel>pic}" title="{PlanningModel>role}" text="{PlanningModel>name}" appointments="{path : 'PlanningModel>appointments', templateShareable: false}" intervalHeaders="{path: 'PlanningModel>headers', templateShareable: false}">
+							<customData>
+								<core:CustomData key="emp-name" value="{PlanningModel>name}" writeToDom="true"/>
+							</customData>
+							<appointments>
+								<unified:CalendarAppointment startDate="{PlanningModel>start}" endDate="{PlanningModel>end}" icon="{PlanningModel>pic}" title="{PlanningModel>title}" text="{PlanningModel>info}" color="{PlanningModel>color}" tentative="{PlanningModel>tentative}"></unified:CalendarAppointment>
+							</appointments>
+							<intervalHeaders>
+								<unified:CalendarAppointment startDate="{PlanningModel>start}" endDate="{PlanningModel>end}" title="{PlanningModel>title}" color="{PlanningModel>color}"></unified:CalendarAppointment>
+							</intervalHeaders>
+						</PlanningCalendarRow>
+					</rows>
+				</PlanningCalendar>
+			</VBox>
+		</content>
+		<footer>
+			<Bar>
+				<contentLeft>
+					<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Footer" type="XML"/>
+				</contentLeft>
+			</Bar>
+		</footer>
+	</Page>
+</mvc:View>

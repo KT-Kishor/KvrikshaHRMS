@@ -1,0 +1,358 @@
+<mvc:View
+    controllerName="sap.kt.com.minihrsolution.controller.AllowanceDetails"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns:f="sap.ui.layout.form"
+    xmlns="sap.uxap"
+    xmlns:core="sap.ui.core"
+    xmlns:m="sap.m"
+>
+    <m:Page
+        id="AllItem_id_Details"
+        title="{i18n>allowanceDetails}"
+        navButtonPress="Exp_Det_onPressBackBtn"
+        showNavButton="true"
+        class="service-background glassHeader ObjectcustomHeaderToolbar classheader"
+    >
+        <m:headerContent >
+            <m:Button
+                press="Tile_NotifictionBTN"
+                class="sapUiTinyMarginBeginEnd LogNot logoutBtn"
+                tooltip="{i18n>TilenotificationfragName}"
+                icon="sap-icon://bell"
+                type="Transparent"
+                visible="{= ${LoginModel>/Role} !== 'Contractor' }"
+            >
+                <m:customData>
+                    <m:BadgeCustomData
+                        class="badgeClass"
+                        key="badge"
+                        value="{EndingSoonModel>/notificationCount}"
+                    />
+                </m:customData>
+            </m:Button>
+             <m:Button
+            press="TP_onraisebugpress"
+            icon="sap-icon://incident"
+            tooltip="{i18n>raisebug}"
+            type="Transparent"
+            class="LogNot logoutBtn"
+        />
+            <m:Button
+                press="onLogout"
+                icon="sap-icon://log"
+                tooltip="{i18n>logoutTooltip}"
+                type="Transparent"
+                class="LogNot logoutBtn"
+            />
+        </m:headerContent>
+        <ObjectPageLayout
+            enableLazyLoading="true"
+            navigate="onSectionChange"
+            beforeNavigate="onBeforeNavigate"
+            useIconTabBar="true"
+            showTitleInHeaderContent="true"
+            upperCaseAnchorBar="false"
+            headerContentPinnable="true"
+            sectionChange="onSectionChange"
+            id="AllItem_id_objectPageLayoutExpence"
+            class="Coursetitle"
+        >
+            <headerTitle>
+                <ObjectPageDynamicHeaderTitle class="sapUiTinyMargin">
+                    <expandedHeading>
+                        <m:Title
+                            text="{FilteredAllowanceModel>/0/EmployeeName}"
+                            wrapping="true"
+                            width="100%"
+                        />
+                    </expandedHeading>
+                    <expandedContent>
+                        <m:Label
+                            text="{FilteredAllowanceModel>/0/EmployeeID}"
+                            wrapping="true"
+                            width="100%"
+                            class="whiteLabel"
+                        />
+                    </expandedContent>
+                </ObjectPageDynamicHeaderTitle>
+            </headerTitle>
+            <sections >
+                <ObjectPageSection
+                    titleUppercase="false"
+                    id="AllItem_id_ExpObjectPageSection"
+                    title="{i18n>expBasicInformation}"
+                >
+                    <subSections>
+                        <ObjectPageSubSection
+                            title="{i18n>expBasicInformation}"
+                            titleUppercase="false"
+                        >
+                            <blocks>
+                                <f:SimpleForm
+                                    id="AllItem_id_DimpleForm"
+                                    editable="true"
+                                    layout="ColumnLayout"
+                                    labelSpanXL="4"
+                                    labelSpanL="3"
+                                    labelSpanM="4"
+                                    labelSpanS="12"
+                                    adjustLabelSpan="false"
+                                    emptySpanXL="0"
+                                    emptySpanL="0"
+                                    emptySpanM="0"
+                                    emptySpanS="0"
+                                    columnsXL="2"
+                                    columnsL="2"
+                                    columnsM="1"
+                                >
+                                    <f:toolbar>
+                                        <m:Toolbar>
+                                            <m:Title
+                                                title="{i18n>expBasicInformation}"
+                                            />
+                                            <m:ToolbarSpacer />
+                                            <m:Button
+                                                type="{= ${viewModel>/isEditMode} ? 'Transparent' : 'Transparent' }"
+                                                text="{= ${viewModel>/isEditMode} ? 'Save' : 'Edit' }"
+                                                press="Exp_Det_onEditOrSavePress"
+                                                icon="{= ${viewModel>/isEditMode} ? '' : '' }"
+                                                visible="{viewModel>/status}"
+                                            />
+                                        </m:Toolbar>
+                                    </f:toolbar>
+                                    <!-- <f:content> -->
+                                    <!-- Employee ID -->
+                                    <m:Label text="{i18n>employeeID}" />
+                                    <m:Input
+                                        value="{FilteredAllowanceModel>/0/EmployeeID}"
+                                        editable="false"
+                                    />
+                                    <!-- Employee Name -->
+                                    <m:Label text="{i18n>employeeName}" />
+                                    <m:Input
+                                        value="{FilteredAllowanceModel>/0/EmployeeName}"
+                                        editable="false"
+                                    />
+                                    <!-- Total Amount -->
+                                    <m:Label text="{i18n>totalAmount}" />
+                                    <m:Input
+                                        value="{path:'FilteredAllowanceModel>/0/TotalAmount', formatter: '.Formatter.fromatNumber'}"
+                                        editable="false"
+                                    />
+                                    <!-- Status -->
+                                    <m:Label text="{i18n>status}" />
+                                    <m:Input
+                                        value="{FilteredAllowanceModel>/0/Status}"
+                                        editable="false"
+                                    />
+                                    <!-- Allowance Data -->
+                                    <m:Label text="{i18n>workingfor}" />
+                                    <m:Input
+                                        value="{FilteredAllowanceModel>/0/AllowanceData}"
+                                        editable="false"
+                                    />
+                                    <!-- Travel Allowance -->
+                                    <m:Label text="{i18n>allowanceType}" />
+                                    <m:Input
+                                        value="{FilteredAllowanceModel>/0/AllowanceType}"
+                                        editable="false"
+                                    />
+                                    <!-- Allowance Description -->
+                                    <m:Label
+                                        text="{i18n>allowanceDescription}"
+                                    />
+                                    <m:TextArea
+                                        rows="3"
+                                        value="{FilteredAllowanceModel>/0/AllowanceDescription}"
+                                        editable="false"
+                                    />
+                                    <!-- Start Date -->
+                                    <m:Label text="{i18n>startDate}" />
+                                    <m:DatePicker
+                                        displayFormat="dd/MM/yyyy"
+                                        value="{path:'FilteredAllowanceModel>/0/AllowanceStartDate',formatter: '.Formatter.formatDate'}"
+                                        editable="false"
+                                    />
+                                    <!-- EndDate -->
+                                    <m:Label text="{i18n>endDate}" />
+                                    <m:DatePicker
+                                        displayFormat="dd/MM/yyyy"
+                                        value="{path:'FilteredAllowanceModel>/0/AllowanceEndDate',formatter: '.Formatter.formatDate'}"
+                                        editable="false"
+                                    />
+                                    <!-- CostCenter -->
+                                    <m:Label
+                                        text="{i18n>expCostCenter}"
+                                        required="true"
+                                    />
+                                    <m:Select
+                                        items="{Costcenter>/Costcenter}"
+                                        selectedKey="{FilteredAllowanceModel>/0/CostCenter}"
+                                        editable="{viewModel>/editable}"
+                                    >
+                                        <core:Item
+                                            key="{Costcenter>Value}"
+                                            text="{Costcenter>Value}"
+                                        />
+                                    </m:Select>
+                                </f:SimpleForm>
+                            </blocks>
+                        </ObjectPageSubSection>
+                        <ObjectPageSubSection
+                            title="{i18n>AllowanceItemDetails} ({= ${ItemAllowanceModel>/}.length })"
+                            titleUppercase="false"
+                        >
+                            <blocks>
+                                <m:Table
+                                    id="AllItem_id_ItemTable"
+                                    items="{ItemAllowanceModel>/}"
+                                    sticky="ColumnHeaders,HeaderToolbar"
+                                    growing="true"
+                                    growingThreshold="50"
+                                    alternateRowColors="true"
+                                    growingScrollToLoad="true"
+                                    width="100%"
+                                    mode="MultiSelect"
+                                    selectionChange="Exp_Det_onChangeExpanesItem"
+                                    busyIndicatorDelay="0"
+                                    class="sapUiTinyMargin CommonRoundedTable SelfAttachment"
+                                >
+                                    <m:headerToolbar>
+                                        <m:OverflowToolbar>
+                                            <m:ToolbarSpacer />
+                                            <m:ToolbarSeparator />
+                                            <m:Button
+                                                type="Transparent"
+                                                text="{i18n>add}"
+                                                tooltip="{i18n>allowanceAddTooltipItem}"
+                                                press="Exp_Det_onPressAddExpenseItem"
+                                                visible="{viewModel>/status}"
+                                                id="AllItem_id_AddExpBtn"
+                                                enabled="{viewModel>/enable}"
+                                            />
+                                            <m:Button
+                                                type="Transparent"
+                                                text="{i18n>delete}"
+                                                tooltip="{i18n>allowanceDeleteTooltipItem}"
+                                                press="Exp_Det_onPressExpenseItemDelete"
+                                                visible="{viewModel>/status}"
+                                                id="AllItem_id_ExpDeleteBtn"
+                                                enabled="{viewModel>/enable}"
+                                            />
+                                        </m:OverflowToolbar>
+                                    </m:headerToolbar>
+                                    <m:columns>
+                                        <m:Column demandPopin="true">
+                                            <m:Label text="{i18n>itemID}"  />
+                                        </m:Column>
+                                        <m:Column demandPopin="true">
+                                            <m:Label
+                                                text="{i18n>expDetItemType}" 
+                                            />
+                                        </m:Column>
+                                        <m:Column
+                                            minScreenWidth="Desktop"
+                                            demandPopin="true"
+                                        >
+                                            <m:Label
+                                                text="{i18n>allowancedate}" 
+                                            />
+                                        </m:Column>
+                                        <m:Column
+                                            minScreenWidth="Desktop"
+                                            demandPopin="true"
+                                        >
+                                            <m:Label
+                                                text="{i18n>expDetForeignAmount}" 
+                                            />
+                                        </m:Column>
+                                        <m:Column
+                                            minScreenWidth="Desktop"
+                                            demandPopin="true"
+                                        >
+                                            <m:Label
+                                                text="{i18n>allowanceAmount}" 
+                                            />
+                                        </m:Column>
+                                    </m:columns>
+                                    <m:items>
+                                        <m:ColumnListItem
+                                         
+                                           
+                                        >
+                                            <m:cells>
+                                                <m:Text
+                                                    text="{ItemAllowanceModel>IndexNo}" 
+                                                />
+                                                <m:Text
+                                                    text="{ItemAllowanceModel>AllowanceType}"
+                                                />
+                                                <m:Text
+                                                    text="{path:'ItemAllowanceModel>Dates',
+                                                     formatter: '.Formatter.getDateWithDay'
+                                                    }"
+                                                />
+                                                <m:VBox>
+                                                    <m:HBox>
+                                                        <m:Text
+                                                            text="{ItemAllowanceModel>Currency} {path:'ItemAllowanceModel>ForeignAmount',formatter:'.Formatter.fromatNumber'}"
+                                                        />
+                                                    </m:HBox>
+                                                    <m:HBox>
+                                                        <m:Text
+                                                            text="{i18n>expConversionRate} : {path:'ItemAllowanceModel>ConversionRate',formatter:'.Formatter.fromatNumber'}"
+                                                            visible="{= ${ItemAllowanceModel>Currency} !== 'INR'}"
+                                                        />
+                                                    </m:HBox>
+                                                </m:VBox>
+                                                <m:Text
+                                                    text="INR {path:'ItemAllowanceModel>AllowanceAmount', formatter: '.Formatter.fromatNumber'}"
+                                                />
+                                            </m:cells>
+                                        </m:ColumnListItem>
+                                    </m:items>
+                                </m:Table>
+                            </blocks>
+                        </ObjectPageSubSection>
+                    </subSections>
+                </ObjectPageSection>
+                <ObjectPageSection
+                    titleUppercase="false"
+                    title="Comments"
+                >
+                    <subSections>
+                        <ObjectPageSubSection
+                            id="AllItem_id_commentSubSection"
+                            title="Comments"
+                        >
+                            <blocks>
+                                <m:VBox id="AllItem_id_timelineContainer" />
+                            </blocks>
+                        </ObjectPageSubSection>
+                    </subSections>
+                </ObjectPageSection>
+            </sections>
+        </ObjectPageLayout>
+        <m:footer>
+            <m:Bar>
+                <m:contentLeft>
+                    <core:Fragment
+                        fragmentName="sap.kt.com.minihrsolution.fragment.Footer"
+                        type="XML"
+                    />
+                </m:contentLeft>
+                <m:contentRight>
+                    <m:Button
+                        text="{i18n>submit}"
+                        type="Transparent"
+                        press="Exp_Det_onPressSubmitExpenseItems"
+                        visible="{viewModel>/status}"
+                        id="AllItem_id_ExpenseSubmit"
+                        enabled="{viewModel>/enable}"
+                    />
+                </m:contentRight>
+            </m:Bar>
+        </m:footer>
+    </m:Page>
+</mvc:View>

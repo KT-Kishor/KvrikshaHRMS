@@ -1,0 +1,169 @@
+<mvc:View controllerName="sap.kt.com.minihrsolution.controller.RaiseBug"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+    displayBlock="true"
+    height="100%"
+    busyIndicatorDelay="0"
+	xmlns:core="sap.ui.core"
+	xmlns:fb="sap.ui.comp.filterbar">
+	<Page showHeader="true">
+		<customHeader>
+			<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Header" type="XML"/>
+		</customHeader>
+		<content>
+			<fb:FilterBar id="Rb_id_Filterbar" showFilterConfiguration="false" useToolbar="false" clear="SP_onPressClear" showClearOnFB="true" search="RB_read" class="sapUiTinyMargin CommonRoundedTable" filterChange="IA_.onFilterChange" afterVariantLoad="IA_.onAfterVariantLoad">
+				<fb:filterGroupItems>
+					<fb:FilterGroupItem name="Search" label="Search" groupName="Group" visibleInFilterBar="true">
+						<fb:control>
+							<!-- <ComboBox id="RB_id_BugID" showClearIcon="true" items="{RaiseBugViewModel>/}" showSecondaryValues="true" >
+								<core:ListItem key="{RaiseBugViewModel>BugID}" text="{RaiseBugViewModel>BugID}"/>
+							</ComboBox> -->
+							  <SearchField
+                                id="RB_id_SearchField"
+                                width="250px"
+                                liveChange="onGlobalSearch"
+                                placeholder="{i18n>applicationsearch}"
+                            />
+						</fb:control>
+					</fb:FilterGroupItem>
+				</fb:filterGroupItems>
+				<fb:filterGroupItems>
+					<fb:FilterGroupItem name="Room No" label="{i18n>raisedby}" groupName="Group" visibleInFilterBar="true">
+						<fb:control>
+							<ComboBox id="RB_id_RaisedBy1" showClearIcon="true" value="{RaiseBugModel>/Name}" showSecondaryValues="true" items="{path: 'EmpModel>/'}" filterSecondaryValues="true">
+								<core:ListItem key="{EmpModel>EmployeeName}" text="{EmpModel>EmployeeName}" additionalText="{EmpModel>EmployeeID}"/>
+							</ComboBox>
+						</fb:control>
+					</fb:FilterGroupItem>
+				</fb:filterGroupItems>
+				<fb:filterGroupItems>
+					<fb:FilterGroupItem name="Assigned To" label="{i18n>assignedto}"  groupName="Group" visibleInFilterBar="true">
+						<fb:control>
+							<ComboBox id="RB_id_AssignedTo" showClearIcon="true" value="{RaiseBugModel>/assignName}"
+					    showSecondaryValues="true" items="{path: 'EmpModel>/'}" filterSecondaryValues="true">
+								<core:ListItem key="{EmpModel>EmployeeName}" text="{EmpModel>EmployeeName}" additionalText="{EmpModel>EmployeeID}"/>
+							</ComboBox>
+						</fb:control>
+					</fb:FilterGroupItem>
+				</fb:filterGroupItems>
+				<fb:filterGroupItems>
+					<fb:FilterGroupItem name="Status" label="{i18n>status}" groupName="Group" visibleInFilterBar="true">
+						<fb:control>
+							<MultiComboBox id="RB_id_Status" showClearIcon="true" showSecondaryValues="true" valueStateText="{i18n>entercontractstatus}" value="{RaiseBugModel>/FilterStatus}" items="{RaiseBug>/}">
+								<core:Item key="{RaiseBug>RateType}" text="{RaiseBug>RateType}"/>
+							</MultiComboBox>
+						</fb:control>
+					</fb:FilterGroupItem>
+				</fb:filterGroupItems>
+
+				<fb:filterGroupItems>
+					<fb:FilterGroupItem name="Issue Type" label="Issue Type" groupName="Group" visibleInFilterBar="true">
+						<fb:control>
+							<ComboBox id="RB_id_issuetype" showClearIcon="true"  valueStateText="Issue type" value="{RaiseBugModel>/IssueTypebug}">
+								<core:Item key="Bug" text="Bug"/>
+								<core:Item key="New feature" text="New Feature"/>
+							</ComboBox>
+						</fb:control>
+					</fb:FilterGroupItem>
+				</fb:filterGroupItems>
+				<fb:filterGroupItems>
+					<fb:FilterGroupItem name="Created Date" label="Created Date" groupName="Group" visibleInFilterBar="true">
+						<fb:control>
+							<DateRangeSelection
+                                id="RB_id_Dates"
+                                name="Dates"
+                                delimiter="to"
+                                displayFormat="dd/MM/yyyy"
+                                valueFormat="yyyy-MM-dd"
+                            />
+						</fb:control>
+					</fb:FilterGroupItem>
+				</fb:filterGroupItems>
+			</fb:FilterBar>
+			<Table id="idBugTable" 
+			sticky="ColumnHeaders,HeaderToolbar"
+			 mode="SingleSelectLeft" width="auto" busyIndicatorDelay="0" class="sapUiTinyMargin CommonRoundedTable" items="{path: 'RaiseBugViewModel>/',
+			      sorter: [{
+                    path: 'Status',
+                    group: true
+                }], 
+				groupHeaderFactory: '.getGroupHeader'}" >
+				<headerToolbar>
+					<OverflowToolbar>
+						<Title text="{i18n>Buglist} ({= ${RaiseBugViewModel>/}.length})"/>
+						<ToolbarSpacer />
+						<Button text="{i18n>Update Bug}" tooltip="{i18n>Update Bug}" press="RB_Update_Bug" class="myUnifiedBtn"/>
+						<!-- <Button text="{i18n>Resolve}" tooltip="{i18n>resolve}" press="RB_resolve" class="myUnifiedBtn"/> -->
+						<Button text="{i18n>download}" tooltip="{i18n>downloadBranchData}" press="RB_onDownload" class="myUnifiedBtn" visible="{= ${LoginModel>/Role} !== 'Front Office Employee' }"/>
+					</OverflowToolbar>
+				</headerToolbar>
+				<columns>
+					<Column demandPopin="true" width="10%">
+						<Text text="{i18n>Bug Details}" tooltip="{i18n>bugID}" />
+					</Column>
+					<!-- <Column demandPopin="true"><Text text="{i18n>appname}" tooltip="{i18n>appname}"/></Column> -->
+					<Column demandPopin="true" minScreenWidth="Tablet" width="30%">
+						<Text text="{i18n>bugdetails}" tooltip="{i18n>bugdetails}"/>
+					</Column>
+						<Column demandPopin="true" minScreenWidth="Tablet">
+						<Text text="{i18n>issuetype}" tooltip="{i18n>issuetype}"/>
+					</Column>
+					<Column demandPopin="true" minScreenWidth="Tablet">
+						<Text text="{i18n>raisedby}" tooltip="{i18n>raisedby}"/>
+					</Column>
+					<Column demandPopin="true" minScreenWidth="Tablet">
+						<Text text="{i18n>assignedto}" tooltip="{i18n>assignedto}"/>
+					</Column>
+					<Column demandPopin="true" minScreenWidth="Tablet" width="15%">
+						<Text text="{i18n>CRDate}" tooltip="{i18n>CRDate}"/>
+					</Column>
+					<!-- <Column demandPopin="true" minScreenWidth="Tablet"><Text text="{i18n>status}" tooltip="{i18n>status}"/></Column> -->
+					<!-- <Column demandPopin="true" minScreenWidth="Tablet"><Text text="{i18n>Resolvedate}" tooltip="{i18n>Resolvedate}"/></Column> -->
+					<Column demandPopin="true" minScreenWidth="Tablet">
+						<Text text="{i18n>ss}" tooltip="{i18n>ss}"/>
+					</Column>
+					<Column demandPopin="true" minScreenWidth="Tablet">
+						<Text text="{i18n>Communication}" tooltip="{i18n>Communication}"/>
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<VBox >
+								<Text text="{RaiseBugViewModel>BugID}" />
+								<!-- <Text text="{SupportModel>IssueName}" /> -->
+								<Text text="{RaiseBugViewModel>AppName}" />
+							</VBox>
+							<ExpandableText text="{RaiseBugViewModel>BugDescription}" maxCharacters="150"/>
+							<Text text="{RaiseBugViewModel>IssueType}" />
+							<Text text="{RaiseBugViewModel>RaisedBy}" />
+							<Text text="{RaiseBugViewModel>AssignedTo}" />
+							<VBox>
+								<Text text="{= 'Created Date: ' + ${path:'RaiseBugViewModel>CreatedDate', formatter: '.Formatter.formatDate'} }"/>
+								<!-- <Text text="{= 'Resolved Date: ' + ${path:'RaiseBugViewModel>ResolvedDate', formatter: '.Formatter.formatDate'}}"/> -->
+								<Text text="{= ${RaiseBugViewModel>ResolvedDate} === '1899-11-30T00:00:00.000Z' || ${RaiseBugViewModel>ResolvedDate} === null ? '' : 'Resolved Date: ' + ${
+                                path: 'RaiseBugViewModel>ResolvedDate',
+                                formatter: '.Formatter.formatDate'
+                            }}" 
+                            />
+							</VBox>
+							<!-- <ObjectStatus inverted="false" text="{RaiseBugViewModel>Status}"
+                            state="{ path: 'RaiseBugViewModel>Status', formatter: '.Formatter.formatObjectStatus'}" class="sapUiTinyMarginBottom"/> -->
+							<Button text="{i18n>View}" press="HF_viewroom" />
+							<Button text="{i18n>View}" press="HF_viewComments" />
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
+		<footer>
+			<Bar>
+				<contentLeft>
+					<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Footer" type="XML" />
+				</contentLeft>
+				<contentRight></contentRight>
+			</Bar>
+		</footer>
+	</Page>
+</mvc:View>

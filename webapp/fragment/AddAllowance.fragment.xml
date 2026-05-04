@@ -1,0 +1,84 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:rich="sap.ui.richtexteditor"
+	xmlns:core="sap.ui.core">
+	<Dialog
+        title="{i18n>allowanceDetails}">
+		<f:SimpleForm id="All_id_SimpleFrom" editable="true" layout="ColumnLayout" labelSpanXL="12" labelSpanL="12" labelSpanM="12"
+         labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2"
+         columnsL="2" columnsM="1">                                            
+			<f:content>
+				<!-- Employee ID -->
+				<Label text="{i18n>employeeIDAndEmployeeName}"/>
+				<Text text="{CreateAllowanceModel>/EmployeeID}  ({CreateAllowanceModel>/EmployeeName})" />
+				<!-- Allowance Type-->
+				<Label text="{i18n>allowanceType}" required="true"></Label>
+				<ComboBox id="All_id_TravelAllowance" selectedKey="{CreateAllowanceModel>/AllowanceType}"
+				items="{AllowanceType>/}" valueStateText="{i18n>allowanceTypePlaceholder}" change="onAllowanceTypeChange">
+					<core:Item key="{AllowanceType>AllowanceType}" text="{AllowanceType>AllowanceType}" />
+				</ComboBox>
+				<!-- Allowance Description -->
+				<Label text="{i18n>allowanceDescription}" />
+				<Text text="{CreateAllowanceModel>/AllowanceDescription}" />
+				<!-- Year -->
+				<Label text="Select Month and Year" required="true"/>
+				<!-- Month -->
+				<Select id="monthSelect" change=".onMonthChange">
+					<items>
+						<core:Item key="0" text="January"/>
+						<core:Item key="1" text="February"/>
+						<core:Item key="2" text="March"/>
+						<core:Item key="3" text="April"/>
+						<core:Item key="4" text="May"/>
+						<core:Item key="5" text="June"/>
+						<core:Item key="6" text="July"/>
+						<core:Item key="7" text="August"/>
+						<core:Item key="8" text="September"/>
+						<core:Item key="9" text="October"/>
+						<core:Item key="10" text="November"/>
+						<core:Item key="11" text="December"/>
+					</items>
+				</Select>
+				<Select id="yearSelect" change=".onMonthChange">
+					<items>
+						<core:Item key="2024" text="2024"/>
+						<core:Item key="2025" text="2025"/>
+						<core:Item key="2026" text="2026"/>
+						<core:Item key="2027" text="2027"/>
+						<core:Item key="2028" text="2028"/>
+						<core:Item key="2029" text="2029"/>
+						<core:Item key="2030" text="2030"/>
+					</items>
+				</Select>
+				<!-- Multi Date Picker via MultiComboBox -->
+				<Label text="Select Dates" required="true"/>
+				<MultiComboBox id="dateMultiBox" items="{/dates}" valueStateText="{i18n>selectDate}" change="onSelectdate" showSecondaryValues="true" showSelectAll="true" > 
+					<core:ListItem key="{key}" text="{day}" additionalText="{weekday}"/>
+				</MultiComboBox>
+				<Button text="Select date Without Weekends" icon="sap-icon://calendar" type="Transparent" press=".onSelectDatesWithoutWeekends" />
+				<!-- Cost Center -->
+				<Label text="{i18n>expCostCenter}" required="true"/>
+				<Select items="{Costcenter>/Costcenter}" id="All_id_CostCenter" selectedKey="{CreateAllowanceModel>/CostCenter}" >
+					<core:Item key="{Costcenter>Value}" text="{Costcenter>Value}" />
+				</Select>
+				<!-- AllowanceData -->
+				<Label text="{i18n>workingfor}" required="true"/>
+				<ComboBox items="{AllowanceData>/}" id="All_id_ExpenseType" valueStateText="{i18n>selectexpensetype}" selectedKey="{CreateAllowanceModel>/AllowanceData}" change="Exp_onChangeExpenseType">
+					<core:Item key="{AllowanceData>Name}" text="{AllowanceData>Name}" />
+				</ComboBox>
+				<!-- Employee Remark -->
+				<Label text="{i18n>expEmployeeRemark}" required="true"/>
+				<TextArea liveChange="Exp_onChangeEmployeeRemark" valueStateText="{i18n>expValStaEmployeeRemark}" id="All_id_EmployeeRemark" rows="2" value="{CreateAllowanceModel>/Comments}" placeholder="{i18n>expValStaEmployeeRemark}" maxLength="1000" />
+			</f:content>
+		</f:SimpleForm>
+		<!-- Buttons for Submit and Close actions -->
+		<footer>
+			<Toolbar>
+				<ToolbarSpacer/>
+			<Button text="{i18n>applyallowance}" type="Transparent" press="Exp_Frg_onPressSubmit" class="sendMail" />
+			<Button text="{i18n>close}" type="Transparent" class="sendMail" press="Exp_Frg_onPressClose" />
+			</Toolbar>
+		</footer>
+	</Dialog>
+</core:FragmentDefinition>

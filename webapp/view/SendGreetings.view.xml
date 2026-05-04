@@ -1,0 +1,193 @@
+<mvc:View
+    controllerName="sap.kt.com.minihrsolution.controller.SendGreetings"
+	xmlns:mvc="sap.ui.core.mvc"
+	displayBlock="true"
+	xmlns:f="sap.ui.layout.form"
+	xmlns="sap.uxap"
+	xmlns:core="sap.ui.core"
+	xmlns:m="sap.m"
+	xmlns:u="sap.ui.unified"
+	xmlns:rte="sap.ui.richtexteditor"
+	xmlns:l="sap.ui.layout"
+>
+	<m:Page id="Wish_id_SendGreetings">
+		<m:customHeader>
+			<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Header" type="XML" />
+		</m:customHeader>
+		<ObjectPageLayout id="Wish_id_NavSendGreetingsPage">
+			<sections>
+				<!-- Section 1: Email Configuration -->
+				<ObjectPageSection id="Wish_id_EmailConfigSection" title="Greeting Details" titleUppercase="false">
+					<subSections>
+						<ObjectPageSubSection>
+							<blocks>
+								<f:SimpleForm editable="true" layout="ColumnLayout" labelSpanXL="4" labelSpanL="3" labelSpanM="4" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="2" columnsM="1">
+									<f:content>
+										<m:Label
+				text="Send Greetings To"
+				required="true"
+			/>
+										<m:RadioButtonGroup
+				id="Wish_id_RadioGroup"
+				columns="4"
+				select="onRadioButtonSelect"
+				selectedIndex="0"
+				width="auto"
+			>
+											<m:RadioButton text="{i18n>employeeOffer}" />
+											<m:RadioButton text="{i18n>contractOffer}" visible="{= ${LoginModel>/Role} === 'Admin' || ${LoginModel>/Role} === 'HR' || ${LoginModel>/Role} === 'HR Manager'}" 
+											/>
+											<m:RadioButton text="{i18n>traineeOffer}" />
+											<m:RadioButton text="{i18n>customer}" visible="{= ${LoginModel>/Role} === 'Admin' || ${LoginModel>/Role} === 'HR' || ${LoginModel>/Role} === 'HR Manager' }"  />
+										</m:RadioButtonGroup>
+										<m:Label
+				text="To Email ID"
+				required="true"
+			/>
+										<m:MultiComboBox
+				id="Wish_id_EmployeeEmail"
+				showClearIcon="true"
+				showSecondaryValues="true" 
+				showSelectAll="true"
+				placeholder="Select Recipient"
+				change="onEmailSelectionChange"
+				valueStateText="{i18n>selectRecipient}"
+			>
+											<core:ListItem key="{key}" text="{text}" additionalText="{additionalText}" />
+										</m:MultiComboBox>
+										<m:Label
+				text="Recipient Email ID"
+				required="true"
+			/>
+										<m:Input
+				id="Wish_id_ToEmail"
+				placeholder="Enter Email ID"
+				value="{SendWishEmailModel>/RecipientEmail}" 
+				liveChange="onChangeRecipientEmail"
+				valueStateText="{i18n>enterRecipient}"
+			/>
+										<m:Label
+				text="Subject"
+				required="true"
+			/>
+										<m:Input
+				id="Wish_id_EmailSubject"
+				placeholder="Enter Subject"
+				value="{SendWishEmailModel>/Subject}"
+				liveChange="onLiveChangeSubject"
+				valueStateText="{i18n>enterSubject}"
+			/>
+									</f:content>
+								</f:SimpleForm>
+							</blocks>
+						</ObjectPageSubSection>
+					</subSections>
+				</ObjectPageSection>
+				<!-- Section 2: Email Content -->
+				<ObjectPageSection id="Wish_id_EmailContentSection" title="Email Content" titleUppercase="false">
+					<subSections>
+						<ObjectPageSubSection titleUppercase="false">
+							<blocks>
+								<m:VBox >
+									<rte:RichTextEditor
+										id="Wish_id_EmailBody"
+										width="100%"
+										height="400px"
+										editorType="TinyMCE4"
+										value="{SendWishEmailModel>/body}"
+										change="onRTEChange"
+										showGroupFont="true"
+										showGroupTextAlign="true"
+										showGroupLink="true"
+										showGroupInsert="true"
+										class="CommonRoundedTable"
+									/>
+								</m:VBox>
+							</blocks>
+						</ObjectPageSubSection>
+					</subSections>
+				</ObjectPageSection>
+				<!-- Section 3: Attachments -->
+				<ObjectPageSection id="Wish_id_AttachmentSection" title="Attachments" titleUppercase="false">
+					<subSections>
+						<ObjectPageSubSection titleUppercase="false">
+							<blocks>
+								<m:VBox >
+									<m:Table
+        id="Wish_id_AttachmentsTable"
+        sticky="ColumnHeaders,HeaderToolbar"
+        items="{UploaderData>/attachments}"
+        inset="false"
+        mode="Delete"
+        delete="onAttachmentsTableDelete"
+        popinLayout="Block"
+        busyIndicatorDelay="0"
+        width="100%" class="sapUiTinyMarginTop CommonRoundedTable">
+										<m:headerToolbar>
+											<m:OverflowToolbar>
+												<m:ToolbarSpacer />
+												<u:FileUploader
+                    id="Wish_id_FileUploader"
+                    fileType="pdf,jpg,jpeg,png,doc,docx,xls,xlsx,ppt,pptx,txt"
+                    name="myFileUpload"
+                    multiple="true"
+                    uploadUrl=""
+                    tooltip="{i18n>toolTipMsgSM}"
+                    change="onFileSelected"
+                    buttonOnly="true"
+                    buttonText="{i18n>uploadAttachment}" />
+											</m:OverflowToolbar>
+										</m:headerToolbar>
+										<m:columns>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline">
+												<m:Text text="{i18n>filename}" />
+											</m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" hAlign="Center" popinDisplay="Inline">
+												<m:Text text="{i18n>FileType}" />
+											</m:Column>
+											<m:Column minScreenWidth="Tablet" demandPopin="true" hAlign="Center" popinDisplay="Inline">
+												<m:Text text="{i18n>FileSize}" />
+											</m:Column>
+										</m:columns>
+										<m:items>
+											<m:ColumnListItem>
+												<m:cells>
+													<m:Text text="{UploaderData>filename}" />
+													<m:Text text="{UploaderData>fileType}" />
+													<m:Text text="{path:'UploaderData>size', formatter: '.Formatter.bytesToMB'}" />
+												</m:cells>
+											</m:ColumnListItem>
+										</m:items>
+									</m:Table>
+								</m:VBox>
+							</blocks>
+						</ObjectPageSubSection>
+					</subSections>
+				</ObjectPageSection>
+			</sections>
+		</ObjectPageLayout>
+		<!-- Footer -->
+		<m:footer>
+			<m:Bar>
+				<m:contentLeft>
+					<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Footer" type="XML" />
+				</m:contentLeft>
+				<m:contentRight>
+					<m:Button
+						id="Wish_id_SendMail"
+						text="Send Mail"
+						class="sapUiSmallMarginEnd"
+						type="Transparent"
+						press="onSendWishMail"
+					/>
+					<m:Button
+						id="Wish_id_CancelMail"
+						text="Clear"
+						type="Transparent"
+						press="onCancelWishMail"
+					/>
+				</m:contentRight>
+			</m:Bar>
+		</m:footer>
+	</m:Page>
+</mvc:View>

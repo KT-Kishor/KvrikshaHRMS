@@ -1,0 +1,73 @@
+<mvc:View controllerName="sap.kt.com.minihrsolution.controller.HomePage" displayBlock="true" 
+	xmlns:mvc="sap.ui.core.mvc" 
+	xmlns="sap.m" 
+	xmlns:l="sap.ui.layout" 
+	xmlns:core="sap.ui.core" 
+	xmlns:tnt="sap.tnt" 
+	xmlns:f="sap.f" 
+	xmlns:fb="sap.ui.comp.filterbar" 
+	xmlns:svm="sap.ui.comp.smartvariants" height="100%">
+	<tnt:ToolPage id="toolPage">	
+		<tnt:header>
+			<tnt:ToolHeader>
+				<Avatar src="./image/KPVL_logo.jpeg" displaySize="XS" tooltip="Company Logo"/>
+				<Title level="H1" text="{i18n>companynameKT}" class="custom-text"/>
+				<ToolbarSpacer/>
+				<Button icon="sap-icon://employee-pane" text="" tooltip="{i18n>tooltipLogin}" press="onpressLogin">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow"/>
+					</layoutData>
+				</Button>
+			</tnt:ToolHeader>
+		</tnt:header>
+		<tnt:subHeader>
+			<tnt:ToolHeader>
+				<IconTabHeader id="mainTabHeader" select="onTabSelect">
+					<items>
+						<IconTabFilter key="idHome" text="{i18n>toolHome}" />
+						<IconTabFilter key="idAboutUs" text="{i18n>aboutus}"/>
+						<IconTabFilter key="idProducts" text="{i18n>product}"/>
+						<IconTabFilter key="idProject" text="{i18n>projectProducts}"/>
+						<IconTabFilter key="idTraning" text="{i18n>training}"/>
+						<IconTabFilter key="idCareer" text="{i18n>careers}"/>
+						<IconTabFilter key="idContact" text="{i18n>contact}"/>
+					</items>
+				</IconTabHeader>
+			</tnt:ToolHeader>
+		</tnt:subHeader>
+		<tnt:mainContents>
+			<NavContainer id="pageContainer">
+				<pages>
+					<ScrollContainer id="idHome" horizontal="false" vertical="true" height="100%" class="sapUiContentPadding home-background sapUiTinyMargin">
+						<l:Grid defaultSpan="XL12 L12 M12 S12" width="100%" class="position-welcome">
+							<VBox class="sapUiLargeMarginTop">
+								<Text class="custom-welcome sapUiTinyMarginTopBottom" textAlign="Center" text="{i18n>welcometoKT}"/>
+								<Text class="custom-welcome sapUiTinyMarginTopBottom" text="{i18n>companynameKT}"/>
+								<Text text="{i18n>afutureoftomorrow}" class="custom-tagline sapUiTinyMarginTop sapUiLargeMarginEnd"/>
+								<Text class="custom-welcome-desc sapUiMediumMarginTop" textAlign="Left" text="{i18n>homepagecoute}"/>
+							</VBox>
+						</l:Grid>
+					</ScrollContainer>
+					<ScrollContainer id="idAboutUs" horizontal="false" vertical="true" height="100%" class="sapUiContentPadding home-background sapUiTinyMargin">
+						<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Aboutus" type="XML"/>
+					</ScrollContainer>
+					<Page id="idProducts" showHeader="false" class="Products_list sapUiTinyMargin">
+						<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.ProductList" type="XML"/>
+					</Page>
+					<Page id="idProject" showHeader="false" class="Products_list sapUiTinyMargin">
+						<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Project" type="XML"/>
+					</Page>
+					<ScrollContainer id="idCareer" horizontal="false" vertical="true" height="100%" class="sapUiContentPadding career-background sapUiTinyMargin">
+						<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.CareerPage" type="XML"/>
+					</ScrollContainer>
+					<ScrollContainer id="idContact" horizontal="false" vertical="true" height="100%" class="contact-background sapUiTinyMargin" >
+						<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.ContactPage" type="XML"/>
+					</ScrollContainer>
+					<ScrollContainer id="idTraning" horizontal="false" vertical="true" height="100%" class="sapUiContentPadding Training-background sapUiTinyMargin">
+						<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Training" type="XML"/>
+					</ScrollContainer>
+				</pages>
+			</NavContainer>
+		</tnt:mainContents>
+	</tnt:ToolPage>
+</mvc:View>

@@ -1,0 +1,114 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout">
+ <Title level="H1" text="{i18n>ourPartnerProducts}" class="ProductDemoSection" wrapping="true"/>
+    
+    <l:Grid defaultSpan="XL6 L6 M6 S12" class="grid-container">
+        <!-- HR solution -->
+        <VBox class="ProductSoluction sapUiSmallMargin" backgroundDesign="Solid">
+            <HBox justifyContent="Center" class="section-image">
+                <Image src="../image/HRSolDemo.png" width="750px" height="250px" visible="true" class="section-image"/>
+            </HBox>
+            <Text class="hr-text sapUiSmallMargin" text="HR Solution" />
+            <Text class="description-text sapUiSmallMargin" text="{i18n>HRsolution}" />
+            <HBox justifyContent="End">
+                <Button text="{i18n>takeaproducttour}"
+                        press="onHRSolutionPress"
+                        class="Takeatour sapUi-Std-PaddingS"
+                        type="Emphasized" width="200px"/>
+            </HBox>
+        </VBox>
+
+        <!-- Invoice management -->
+        <VBox class="ProductSoluction sapUiSmallMargin" backgroundDesign="Solid">
+            <HBox justifyContent="Center" class="section-image">
+                <Image src="../image/InvoiceProduct.png" width="750px" height="250px" visible="true" class="section-image"/>
+            </HBox>
+            <Text class="hr-text sapUiSmallMargin" text="Invoice Management" />
+            <Text class="description-text sapUiSmallMargin" text="{i18n>invoicemanage}" />
+            <HBox justifyContent="End">
+                <Button text="{i18n>takeaproducttour}"
+                        press="onInvoiceManagePress"
+                        class="Takeatour sapUi-Std-PaddingS"
+                        type="Emphasized" width="200px"/>
+            </HBox>
+        </VBox>
+
+        <!-- Company Asset Management -->
+        <VBox class="ProductSoluction sapUiSmallMargin" backgroundDesign="Solid">
+            <HBox justifyContent="Center" class="section-image">
+                <Image src="../image/AssetDemo.png" width="750px" height="250px" visible="true" class="section-image"/>
+            </HBox>
+            <Text class="hr-text sapUiSmallMargin" text="Company Asset Management" />
+            <Text class="description-text sapUiSmallMargin" text="{i18n>Companyassetmanage}" />
+            <HBox justifyContent="End">
+                <Button text="{i18n>takeaproducttour}"
+                        press="onAssetPress"
+                        class="Takeatour sapUi-Std-PaddingS"
+                        type="Emphasized" width="200px"/>
+            </HBox>
+        </VBox>
+
+        <!-- Recruitment -->
+        <VBox class="ProductSoluction sapUiSmallMargin" backgroundDesign="Solid">
+            <HBox justifyContent="Center" class="section-image">
+                <Image src="../image/RecruimentDemo.png" width="750px" height="250px" visible="true" class="section-image"/>
+            </HBox>
+            <Text class="hr-text sapUiSmallMargin" text="Recruitment" />
+            <Text class="description-text sapUiSmallMargin" text="{i18n>recruitmentmanage}" />
+            <HBox justifyContent="End">
+                <Button text="{i18n>takeaproducttour}"
+                        press="onrecruitmentPress"
+                        class="Takeatour sapUi-Std-PaddingS"
+                        type="Emphasized" width="200px"/>
+            </HBox>
+        </VBox>
+
+        <!-- Automotive Solution -->
+        <VBox class="ProductSoluction sapUiSmallMargin" backgroundDesign="Solid">
+            <HBox justifyContent="Center" class="section-image">
+                <Image src="../image/Automobile.png" width="750px" height="250px" visible="true" class="section-image"/>
+            </HBox>
+            <Text class="hr-text sapUiSmallMargin" text="Automotive Solution" />
+            <Text class="description-text sapUiSmallMargin" text="{i18n>AutomobileSolution}" />
+            <HBox justifyContent="End">
+                <Button text="{i18n>takeaproducttour}"
+                        press="onAutoMotivePress"
+                        class="Takeatour sapUi-Std-PaddingS"
+                        type="Emphasized" width="200px"/>
+            </HBox>
+        </VBox>
+
+        <!-- ID Card Generation -->
+        <VBox class="ProductSoluction sapUiSmallMargin" backgroundDesign="Solid">
+            <HBox justifyContent="Center" class="section-image">
+                <Image src="../image/IDDemo.png" width="750px" height="250px" visible="true" class="section-image"/>
+            </HBox>
+            <Text class="hr-text sapUiSmallMargin" text="ID Card Generation" />
+            <Text class="description-text sapUiSmallMargin" text="{i18n>idcardgeneration}" />
+            <HBox justifyContent="End">
+                <Button text="{i18n>takeaproducttour}"
+                        press="onIdCardPress"
+                        class="Takeatour sapUi-Std-PaddingS"
+                        type="Emphasized" width="200px"/>
+            </HBox>
+        </VBox>
+    </l:Grid>
+
+     <!-- Footer -->
+ <HBox class="footer-bar sapUiSmallMargin" alignItems="Center" justifyContent="SpaceBetween" >
+        <!-- Left: Copyright -->
+        <Text text="{i18n>companynameKT}" class="footer-text"/>
+
+        <!-- Right: Social Icons -->
+        <HBox class="footer-social" justifyContent="End">
+            <core:HTML content="&lt;a href='https://www.instagram.com/kalpavrikshatechnologies/' target='_blank'&gt;
+                                  &lt;i class='fab fa-instagram social-icon'&gt;&lt;/i&gt;
+                                &lt;/a&gt;"/>
+            <core:HTML content="&lt;a href='https://www.linkedin.com/company/kalpavriksha-technologies/' target='_blank'&gt;
+                                  &lt;i class='fab fa-linkedin-in social-icon'&gt;&lt;/i&gt;
+                                &lt;/a&gt;"/>
+            <core:HTML content="&lt;a href='https://www.youtube.com/@KalpavrikshaTechnologies' target='_blank'&gt;
+                                  &lt;i class='fab fa-youtube social-icon'&gt;&lt;/i&gt;
+                                &lt;/a&gt;"/>
+        </HBox>
+    </HBox>
+</core:FragmentDefinition>

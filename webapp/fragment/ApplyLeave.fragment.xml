@@ -1,0 +1,77 @@
+<core:FragmentDefinition xmlns:odata="sap.ui.comp.odata"
+	xmlns="sap.m"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+	<Dialog title="{LeaveTempModel>/Title}">
+		<f:SimpleForm
+            editable="true"
+            layout="ResponsiveGridLayout"
+            labelSpanXL="3"
+            labelSpanL="3"
+            labelSpanM="3"
+            labelSpanS="12"
+            adjustLabelSpan="false"
+            emptySpanXL="4"
+            emptySpanL="4"
+            emptySpanM="4"
+            emptySpanS="0"
+            columnsXL="1"
+            columnsL="1"
+            columnsM="1"
+            singleContainerFullSize="false">
+			<f:content>
+				<!-- Employee ID -->
+				<Label text="{i18n>employeeID}"/>
+				<Input  value="{LeaveTempModel>/employeeID}" editable="false"/>
+				<!-- Employee Name -->
+				<Label text="{i18n>employeeName}"/>
+				<Input  value="{LeaveTempModel>/employeeName}" editable="false"/>
+				<!-- Email -->
+				<Label text="{i18n>emailId}"/>
+				<Input value="{LeaveTempModel>/email}" editable="false"/>
+				<!-- Leave Type -->
+				<Label text="{i18n>type}" required="true"/>
+				<ComboBox items="{leaveTypeModel>/}" selectedKey="{LeaveTempModel>/typeOfLeave}" valueStateText="{i18n>invalidleavetype}" editable="{= !${LeaveTempModel>/isUpdate} }" id="AL_id_Leavetype" change="AL_ValidateLeavetype">
+				<core:Item key="{leaveTypeModel>name}" text="{leaveTypeModel>name}" />
+				</ComboBox>
+				<VBox>
+					<!-- From Date -->
+					<Label text="{i18n>fromDate}" required="true" class="sapUiTinyMarginTop"/>
+					<DatePicker value="{LeaveTempModel>/fromDate}" id="AL_id_FromDate"  displayFormat="dd/MM/yyyy" valueFormat="dd/MM/yyyy" change="AL_ValidateFromDate" valueStateText="{i18n>dateValueState}"  maxDate="{LeaveTempModel>/maxDate}"
+                    liveChange="onLiveChange" legend="legend" afterValueHelpOpen="onInitializeLegend" minDate="{LeaveTempModel>/minDate}"/>
+					<!-- To Date -->
+					<Label text="{i18n>toDate}" required="true" class="sapUiTinyMarginTop"/>
+					<DatePicker minDate="{LeaveTempModel>/MinToDate}" id="AL_id_ToDate" value="{LeaveTempModel>/toDate}" displayFormat="dd/MM/yyyy" maxDate="{LeaveTempModel>/maxDate}" valueFormat="dd/MM/yyyy" change="AL_ValidateToDate" valueStateText="{i18n>dateValueState}"  liveChange="onLiveChange" legend="legend" afterValueHelpOpen="onInitializeLegend"/>
+					<!-- Half Day CheckBox -->
+					<CheckBox text="{i18n>halfDay}" select="onHalfDaySelect" selected="{LeaveTempModel>/halfDay}"/>
+					<RadioButtonGroup
+					id="AL_id_leasveSessionType"
+					columns="2"
+					selectedIndex="{= ${LeaveTempModel>/leaveSessionType} === 'Morning' ? 0 : (${LeaveTempModel>/leaveSessionType} === 'Afternoon' ? 1 : -1) }"
+					select="onChangeleasveSessionType"
+					visible="{LeaveTempModel>/halfDay}">
+					<buttons>
+						<RadioButton text="Morning" />
+						<RadioButton text="Afternoon" />
+					</buttons>
+				</RadioButtonGroup>
+				</VBox>
+				<!-- Number of Days -->
+				<Label text="{i18n>noOfDays}"/>
+				<Input  value="{LeaveTempModel>/NoofDays}" editable="false"/>
+				<!-- Add Feedback -->
+				<Label text="{i18n>comments}" required="true"></Label>
+				<TextArea value="{LeaveTempModel>/comments}" rows="2" id="AL_id_LeaveComments"  liveChange="AL_ValidateCommonFields" valueStateText="{i18n>commentsValueState}"  maxLength="200" placeholder="{i18n>enterComments}"/>
+			</f:content>
+		</f:SimpleForm>
+		<!-- Buttons for Submit and Close actions -->
+		<footer>
+			<Toolbar>
+				<ToolbarSpacer/>
+					<Button text="{i18n>submit}" type="Transparent" press="AL_onPressSubmit" class="sendMail" visible="{= !${LeaveTempModel>/isUpdate} }"/>
+					<Button text="{i18n>save}" type="Transparent" press="AL_onPressSave" class="sendMail" visible="{= ${LeaveTempModel>/isUpdate} }"/>
+					<Button text="{i18n>close}" class="sendMail" press="AL_onPressClose" type="Transparent"/>
+			</Toolbar>
+		</footer>
+	</Dialog>
+</core:FragmentDefinition>

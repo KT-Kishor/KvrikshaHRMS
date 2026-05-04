@@ -1,0 +1,418 @@
+<core:FragmentDefinition
+    id="JobAddFrag"
+    xmlns:vk="sap.ui.vk"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+    xmlns:rte="sap.ui.richtexteditor"
+>
+    <Dialog
+        id="addJobDialog"
+        title="{= ${temporaryModel>/dialogTitle} }"
+        resizable="true"
+        draggable="true"
+        contentHeight="auto"
+        contentWidth="60%"
+        afterClose="onCloseDialog"
+    >
+        <content>
+   
+            <!-- <f:SimpleForm
+                id="addJobForm2"
+                visible="{= ${temporaryModel>/isEdit} === true }"
+                editable="true"
+                layout="ResponsiveGridLayout"
+                class="sapUiTinyMargin"
+              
+            >
+                <f:content>
+                    <Title
+                        text="Change Job Status"
+                        level="H4"
+                        class="sapUiSmallMargin"
+                    />
+                    <Label
+                        text="Status"
+                        required="true"
+                    />
+                    <ComboBox
+                        id="statusCombo"
+                        required="true"
+                        selectedKey="{temporaryModel>/Status}"
+                        items="{BackendStatusModel>/}"
+                        change="onStatusChange"
+                        valueStateText="{i18n>jpStatusValueState}"
+                    >
+                        <core:Item
+                            key="{BackendStatusModel>key}"
+                            text="{BackendStatusModel>text}"
+                        />
+                    </ComboBox>
+                </f:content>
+            </f:SimpleForm> -->
+              <HBox width="100%" alignItems="Start" >
+               <VBox width="50%" class="sapUiSmallMarginEnd">
+           <f:SimpleForm
+    id="addJobForm24"
+    editable="true"
+    layout="ResponsiveGridLayout"
+    labelSpanL="12"
+    labelSpanM="12"
+    columnsL="1"
+    columnsM="1">
+
+    <f:content>
+
+       
+
+        <RadioButtonGroup
+            id="jobTypeGroup"
+            columns="2"
+            selectedIndex="{temporaryModel>/jobTypeIndex}"
+            select="onJobTypeSelect"
+            class="sapUiSmallMarginTop">
+            <buttons>
+                <RadioButton text="Our Company" />
+                <RadioButton text="Client Recruitment" />
+            </buttons>
+        </RadioButtonGroup>
+
+        <!-- Branch Code: show only for Our Company -->
+        <Label
+            text="{i18n>branchCode}"
+            required="true"
+         
+            visible="{= ${temporaryModel>/jobTypeIndex} === 0 }" />
+
+       <ComboBox
+    width="100%"
+    id="HP_id_BranchCode"
+    selectionChange="HP_onChangeBranchCode"
+    valueStateText="{i18n>expValStaBranchCode}"
+   
+    items="{path:'CompanyCodeDetailsModel>/'}"
+    selectedKey="{temporaryModel>/branchCode}"
+    showSecondaryValues="true"
+    filterSecondaryValues="true"
+    visible="{= ${temporaryModel>/jobTypeIndex} === 0 }">
+    <core:ListItem
+        key="{CompanyCodeDetailsModel>branchCode}"
+        text="{CompanyCodeDetailsModel>branch}"
+        additionalText="{CompanyCodeDetailsModel>branchCode}" />
+</ComboBox>
+
+        <!-- Client Name: show only for Client Recruitment -->
+        <Label
+            text="Client Name"
+            required="true"
+        
+            visible="{= ${temporaryModel>/jobTypeIndex} === 1 }" />
+
+        <Input
+            id="clientNameInput"
+            value="{temporaryModel>/clientName}"
+            placeholder="Enter Client Name"
+            required="true"
+          liveChange="onClientNameChange"
+            visible="{= ${temporaryModel>/jobTypeIndex} === 1 }" />
+
+        <Label
+            text="{i18n>expCountry}"
+            required="true"
+           />
+        <ComboBox
+            width="100%"
+            id="HP_id_Country"
+            change="HP_onChangeCountry"
+            valueStateText="{i18n>expValStaCountry}"
+          
+            items="{path:'CountryModel>/',length:1000}"
+            selectedKey="{temporaryModel>/country}"
+            showSecondaryValues="true"
+            filterSecondaryValues="true">
+            <core:ListItem
+                key="{CountryModel>countryName}"
+                text="{CountryModel>countryName}"
+                additionalText="{CountryModel>code}" />
+        </ComboBox>
+
+        <Label
+            text="{i18n>state}"
+            required="true"
+          />
+        <ComboBox
+            id="HP_id_State"
+            change="HP_onChangeState"
+            valueStateText="{i18n>expValStaState}"
+           
+            items="{path:'StateModel>/',length:1000}"
+            selectedKey="{temporaryModel>/state}"
+            showSecondaryValues="true"
+            filterSecondaryValues="true">
+            <core:ListItem
+                key="{StateModel>stateName}"
+                text="{StateModel>stateName}"
+                additionalText="{StateModel>countryCode}" />
+        </ComboBox>
+
+        <Label
+            text="{i18n>contractLocation}"
+            required="true"
+           />
+        <ComboBox
+            id="HP_id_City"
+            change="HP_onChangeCity"
+            valueStateText="{i18n>combovalueState}"
+            items="{path:'CityModel>/',length:1000}"
+            selectedKey="{temporaryModel>/Location}"
+            value="{temporaryModel>/Location}"
+            showSecondaryValues="true"
+           >
+            <core:ListItem
+                key="{CityModel>cityName}"
+                text="{CityModel>cityName}"
+                additionalText="{CityModel>stateName}" />
+        </ComboBox>
+
+        <Label
+            text="Work Mode"
+            required="true"
+           />
+        <ComboBox
+            id="workModeCombo"
+            placeholder="Select Work Mode"
+            required="true"
+          
+            items="{WorkingMode>/location}"
+            selectedKey="{temporaryModel>/SelectedWorkMode}"
+            showClearIcon="true"
+            change="onWorkModeChange"
+            valueStateText="{i18n>jpWorkMode}">
+            <core:ListItem
+                key="{WorkingMode>ID}"
+                text="{WorkingMode>Location}" />
+        </ComboBox>
+
+        <Label
+            text="Number of Positions"
+            required="true"
+            />
+        <Input
+            id="positionsInput"
+            value="{temporaryModel>/NoOfPositions}"
+            type="Text"
+            placeholder="e.g., 5"
+            liveChange="onNoOfPositionsChange"
+          
+            maxLength="2"
+            required="true" />
+
+        <Label
+            text="Post Date"
+            required="true"
+          />
+        <DatePicker
+            id="postDateDP"
+            value="{temporaryModel>/PostDate}"
+            valueFormat="yyyy-MM-dd"
+            displayFormat="dd/MM/yyyy"
+            placeholder="Select Date"
+            change="onPostDateChange"
+          
+            required="true" />
+             <Label
+                        text="Experience"
+                        required="true"
+                    
+                    />
+                    <ComboBox
+                    
+                        id="experienceCombo"
+                        placeholder="Select Experience"
+                        items="{ExperienceModel>/data}"
+                        selectedKey="{temporaryModel>/SelectedExperienceKey}"
+                        change="onExperienceChange"
+                        required="true"
+                        valueStateText="{i18n>jpExpValueState}"
+                    >
+                        <core:Item
+                            key="{ExperienceModel>value}"
+                            text="{ExperienceModel>value} "
+                        />
+                    </ComboBox>
+                   
+
+    </f:content>
+</f:SimpleForm>
+            </VBox>
+             <VBox width="50%" >
+            <f:SimpleForm
+                id="addJobForm3"
+                editable="true"
+                layout="ResponsiveGridLayout"
+               labelSpanL="12"
+    labelSpanM="12"
+    columnsL="1"
+    columnsM="1"
+            >
+                <f:content>
+                    <!-- <Title
+                        text="Skills &amp; Requirements"
+                        level="H4"
+                        class="sapUiSmallMargin"
+                    /> -->
+                    <Label
+                        text="Primary Skills"
+                        required="true"
+                        class="sapUiSmallMarginTop"
+                    />
+                    <Input
+                    width="100%"
+                        id="primarySkillsInput"
+                        value="{temporaryModel>/PrimarySkills}"
+                        placeholder="e.g., SAPUI5"
+                        liveChange="onPrimarySkillsChange"
+                       
+                        type="Text"
+                        maxLength="100"
+                        required="true"
+                    />
+                     <Label
+                        text="Secondary Skills"
+                        required="true"
+                      
+                    />
+                    <VBox
+                        id="secondarySkillsRTE"
+                       
+                    /> 
+                    <Label
+                        text="Status"
+                        required="true"
+                        visible="{= ${temporaryModel>/isEdit} === true }"
+                    />
+                    <ComboBox
+                        id="statusCombo"
+                        required="true"
+                        selectedKey="{temporaryModel>/Status}"
+                        items="{BackendStatusModel>/}"
+                        change="onStatusChange"
+                        valueStateText="{i18n>jpStatusValueState}"
+                        visible="{= ${temporaryModel>/isEdit} === true }"
+                    >
+                        <core:Item
+                            key="{BackendStatusModel>key}"
+                            text="{BackendStatusModel>text}"
+                        />
+                    </ComboBox>
+                     <Label
+                        text="Qualification"
+                        required="true"
+                      
+                    />
+                    <MultiInput
+                        change=".onQualificationsChange"
+                      
+                        id="multiInputQualifications"
+                        placeholder="Select Qualifications"
+                        showValueHelp="true"
+                        valueHelpRequest=".onOpenQualificationsDialog"
+                        tokenUpdate=".onQualificationsTokenUpdate"
+                    />
+                    <Label
+                        text="Certifications"
+                        
+                    />
+                    <Input
+                        id="certificationsInput"
+                        value="{temporaryModel>/Certifications}"
+                        placeholder="Any relevant certifications"
+                        liveChange="onCertificationChange"
+                      
+                        maxLength="100"
+                        type="Text"
+                    />
+                    <!-- <Label
+                        text="Skill Requirements"
+                     
+                    />
+                    <VBox
+                        id="skillReqRTE"
+                      
+                    /> -->
+                   
+                   
+                </f:content>
+            </f:SimpleForm>
+            </VBox>
+         </HBox>
+            <f:SimpleForm
+                id="addJobForm"
+                editable="true"
+                layout="ResponsiveGridLayout"
+            >
+                <f:content>
+                    <Title
+                        text="Job Details"
+                        level="H4"
+                        class="sapUiSmallMargin"
+                    />
+                    <Label
+                        text="Job Title"
+                        required="true"
+                       
+                    />
+                    <ComboBox
+                        value="{temporaryModel>/SelectedJobTitleValue}"
+                        items="{path:'DesignationModel>/', 			  sorter:{ path:'department',descending:false, group:true}}"
+                        showSecondaryValues="true"
+                        id="JobTitleCombo"
+                        valueStateText="{i18n>jpJobTitlevaluestate}"
+                        change="onJobTitleChange"
+                        required="true"
+                        placeholder="Select or enter Job Title"
+                      
+                        filterSecondaryValues="true"
+                    >
+                        <core:ListItem
+                            key="{DesignationModel>designationName}"
+                            text="{DesignationModel>designationName}"
+                            additionalText="{DesignationModel>department}"
+                        />
+                    </ComboBox>
+                    <Label
+                        text="Job Description"
+                        required="true"
+                    
+                    />
+                    <VBox
+                        id="jobDescRTE"
+                     
+                    />
+                    <Label
+                        text="Key Responsibilities"
+                      
+                    />
+                    <VBox
+                        id="keyRespRTE"
+                      
+                    />
+                </f:content>
+            </f:SimpleForm>
+        </content>
+        <buttons>
+            <Button
+                text="{= ${temporaryModel>/isEdit} ? 'Save' : 'Submit' }"
+                id="IDbutton"
+                type="Transparent"
+                press="onSubmitJob"
+            />
+            <Button
+                text="Close"
+                type="Transparent"
+                press="onCloseDialog"
+            />
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>

@@ -1,0 +1,222 @@
+<core:FragmentDefinition
+    displayBlock="true"
+	xmlns:f="sap.ui.layout.form"
+	xmlns="sap.uxap"
+	xmlns:m="sap.m"
+	xmlns:core="sap.ui.core">
+	<m:Page id="CUF_id_Contractpage" title="{i18n>contractDetails}" navButtonPress="CU_onBack" showNavButton="true"  class="classheader glassHeader ObjectcustomHeaderToolbar">
+	<m:headerContent>
+	<m:Button press="Tile_NotifictionBTN" class="sapUiTinyMarginBeginEnd LogNot logoutBtn" tooltip="{i18n>TilenotificationfragName}" icon="sap-icon://bell" type="Transparent" visible="{= ${LoginModel>/Role} !== 'Contractor' }">
+
+	<m:customData >
+		<m:BadgeCustomData class="badgeClass" key="badge" value="{EndingSoonModel>/notificationCount}"/>
+	</m:customData>
+
+	</m:Button>
+	 <m:Button
+            press="TP_onraisebugpress"
+            icon="sap-icon://incident"
+            tooltip="{i18n>raisebug}"
+            type="Transparent"
+            class="LogNot logoutBtn"
+        />
+	<m:Button press="onLogout" icon="sap-icon://log" tooltip="{i18n>logoutTooltip}" type="Transparent" class="LogNot logoutBtn"/>
+	</m:headerContent>
+		<ObjectPageLayout id="CU_id_ObjectPage"
+            useIconTabBar="true"
+            showTitleInHeaderContent="true"
+            >
+			<headerTitle>
+				<ObjectPageDynamicHeaderTitle class="sapUiTinyMargin">
+					<!-- Expanded heading to display Consultant Name and consulting service -->
+					<expandedHeading>
+						<m:Title text="{oFilteredContractModel>/ConsultantNameSalutation} {oFilteredContractModel>/ConsultantName}" wrapping="true" width="100%" />
+					</expandedHeading>
+					<expandedContent>
+						<m:Label text="{oFilteredContractModel>/ConsultingService}" wrapping="true" width="100%" class="whiteTitle" />
+					</expandedContent>
+					<snappedHeading>
+						<m:Title text="{oFilteredContractModel>/ConsultantNameSalutation} {oFilteredContractModel>/ConsultantName}" wrapping="true" width="100%" />
+					</snappedHeading>
+					<snappedContent>
+						<m:Label text="{oFilteredContractModel>/ConsultingService}" wrapping="true" width="100%" class="whiteTitle" />
+					</snappedContent>
+				</ObjectPageDynamicHeaderTitle>
+			</headerTitle>
+			<!-- Object Page Sections -->
+			<sections>
+				<ObjectPageSection showTitle="false">
+					<subSections>
+						<!-- Sub-section for displaying contract basic information -->
+						<ObjectPageSubSection showTitle="false">
+							<blocks>
+								<!-- SimpleForm for displaying and editing contract details -->
+								<f:SimpleForm 
+                                 editable="true" layout="ColumnLayout"
+              labelSpanXL="4" labelSpanL="3" labelSpanM="4" labelSpanS="12"
+              adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0"
+              emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="2" columnsM="1">
+									<f:content>
+									    <!-- Select Company Code -->
+										<m:Label text="{i18n>companyBranch}" required="true" />
+										<m:ComboBox items="{path:'CompanyCodeDetailsModel>/',length:1000}" valueStateText="{i18n>combovalueState}" showSecondaryValues="true" value="{oFilteredContractModel>/CompanyCode}" id="CU_id_CompanyCode" change="CU_onCompanyCodeChange" editable="{simpleForm>/editable}" filterSecondaryValues="true">
+										<core:ListItem key="{CompanyCodeDetailsModel>companyCode}" text="{CompanyCodeDetailsModel>companyCode}" additionalText="{CompanyCodeDetailsModel>branchCode}"/>
+										</m:ComboBox>	
+										  <!-- Select Branch -->
+										<m:Label text="{i18n>branch}" />
+										<m:ComboBox valueStateText="{i18n>selectBranch}" 
+										id="CU_id_Branch" items="{path:'CompanyCodeDetailsModel>/',length:1000}" 
+										value="{oFilteredContractModel>/Branch}" showSecondaryValues="true" filterSecondaryValues="true" enabled="false">
+										<core:ListItem key="{CompanyCodeDetailsModel>branch}" text="{CompanyCodeDetailsModel>branch}" 
+										additionalText="{CompanyCodeDetailsModel>companyName}" />
+										</m:ComboBox>
+										<!-- Agreement Number -->
+										<m:Label text="{i18n>contractNo}"/>
+										<m:Text text="{oFilteredContractModel>/ContractNo} / {oFilteredContractModel>/AgreementNo}" />
+										<!-- Consultant Name -->
+										<m:Label text="{i18n>consultantName}" required="true"/>
+                                         <m:Select
+                                               editable="{simpleForm>/editable}" 
+                                               selectedKey="{oFilteredContractModel>/ConsultantNameSalutation}"
+                                               items="{Salutation>/salutation}"
+                                               width="100%">
+												<!-- Binding the key and text of the Select control to the NameSalutation model -->
+												<core:Item key="{Salutation>text}" text="{Salutation>text}"/>
+												</m:Select>
+										<m:Input value="{oFilteredContractModel>/ConsultantName}" liveChange="CD_ValidateConsultantName" maxLength="50" id="CU_id_ConsultantName" valueStateText="{i18n>nameConsultantValueState}" editable="{simpleForm>/editable}"  />
+										<m:Label text="{i18n>consultingService}" required="true"/>
+                                        <m:Input value="{oFilteredContractModel>/ConsultingService}" valueStateText="{i18n>placeConsultingService}" placeholder="{i18n>placeConsultingService}" id="CU_id_Role" liveChange="CD_ValidateConsultantName"  maxLength="50"  editable="{simpleForm>/editable}" />
+										<!-- Consultant Email -->
+										<m:Label text="{i18n>consultantEmailID}" required="true"/>
+										<m:Input value="{oFilteredContractModel>/ContarctEmail}" liveChange="CD_validateEmail"  valueStateText="{i18n>emailValueState}" id="CU_id_ContractEmailID" editable="{simpleForm>/editable}" maxLength="100" />
+										<!-- Agreement Date -->
+										<m:Label text="{i18n>agreementDate}" required="true"/>
+										<m:DatePicker value="{path:'oFilteredContractModel>/AgreementDate' ,formatter:'.Formatter.formatDate'}" editable="{simpleForm>/editable}" id="CU_id_AgreementDate" valueFormat="dd/MM/yyyy" displayFormat="dd/MM/yyyy" change="onChangeAggrementDate" valueStateText="{i18n>dateValueState}"/>
+											<!-- Assignment Start Date -->
+										<m:Label text="{i18n>assignmentStartDate}" required="true"/>
+										<m:DatePicker value="{path:'oFilteredContractModel>/AssignmentStartDate' ,formatter:'.Formatter.formatDate'}" id="CU_id_AssignmentStartDate" displayFormat="dd/MM/yyyy" valueFormat="dd/MM/yyyy" editable="{simpleForm>/editable}" change="CD_validateDate" valueStateText="{i18n>dateValueState}" maxDate="{oFilteredContractModel>/MaxFromDate}"/>
+										<!-- Assignment End Date -->
+										<m:Label text="{i18n>assignmentEndDate}" required="true"/>
+										<m:DatePicker value="{path:'oFilteredContractModel>/AssignmentEndDate' ,formatter:'.Formatter.formatDate'}"  id="CU_id_AssignmentEndDate" displayFormat="dd/MM/yyyy" valueFormat="dd/MM/yyyy" editable="{simpleForm>/editable}" valueStateText="{i18n>dateValueState}" minDate="{oFilteredContractModel>/MinToDate}" change="CD_validateDate"/>
+										<!-- Consultant Address -->
+										<m:Label text="{i18n>consultantAddress}" required="true"/>
+										<m:TextArea value="{oFilteredContractModel>/ConsultantAddress}" valueStateText="{i18n>addressValueState}" liveChange="CD_ValidateCommonFields" id="CU_id_ContractAddress" maxLength="120" editable="{simpleForm>/editable}" rows="2"/>
+										<!-- End Client -->
+										<m:Label text="{i18n>endClient}" required="true"/>
+										<m:ComboBox items="{path:'CreateCustomerModel>/', sorter: {path:'companyName', descending:false }}" valueStateText="{i18n>combovalueState}" showSecondaryValues="true"  value="{oFilteredContractModel>/EndClient}" id="CU_id_EndClient" change="CD_validateName"  editable="{simpleForm>/editable}" filterSecondaryValues="true">
+										<core:ListItem  key="{CreateCustomerModel>salutation}" text="{CreateCustomerModel>companyName}" additionalText="{CreateCustomerModel>name}" />
+										</m:ComboBox>	
+										<!-- <m:Input value="{oFilteredContractModel>/EndClient}" liveChange="onLiveValidation" id="idEndClient"  editable="{simpleForm>/editable}" maxLength="50" /> -->
+
+										<m:Label text="{i18n>hiringContactLabel}" required="true"/>
+                                            <m:Select
+                                               editable="{simpleForm>/editable}"
+                                               selectedKey="{oFilteredContractModel>/ClientReportContactSalutation}" 
+                                                items="{Salutation>/salutation}" width="100%">
+												<!-- Binding the key and text of the Select control to the NameSalutation model -->
+												<core:Item key="{Salutation>text}" text="{Salutation>text}" />
+												</m:Select>		
+										<!-- Client Report Contact Name -->
+										<m:Input value="{oFilteredContractModel>/ClientReportContact}" id="CU_id_ClientReportContact" editable="{simpleForm>/editable}" maxLength="50" change="CD_validateName"  valueStateText="{i18n>commonNameValueState}"/>
+										<!-- Location where services are provided -->
+										<m:Label text="{i18n>locationswhereServices}" ></m:Label>
+										<m:Select selectedKey="{oFilteredContractModel>/LocationService}" id="CD_id_contractLocation" items="{WorkingMode>/location}" editable="{simpleForm>/editable}">
+											<core:Item key="{WorkingMode>Location}" text="{WorkingMode>Location}" />
+										</m:Select>									
+										<!-- Rate Type -->
+										<m:Label text="{i18n>rate}" required="true" />
+										<m:RadioButtonGroup id="CU_id_rbg3" columns="3" selectedIndex="{oFilteredContractModel>/HrDaliyMonth}" select="RadioButtonSelect" editable="{simpleForm>/editable}" >
+											<m:RadioButton id="CU_id_RB3-1" text="{i18n>rateHour}" />
+											<m:RadioButton id="CU_id_RB3-2" text="{i18n>rateDaily}" />
+											<m:RadioButton id="CU_id_RB3-3" text="{i18n>rateMonthly}" />
+										</m:RadioButtonGroup>
+										<!-- Contract Status -->
+										<m:Label text="{i18n>contractStatus}" required="true"/>
+										<m:ComboBox value="{oFilteredContractModel>/ContractStatus}" id="CD_id_contractStatus" items="{AssignmentStatus>/assignmentStatus}" editable="{simpleForm>/Status}"
+                                        change="onChangeContractStatus" valueStateText="{i18n>combovalueState}">
+											<core:Item key="{AssignmentStatus>ID}" text="{AssignmentStatus>Value}" />
+										</m:ComboBox>	
+										<!-- Input for Amount -->
+										<m:Label text="{i18n>amount}" required="true" />
+										<m:Input value="{oFilteredContractModel>/Amount}" valueState="None" id="CU_id_EditAmountInput"  placeholder="{i18n>placeAmount}" liveChange="CD_validateAmount"  maxLength="10" valueStateText="{i18n>ammountValuState}"  editable="{simpleForm>/editable}" />
+										<m:Input id="CU_id_CurrencySelect" value="{oFilteredContractModel>/Currency}"
+										editable="false" visible="true" width="100%" class="marginLeft" change="CD_onChangeCurrency" valueStateText="{i18n>selectCurrency}"/>
+										<!-- Contract Period -->
+										<m:Label text="{i18n>warrantyDate}"  />
+										<m:Select id="CU_id_WarrantyDate" selectedKey="{oFilteredContractModel>/ContractPeriod}" items="{ContractPeriod>/ContractPeriod}" editable="{simpleForm>/editable}" >
+											<core:Item key="{ContractPeriod>Months}" text="{ContractPeriod>Months}" />
+										</m:Select>
+										<!-- Payment Terms -->
+										<m:Label text="{i18n>paymentterms}" ></m:Label>
+										<m:Select selectedKey="{oFilteredContractModel>/PaymentTerms}" items="{ContractpaymentModel>/}" editable="{simpleForm>/editable}" id="CU_id_PaymentTerms">
+											<core:Item key="{ContractpaymentModel>days}" text="{ContractpaymentModel>days}" />
+										</m:Select>									
+										<!-- Specific Insurance Requirement -->
+										<m:Label text="{i18n>specificInsuranceRequirement}" ></m:Label>
+										<m:Select id="CU_id_InsuranceRequirement" selectedKey="{oFilteredContractModel>/SpecificInsuranceRequirement}" editable="{simpleForm>/editable}">
+											<core:Item key="Yes" text="{i18n>yes}" />
+											<core:Item key="No" text="{i18n>no}" />
+										</m:Select>
+										<!-- Expenses Claim -->
+										<m:Label text="{i18n>expensesClaim}" />
+										<m:Select selectedKey="{oFilteredContractModel>/ExpensesClaim}" editable="{simpleForm>/editable}">
+											<core:Item key="Yes" text="{i18n>yes}" />
+											<core:Item key="No" text="{i18n>no}" />
+										</m:Select>
+
+										<!-- Country -->
+										<m:Label text="{i18n>expCountry}" required="true"/>
+										<m:ComboBox id="CU_id_Country" items="{path:'CountryModel>/',length:1000}" 
+										value="{oFilteredContractModel>/Country}" selectedKey="{oFilteredContractModel>/Country}" 
+										showSecondaryValues="true" valueStateText="{i18n>expValStaCountry}" 
+										editable="{simpleForm>/editable}" change="CD_onChangeCountry" filterSecondaryValues="true">
+										<core:ListItem key="{CountryModel>countryName}" text="{CountryModel>countryName}" 
+										additionalText="{CountryModel>code}"/>
+										</m:ComboBox>
+
+										<!-- State -->
+										<m:Label text="{i18n>state}" required="true"/>
+										<m:ComboBox id="CU_id_State" items="{path:'StateModel>/',length:1000}"
+										selectedKey="{oFilteredContractModel>/State}" showSecondaryValues="true"
+										valueStateText="{i18n>expValStaState}" editable="{simpleForm>/editable}" 
+										change="CD_onChangeState">
+											<core:ListItem key="{StateModel>stateName}" text="{StateModel>stateName}"/>
+										</m:ComboBox>
+
+										<!-- City  -->
+										<m:Label text="{i18n>city}" required="true"/>
+										<m:ComboBox id="CU_id_ContractCity" items="{path:'CityModel>/',length:1000}"
+										value="{oFilteredContractModel>/ContractLocation}" selectedKey="{oFilteredContractModel>/ContractLocation}" showSecondaryValues="true" valueStateText="{i18n>cityValueText}" 
+										editable="{simpleForm>/editable}" change="CD_onBaseLocationChange" filterSecondaryValues="true">
+										 <core:ListItem key="{CityModel>cityName}" text="{CityModel>cityName}" additionalText="{CityModel>branchCode}" />
+										</m:ComboBox>
+
+										<!-- STD Code -->
+										<m:Label text="{i18n>mobileNo}" required="true" />
+										<m:Input id="CU_id_codeModel" value="{oFilteredContractModel>/STDCode}"
+										editable="false" visible="true" class="marginLeft" change="CD_ValidateComboBox" />
+
+										<m:Input value="{oFilteredContractModel>/MobileNo}" placeholder="{i18n>mobileNo}" liveChange="CD_validateMobileNo"  maxLength="20" id="CU_id_Mobile" valueStateText="{i18n>mobileNoValueState}" editable="{simpleForm>/mobile}" />
+
+										<m:Label text="Comments" />
+										<m:TextArea  value="{oFilteredContractModel>/Comments}" id="CU_id_Comments" editable="{simpleForm>/Status}" valueStateText="{i18n>commentsValueState}"  maxLength="100"/>
+									</f:content>
+								</f:SimpleForm>
+							</blocks>
+						</ObjectPageSubSection>
+					</subSections>
+				</ObjectPageSection>
+			</sections>
+		</ObjectPageLayout>
+		<m:footer>
+			<!-- button with expression binding for visibility -->
+			<m:Bar>
+				<m:contentRight>
+					<m:Button text="{i18n>tileFooter}" id="CU_id_Mail" press="CUD_onSendEmail" visible="{ContractStatus>/sendMail}" type="Transparent"/>
+					<m:Button text="{= ${viewModel>/isEditMode} ? ${i18n>save} : ${i18n>edit} }" press=".onEditOrSavePress" visible="{ContractStatus>/status}" type="{= ${viewModel>/isEditMode} ? 'Transparent' : 'Transparent' }"/>
+					<m:Button text="{i18n>GeneratePDF}" id="CU_id_Merge" press="onPressMerge" visible="{ContractStatus>/sendMail}" type="Transparent"/>
+				</m:contentRight>
+			</m:Bar>
+		</m:footer>
+	</m:Page>
+</core:FragmentDefinition>

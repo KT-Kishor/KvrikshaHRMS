@@ -1,0 +1,31 @@
+[
+    {
+      "ID": 1,
+      "RateType": "Open"
+    },
+      {
+      "ID": 2,
+      "RateType": "In Progress"
+    },
+    {
+      "ID": 3,
+      "RateType": "Resolved"
+    },
+     {
+      "ID": 4,
+      "RateType": "Fixed"
+    },
+    {
+      "ID": 5,
+      "RateType": "Not Required"
+    },
+     {
+      "ID": 6,
+      "RateType": "Move To Production"
+    },
+    {
+      "ID": 7,
+      "RateType": "Re Open"
+    }
+  ]
+  

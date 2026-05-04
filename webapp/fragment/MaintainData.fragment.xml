@@ -1,0 +1,38 @@
+<c:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:c="sap.ui.core"
+>
+    <Dialog
+        title="{i18n>FillDetails}"
+        resizable="true"
+        draggable="true"
+        contentWidth="40rem"
+    >
+        <VBox
+            id="dynamicForm"
+            class="sapUiSmallMargin"
+        />
+        <Bar
+            design="Auto"
+            titleAlignment="None"
+        >
+            <contentRight>
+                <Button
+                    id="MD_id_submitButoon"
+                    text="{i18n>submit}"
+                    press="MD_onSubmitButtonPress"
+                />
+                <Button
+                    id="MD_id_saveButoon"
+                    text="{i18n>save}"
+                    press="MD_onUpdateButtonPress"
+                />
+
+                <Button
+                    text="{i18n>CancelButton}"
+                    press="MD_onCancelButtonPress"
+                />
+            </contentRight>
+        </Bar>
+    </Dialog>
+</c:FragmentDefinition>

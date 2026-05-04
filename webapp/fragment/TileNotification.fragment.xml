@@ -1,0 +1,420 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
+    xmlns:card="sap.f.cards"
+>
+   <Dialog
+    stretch="true"
+    contentWidth="100%"
+    draggable="false"
+    resizable="false"
+    class="sapUiResponsiveContentPadding" verticalScrolling="true"
+>
+
+    <!-- HEADER -->
+    <customHeader>
+        <Toolbar>
+            <Title text="{i18n>TilenotificationfragName}" />
+            <ToolbarSpacer />
+            <Button icon="sap-icon://decline" press=".onClosePopover" />
+        </Toolbar>
+    </customHeader>
+
+    <ScrollContainer
+            width="100%"
+            height="100%"
+            vertical="true"
+            horizontal="false"
+        >
+
+    <VBox width="100%">
+
+        <!-- 🎉 BIRTHDAY CAROUSEL -->
+        <Carousel
+            visible="{= ${BirthdayModel>/}.length > 0 }"
+            width="100%"
+            height="auto"
+            loop="true"
+            showPageIndicator="true"
+            pages="{BirthdayModel>/}"
+        >
+            <pages>
+                <f:Card width="100%">
+                    <f:header>
+                        <card:Header
+                            title="{BirthdayModel>EmployeeName}"
+                            subtitle="{BirthdayModel>Role}"
+                            iconSrc="data:image/png;base64,{BirthdayModel>ProfilePhoto}"
+                            iconDisplayShape="Circle"
+                        />
+                    </f:header>
+
+                    <f:content>
+                        <VBox class="sapUiContentPadding">
+                            <Title text="Happy Birthday!! 🎉" level="H3"/>
+                            <Text text="Wishing you a wonderful birthday and a great year ahead."/>
+                            
+                            <HBox justifyContent="End">
+                                <Button text="Send Wishes" press="onPressCC"/>
+                            </HBox>
+                        </VBox>
+                    </f:content>
+                </f:Card>
+            </pages>
+        </Carousel>
+            <f:Card
+                width="auto"
+                class="sapUiSmallMarginBeginEnd sapUiTinyMarginTop sapUiSmallMargin"
+                visible="{= ${MSASOWModel>/length} > 0
+                        &amp;&amp; (
+                            ${LoginModel>/Role} === 'Admin' ||
+                            ${LoginModel>/Role} === 'Demo' ||
+                            ${LoginModel>/Role} === 'Account Manager' ||
+                            ${LoginModel>/Role} === 'HR Manager' ||
+                            ${LoginModel>/Role} === 'HR' ||
+                            ${LoginModel>/Role} === 'Account Consultant'
+                        )}"
+            >
+                <f:content>
+                    <Table
+                        sticky="ColumnHeaders,HeaderToolbar"
+                        items="{MSASOWModel>/}"
+                        id=""
+                        busy="{setModelforBusy>/busyIndicator}"
+                    >
+                        <headerToolbar>
+                            <OverflowToolbar>
+                                <Title
+                                    text="{i18n>msaDetails}"
+                                    level="H1"
+                                />
+                            </OverflowToolbar>
+                        </headerToolbar>
+                        <columns>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>companyName}" />
+                            </Column>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>companyHeadName}" />
+                            </Column>
+                            <Column
+                                minScreenWidth="Desktop"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>companyHeadPosition}" />
+                            </Column>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>paymentterms}" />
+                            </Column>
+                        </columns>
+                        <items>
+                            <ColumnListItem
+                                type="Navigation"
+                                press="OnPressNavigationMsaDet"
+                            >
+                                <cells>
+                                    <Text text="{MSASOWModel>CompanyName}" />
+                                    <Text
+                                        text="{MSASOWModel>CompanyHeadName}"
+                                    />
+                                    <Text
+                                        text="{MSASOWModel>CompanyHeadPosition}"
+                                    />
+                                    <ObjectStatus
+                                        class="PayByDateClass"
+                                        text="{path: 'MSASOWModel>MsaContractPeriodEndDate', formatter: '.Formatter.formatDate'}"
+                                        inverted="false"
+                                        state="{path: 'MSASOWModel>MsaContractPeriodEndDate', formatter: '.Formatter.formatContractEndState'}"
+                                    />
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </f:content>
+            </f:Card>
+
+            <f:Card
+                width="auto"
+                class="sapUiSmallMargin"
+                visible="{= ${CompanyInvoiceModelData>/AfterData} &amp;&amp; ${CompanyInvoiceModelData>/AfterData}.length > 0 &amp;&amp; (
+    ${LoginModel>/Role} === 'Admin' ||
+    ${LoginModel>/Role} === 'Demo' ||
+    ${LoginModel>/Role} === 'Account Manager'
+)}"
+            >
+                <f:content>
+                    <Table
+                        id=""
+                        items="{CompanyInvoiceModelData>/AfterData}"
+                        busy="{setModelforBusy>/busyIndicator}"
+                        sticky="ColumnHeaders,HeaderToolbar"
+                    >
+                        <headerToolbar>
+                            <OverflowToolbar>
+                                <Title
+                                    text="{i18n>tileNotificationtablename}"
+                                    level="H1"
+                                />
+                            </OverflowToolbar>
+                        </headerToolbar>
+                        <columns>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>invoiceNo}" />
+                            </Column>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>customerName}" />
+                            </Column>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>invoiceDate}" />
+                            </Column>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>PayByDate}" />
+                            </Column>
+                              <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>totalAmount}" />
+                            </Column>
+                        </columns>
+                        <items>
+                            <ColumnListItem
+                                type="Navigation"
+                                press="CIB_onPressInvoiceRow"
+                            >
+                                <cells>
+                                    <Text
+                                        text="{CompanyInvoiceModelData>InvNo}"
+                                    />
+                                    <Text
+                                        text="{CompanyInvoiceModelData>CustomerName}"
+                                    />
+                                    <Text
+                                        text="{path:'CompanyInvoiceModelData>InvoiceDate',formatter: '.Formatter.formatDate'}"
+                                    />
+                                    <ObjectStatus
+                                        class="PayByDateClass"
+                                        text="{path:'CompanyInvoiceModelData>PayByDate',formatter:'.Formatter.formatDate'}"
+                                        inverted="false"
+                                        state="{ parts: [{path: 'CompanyInvoiceModelData>PayByDate'},{path: 'CompanyInvoiceModelData>Status'}], formatter: '.Formatter.companyInvoicePayByDate'}"
+                                    />
+                                 <Text text="{parts: [
+                                                        { path: 'CompanyInvoiceModelData>Currency' },
+                                                        { path: 'CompanyInvoiceModelData>TotalAmount' },
+                                                        { path: 'CompanyInvoiceModelData>AmountInINR' }
+                                                    ],
+                                                    formatter: '.Formatter.NotificationNumber'}" textAlign="End"/>
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </f:content>
+            </f:Card>
+
+            <f:Card
+                width="auto"
+                class="sapUiSmallMargin"
+                visible="{= ${CompanyInvoiceModelData>/BeforeData} &amp;&amp; ${CompanyInvoiceModelData>/BeforeData}.length > 0 &amp;&amp; (
+    ${LoginModel>/Role} === 'Admin' ||
+    ${LoginModel>/Role} === 'Demo' ||
+    ${LoginModel>/Role} === 'Account Manager'
+)}"
+            >
+                <f:content>
+                    <Table
+                        items="{CompanyInvoiceModelData>/BeforeData}"
+                        busy="{setModelforBusy>/busyIndicator}"
+                        sticky="ColumnHeaders,HeaderToolbar"
+                    >
+                        <headerToolbar>
+                            <OverflowToolbar>
+                                <Title
+                                    text="{i18n>tileNotificationOverdue}"
+                                    level="H1"
+                                />
+                            </OverflowToolbar>
+                        </headerToolbar>
+                        <columns>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>invoiceNo}" />
+                            </Column>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>customerName}" />
+                            </Column>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>invoiceDate}" />
+                            </Column>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>PayByDate}" />
+                            </Column>
+                             <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>totalAmount}" />
+                            </Column>
+                        </columns>
+                        <items>
+                            <ColumnListItem
+                                type="Navigation"
+                                press="CIB_onPressInvoiceRow"
+                            >
+                                <cells>
+                                    <Text
+                                        text="{CompanyInvoiceModelData>InvNo}"
+                                    />
+                                    <Text
+                                        text="{CompanyInvoiceModelData>CustomerName}"
+                                    />
+                                    <Text
+                                        text="{path:'CompanyInvoiceModelData>InvoiceDate',formatter: '.Formatter.formatDate'}"
+                                    />
+                                    <ObjectStatus
+                                        class="PayByDateClass"
+                                        text="{path:'CompanyInvoiceModelData>PayByDate',formatter:'.Formatter.formatDate'}"
+                                        inverted="false"
+                                        state="{ parts: [{path: 'CompanyInvoiceModelData>PayByDate'},{path: 'CompanyInvoiceModelData>Status'}], formatter: '.Formatter.companyInvoicePayByDate'}"
+                                    />
+                                 <Text text="{parts: [
+                                                        { path: 'CompanyInvoiceModelData>Currency' },
+                                                        { path: 'CompanyInvoiceModelData>TotalAmount' },
+                                                        { path: 'CompanyInvoiceModelData>AmountInINR' }
+                                                    ],
+                                                    formatter: '.Formatter.NotificationNumber'}" textAlign="End"/>
+
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </f:content>
+            </f:Card>
+
+            <f:Card
+                width="auto"
+                class="sapUiSmallMarginBeginEnd sapUiTinyMarginTop sapUiSmallMargin"
+                visible="{= ${SOWModel>/length} > 0
+                        &amp;&amp; (
+                            ${LoginModel>/Role} === 'Admin' ||
+                            ${LoginModel>/Role} === 'Demo' ||
+                            ${LoginModel>/Role} === 'Account Manager' ||
+                            ${LoginModel>/Role} === 'HR Manager' ||
+                            ${LoginModel>/Role} === 'Account Consultant' ||
+                            ${LoginModel>/Role} === 'HR' 
+                        )}"
+            >
+                <f:content>
+                    <Table
+                        items="{SOWModel>/}"
+                        sticky="ColumnHeaders,HeaderToolbar"
+                        busy="{setModelforBusy>/busyIndicator}"
+                    >
+                        <headerToolbar>
+                            <OverflowToolbar>
+                                <Title
+                                    text="{i18n>sowTitle}"
+                                    level="H1"
+                                />
+                            </OverflowToolbar>
+                        </headerToolbar>
+                        <columns>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>POConsultantname}" />
+                            </Column>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>startDate}" />
+                            </Column>
+                            <Column
+                                minScreenWidth="Desktop"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>endDate}" />
+                            </Column>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>designation}" />
+                            </Column>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>rate}" />
+                            </Column>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>status}" />
+                            </Column>
+                        </columns>
+                        <items>
+                            <ColumnListItem
+                                type="Navigation"
+                                press="OnPressNavigationSOW"
+                            >
+                                <cells>
+                                    <Text text="{SOWModel>ConsultantName}" />
+                                    <Text
+                                        text="{path:'SOWModel>StartDate',formatter: '.Formatter.formatDate'}"
+                                    />
+                                    <Text
+                                        text="{path:'SOWModel>EndDate',formatter: '.Formatter.formatDate'}"
+                                    />
+                                    <Text text="{SOWModel>Designation}" />
+                                    <Text text="{SOWModel>Rate}" />
+                                    <ObjectStatus
+                                        text="{SOWModel>Status}"
+                                        inverted="false"
+                                        state="{path: 'SOWModel>Status', formatter: '.Formatter.formatObjectStatus'}"
+                                    />
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </f:content>
+            </f:Card>
+        </VBox>
+        </ScrollContainer>
+</Dialog>
+</core:FragmentDefinition>

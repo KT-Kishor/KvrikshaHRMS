@@ -1,0 +1,122 @@
+<mvc:View controllerName="sap.kt.com.minihrsolution.controller.AppliedCanDetail" 
+	xmlns:mvc="sap.ui.core.mvc" 
+	xmlns="sap.m" 
+	xmlns:core="sap.ui.core" 
+	xmlns:f="sap.ui.layout.form" 
+	xmlns:u="sap.ui.unified">
+	<Page title="{i18n>TableHeader}" navButtonPress="onPageNavButtonPress" showNavButton="true" 
+	class="glassHeader ObjectcustomHeaderToolbar classheader"
+	>
+		<headerContent>
+			<Button press="Tile_NotifictionBTN" class="sapUiTinyMarginBeginEnd LogNot logoutBtn" tooltip="{i18n>TilenotificationfragName}" icon="sap-icon://bell" type="Transparent" visible="{= ${LoginModel>/Role} !== 'Contractor' }">
+
+                <customData >
+                    <BadgeCustomData class="badgeClass" key="badge" value="{EndingSoonModel>/notificationCount}"/>
+                </customData>
+
+            </Button>
+			 <Button
+            press="TP_onraisebugpress"
+            icon="sap-icon://incident"
+            tooltip="{i18n>raisebug}"
+            type="Transparent"
+            class="LogNot logoutBtn"
+        />
+			<Button press="onLogout" icon="sap-icon://log" tooltip="{i18n>logoutTooltip}" type="Transparent" class="LogNot logoutBtn"/>
+		</headerContent>
+		<f:SimpleForm layout="ColumnLayout" labelSpanXL="12" labelSpanL="12" labelSpanM="12" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="0" emptySpanM="0" emptySpanS="0" columnsXL="3" columnsL="3" columnsM="1" singleContainerFullSize="false">
+			<!-- form header  -->
+			<f:toolbar>
+				<Toolbar>
+					<Title text="{i18n>TableHeader}" />
+					<ToolbarSpacer />
+					<Button id="ACD_id_EditButton" text="{= ${viewModel>/isEditMode} ? 'Save' : 'Edit' }" press="ACD_onEditPress" type="{= ${viewModel>/isEditMode} ? 'Transparent' : 'Transparent' }" tooltip="{i18n>editDetails}" />
+					<Button text="{i18n>viewResume}" press="openResumePreview" type="Transparent" />
+					<Button tooltip="{i18n>onboardTraineeTool}" text="{i18n>generateOffer}" id="ACD_id_EmpOnBoard" press="ACD_onBoardCandidate" type="Transparent"/>
+				</Toolbar>
+			</f:toolbar>
+			<f:content>
+				<!-- Bind the 'editable' property to the viewModel -->
+				<Label text="{i18n>candidateName}" />
+				<Input value="{setDataToForm>/FullName}" maxLength="50" editable="{viewModel>/isEditMode}"/>
+				<Label text="{i18n>gender}" />
+				<Input value="{setDataToForm>/Gender}" maxLength="6" editable="{viewModel>/isEditMode}"/>
+				<Label text="{i18n>FormField}" />
+				<DatePicker id="CD_id_DOB" value="{path: 'setDataToForm>/DOB'}" editable="{viewModel>/isEditMode}" change=".onDOBChange" valueFormat="dd/MM/yyyy" displayFormat="dd/MM/yyyy"/>
+				<Label text="{i18n>email}" />
+				<Input value="{setDataToForm>/Email}" maxLength="50" editable="{viewModel>/isEditMode}"/>
+				<Label text="{i18n>expCountry}" />
+				<ComboBox items="{path:'CountryModel>/',length:1000}" id="AC_Id_Country" selectedKey="{setDataToForm>/Country}" value="{setDataToForm>/Country}" editable="{viewModel>/isEditMode}" change="AC_onChangeCountry">
+					<core:ListItem key="{CountryModel>countryName}" text="{CountryModel>countryName}" additionalText="{CountryModel>code}"/>
+				</ComboBox>
+				<Label text="State" />
+				<ComboBox items="{path: 'StateModel>/', length: 1000}" change="AC_onChangeState" editable="{viewModel>/isEditMode}" id="AN_Id_State" showSecondaryValues="true" filterSecondaryValues="true" value="{setDataToForm>/State}" selectedKey="{setDataToForm>/State}" valueStateText="{i18n>combovalueState}" >
+					<core:ListItem key="{StateModel>stateName}" text="{StateModel>stateName}" additionalText="{StateModel>countryCode}" />
+				</ComboBox>
+				<Label text="{i18n>city}" />
+				<ComboBox items="{path:'CityModel>/',length:1000}" change="AC_onChangeCity" editable="{viewModel>/isEditMode}" id="AN_Id_City" showSecondaryValues="true" value="{setDataToForm>/City}" selectedKey="{setDataToForm>/City}" valueStateText="{i18n>combovalueState}" >
+					<core:ListItem key="{CityModel>cityName}" text="{CityModel>cityName}" />
+				</ComboBox>
+				<Label text="{i18n>address}" />
+				<TextArea rows="3" value="{setDataToForm>/Address}" maxLength="200" editable="{viewModel>/isEditMode}"/>
+				<Label text="{i18n>mobilenumber}" />
+				<Input value="{setDataToForm>/ISD}" editable="{viewModel>/isEditMode}" id="AC_id_ISD"/>
+				<Input value="{setDataToForm>/Mobile}" editable="{viewModel>/isEditMode}"/>
+				<Label text="{i18n>CurrentCompanyField}" />
+				<Input value="{setDataToForm>/CurrentCompany}" editable="{viewModel>/isEditMode}"/>
+				<Label text="{i18n>designation}" />
+				<Input value="{setDataToForm>/Designation}" editable="{viewModel>/isEditMode}"/>
+				<Label text="{i18n>EmploymentTypeField}" />
+				<Input value="{setDataToForm>/EmploymentType}" editable="{viewModel>/isEditMode}"/>
+				<Label text="{i18n>TableColExperience}" />
+				<Input value="{setDataToForm>/Experience}" editable="{viewModel>/isEditMode}"/>
+				<Label text="{i18n>TableColNoticePeriod}" />
+				<ComboBox id="AN_RE_NoticePeriod" items="{NoticePeriod>/}" value="{setDataToForm>/NoticePeriod}" valueState="{modelValuStateError>/NoticePeriodState}" editable="{viewModel>/isEditMode}" valueStateText="{i18n>NoticePeriod}" change="onValidateMandatoryField">
+					<core:Item key="{NoticePeriod>key}" text="{NoticePeriod>text}" />
+				</ComboBox>
+				<Label text="{i18n>CurrentSalaryField}" />
+				<Input value="{setDataToForm>/CurrentSalary}" editable="{viewModel>/isEditMode}" showValueHelp="true" placeholder="{i18n>ExpectedSalaryField}" valueHelpRequest="SalaryInfoPress" valueHelpIconSrc="sap-icon://message-information" valueState="{modelValuStateError>/ExpectedCTCState}" valueStateText="{i18n>ExpectedCTC}" maxLength="10"/>
+				<Label text="{i18n>ExpectedSalaryField}" />
+				<Input value="{setDataToForm>/ExpectedSalary}" editable="{viewModel>/isEditMode}" showValueHelp="true" placeholder="{i18n>ExpectedSalaryField}" valueHelpRequest="SalaryInfoPress" valueHelpIconSrc="sap-icon://message-information" valueState="{modelValuStateError>/ExpectedCTCState}" valueStateText="{i18n>ExpectedCTC}" maxLength="10"/>
+				<Label text="{i18n>Jobtitle}" />
+				<ComboBox placeholder="Select Job Title" editable="{viewModel>/isEditMode}" items="{ path: 'DesignationModel>/', sorter: { path: 'department', descending: false, group: true } }" value="{setDataToForm>/JobTitle}" showSecondaryValues="true" filterSecondaryValues="true" change="onJobTitleChange" required="true" valueStateText="{i18n>jpJobTitlevaluestate}">
+					<core:ListItem key="{DesignationModel>designationName}" text="{DesignationModel>designationName}" additionalText="{DesignationModel>department}"/>
+				</ComboBox>
+				<Label text="{i18n>RolesFields}" />
+				<Input value="{setDataToForm>/Roles}" editable="{viewModel>/isEditMode}"/>
+				<Label text="{i18n>ExpertiseInField}" />
+				<Input value="{setDataToForm>/ExpertiseIn}" editable="{viewModel>/isEditMode}"/>
+				<Label text="{i18n>TableColSkills}" />
+				<Input value="{setDataToForm>/Skills}" editable="{viewModel>/isEditMode}"/>
+				<Label text="{i18n>DescribeYourselfField}" />
+				<TextArea rows="3" cols="4" value="{setDataToForm>/DescribeYourSelf}" editable="{viewModel>/isEditMode}"/>
+				<Label text="{i18n>TableColNameHeistQualification}" />
+				<Input value="{setDataToForm>/HighestQualifaction}" editable="{viewModel>/isEditMode}"/>
+				<Label text="{i18n>UniversityFiled}" />
+				<Input value="{setDataToForm>/University}" editable="{viewModel>/isEditMode}"/>
+				<Label text="{i18n>PassingYearField}" />
+				<Input value="{setDataToForm>/PassingYear}" editable="{viewModel>/isEditMode}"/>
+				<Label text="{i18n>WorkDurationStartField}" />
+				<DatePicker value="{path: 'setDataToForm>/WorkDurationStart'}" editable="{viewModel>/isEditMode}" change=".onDOBChange" valueFormat="dd/MM/yyyy" displayFormat="dd/MM/yyyy"/>
+				<Label text="{i18n>WorkDurationEndField}" />
+				<DatePicker value="{path: 'setDataToForm>/WorkDurationEnd'}" editable="{viewModel>/isEditMode}" change=".onDOBChange" valueFormat="dd/MM/yyyy" displayFormat="dd/MM/yyyy"/>
+			</f:content>
+		</f:SimpleForm>
+		<VBox class="uploaderSection noBottomSpace">
+			<HBox alignItems="Center" wrap="Wrap" class="fileUploaderHBox">
+				<Label text="{i18n>attachmentLabel} :" class="sapUiSmallMargin" />
+				<u:FileUploader id="FM_jobFileUploader" fileSizeExceed="onFileSizeExceeds" maximumFileSize="5MB" typeMissmatch="onFileTypeMissmatch" fileType="pdf,doc,docx" change="onBeforeUploadStarts" buttonOnly="true" sameFilenameAllowed="true" iconFirst="true" buttonText="{i18n>attachmentButtonText}" />
+				<Tokenizer id="FM_tokenizer" width="auto" tokenDelete="onTokenDelete" editable="{viewModel>/isEditMode}" tokens="{tokenModel>/tokens}">
+					<Token key="{tokenModel>key}" text="{tokenModel>text}" />
+				</Tokenizer>
+			</HBox>	
+		</VBox>
+		<footer>
+			<Bar id="ACD_id_FooterBar">
+				<contentLeft>
+					<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Footer" type="XML" />
+				</contentLeft>
+			</Bar>
+		</footer>
+	</Page>
+</mvc:View>

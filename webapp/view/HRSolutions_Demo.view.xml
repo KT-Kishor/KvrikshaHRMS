@@ -1,0 +1,393 @@
+<mvc:View
+	controllerName="sap.kt.com.minihrsolution.controller.HRSolutions_Demo"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:m="sap.m"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	displayBlock="true"
+	xmlns:g="sap.f"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:l="sap.ui.layout"
+	height="100%"
+	busyIndicatorDelay="0"
+>
+	<Page >
+		<headerContent>
+			<Avatar src="./image/KPVL_logo.jpeg" displaySize="XS" press="onAvatarPressed" tooltip="Company Logo"/>
+			<Title level="H1" text="{i18n>companynameKT}" class="custom-text" wrapping="false"/>
+			<ToolbarSpacer/>
+			<Button icon="sap-icon://home" press="onpresshome" class="sapUiTinyMarginEnd" tooltip="{i18n>toolHome}"/>
+		</headerContent>
+		<Title level="H1" text="{i18n>minihrsolution}" class="HeadDemoSection " wrapping="false"/>
+		<!-- EmployeeOffer -->
+		<g:GridContainer class="jioSection sapUiSmallMarginTop">
+			<g:layout>
+				<g:GridContainerSettings columnSize="49.5%" gap="10px" />
+			</g:layout>
+			<g:layoutXS>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutXS>
+			<g:layoutS>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutS>
+			<g:layoutM>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutM>
+			<!-- Left Column -->
+			<m:VBox alignItems="Start" justifyContent="Center" class="sapUiSmallMarginTop">
+				<m:Title text="{i18n>headerEmployeeOffer}" level="H1" class="jioHeading" />
+				<m:Text text="{i18n>employee_Par}" class="jioParagraph" />
+			</m:VBox>
+			<!-- Right Column -->
+			<m:VBox id="videoBox_A" class="sapUiMediumMarginTop">
+				<core:HTML id="videoFrameHtml_A"
+            content="&lt;div style='position:relative;width:100%;padding-top:56.25%;overflow:hidden;border-radius:15px;background:#f3f3f3;'&gt;
+                        &lt;video controls autoplay muted playsinline 
+                               style='position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border:none;border-radius:15px;'&gt;
+                            &lt;source src='../Videos/Employee Offer.mp4' type='video/mp4'&gt;
+                            Your browser does not support the video tag.
+                        &lt;/video&gt;
+                     &lt;/div&gt;" />
+			</m:VBox>
+			<!-- Trainee -->
+		</g:GridContainer>
+		<g:GridContainer class="jioSection sapUiSmallMarginTop">
+			<g:layout>
+				<g:GridContainerSettings columnSize="49.5%" gap="10px" />
+			</g:layout>
+			<g:layoutXS>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutXS>
+			<g:layoutS>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutS>
+			<g:layoutM>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutM>
+			<!-- Right Column -->
+			<m:VBox id="videoBox_B" class="sapUiMediumMarginTop">
+				<core:HTML id="videoFrameHtml_B"
+            content="&lt;div style='position:relative;width:100%;padding-top:56.25%;overflow:hidden;border-radius:15px;background:#f3f3f3;'&gt;
+                        &lt;video controls muted playsinline
+                               style='position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border:none;border-radius:15px;'&gt;
+                            &lt;source src='../Videos/Trainee Application.mp4' type='video/mp4'&gt;
+                            Your browser does not support the video tag.
+                        &lt;/video&gt;
+                     &lt;/div&gt;" />
+			</m:VBox>
+			<!-- Left Column -->
+			<m:VBox alignItems="Start" justifyContent="Center" class="sapUiMediumMarginTop">
+				<m:Title text="{i18n>headerTrainee}" level="H1" class="jioHeading" />
+				<m:Text text="{i18n>Trainee_Par}" class="jioParagraph" />
+			</m:VBox>
+		</g:GridContainer>
+		<!-- ContractDetails -->
+		<g:GridContainer class="jioSection sapUiSmallMarginTop">
+			<g:layout>
+				<g:GridContainerSettings columnSize="49.5%" gap="10px" />
+			</g:layout>
+			<g:layoutXS>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutXS>
+			<g:layoutS>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutS>
+			<g:layoutM>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutM>
+			<!-- Left Column -->
+			<m:VBox alignItems="Start" justifyContent="Center" class="sapUiMediumMarginTop">
+				<m:Title text="{i18n>headerContractDetails}" level="H1" class="jioHeading" />
+				<m:Text text="{i18n>Contract_Par}" class="jioParagraph" />
+			</m:VBox>
+			<!-- Right Column -->
+			<m:VBox id="videoBox_C" class="sapUiMediumMarginTop">
+				<core:HTML id="videoFrameHtml_C"
+            content="&lt;div style='position:relative;width:100%;padding-top:56.25%;overflow:hidden;border-radius:15px;background:#f3f3f3;'&gt;
+                        &lt;video controls muted playsinline
+                               style='position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border:none;border-radius:15px;'&gt;
+                            &lt;source src='../Videos/Contract Offer Application.mp4' type='video/mp4'&gt;
+                            Your browser does not support the video tag.
+                        &lt;/video&gt;
+                     &lt;/div&gt;" />
+			</m:VBox>
+		</g:GridContainer>
+		<!-- SelfService -->
+		<g:GridContainer class="jioSection sapUiSmallMarginTop">
+			<g:layout>
+				<g:GridContainerSettings columnSize="49.5%" gap="10px" />
+			</g:layout>
+			<g:layoutXS>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutXS>
+			<g:layoutS>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutS>
+			<g:layoutM>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutM>
+			<!-- Right Column -->
+			<m:VBox id="videoBox_D" class="sapUiMediumMarginTop">
+				<core:HTML id="videoFrameHtml_D"
+            content="&lt;div style='position:relative;width:100%;padding-top:56.25%;overflow:hidden;border-radius:15px;background:#f3f3f3;'&gt;
+                        &lt;video controls muted playsinline
+                               style='position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border:none;border-radius:15px;'&gt;
+                            &lt;source src='../Videos/Self Service.mp4' type='video/mp4'&gt;
+                            Your browser does not support the video tag.
+                        &lt;/video&gt;
+                     &lt;/div&gt;" />
+			</m:VBox>
+			<!-- Left Column -->
+			<m:VBox alignItems="Start" justifyContent="Center" class="sapUiMediumMarginTop">
+				<m:Title text="{i18n>headerSelfService}" level="H1" class="jioHeading" />
+				<m:Text text="{i18n>Self_par}" class="jioParagraph" />
+			</m:VBox>
+		</g:GridContainer>
+		<!-- EmpDetails -->
+		<g:GridContainer class="jioSection sapUiSmallMarginTop">
+			<g:layout>
+				<g:GridContainerSettings columnSize="49.5%" gap="10px" />
+			</g:layout>
+			<g:layoutXS>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutXS>
+			<g:layoutS>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutS>
+			<g:layoutM>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutM>
+			<!-- Left Column -->
+			<m:VBox alignItems="Start" justifyContent="Center" class="sapUiSmallMarginTop">
+				<m:Title text="{i18n>headerEmpDetails}" level="H1" class="jioHeading" />
+				<m:Text text="{i18n>EmployeeDet_par}" class="jioParagraph" />
+			</m:VBox>
+			<!-- Right Column -->
+			<m:VBox id="videoBox_E" class="sapUiMediumMarginTop">
+				<core:HTML id="videoFrameHtml_E"
+            content="&lt;div style='position:relative;width:100%;padding-top:56.25%;overflow:hidden;border-radius:15px;background:#f3f3f3;'&gt;
+                        &lt;video controls muted playsinline
+                               style='position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border:none;border-radius:15px;'&gt;
+                            &lt;source src='../Videos/Employee Details.mp4' type='video/mp4'&gt;
+                            Your browser does not support the video tag.
+                        &lt;/video&gt;
+                     &lt;/div&gt;" />
+			</m:VBox>
+		</g:GridContainer>
+		<!-- Leave -->
+		<g:GridContainer class="jioSection sapUiSmallMarginTop">
+			<g:layout>
+				<g:GridContainerSettings columnSize="49.5%" gap="10px" />
+			</g:layout>
+			<g:layoutXS>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutXS>
+			<g:layoutS>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutS>
+			<g:layoutM>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutM>
+			<!-- Right Column -->
+			<m:VBox id="videoBox_F" class="sapUiMediumMarginTop">
+				<core:HTML id="videoFrameHtml_F"
+            content="&lt;div style='position:relative;width:100%;padding-top:56.25%;overflow:hidden;border-radius:15px;background:#f3f3f3;'&gt;
+                        &lt;video controls muted playsinline
+                               style='position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border:none;border-radius:15px;'&gt;
+                            &lt;source src='../Videos/Leave Application.mp4' type='video/mp4'&gt;
+                            Your browser does not support the video tag.
+                        &lt;/video&gt;
+                     &lt;/div&gt;" />
+			</m:VBox>
+			<!-- Left Column -->
+			<m:VBox alignItems="Start" justifyContent="Center" class="sapUiMediumMarginTop">
+				<m:Title text="{i18n>headerLeave}" level="H1" class="jioHeading" />
+				<m:Text text="{i18n>Leave_Par}" class="jioParagraph" />
+			</m:VBox>
+		</g:GridContainer>
+		<!-- Expense -->
+		<g:GridContainer class="jioSection sapUiSmallMarginTop">
+			<g:layout>
+				<g:GridContainerSettings columnSize="49.5%" gap="10px" />
+			</g:layout>
+			<g:layoutXS>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutXS>
+			<g:layoutS>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutS>
+			<g:layoutM>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutM>
+			<!-- Left Column -->
+			<m:VBox alignItems="Start" justifyContent="Center" class="sapUiSmallMarginTop">
+				<m:Title text="{i18n>headerExpense}" level="H1" class="jioHeading" />
+				<m:Text text="{i18n>Expanse_par}" class="jioParagraph" />
+			</m:VBox>
+			<!-- Right Column -->
+			<m:VBox id="videoBox_G" class="sapUiMediumMarginTop">
+				<core:HTML id="videoFrameHtml_G"
+            content="&lt;div style='position:relative;width:100%;padding-top:56.25%;overflow:hidden;border-radius:15px;background:#f3f3f3;'&gt;
+                        &lt;video controls muted playsinline
+                               style='position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border:none;border-radius:15px;'&gt;
+                            &lt;source src='../Videos/Expense Application.mp4' type='video/mp4'&gt;
+                            Your browser does not support the video tag.
+                        &lt;/video&gt;
+                     &lt;/div&gt;" />
+			</m:VBox>
+		</g:GridContainer>
+		<!-- Timesheet -->
+		<g:GridContainer class="jioSection sapUiSmallMarginTop">
+			<g:layout>
+				<g:GridContainerSettings columnSize="49.5%" gap="10px" />
+			</g:layout>
+			<g:layoutXS>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutXS>
+			<g:layoutS>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutS>
+			<g:layoutM>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutM>
+			<!-- Right Column -->
+			<m:VBox id="videoBox_H" class="sapUiMediumMarginTop">
+				<core:HTML id="videoFrameHtml_H"
+            content="&lt;div style='position:relative;width:100%;padding-top:56.25%;overflow:hidden;border-radius:15px;background:#f3f3f3;'&gt;
+                        &lt;video controls muted playsinline
+                               style='position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border:none;border-radius:15px;'&gt;
+                            &lt;source src='../Videos/Timesheet Application.mp4' type='video/mp4'&gt;
+                            Your browser does not support the video tag.
+                        &lt;/video&gt;
+                     &lt;/div&gt;" />
+			</m:VBox>
+			<!-- Left Column -->
+			<m:VBox alignItems="Start" justifyContent="Center" class="sapUiMediumMarginTop">
+				<m:Title text="{i18n>headerTimesheet}" level="H1" class="jioHeading" />
+				<m:Text text="{i18n>Mytimesheet_Par}" class="jioParagraph" />
+			</m:VBox>
+		</g:GridContainer>
+		<!-- My Timesheet -->
+		<!-- Generate Payslip -->
+		<g:GridContainer class="jioSection sapUiSmallMarginTop">
+			<g:layout>
+				<g:GridContainerSettings columnSize="49.5%" gap="10px" />
+			</g:layout>
+			<g:layoutXS>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutXS>
+			<g:layoutS>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutS>
+			<g:layoutM>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutM>
+			<!-- Left Column -->
+			<m:VBox alignItems="Start" justifyContent="Center" class="sapUiSmallMarginTop">
+				<m:Title text="{i18n>HeaderPaySlip}" level="H1" class="jioHeading" />
+				<m:Text text="{i18n>Payslip_Par}" class="jioParagraph" />
+			</m:VBox>
+			<!-- Right Column -->
+			<m:VBox id="videoBox_I" class="sapUiMediumMarginTop">
+				<core:HTML id="videoFrameHtml_I"
+            content="&lt;div style='position:relative;width:100%;padding-top:56.25%;overflow:hidden;border-radius:15px;background:#f3f3f3;'&gt;
+                        &lt;video controls muted playsinline
+                               style='position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border:none;border-radius:15px;'&gt;
+                            &lt;source src='../Videos/Generate Payslip.mp4' type='video/mp4'&gt;
+                            Your browser does not support the video tag.
+                        &lt;/video&gt;
+                     &lt;/div&gt;" />
+			</m:VBox>
+		</g:GridContainer>
+		<!-- Inbox -->
+		<g:GridContainer class="jioSection sapUiSmallMarginTop">
+			<g:layout>
+				<g:GridContainerSettings columnSize="49.5%" gap="10px" />
+			</g:layout>
+			<g:layoutXS>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutXS>
+			<g:layoutS>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutS>
+			<g:layoutM>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutM>
+			<!-- Right Column -->
+			<m:VBox id="videoBox_J" class="sapUiMediumMarginTop">
+				<core:HTML id="videoFrameHtml_J"
+            content="&lt;div style='position:relative;width:100%;padding-top:56.25%;overflow:hidden;border-radius:15px;background:#f3f3f3;'&gt;
+                        &lt;video controls muted playsinline
+                               style='position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border:none;border-radius:15px;'&gt;
+                            &lt;source src='../Videos/My Inbox.mp4' type='video/mp4'&gt;
+                            Your browser does not support the video tag.
+                        &lt;/video&gt;
+                     &lt;/div&gt;" />
+			</m:VBox>
+			<!-- Left Column -->
+			<m:VBox alignItems="Start" justifyContent="Center" class="sapUiMediumMarginTop">
+				<m:Title text="{i18n>headerInbox}" level="H1" class="jioHeading" />
+				<m:Text text="{i18n>MyInbox_par}" class="jioParagraph" />
+			</m:VBox>
+		</g:GridContainer>
+
+		<!-- Leave Overview -->
+		<g:GridContainer class="jioSection sapUiSmallMarginTop">
+			<g:layout>
+				<g:GridContainerSettings columnSize="49.5%" gap="10px" />
+			</g:layout>
+			<g:layoutXS>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutXS>
+			<g:layoutS>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutS>
+			<g:layoutM>
+				<g:GridContainerSettings columnSize="100%" gap="10px" />
+			</g:layoutM>
+			<!-- Left Column -->
+			<m:VBox alignItems="Start" justifyContent="Center" class="sapUiMediumMarginTop">
+				<m:Title text="{i18n>leaveOverview}" level="H1" class="jioHeading" />
+				<m:Text text="{i18n>headerLeaveOverview_par}" class="jioParagraph" />
+			</m:VBox>
+			<!-- Right Column -->
+			<m:VBox id="videoBox_K" class="sapUiMediumMarginTop">
+				<core:HTML id="videoFrameHtml_K"
+            content="&lt;div style='position:relative;width:100%;padding-top:56.25%;overflow:hidden;border-radius:15px;background:#f3f3f3;'&gt;
+                        &lt;video controls muted playsinline
+                               style='position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border:none;border-radius:15px;'&gt;
+                            &lt;source src='../Videos/Leave Overview.mp4' type='video/mp4'&gt;
+                            Your browser does not support the video tag.
+                        &lt;/video&gt;
+                     &lt;/div&gt;" />
+			</m:VBox>
+		</g:GridContainer>
+
+		<!-- <m:Button
+            text="Request Demo"
+            press="onOpenDemoForm"
+            class="demoBtn"
+        /> -->
+		<Image
+        src="../image/Request_Demo.png"
+        class="floatingButton"
+        press="onOpenDemoForm"
+      />
+	   <!-- Footer -->
+    <HBox class="footer-bar sapUiSmallMargin" alignItems="Center" justifyContent="SpaceBetween" >
+        <!-- Left: Copyright -->
+        <Text text="{i18n>companynameKT}" class="footer-text"/>
+        <HBox class="footer-social" justifyContent="End">
+            <core:HTML content="&lt;a href='https://www.instagram.com/kalpavrikshatechnologies/' target='_blank'&gt;
+                                  &lt;i class='fab fa-instagram social-icon'&gt;&lt;/i&gt;
+                                &lt;/a&gt;"/>
+            <core:HTML content="&lt;a href='https://www.linkedin.com/company/kalpavriksha-technologies/' target='_blank'&gt;
+                                  &lt;i class='fab fa-linkedin-in social-icon'&gt;&lt;/i&gt;
+                                &lt;/a&gt;"/>
+            <core:HTML content="&lt;a href='https://www.youtube.com/@KalpavrikshaTechnologies' target='_blank'&gt;
+                                  &lt;i class='fab fa-youtube social-icon'&gt;&lt;/i&gt;
+                                &lt;/a&gt;"/>
+        </HBox>
+    </HBox>
+	</Page>
+</mvc:View>

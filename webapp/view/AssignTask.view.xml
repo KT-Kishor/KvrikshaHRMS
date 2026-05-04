@@ -1,0 +1,115 @@
+<mvc:View controllerName="sap.kt.com.minihrsolution.controller.AssignTask"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:fb="sap.ui.comp.filterbar">
+	<Page showNavButton="true" title="{i18n>tileAssignmentFooter}" navButtonPress="AT_onPressback" class="classheader glassHeader ObjectcustomHeaderToolbar">
+		<headerContent>
+			<Button press="Tile_NotifictionBTN" class="sapUiTinyMarginBeginEnd LogNot logoutBtn" tooltip="{i18n>TilenotificationfragName}" icon="sap-icon://bell" type="Transparent" visible="{= ${LoginModel>/Role} !== 'Contractor' }">
+				<customData >
+					<BadgeCustomData class="badgeClass" key="badge" value="{EndingSoonModel>/notificationCount}"/>
+				</customData>
+			</Button>
+			 <Button
+            press="TP_onraisebugpress"
+            icon="sap-icon://incident"
+            tooltip="{i18n>raisebug}"
+            type="Transparent"
+            class="LogNot logoutBtn"
+        />
+			<Button press="onLogout" icon="sap-icon://log" tooltip="{i18n>logoutTooltip}"
+                type="Transparent" class="LogNot logoutBtn"/>
+		</headerContent>
+		<content>
+			<ObjectHeader
+    responsive="true"
+    backgroundDesign="Translucent"
+    binding="{TaskDetailsModel>/}"
+    class="compactObjectHeader">
+    <attributes>
+        <ObjectAttribute
+            title="{i18n>assignmentName}"
+            text="{TaskDetailsModel>TaskName}"/>
+        <ObjectAttribute
+            title="{i18n>description}"
+            text="{TaskDetailsModel>TaskTypeDescription}  -  {TaskDetailsModel>TaskType}"/>
+        <ObjectAttribute
+            title="{i18n>startDate}"
+            text="{path:'TaskDetailsModel>StartDate', formatter:'.Formatter.formatDate'}"/>
+        <ObjectAttribute
+            title="{i18n>endDate}"
+            text="{path:'TaskDetailsModel>EndDate', formatter:'.Formatter.formatDate'}"/>
+    </attributes>
+</ObjectHeader>
+ 
+			<Table
+                class="sapUiTinyMargin CommonRoundedTable"
+                growingScrollToLoad="true"
+                width="auto"
+                items="{AssignModel>/}"
+                growing="true"
+                growingThreshold="50"
+                mode="MultiSelect"
+                alternateRowColors="true"
+                id="AT_id_TaskTable"
+                sticky="ColumnHeaders,HeaderToolbar">
+				<headerToolbar>
+					<OverflowToolbar>
+						<Title
+                            text="{i18n>tileAssignmentFooter} ({= ${AssignModel>/}.length })"
+                        />
+						<!-- <ToolbarSeparator/> -->
+						<ToolbarSpacer />
+						<Button text="Assign Employee" press="AT_onAssignEmpTask" id="AT_id_Assign"
+                         type="Transparent" tooltip="{i18n>assigntask}"/>
+						<!-- <Button text="{i18n>updateenddate}" press="AT_onAssignUpdateEnddate" id="AT_id_updateenddate"
+                         type="Transparent" tooltip="{i18n>updateenddate}"/> -->
+						<Button
+                            press="AT_onEditTask" text="{i18n>updateenddate}" id="AT_id_EditTask"
+                            tooltip="{i18n>updateenddate}" type="Transparent"
+                        />
+						<Button text="{i18n>delete}" press="AT_onDeleteTask" id="AT_id_DeleteTask"
+                            tooltip="{i18n>deleteassigntask}" type="Transparent"/>
+					</OverflowToolbar>
+				</headerToolbar>
+				<columns>
+					<Column minScreenWidth="Tablet" demandPopin="true">
+						<Text text="{i18n>employeeOffer}" />
+					</Column>
+					<!-- <Column minScreenWidth="Tablet" demandPopin="true">
+						<Text text="{i18n>employeeName}" />
+					</Column> -->
+					<Column demandPopin="true">
+						<Text text="{i18n>startDate}" />
+					</Column>
+					<Column minScreenWidth="Tablet" demandPopin="true">
+						<Text text="{i18n>endDate}" />
+					</Column>
+					<Column minScreenWidth="Tablet" demandPopin="true">
+						<Text text="{i18n>hoursWorked}" />
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+						<ObjectIdentifier title="{AssignModel>EmployeeName}" text="{AssignModel>EmployeeID}" />
+							<!-- <Text text="{AssignModel>EmployeeID}" />
+							<Text text="{AssignModel>EmployeeName}" /> -->
+							<Text text="{path:'AssignModel>StartDate',formatter:'.Formatter.formatDate'}"/>
+							<Text text="{path:'AssignModel>EndDate',formatter:'.Formatter.formatDate'}"/>
+							<Text text="{AssignModel>HoursWorked}" />
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
+		<footer>
+			<Bar>
+				<contentLeft>
+					<core:Fragment
+                        fragmentName="sap.kt.com.minihrsolution.fragment.Footer" type="XML" />
+				</contentLeft>
+			</Bar>
+		</footer>
+	</Page>
+</mvc:View>

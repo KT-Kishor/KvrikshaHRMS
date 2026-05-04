@@ -1,0 +1,151 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+
+    <Dialog
+        id="MonthlyInvoiceDialog"
+        contentWidth="1000px"
+        contentHeight="500px"
+        resizable="true"
+        draggable="true">
+
+        <!-- Header -->
+        <customHeader>
+            <Bar class="Coursetitle">
+                <contentLeft>
+                    <Title text="{i18n>monthlyinvoicefor} {MonthlyInvoiceData>/Month}" />
+                </contentLeft>
+                <contentRight>
+                    <Button icon="sap-icon://decline" press="onCloseDialog" tooltip="Close"/>
+                </contentRight>
+            </Bar>
+        </customHeader>
+
+        <!-- Content -->
+        <content>
+           <Table
+                sticky="ColumnHeaders"
+                items="{MonthlyInvoiceData>/Invoices}"
+                noDataText="{i18n>nomonthlydata}">
+
+                <columns>
+                    <Column hAlign="Left">
+                        <Text text="{i18n>invoice_No}" tooltip="{i18n>invoiceNo}"/>
+                    </Column>
+
+                    <Column hAlign="Left">
+                        <Text text="{i18n>invoice_Date}" tooltip="{i18n>invoiceDate}"/>
+                    </Column>
+
+                    <Column hAlign="Left">
+                        <Text text="{i18n>customer_Name}" tooltip="{i18n>customerName}"/>
+                    </Column>
+
+                    <Column hAlign="End">
+                        <Text text="{i18n>transaction_Amount}" tooltip="{i18n>transactionAmount}"/>
+                    </Column>
+
+                    <Column hAlign="End">
+                        <Text text="{i18n>credit_Notes_Amount}" tooltip="{i18n>creditNotesAmount}"/>
+                    </Column>
+
+                    <Column hAlign="End">
+                        <Text text="{i18n>total_Amount}" tooltip="{i18n>totalAmount}"/>
+                    </Column>
+
+                    <Column hAlign="Left">
+                        <Text text="{i18n>status}" tooltip="{i18n>status}"/>
+                    </Column>
+
+                    <Column hAlign="End">
+                        <Text text="{i18n>actual_Amount}" tooltip="{i18n>Actual Amount}"/>
+                    </Column>
+                </columns>
+
+                <items>
+                    <ColumnListItem type="Navigation" press="onPressMonthlyListItem">
+
+                        <cells>
+
+                            <Text text="{MonthlyInvoiceData>InvNo}" />
+
+                            <Text text="{ path:'MonthlyInvoiceData>InvoiceDate', formatter:'.Formatter.formatDate'}"/>
+
+                            <Text text="{MonthlyInvoiceData>CustomerName}" />
+
+                            <ObjectNumber
+                                number="{parts:[{path:'MonthlyInvoiceData>TransactionAmount'}], formatter:'.Formatter.fromatNumber'}"
+                                unit="{MonthlyInvoiceData>Currency}"
+                                textAlign="End"/>
+
+                            <VBox alignItems="End">
+                                <Link
+                                    wrapping="true"
+                                    class="creditLinkStyle"
+                                    press="onInvoiceCreditNotesMonthlyPress"
+                                    text="{parts:[{path:'MonthlyInvoiceData>CreditNotesTotalAmount'},{path:'MonthlyInvoiceData>Currency'}], formatter:'.Formatter.formatAmountWithCurrency'}"/>
+
+                                <Link
+                                    wrapping="true"
+                                    visible="{= ${MonthlyInvoiceData>Currency} !== 'INR' }"
+                                    class="creditLinkStyle"
+                                    press="onInvoiceCreditNotesMonthlyPress"
+                                    text="{parts:[{path:'MonthlyInvoiceData>CreditNotesAmount'},{value:'INR'}], formatter:'.Formatter.formatAmountWithCurrency'}"/>
+                            </VBox>
+
+                            <VBox alignItems="End">
+
+                                <ObjectNumber
+                                    number="{
+                                        parts:[
+                                            {path:'MonthlyInvoiceData>Currency'},
+                                            {path:'MonthlyInvoiceData>TotalAmount'},
+                                            {path:'MonthlyInvoiceData>AmountInINR'}
+                                        ],
+                                        formatter:'.Formatter.fromatNumber'
+                                    }"
+                                    unit="INR"
+                                    textAlign="End"/>
+
+                                <HBox visible="{= ${MonthlyInvoiceData>Currency} !== 'INR' }" justifyContent="End">
+                                    <Text text="Exch. Rate: " />
+                                    <Text text="{path:'MonthlyInvoiceData>ExchRate', formatter:'.Formatter.fromatNumber'}"/>
+                                </HBox>
+
+                            </VBox>
+
+                            <Text text="{MonthlyInvoiceData>Status}" />
+
+                            <Link
+                                id="idMonthly"
+                                wrapping="true"
+                                class="creditLinkStyle"
+                                press="onMonthlyPaymentAmountPress"
+                               text="{
+                                    parts: [
+                                        { path: 'MonthlyInvoiceData>AllTotalAndActualAmount' },
+                                        { value: 'INR' }
+                                    ],
+                                    formatter: '.Formatter.paymentOrActualAmount'
+                                }"/>
+
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+
+        <!-- Footer -->
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer/>
+                <Text text="{i18n>totalAmount} : "/>
+                <ObjectNumber number="{parts:[{path:'MonthlyInvoiceData>/AllTotalAmount'}], formatter:'.Formatter.fromatNumber'}" unit="INR" />
+
+                <Text text="   Actual Amount : "/>
+                <ObjectNumber number="{parts: [{ path: 'MonthlyInvoiceData>/AllActualAmount' }],formatter: '.Formatter.fromatNumber'}" unit="INR"/>
+            </Toolbar>
+        </footer>
+
+    </Dialog>
+</core:FragmentDefinition>

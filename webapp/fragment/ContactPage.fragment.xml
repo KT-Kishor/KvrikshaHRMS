@@ -1,0 +1,72 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:grid="sap.ui.layout.cssgrid"
+    xmlns:core="sap.ui.core">
+
+    <VBox class="contact-hero" width="100%">
+        <Title text="Get in Touch" class="contact-hero-title"/>
+    </VBox>
+    <!-- Section Title -->
+        <HBox class="contact-flex" justifyContent="Start" alignItems="Stretch" wrap="Wrap">
+          <VBox class="contact-subtitle" width="100%">
+                <Title text="{i18n>corporateOfficeAddress}" class="contact-text"/>
+            </VBox>
+
+            <!-- Left: Address -->
+            <VBox class="contact-address-box">
+                <Text text="{i18n>companynameKT}" class="sapUiSmallMarginBottom compName"/>
+                <Text text="{i18n>addressLine1}"/>
+                <Text text="{i18n>addressLine2}"/>
+                <Text text="{i18n>addressLine3}"/>
+                <Text text="{i18n>mobile}"/>
+                <Link text="{i18n>compemail}" href="mailto:accounts@kalpavrikshatechnologies.com"
+                      class="sapUiLargeMarginBottom" wrapping="true"/>
+                <Text text="{i18n>kalCompany}" class="sapUiSmallMarginBottom oldCompName"/>
+                <Text text="{i18n>newCompany}" class="sapUiSmallMarginBottom newcompName"/>
+                <Link text="{i18n>compwebsite}" href="https://kalpavrikshatechnologies.com/" wrapping="true" target="_blank" class="underlineLink"/>
+            </VBox>
+
+                <!-- Right: Google Map -->
+            <VBox class="contact-map-box">
+                    <core:HTML
+                        content="
+                            &lt;div class='map-responsive'&gt;
+                            &lt;iframe
+                                src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3809.3348209072196!2d76.84617247462505!3d17.299387105335363!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc8c122d9181afd%3A0x6af9e90eb1f5fc8f!2sKalpavriksha%20Technologies!5e0!3m2!1sen!2sin!4v1758549339340!5m2!1sen!2sin'
+                                width='100%'
+                                style='border:0;'
+                                allowfullscreen=''
+                                loading='lazy'
+                                referrerpolicy='no-referrer-when-downgrade'&gt;
+                            &lt;/iframe&gt;
+                            &lt;/div&gt;
+                        " />      
+            </VBox>
+        </HBox>
+
+    <!-- Footer -->
+    <HBox class="footer-bar" alignItems="Center" justifyContent="SpaceBetween" width="100%" >
+        <!-- Left: Copyright -->
+        <Text text="{i18n>companynameKT}" class="footer-text"/>
+        <!-- Middle: Links -->
+        <!-- <HBox class="footer-links" justifyContent="Center">
+            <Link text="Disclaimer" href="#" target="_blank" class="footer-link"/>
+            <Link text="Privacy" href="#" target="_blank" class="footer-link"/>
+            <Link text="Modern Slavery Statement" href="#" target="_blank" class="footer-link"/>
+        </HBox> -->
+
+        <!-- Right: Social Icons -->
+        <HBox class="footer-social" justifyContent="End">
+            <core:HTML content="&lt;a href='https://www.instagram.com/kalpavrikshatechnologies/' target='_blank'&gt;
+                                  &lt;i class='fab fa-instagram social-icon'&gt;&lt;/i&gt;
+                                &lt;/a&gt;"/>
+            <core:HTML content="&lt;a href='https://www.linkedin.com/company/kalpavriksha-technologies/' target='_blank'&gt;
+                                  &lt;i class='fab fa-linkedin-in social-icon'&gt;&lt;/i&gt;
+                                &lt;/a&gt;"/>
+            <core:HTML content="&lt;a href='https://www.youtube.com/@KalpavrikshaTechnologies' target='_blank'&gt;
+                                  &lt;i class='fab fa-youtube social-icon'&gt;&lt;/i&gt;
+                                &lt;/a&gt;"/>
+        </HBox>
+    </HBox>
+</core:FragmentDefinition>

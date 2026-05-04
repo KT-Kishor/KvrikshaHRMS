@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Kvriksha Technologies Private Limited</title>
+    <link rel="icon" type="image/x-icon" href="../image/KVPL_Logo_T.png" />
+    <style>
+      html,
+      body,
+      body > div,
+      #content,
+      #container,
+      #container-uiarea {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+    </style>
+  <script id="sap-ui-bootstrap" src="resources/sap-ui-core.js"
+    data-sap-ui-theme="sap_horizon" data-sap-ui-resourceroots='{
+            "sap.kt.com.minihrsolution": "./"
+        }' data-sap-ui-oninit="module:sap/ui/core/ComponentSupport" data-sap-ui-compatVersion="edge"
+    data-sap-ui-async="true" data-sap-ui-frameOptions="trusted"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+
+<body class="sapUiBody sapUiSizeCompact" id="content">
+  <div data-sap-ui-component data-name="sap.kt.com.minihrsolution" data-id="container"
+    data-settings='{"id" : "sap.kt.com.minihrsolution"}' data-handle-validation="true"></div>
+</body>
+
+</html>

@@ -1,0 +1,78 @@
+<core:FragmentDefinition xmlns="sap.m"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:u="sap.ui.unified"
+	xmlns:core="sap.ui.core">
+	<Dialog title="{i18n>addItemAllowance}" resizable="true" draggable="true" contentHeight="auto" contentWidth="50%">
+			<f:SimpleForm id="item_id_SimpleFromtwo" editable="true" layout="ResponsiveGridLayout" labelSpanXL="4" labelSpanL="3" labelSpanM="4" labelSpanS="12" emptySpanXL="0" emptySpanL="4" emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="1" columnsM="1">
+				<f:content>
+					<Label text="{i18n>itemID}"/>
+					<Input value="{AllowanceCreateModel>/IndexNo}" editable="false" />
+					<!-- Item Type -->
+					<!-- <Label text="{i18n>allowanceType}" required="true"/>
+                    <ComboBox id="item_id_ItemType" valueStateText="{i18n>expItemTypeMess}" change="Exp_Frg_onItemTypeChange" showSecondaryValues="true"  selectedKey="{AllowanceCreateModel>/ItemType}">
+					<core:Item key="{i18n>nightallowance}" text="{i18n>nightallowance}" />
+				    </ComboBox> -->
+					<!-- Mode Of Payment -->
+					<!-- <Label text="{i18n>expModeOfPayment}" required="true"/>
+					<ComboBox id="item_id_modeofPayment" valueStateText="{i18n>selectmodeofpayment}" items="{ModeOfPayment>/}" selectedKey="{AllowanceCreateModel>/ModeOfPayment}" change="EXP_FRG_validatepaymentMode" enabled="{viewModel>/enable}">
+						<core:Item key="{ModeOfPayment>Code}" text="{ModeOfPayment>Code}" />
+					</ComboBox> -->
+					<!-- Expense Date -->
+					<Label text="{i18n>allowancedate}" required="true" />
+					<VBox width="100%" height="3rem">
+						<!-- <DatePicker
+							id="item_id_AllowanceDate"
+							minDate="{viewModel>/MinDate}"
+							maxDate="{viewModel>/MaxDate}"
+							displayFormat="dd/MM/yyyy"
+							valueFormat="dd/MM/yyyy"
+							value="{AllowanceCreateModel>/AllowanceDate}"
+							visible="{viewModel>/DateVisible}"
+							change="LC_ValidateDate"/> -->
+						<MultiComboBox
+							id="dateMultiBoxFrag"
+							items="{/dates}"
+							visible="{viewModel>/MutiDateVis}"
+							valueStateText="{i18n>selectDate}"
+							showSelectAll="true"
+							change="onSelectdate" showSecondaryValues="true">
+							<core:ListItem key="{key}" text="{day}" additionalText="{weekday}"/>
+						</MultiComboBox>
+					</VBox>
+					<!-- Expense Amount -->
+					<!-- <Label text="{i18n>allowanceAmount}" required="true"/>
+					<HBox width="100%" justifyContent="SpaceBetween">
+						<VBox width="calc(70% - 5px)">
+							<Input id="item_id_Amount" valueStateText="{i18n>ExpExpenseAmountMess}" value="{AllowanceCreateModel>/AllowanceAmount}" liveChange="LC_ExpAmount" placeholder="{i18n>placeAmount}" enabled="{viewModel>/enable}" maxLength="15"/>
+						</VBox>
+						<VBox width="calc(30% - 5px)">
+							<ComboBox items="{path:'CurrencyModel>/',length:1000}" valueStateText="{i18n>selectCurrency}" width="100%" change="onChangeCurrency" value="{AllowanceCreateModel>/Currency}" id="item_id_Currency" enabled="{viewModel>/enable}">
+								<core:Item key="{CurrencyModel>currency}" text="{CurrencyModel>currency}" />
+							</ComboBox>
+						</VBox>
+					</HBox> -->
+					<!-- Conversion Rate -->
+					<!-- <Label text="{i18n>expConversionRate}" visible="{= ${AllowanceCreateModel>/Currency} !== 'INR' }" required="true" />
+					<HBox width="100%" justifyContent="SpaceBetween">
+						<VBox width="calc(50% - 5px)">
+							<Input id="item_id_ConvertionRate" valueStateText="{i18n>ExpExpenseAmountMess}" value="{AllowanceCreateModel>/ConversionRate}" liveChange="LC_ExpConversionRate" placeholder="{i18n>expenseConversionRatePlaceholder}" visible="{= ${AllowanceCreateModel>/Currency} !== 'INR' }" maxLength="15 " change="Exp_Frg_onChangeConverstionRate"/>
+						</VBox>
+						<VBox width="calc(50% - 5px)">
+							<Input value="{AllowanceCreateModel>/TotalAmount}" visible="{= ${AllowanceCreateModel>/Currency} !== 'INR' }" editable="false"></Input>
+						</VBox>
+					</HBox> -->
+					<!-- <Label text="{i18n>comments}" required="true"></Label>
+					<TextArea id="item_id_Comments" valueStateText="{i18n>enterComments}" liveChange="LC_ExpComments" value="{AllowanceCreateModel>/Comments}" maxLength="120" rows="2" placeholder="{i18n>enterComments}" /> -->
+				</f:content>
+			</f:SimpleForm>
+		<footer>
+			<Toolbar>
+				<ToolbarSpacer />
+				<!-- This pushes the buttons to the right -->
+				<Button text="{i18n>submit}" type="Transparent" press="Exp_Det_onPressSubmit" visible="{viewModel>/SubmitBtn}" />
+				<Button text="{i18n>save}" type="Transparent" press="Exp_Det_onPressSaveExpense" visible="{viewModel>/SaveBtn}" />
+				<Button text="{i18n>close}" type="Transparent" class="spaceBetween sendMail" press="Exp_Det_onPressClose" />
+			</Toolbar>
+		</footer>
+	</Dialog>
+</core:FragmentDefinition>

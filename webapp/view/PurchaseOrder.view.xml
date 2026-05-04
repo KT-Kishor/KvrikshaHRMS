@@ -1,0 +1,252 @@
+<mvc:View
+    controllerName="sap.kt.com.minihrsolution.controller.PurchaseOrder"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:m="sap.m"
+    xmlns:c="sap.ui.core"
+    xmlns:fb="sap.ui.comp.filterbar"
+    xmlns:core="sap.ui.core"
+    displayBlock="true"
+    height="100%"
+    busyIndicatorDelay="0"
+>
+    <Page>
+        <customHeader>
+            <core:Fragment
+                fragmentName="sap.kt.com.minihrsolution.fragment.Header"
+                type="XML"
+            />
+        </customHeader>
+        <content>
+            <fb:FilterBar
+                id="PO_id_FilterbarEmployee"
+                persistencyKey="myPersKey"
+                useToolbar="false"
+                clear="PO_onPressClear"
+                showClearOnFB="true"
+                search="PO_onSearch"
+                filterChange="IA_.onFilterChange"
+                afterVariantLoad="IA_.onAfterVariantLoad"
+                showFilterConfiguration="false"
+                class="sapUiTinyMargin CommonRoundedTable"
+				
+            >
+                <fb:filterGroupItems>
+                    <fb:FilterGroupItem
+                        name="Customer Name"
+                        label="Customer Name"
+                        groupName="Group"
+                        visibleInFilterBar="true"
+                    >
+                        <fb:control>
+                            <ComboBox
+                                id="PO_id_CustomerName"
+                                items="{ManageCustomerModel>/}"
+                                showClearIcon="true"
+                            >
+                                <core:Item
+                                    key="{ManageCustomerModel>companyName}"
+                                    text="{ManageCustomerModel>companyName}"
+                                />
+                            </ComboBox>
+                        </fb:control>
+                    </fb:FilterGroupItem>
+                </fb:filterGroupItems>
+
+                <fb:filterGroupItems>
+                    <fb:FilterGroupItem
+                        name="Company Name"
+                        label="Company Name"
+                        groupName="Group"
+                        visibleInFilterBar="true"	
+                    >
+                        <fb:control>
+                            <ComboBox
+                                id="PO_id_CompanyName"
+                                items="{CompanyCodeDetailsModel>/}"
+                                showClearIcon="true"
+								showSecondaryValues="true" filterSecondaryValues="true"
+                            >
+                                <core:ListItem
+                                    key="{CompanyCodeDetailsModel>companyCode}"
+                                    text="{CompanyCodeDetailsModel>companyCode}"
+									additionalText="{CompanyCodeDetailsModel>branch}"
+                                />
+                            </ComboBox>
+                        </fb:control>
+                    </fb:FilterGroupItem>
+                </fb:filterGroupItems>
+
+                <fb:filterGroupItems>
+                    <fb:FilterGroupItem
+                        name="Po Number"
+                        label="PO Number"
+                        groupName="Group"
+                        visibleInFilterBar="true"
+                    >
+                        <fb:control>
+                            <ComboBox
+                                id="PO_id_PoNumber"
+                                items="{POModelfilter>/}"
+                                showClearIcon="true"
+                                change="onDateRangeChange"
+                            >
+                                <core:Item
+                                    key="{POModelfilter>PoNumber}"
+                                    text="{POModelfilter>PoNumber}"
+                                />
+                            </ComboBox>
+                        </fb:control>
+                    </fb:FilterGroupItem>
+                </fb:filterGroupItems>
+                <fb:filterGroupItems>
+                    <fb:FilterGroupItem
+                        name="Creation Date"
+                        label="Creation Date"
+                        groupName="Group"
+                        visibleInFilterBar="true"
+                    >
+                        <fb:control>
+                            <DateRangeSelection
+                                id="PO_idECreationDatePicker"
+                                valueFormat="yyyy-MM-dd"
+                                displayFormat="dd/MM/yyyy"
+                                change="onDateRangeChange"
+                            />
+                        </fb:control>
+                    </fb:FilterGroupItem>
+                </fb:filterGroupItems>
+            </fb:FilterBar>
+            <Table
+                id="idPOTable"
+                sticky="ColumnHeaders,HeaderToolbar"
+                mode="SingleSelectLeft"
+                width="auto"
+                class="sapUiTinyMargin CommonRoundedTable"
+                items="{path: 'POModel>/', sorter: {path: 'PoNumber', descending: true}}"
+            >
+                <headerToolbar>
+                    <OverflowToolbar>
+                        <Title
+                            text="Purchase Order List ({=${POModel>/}.length})"
+                        />
+                        <ToolbarSpacer />
+                        <Button
+                            text="Create Purchase Order"
+                            press="PO_onCreatePurchaseOrder"
+                            type="Transparent"
+                        />
+                        <Button
+                            text="Delete"
+                            press="PO_onDeleteButtonPress"
+                            type="Transparent"
+                        />
+                        <Button
+                            text="{i18n>download}"
+                            press="PO_onDownloadButtonPress"
+                            type="Transparent"
+                            tooltip="{i18n>download}"
+                        />
+                    </OverflowToolbar>
+                </headerToolbar>
+                <columns>
+                    <Column demandPopin="true">
+                        <Text
+                            text="{i18n>ponumber}"
+                            tooltip="{i18n>ponumber}"
+                        />
+                    </Column>
+					
+                    <Column demandPopin="true">
+                        <Text
+                            text="{i18n>customerName}"
+                            tooltip="{i18n>customerName}"
+                        />
+                    </Column>
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                    >
+                        <Text
+                            text="{i18n>customerAddress}"
+                            tooltip="{i18n>customerAddress}"
+                        />
+                    </Column>
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                    >
+                        <Text
+                            text="{i18n>type}"
+                            tooltip="{i18n>type}"
+                        />
+                    </Column>
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                    >
+                        <Text
+                            text="{i18n>pan}"
+                            tooltip="{i18n>pan}"
+                        />
+                    </Column>
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                    >
+                        <Text
+                            text="{i18n>sdate}"
+                            tooltip="{i18n>sdate}"
+                        />
+                    </Column>
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                    >
+                        <Text
+                            text="{i18n>edate}"
+                            tooltip="{i18n>edate}"
+                        />
+                    </Column>
+                    <Column
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                    >
+                        <Text
+                            text="{i18n>podate}"
+                            tooltip="{i18n>podate}"
+                        />
+                    </Column>
+                </columns>
+                <items>
+                    <ColumnListItem
+                        type="Navigation"
+                        press="onColumnListItemPress"
+                    >
+                        <cells>
+                            <Text text="{POModel>PoNumber}" />
+                            <Text text="{POModel>CustomerName}" />
+                            <Text text="{POModel>Address}" />
+                            <Text text="{POModel>Type}" />
+                            <Text text="{POModel>PAN}" />
+                            <Text text="{path:'POModel>StartDate', formatter: '.formatter.formatDate'}"/>
+                            <Text text="{path:'POModel>EndDate', formatter: '.formatter.formatDate'}"/>
+                            <Text text="{path:'POModel>CurrentDate', formatter: '.formatter.formatDate'}"/>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+        <footer>
+            <Bar>
+                <contentLeft>
+                    <core:Fragment
+                        fragmentName="sap.kt.com.minihrsolution.fragment.Footer"
+                        type="XML"
+                    />
+                </contentLeft>
+                <contentRight />
+            </Bar>
+        </footer>
+    </Page>
+</mvc:View>

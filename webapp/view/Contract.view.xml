@@ -1,0 +1,136 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+    controllerName="sap.kt.com.minihrsolution.controller.Contract"
+	xmlns:fb="sap.ui.comp.filterbar"	
+    displayBlock="true">
+	<Page id="C_id_Page" >
+		<customHeader>
+	    <core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Header" type="XML" />
+		</customHeader>
+		<content>
+			<fb:FilterBar  class="sapUiTinyMargin CommonRoundedTable" id="C_id_FilterBar" persistencyKey="myPersKey" useToolbar="false" clear="C_onClearFilters" showClearOnFB="true" search="C_onSearch" filterChange=".onFilterChange" afterVariantLoad=".onAfterVariantLoad" showFilterConfiguration="false">
+				<fb:filterGroupItems>
+					<fb:FilterGroupItem name="ContractNo" label="{i18n>contractNo}" groupName="Group1" visibleInFilterBar="true">
+					<fb:control>
+						 <ComboBox id="idContractNoCombo" selectedKey="{path: 'filters>/ContractNo'}" showSecondaryValues="true"
+                         showClearIcon="true" items="{ContractModelInitial>/}" filterSecondaryValues="true">
+						   <core:ListItem key="{ContractModelInitial>ContractNo}" text="{ContractModelInitial>ContractNo}"
+                            additionalText="{ContractModelInitial>ConsultantName}"/>
+                         </ComboBox>
+					</fb:control>
+				</fb:FilterGroupItem>
+				<fb:FilterGroupItem name="LocationService" label="{i18n>locationService}" groupName="Group1" visibleInFilterBar="true">
+						<fb:control>
+							<ComboBox   items="{WorkingMode>/location}" showClearIcon="true" id="C_id_DesiFilter">
+								<core:Item key="{WorkingMode>ID}" text="{WorkingMode>Location}"/>
+							</ComboBox>
+						</fb:control>
+					</fb:FilterGroupItem>
+					<fb:FilterGroupItem name="EndClient" label="{i18n>endClient}" groupName="Group1" visibleInFilterBar="true">
+					<fb:control>
+						<ComboBox id="C_id_EndClient" showClearIcon="true" items="{path:'EndClientModel>/', sorter: {path:'EndClient', descending:false}}">
+							<core:Item key="{EndClientModel>EndClient}" text="{EndClientModel>EndClient}" />
+						</ComboBox>
+					</fb:control>
+				</fb:FilterGroupItem>
+					<fb:FilterGroupItem name="Year" label="{i18n>startDate}" groupName="Group1" visibleInFilterBar="true">
+						<fb:control>
+                    <DateRangeSelection
+                    id="C_id_Year"
+                    valueFormat="yyyy-MM-dd"
+                    displayFormat="dd/MM/yyyy"/>						
+					</fb:control>
+						</fb:FilterGroupItem>
+					<fb:FilterGroupItem name="ContractStatus" label="{i18n>contractStatus}" groupName="Group1" visibleInFilterBar="true">
+					<fb:control>
+						<ComboBox showClearIcon="true" selectionChange=".onSelectionChange" items="{AssignmentStatus>/assignmentStatus}">
+							<core:Item key="{AssignmentStatus>ID}" text="{AssignmentStatus>Value}"/>
+						</ComboBox>
+					</fb:control>
+				</fb:FilterGroupItem>
+				<fb:FilterGroupItem name="CompanyCode" label="{i18n>coCode}" groupName="Group1" visibleInFilterBar="true">
+						<fb:control>
+							<ComboBox id="C_id_CompanyCodeComboBox" showSecondaryValues="true" items="{CompanyCodeDetailsModel>/}" showClearIcon="true" filterSecondaryValues="true">
+								<core:ListItem key="{CompanyCodeDetailsModel>companyCode}" text="{CompanyCodeDetailsModel>companyCode}"  additionalText="{CompanyCodeDetailsModel>branch}"/>
+							</ComboBox>
+						</fb:control>
+					</fb:FilterGroupItem>
+				</fb:filterGroupItems>
+			</fb:FilterBar>
+			<Table  class="sapUiTinyMargin CommonRoundedTable" sticky="ColumnHeaders,HeaderToolbar" growingScrollToLoad="true" width="auto" id="C_id_Salary"  items="{
+                path: 'ContractModel>/', sorter: {path: 'ContractStatus',descending: false,group: true},groupHeaderFactory: '.getGroupHeader'}" growing="true"  growingThreshold="50"  alternateRowColors="true"  busyIndicatorDelay="0" mode="SingleSelectLeft"
+			    selectionChange="onSelectionChange">
+			 <headerToolbar>
+                <OverflowToolbar >
+                    <Title id="" text="{i18n>contractDetails}  ({= ${ContractModel>/}.length })"/>
+                    <!-- <ToolbarSeparator/> -->
+                    <ToolbarSpacer/>
+					<Button  tooltip="{i18n>resendOnboardingEmail}" text="{i18n>resendOnboardingEmail}"  id="Con_id_ResendEmail" enabled="false"  press="Con_onResendOnboardingEmail" type="Transparent"/>
+					<Button text="{i18n>activeContract}"  tooltip="{i18n>active}" id="C_id_ActivateBtn" press="C_id_ActivatePress" type="Transparent"/>
+					<Button text="{i18n>renew}" tooltip="{i18n>renew}" id="C_id_Renewbtn" press="C_id_RenewPress" type="Transparent"/>
+					<Button text="{i18n>headerContractDetails}" tooltip="{i18n>headerContractDetails}" id="C_id_AddBtn" press="C_onPressAddContract" type="Transparent"/>
+					<Button text="{i18n>download}" press="C_DownloadTableData"/>
+                </OverflowToolbar>
+            </headerToolbar>
+				<columns>
+					<Column demandPopin="true">
+						<Text text="{i18n>contractNo}"/>
+					</Column>
+					<Column demandPopin="true" width="20%">
+						<Text text="{i18n>consultantName}" />
+					</Column>
+					<Column demandPopin="true" minScreenWidth="Desktop">
+						<Text text="{i18n>locationswhereServices}" />
+					</Column>
+					<Column minScreenWidth="Desktop" demandPopin="true">
+						<Text text="{i18n>endClient}" />
+					</Column>
+					<Column minScreenWidth="Desktop" demandPopin="true">
+						<Text text="{i18n>startDate}" />
+					</Column>
+					<Column minScreenWidth="Desktop" demandPopin="true">
+						<Text text="{i18n>endDate}" />
+					</Column>
+					<Column minScreenWidth="Tablet" demandPopin="true">
+						<Text text="{i18n>amount}" />
+					</Column>
+					<Column minScreenWidth="Tablet" demandPopin="true">
+						<Text text="{i18n>paymentterms}" />
+					</Column>
+					<Column minScreenWidth="Desktop" demandPopin="true">
+						<Text text="{i18n>comments}" />
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem type="Navigation" press="C_onPressAddContract">
+						<cells>
+							<Text text="{ContractModel>ContractNo} / {ContractModel>AgreementNo}"/>
+							<VBox>
+							<Text text="{ContractModel>ConsultantName}"/>
+							<Text text="{ContractModel>ContarctEmail}"/>
+                            </VBox>
+							<!-- <Text text="{ContractModel>ConsultantName}"/> -->
+							<ObjectIdentifier title="{ContractModel>LocationService}" text="{ContractModel>ContractLocation}"/>
+							<Text text="{ContractModel>EndClient}"/>
+							<Text text="{path:'ContractModel>AssignmentStartDate' ,formatter:'.Formatter.formatDate'}" />
+							<Text text="{path:'ContractModel>AssignmentEndDate' ,formatter:'.Formatter.formatDate'}" />
+							<Text text="{ContractModel>ConsultantRate}"/>
+							<Text text="{ContractModel>PaymentTerms}"/>
+							<Button text="{i18n>View}" press=".onShowMore"
+    						visible="{=${ContractModel>Comments}.length > 0 }"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
+		<footer>
+			<Bar>
+					    <contentLeft>
+                    <core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Footer" type="XML" />
+                </contentLeft>
+			</Bar>
+		</footer>
+	</Page>
+</mvc:View>

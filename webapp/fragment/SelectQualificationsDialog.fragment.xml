@@ -1,0 +1,18 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <SelectDialog
+        contentHeight="auto"
+        contentWidth="auto"
+        id="qualificationDialog"
+        title="Select Qualifications"
+        multiSelect="true"
+        confirm=".onConfirmQualifications"
+        cancel=".onCancelQualifications"
+        search=".onSearchQualifications"
+        items="{QualificationModel>/qualification}"
+    >
+        <StandardListItem title="{QualificationModel>}" />
+    </SelectDialog>
+</core:FragmentDefinition>

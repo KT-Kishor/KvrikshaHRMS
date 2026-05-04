@@ -1,0 +1,539 @@
+<mvc:View
+    controllerName="sap.kt.com.minihrsolution.controller.ExpenseDetails"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns:f="sap.ui.layout.form"
+    xmlns="sap.uxap"
+    xmlns:core="sap.ui.core"
+    xmlns:m="sap.m"
+    busyIndicatorDelay="0"
+>
+    <m:Page
+        id="id_Expense_Details"
+        title="{i18n>expDetails}"
+        navButtonPress="Exp_Det_onPressBackBtn"
+        showNavButton="true"
+        class="service-background glassHeader ObjectcustomHeaderToolbar classheader"
+    >
+        <m:headerContent>
+            <m:Button
+                press="Tile_NotifictionBTN"
+                tooltip="{i18n>TilenotificationfragName}"
+                icon="sap-icon://bell"
+                type="Transparent" 
+                visible="{= ${LoginModel>/Role} !== 'Contractor' }" class="sapUiTinyMarginBeginEnd LogNot logoutBtn"
+            >
+                <m:customData>
+                    <m:BadgeCustomData
+                        class="badgeClass"
+                        key="badge"
+                        value="{EndingSoonModel>/notificationCount}"
+                    />
+                </m:customData>
+            </m:Button>
+             <m:Button
+            press="TP_onraisebugpress"
+            icon="sap-icon://incident"
+            tooltip="{i18n>raisebug}"
+            type="Transparent"
+            class="LogNot logoutBtn"
+        />  
+            <m:Button
+                press="onLogout"
+                icon="sap-icon://log"
+                tooltip="{i18n>logoutTooltip}"
+                type="Transparent" class="LogNot logoutBtn"
+            />
+        </m:headerContent>
+        <ObjectPageLayout
+            enableLazyLoading="true"
+            navigate="onSectionChange"
+            beforeNavigate="onBeforeNavigate"
+            useIconTabBar="true"
+            showTitleInHeaderContent="true"
+            upperCaseAnchorBar="false"
+            headerContentPinnable="true"
+            sectionChange="onSectionChange"
+            id="objectPageLayoutExpence"
+            class="sapuiTinyMarginBegin Coursetitle"
+
+        >
+            <headerTitle >
+                <ObjectPageDynamicHeaderTitle class="sapUiTinyMargin">
+                    <expandedHeading>
+                        <m:Title
+                            text="{FilteredExpenseModel>/0/EmployeeName}"
+                            wrapping="true"
+                            width="100%"
+                        />
+                    </expandedHeading>
+                    <expandedContent>
+                        <m:Label
+                            text="{FilteredExpenseModel>/0/EmployeeID}"
+                            wrapping="true"
+                            width="100%"
+                            class="whiteLabel"
+                        />
+                    </expandedContent>
+                </ObjectPageDynamicHeaderTitle>
+            </headerTitle>
+            <sections>
+                <ObjectPageSection
+                    titleUppercase="false"
+                    id="idExpObjectPageSection"
+                    title="{i18n>expBasicInformation}"
+                >
+                    <subSections>
+                        <ObjectPageSubSection
+                            title="{i18n>expBasicInformation}"
+                            titleUppercase="false"
+                        >
+                            <blocks>
+                                <f:SimpleForm
+                                    id="Exp_Det_id_DimpleForm"
+                                    editable="true"
+                                    layout="ColumnLayout"
+                                    labelSpanXL="4"
+                                    labelSpanL="3"
+                                    labelSpanM="4"
+                                    labelSpanS="12"
+                                    adjustLabelSpan="false"
+                                    emptySpanXL="0"
+                                    emptySpanL="0"
+                                    emptySpanM="0"
+                                    emptySpanS="0"
+                                    columnsXL="2"
+                                    columnsL="2"
+                                    columnsM="1"
+                                >
+                                    <f:toolbar>
+                                        <m:Toolbar>
+                                            <m:Title
+                                                title="{i18n>expBasicInformation}"
+                                            />
+                                            <m:ToolbarSpacer />
+                                            <m:Button
+                                                type="{= ${viewModel>/isEditMode} ? 'Transparent' : 'Transparent' }"
+                                                text="{= ${viewModel>/isEditMode} ? 'Save' : 'Edit' }"
+                                                press="Exp_Det_onEditOrSavePress"
+                                                icon="{= ${viewModel>/isEditMode} ? '' : '' }"
+                                                visible="{viewModel>/status}"
+                                            />
+                                        </m:Toolbar>
+                                    </f:toolbar>
+                                    <!-- <f:content> -->
+                                    <!-- Employee ID -->
+                                    <m:Label text="{i18n>employeeID}" />
+                                    <m:Input
+                                        value="{FilteredExpenseModel>/0/EmployeeID}"
+                                        editable="false"
+                                    />
+                                    <!-- Employee Name -->
+                                    <m:Label text="{i18n>employeeName}" />
+                                    <m:Input
+                                        value="{FilteredExpenseModel>/0/EmployeeName}"
+                                        editable="false"
+                                    />
+                                    <!-- Total Amount -->
+                                    <m:Label text="{i18n>totalAmount}" />
+                                    <m:Input
+                                        value="{path:'FilteredExpenseModel>/0/TotalAmount', formatter: '.Formatter.formatAmount'}"
+                                        editable="false"
+                                    />
+                                    <!-- Reimbursement Amount -->
+                                    <m:Label
+                                        text="{i18n>expReimbursementAmount}"
+                                    />
+                                    <m:Input
+                                        value="{path:'FilteredExpenseModel>/0/ReimbursementAmount', formatter: '.Formatter.formatAmount'}"
+                                        editable="false"
+                                    />
+                                    <!-- Status -->
+                                    <m:Label text="{i18n>status}" />
+                                    <m:Input
+                                        value="{FilteredExpenseModel>/0/Status}"
+                                        editable="false"
+                                    />
+                                    <!-- Trip Type -->
+                                    <m:Label text="{i18n>expExpenseType}" />
+                                    <m:Input
+                                        value="{FilteredExpenseModel>/0/TripType}"
+                                        editable="false"
+                                    />
+                                    <!-- Travel Allowance -->
+                                    <m:Label text="{i18n>expTravelAllowance}" />
+                                    <m:Input
+                                        value="{FilteredExpenseModel>/0/TravelAllowance}"
+                                        editable="false"
+                                    />
+                                    <!-- Expense Name -->
+                                    <m:Label text="{i18n>expExpenseName}" />
+                                    <m:Input
+                                        value="{FilteredExpenseModel>/0/ExpenseName}"
+                                        editable="false"
+                                    />
+                                    <!-- Start Date -->
+                                    <m:Label text="{i18n>startDate}" />
+                                    <m:DatePicker
+                                        displayFormat="dd/MM/yyyy"
+                                        value="{path:'FilteredExpenseModel>/0/ExpStartDate',formatter: '.Formatter.formatDate'}"
+                                        editable="false"
+                                    />
+                                    <!-- EndDate -->
+                                    <m:Label text="{i18n>endDate}" />
+                                    <m:DatePicker
+                                        displayFormat="dd/MM/yyyy"
+                                        value="{path:'FilteredExpenseModel>/0/ExpEndDate',formatter: '.Formatter.formatDate'}"
+                                        editable="false"
+                                    />
+                                    <!-- Country -->
+                                    <m:Label
+                                        text="{i18n>sourceCountry}"
+                                        required="true"
+                                    />
+                                    <m:ComboBox
+                                        id="Exp_id_Country"
+                                        valueStateText="{i18n>expValStaCountry}"
+                                        change="Exp_Det_CountryChange"
+                                        items="{path:'CountryModel>/',length:1000}"
+                                        value="{FilteredExpenseModel>/0/Country}"
+                                        editable="{viewModel>/editable}"
+                                    >
+                                        <core:ListItem
+                                            key="{CountryModel>id}"
+                                            text="{CountryModel>countryName}"
+                                            additionalText="{CountryModel>code}"
+                                        />
+                                    </m:ComboBox>
+                                    <!-- State -->
+                                    <m:Label
+                                        text="{i18n>sourceState}"
+                                        required="true"
+                                    />
+                                    <m:ComboBox
+                                        id="Exp_id_State"
+                                        valueStateText="{i18n>expValStaState}"
+                                        change="Exp_Det_StateChange"
+                                        items="{path:'StateModel>/',length:1000}"
+                                        value="{FilteredExpenseModel>/0/State}"
+                                        editable="{viewModel>/editable}"
+                                    >
+                                        <core:ListItem
+                                            key="{StateModel>stateName}"
+                                            text="{StateModel>stateName}"
+                                        />
+                                    </m:ComboBox>
+                                    <!-- Source -->
+                                    <m:Label
+                                        text="{i18n>sourceCity}"
+                                        required="true"
+                                    />
+                                    <m:ComboBox
+                                        id="Exp_id_Source"
+                                        valueStateText="{i18n>expValStaSource}"
+                                        change="Exp_Det_SourceChange"
+                                        items="{path:'CityModel>/',length:1000}"
+                                        value="{FilteredExpenseModel>/0/Source}"
+                                        editable="{viewModel>/editable}"
+                                    >
+                                        <core:ListItem
+                                            key="{CityModel>cityName}"
+                                            text="{CityModel>cityName}"
+                                            additionalText="{CityModel>branchCode}"
+                                        />
+                                    </m:ComboBox>
+                                    <!-- Destination Country -->
+                                    <m:Label
+                                        text="{i18n>destinationCountry}"
+                                        required="{viewModel>/required}"
+                                    />
+                                    <m:ComboBox
+                                        id="Exp_id_DestinationCountry"
+                                        valueStateText="{i18n>expValStaCountry}"
+                                        change="Exp_Det_DestinationCountryChange"
+                                        items="{path:'CountryModel>/',length:1000}"
+                                        value="{FilteredExpenseModel>/0/DestinationCountry}"
+                                        editable="{viewModel>/editable}"
+                                    >
+                                        <core:ListItem
+                                            key="{CountryModel>id}"
+                                            text="{CountryModel>countryName}"
+                                            additionalText="{CountryModel>code}"
+                                        />
+                                    </m:ComboBox>
+                                    <!-- Destination State -->
+                                    <m:Label
+                                        text="{i18n>destinationState}"
+                                        required="{viewModel>/required}"
+                                    />
+                                    <m:ComboBox
+                                        id="Exp_id_DestinationState"
+                                        valueStateText="{i18n>expValStaState}"
+                                        change="Exp_Det_DestinationStateChange"
+                                        items="{path:'StateModel>/',length:1000}"
+                                        value="{FilteredExpenseModel>/0/DestinationState}"
+                                        editable="{viewModel>/editable}"
+                                    >
+                                        <core:ListItem
+                                            key="{StateModel>stateName}"
+                                            text="{StateModel>stateName}"
+                                        />
+                                    </m:ComboBox>
+                                    <!-- Destination -->
+                                    <m:Label
+                                        text="{i18n>destinationCity}"
+                                        required="{viewModel>/required}"
+                                    />
+                                    <m:ComboBox
+                                        id="Exp_id_Destination"
+                                        valueStateText="{i18n>expValStaDestination}"
+                                        change="Exp_Det_DestinationChange"
+                                        items="{path:'CityModel>/',length:1000}"
+                                        editable="{viewModel>/editable}"
+                                        value="{FilteredExpenseModel>/0/Destination}"
+                                    >
+                                        <core:ListItem
+                                            key="{CityModel>cityName}"
+                                            text="{CityModel>cityName}"
+                                            additionalText="{CityModel>branchCode}"
+                                        />
+                                    </m:ComboBox>
+                                    <!-- CostCenter -->
+                                    <m:Label
+                                        text="{i18n>expCostCenter}"
+                                        required="true"
+                                    />
+                                    <m:Select
+                                        items="{Costcenter>/Costcenter}"
+                                        selectedKey="{FilteredExpenseModel>/0/CostCenter}"
+                                        editable="{viewModel>/editable}"
+                                    >
+                                        <core:Item
+                                            key="{Costcenter>Value}"
+                                            text="{Costcenter>Value}"
+                                        />
+                                    </m:Select>
+                                </f:SimpleForm>
+                            </blocks>
+                        </ObjectPageSubSection>
+                        <ObjectPageSubSection
+                            title="{i18n>ExpenseItemDetails} ({= ${ItemExpenseModel>/}.length })"
+                            titleUppercase="false"
+                        >
+                            <blocks>
+                                <m:Table
+                                    id="exp_Id_ExpenseTable"
+                                    items="{ItemExpenseModel>/}"
+                                    sticky="ColumnHeaders,HeaderToolbar"
+                                    growing="true"
+                                    growingThreshold="50"
+                                    alternateRowColors="true"
+                                    growingScrollToLoad="true"
+                                    width="100%"
+                                    mode="SingleSelectLeft"
+                                    selectionChange="Exp_Det_onChangeExpanesItem"
+                                    busyIndicatorDelay="0"
+                                    class="sapUiTinyMargin CommonRoundedTable SelfAttachment"
+                                >
+                                    <m:headerToolbar>
+                                        <m:OverflowToolbar>
+                                            <m:ToolbarSpacer />
+                                            <m:ToolbarSeparator />
+                                            <m:Button
+                                                type="Transparent"
+                                                text="{i18n>download}"
+                                                tooltip="{i18n>download}"
+                                                press="Exp_Det_onPressDownloadExcle"
+                                                id="idExcleDownload"
+                                                enabled="{viewModel>/enable}"
+                                            />
+                                            <m:Button
+                                                type="Transparent"
+                                                text="{i18n>add}"
+                                                tooltip="{i18n>expenseAddTooltipItem}"
+                                                press="Exp_Det_onPressAddExpenseItem"
+                                                visible="{viewModel>/status}"
+                                                id="idAddExpBtn"
+                                                enabled="{viewModel>/enable}"
+                                            />
+                                            <m:Button
+                                                type="Transparent"
+                                                text="{i18n>edit}"
+                                                tooltip="{i18n>expenseEditTooltipItem}"
+                                                press="Exp_Det_onPressExpenseItemEdit"
+                                                id="idExpenseItemEdit"
+                                                visible="{viewModel>/status}"
+                                                enabled="{viewModel>/enableDelete}"
+                                            />
+                                            <m:Button
+                                                type="Transparent"
+                                                text="{i18n>delete}"
+                                                tooltip="{i18n>expenseDeleteTooltipItem}"
+                                                press="Exp_Det_onPressExpenseItemDelete"
+                                                visible="{viewModel>/status}"
+                                                id="idExpDeleteBtn"
+                                                enabled="{viewModel>/enable}"
+                                            />
+                                            <m:Button
+                                                type="Transparent"
+                                                text="{i18n>downloadPerdiem}"
+                                                tooltip="{i18n>downloadPerdiem}"
+                                                press="Exp_Det_onPressExpenseDownload"
+                                                visible="{viewModel>/status}"
+                                                enabled="{viewModel>/enable}"
+                                            />
+                                            <m:Button
+                                                type="Transparent"
+                                                text="{i18n>downloadZip}"
+                                                tooltip="{i18n>downloadAttachment}"
+                                                press="Exp_Det_onPressDownloadZipFile"
+                                                enabled="{viewModel>/enable}"
+                                            />
+                                        </m:OverflowToolbar>
+                                    </m:headerToolbar>
+                                    <m:columns>
+                                        <m:Column demandPopin="true">
+                                            <m:Label text="{i18n>itemID}" />
+                                        </m:Column>
+                                        <m:Column demandPopin="true">
+                                            <m:Label
+                                                text="{i18n>expDetItemType}" 
+                                            />
+                                        </m:Column>
+                                        <m:Column
+                                            minScreenWidth="Desktop"
+                                            demandPopin="true"
+                                        >
+                                            <m:Label
+                                                text="{i18n>expDetExpenseDate}" 
+                                            />
+                                        </m:Column>
+                                        <m:Column
+                                            minScreenWidth="Desktop"
+                                            demandPopin="true"
+                                        >
+                                            <m:Label
+                                                text="{i18n>expDetForeignAmount}" 
+                                            />
+                                        </m:Column>
+                                        <m:Column
+                                            minScreenWidth="Desktop"
+                                            demandPopin="true"
+                                        >
+                                            <m:Label
+                                                text="{i18n>expDetExpenseAmount}" 
+                                            />
+                                        </m:Column>
+                                        <m:Column
+                                            minScreenWidth="Desktop"
+                                            demandPopin="true"
+                                        >
+                                            <m:Label
+                                                text="{i18n>expModeOfPayment}" 
+                                            />
+                                        </m:Column>
+                                        <m:Column
+                                            minScreenWidth="Desktop"
+                                            demandPopin="true"
+                                        >
+                                            <m:Label text="{i18n>comments}"  /> 
+                                        </m:Column>
+                                    </m:columns>
+                                    <m:items>
+                                        <m:ColumnListItem
+                                            press="onCheckExpenseDetails"
+                                        >
+                                            <m:cells>
+                                                <m:Text
+                                                    text="{ItemExpenseModel>IndexNo}"
+                                                />
+                                                <m:HBox>
+                                                    <m:Text
+                                                        text="{ItemExpenseModel>ItemType}"
+                                                        visible="{= ${ItemExpenseModel>ItemType} === 'Peridiem' }"
+                                                    />
+
+                                                    <m:Link
+                                                        text="{ItemExpenseModel>ItemType}"
+                                                        visible="{= ${ItemExpenseModel>ItemType} !== 'Peridiem' }"
+                                                        press="OnPressAttachment"
+                                                    />
+                                                </m:HBox>
+
+                                                <m:Text
+                                                    text="{path:'ItemExpenseModel>ExpenseDate',formatter: '.Formatter.formatDate'}"
+                                                />
+
+                                                <m:VBox>
+                                                    <m:HBox>
+                                                        <m:Text
+                                                            text="{ItemExpenseModel>Currency} {path:'ItemExpenseModel>ForeignAmount',formatter:'.Formatter.formatAmount'}"
+                                                        />
+                                                    </m:HBox>
+                                                    <m:HBox>
+                                                        <m:Text
+                                                            text="{i18n>expConversionRate} : {path:'ItemExpenseModel>ConversionRate',formatter:'.Formatter.formatAmount'}"
+                                                            visible="{= ${ItemExpenseModel>Currency} !== 'INR'}"
+                                                        />
+                                                    </m:HBox>
+                                                </m:VBox>
+                                                <m:Text
+                                                    text="INR {path:'ItemExpenseModel>ExpenseAmount', formatter: '.Formatter.formatAmount'}"
+                                                />
+                                                <m:ObjectStatus
+                                                    inverted="true"
+                                                    text="{ItemExpenseModel>ModeOfPayment}"
+                                                    state="{path: 'ItemExpenseModel>ModeOfPayment', formatter: '.Formatter.formatObjectStatus'}"
+                                                />
+                                                <!-- <m:Text text="{ItemExpenseModel>Comments}" />													 -->
+                                                <m:Button
+                                                    text="{i18n>View}"
+                                                    press=".onShowMore"
+                                                />
+                                            </m:cells>
+                                        </m:ColumnListItem>
+                                    </m:items>
+                                </m:Table>
+                            </blocks>
+                        </ObjectPageSubSection>
+                    </subSections>
+                </ObjectPageSection>
+                <ObjectPageSection
+                    titleUppercase="false"
+                    title="Comments"
+                >
+                    <subSections>
+                        <ObjectPageSubSection
+                            id="commentSubSection"
+                            title="Comments"
+                        >
+                            <blocks>
+                                <m:VBox id="timelineContainer" />
+                            </blocks>
+                        </ObjectPageSubSection>
+                    </subSections>
+                </ObjectPageSection>
+            </sections>
+        </ObjectPageLayout>
+        <m:footer>
+            <m:Bar>
+                <m:contentLeft>
+                    <core:Fragment
+                        fragmentName="sap.kt.com.minihrsolution.fragment.Footer"
+                        type="XML"
+                    />
+                </m:contentLeft>
+                <m:contentRight>
+                    <m:Button
+                        text="{i18n>submit}"
+                        type="Transparent"
+                        press="Exp_Det_onPressSubmitExpenseItems"
+                        visible="{viewModel>/status}"
+                        id="idExpenseSubmit"
+                        enabled="{viewModel>/enable}"
+                    />
+                </m:contentRight>
+            </m:Bar>
+        </m:footer>
+    </m:Page>
+</mvc:View>

@@ -1,0 +1,121 @@
+<core:FragmentDefinition
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:m="sap.m"
+	xmlns:core="sap.ui.core"
+>
+	<m:Dialog
+        id="demoFormDialog"
+        class="demoFormDialog"
+        draggable="true"
+        title="{i18n>demoFormtitle}"
+    >
+		<m:VBox class="dialogContentBox">
+			<m:VBox
+                class="formContainer"
+                renderType="Bare"
+            >
+				<m:Input    
+                    value="{formData>/CompanyName}"
+                    id="idCompanyname"
+                    liveChange="validateCompnayname"
+                    placeholder="{i18n>demoCompanyName}"
+                    required="true"
+                    maxLength="50"
+                    valueStateText="{i18n>demoCompanyName}"
+                        class="inputField"
+                />
+				<m:Input
+                    value="{formData>/CustomerName}"
+                    liveChange="validateName"
+                    id="idcustomername"
+                    maxLength="50"
+                    placeholder="{i18n>placeholderCustName}"
+                    required="true"
+                    valueStateText="{i18n>placeholderCustName}"
+                     class="inputField"
+                />
+				<m:Input
+                    value="{formData>/Email}"
+                    placeholder="{i18n>placeEmailId}"
+                    type="Email"
+                    maxLength="50"
+                    id="idCustmailid"
+                    liveChange="validateEmail"
+                    required="true"
+                    valueStateText="Enter Valid Email"
+                     class="inputField"
+                />
+				<m:DateTimePicker
+                    value="{formData>/TimeSlot}"
+                    placeholder="{i18n>placeholdertimeslote}"
+                    required="true"
+                    liveChange="ValidateCommonFields"
+                    id="idtimeslot"
+                    valueFormat="yyyy-MM-dd HH:mm"
+                    displayFormat="dd/MM/yyyy HH:mm"
+                     class="inputField"
+                />
+				<m:HBox width="100%" justifyContent="Start" alignItems="Center" class="inputField">
+					<m:VBox width="30%">
+						<m:ComboBox 
+            id="idDemoSTD" 
+            width="80px"  
+            valueStateText="Select STD Code"
+            change="ValidateSTDFields"
+            value="{formData>/stdCode}"
+            placeholder="STD"   showSecondaryValues="true"  filterSecondaryValues="true"
+            items="{path: 'CountryModel>/', length: 300, sorter: { path: 'stdCode'}}"
+        >
+							<core:ListItem key="{CountryModel>stdCode}" text="{CountryModel>stdCode}" additionalText="{CountryModel>code}" />
+						</m:ComboBox>
+					</m:VBox>
+					<m:VBox width="70%" class="inputMargin">
+						<m:Input
+            value="{formData>/MobileNo}"
+            placeholder="{i18n>placeholderMobileNo}"
+            liveChange="validateMobileNo"
+            id="idmobilenumber"
+            valueStateText="Enter At least 10 digit number"
+            required="true"
+            maxLength="10"
+        />
+					</m:VBox>
+				</m:HBox>
+				<m:TextArea
+                    value="{formData>/Address}"
+                    placeholder="{i18n>placeAddress}"
+                    rows="2"
+                    id="idCustaddress"
+                    valueStateText="{i18n>placeAddress}"
+                    liveChange="ValidateCommonFields"
+                    required="true"
+                    maxLength="120"
+                     class="inputField"
+                />
+				<m:TextArea
+                    value="{formData>/Comments}"
+                    placeholder="{i18n>enterComments}"
+                    rows="2"
+                    valueStateText="{i18n>enterComments}" 
+                    id="idcomment"
+                    maxLength="120"
+                    liveChange="ValidateCommonFields"
+                     class="inputField"
+                />
+			</m:VBox>
+		</m:VBox>
+		<m:beginButton>
+			<m:Button
+                text="Submit"
+                class="FOOTER"
+                press="onDemoformSave"
+            />
+		</m:beginButton>
+		<m:endButton>
+			<m:Button
+                text="Cancel"
+                press="onCloseDemoForm"
+            />
+		</m:endButton>
+	</m:Dialog>
+</core:FragmentDefinition>
