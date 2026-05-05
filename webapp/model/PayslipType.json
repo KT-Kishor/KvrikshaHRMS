@@ -1,0 +1,14 @@
+[
+    {
+      "ID": 1,
+      "Name": "Monthly"
+    },
+    {
+      "ID": 2,
+      "Name": "Quaterly"
+    },
+    {
+      "ID": 3,
+      "Name": "Yearly"
+    }
+]

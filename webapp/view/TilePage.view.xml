@@ -330,6 +330,20 @@
                                                         </TileContent>
                                                     </GenericTile>
                                                     <GenericTile
+                                                        visible="{= ${AppVisibilityModel>/PaySlip} === '1' ? true : false}"
+                                                        class="sapUiSmallMargin glassTile blue"
+                                                        header="{i18n>HeaderPaySlipDeduction}"
+                                                        press="TileV_onPressPaySlipDeduction"
+                                                    >
+                                                        <TileContent
+                                                            unit="{i18n>tilePaySlipDeductionFooter}"
+                                                        >
+                                                            <ImageContent
+                                                                src="sap-icon://money-bills"
+                                                            />
+                                                        </TileContent>
+                                                    </GenericTile>
+                                                    <GenericTile
                                                         visible="{= ${AppVisibilityModel>/GenerateSalary} === '1' ? true : false}"
                                                         class="sapUiSmallMargin glassTile blue"
                                                         header="{i18n>headerGenerateSalary}"

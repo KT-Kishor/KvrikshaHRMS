@@ -337,7 +337,17 @@
         "type": "sap.ui.model.json.JSONModel",
         "uri": "model/CompOff.json",
         "preload": true
-      }
+      },
+      "PayslipType": {
+        "type": "sap.ui.model.json.JSONModel",
+        "uri": "model/PayslipType.json",
+        "preload": true
+      },
+      "PayslipStatus": {
+        "type": "sap.ui.model.json.JSONModel",
+        "uri": "model/PayslipStatus.json",
+        "preload": true
+      },
     },
     "resources": {
       "js": [
@@ -899,6 +909,13 @@
           "target": [
             "TargetEmployeeAssign"
           ]
+        },
+        {
+          "name": "RoutePayslipDeduction",
+          "pattern": "PayslipDeduction",
+          "target": [
+            "TargetPayslipDeduction"
+          ]
         }
       ],
       "targets": {
@@ -1418,6 +1435,13 @@
           "clearControlAggregation": false,
           "viewId": "EmployeeAsignment",
           "viewName": "EmployeeAsignment"
+        },
+        "TargetPayslipDeduction": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "PayslipDeduction",
+          "viewName": "PayslipDeduction"
         }
       }
     },

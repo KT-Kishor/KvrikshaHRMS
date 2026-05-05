@@ -1,0 +1,85 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:layout="sap.ui.layout">
+	<Dialog title="{=${modeModel>/isCreate}? 'Create Payslip' : 'Update Payslip'}" draggable="true" resizable="false" contentWidth="20%">
+		<form:SimpleForm
+        id="PayslipSimpleForm"
+        editable="true"
+        layout="ResponsiveGridLayout" 
+        labelSpanXL="12"
+        labelSpanL="12"
+        labelSpanM="12"
+        labelSpanS="12"
+        emptySpanXL="0"
+        emptySpanL="0"
+        emptySpanM="0"
+        emptySpanS="0"
+        columnsXL="1"
+        columnsL="1"
+        columnsM="1"
+        singleContainerFullSize="false">
+
+			<!-- Employee ID -->
+			<Label text="Employee ID" required="true"/>
+            <ComboBox id="PD_ID_EmployeeID" placeholder="Select Employee ID" selectedKey="{PayslipformModel>/EmployeeID}"
+            showSecondaryValues="true" filterSecondaryValues="true"  items="{path:'EmployeeModel>/',length:1000}" change="onEmployeeIDChange"
+            valueStateText="{i18n>selectEmployeeID}" editable="{modeModel>/isCreate}">
+            <core:ListItem
+                                    key="{EmployeeModel>EmployeeID}"
+                                    text="{EmployeeModel>EmployeeID}"
+                                    additionalText="{EmployeeModel>EmployeeName}"
+                                />
+            </ComboBox>
+
+			<!--  Description -->
+			<Label text="Description" required="true"/>
+			<TextArea id="PD_ID_DescriptionInput" liveChange="onDescriptionLiveChange" valueStateText="{i18n>enterDescription}"
+            value="{PayslipformModel>/Description}" placeholder="Enter description" rows="2" maxLength="50"/>
+
+           <!--  Type -->
+			<Label text="{i18n>type}" required="true"/>
+			<ComboBox items="{PayslipType>/}" id="PD_ID_Type" valueStateText="{i18n>selecttype}" selectedKey="{PayslipformModel>/Type}" change="onChangeType" value="{PayslipformModel>/Type}" >
+					<core:Item key="{PayslipType>Name}" text="{PayslipType>Name}" />
+			</ComboBox>
+
+           <!-- Start Date -->
+			<Label text="{i18n>startDate}" required="true" />
+			<DatePicker id="PD_ID_StartDate" valueStateText="{i18n>dateValueState}" value="{PayslipformModel>/StartDate}" valueFormat="dd/MM/yyyy" displayFormat="dd/MM/yyyy" change="onDatePickerChange"/>
+
+			<!-- End Date -->
+			<Label text="{i18n>endDate}" required="true" />
+			<DatePicker id="PD_ID_EndDate" valueStateText="{i18n>dateValueState}" value="{PayslipformModel>/EndDate}" displayFormat="dd/MM/yyyy" valueFormat="dd/MM/yyyy" change="onEndDateChange" />
+
+			<!-- Amount -->
+			<Label text="Amount" required="true"/>
+			<HBox width="100%" alignItems="Center" renderType="Bare">
+			<Input id="PD_ID_AmountInput" liveChange="onAmountLiveChange" valueStateText="{i18n>enterValidAmount}"
+            value="{PayslipformModel>/Amount}" type="Number" placeholder="Enter amount" width="60%"  class="sapUiTinyMarginEnd customTightGap" />
+
+			<ComboBox id="PD_ID_CurrencyComboBox" selectedKey="{PayslipformModel>/Currency}" change="onCurrencyChange"
+            required="true" valueStateText="{i18n>enterValidAmount}" items="{CurrencyModel>/}" placeholder="Select Currency"
+            width="40%" class="sapUiSmallMarginBegin customComboTight" >
+			        <items>
+						<core:Item key="{CurrencyModel>currency}" text="{CurrencyModel>currency}" />
+					</items>
+				</ComboBox>
+			</HBox>
+
+            <!-- Status -->
+            <Label text="{i18n>status}" required="true"/>
+			<ComboBox value="{PayslipformModel>/Status}" id="PD_ID_Status" items="{PayslipStatus>/}" change="onChangeStatus" valueStateText="{i18n>combovalueState}">
+		    <core:Item key="{PayslipStatus>ID}" text="{PayslipStatus>Value}" />
+			</ComboBox>	
+		</form:SimpleForm>
+		<footer>
+			<Toolbar>
+				<ToolbarSpacer/>
+				<Button text="Create" press="onCreatePayslip"  visible="{modeModel>/isCreate}" />
+				<Button text="Save" press="onUpdatePaylsip" visible="{modeModel>/isUpdate}" />
+				<Button text="Cancel" press="onCancelPayslip" />
+			</Toolbar>
+		</footer>
+	</Dialog>
+</core:FragmentDefinition>

@@ -3711,3 +3711,20 @@ color: #fff !important;
 :not(.sapMBtnDisabled) .sapMBtnTransparent>.sapMBtnIcon {
     color: #d3dfed;
 }
+.sapMDialog.sapMMessageBoxSuccess .sapMDialogIcon.sapUiIcon {
+    color: #788fa6;
+}
+
+.sapMDialog.sapMMessageBoxError .sapMDialogIcon.sapUiIcon {
+    color: #788fa6;
+}
+
+.sapMDialog.sapMMessageDialog.sapMMessageBoxError .sapMDialogTitleGroup>.sapMBar {
+    box-shadow: none !important;
+}
+.sapMDialog.sapMMessageBoxInfo .sapMDialogIcon.sapUiIcon {
+    color:#788fa6 ;
+}
+.sapMDialogSuccess>header .sapMDialogTitleGroup .sapMDialogIcon.sapUiIcon {
+    color:#788fa6 ;
+}

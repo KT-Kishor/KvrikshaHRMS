@@ -519,6 +519,9 @@ sap.ui.define(
             TileV_onpressCreateAllowanceApp: function () {
                 this.getRouter().navTo("RouteCreateAllowance");
             },
+            TileV_onPressPaySlipDeduction: function () {
+                this.getRouter().navTo("RoutePayslipDeduction");
+            },
             onTileRefresh: async function () {
                 this.getBusyDialog();
                 const backendModels = {

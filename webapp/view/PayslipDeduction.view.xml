@@ -1,0 +1,88 @@
+<mvc:View controllerName="sap.kt.com.minihrsolution.controller.PayslipDeduction"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+    displayBlock="true"
+    height="100%"
+    busyIndicatorDelay="0"
+	xmlns:core="sap.ui.core"
+	xmlns:fb="sap.ui.comp.filterbar">
+	<Page showHeader="true">
+		<customHeader>
+			<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Header" type="XML"/>
+		</customHeader>
+		<content>
+			<fb:FilterBar id="PD_id_Filterbar" persistencyKey="myPersKey" useToolbar="false" clear="CA_onPressClear" showClearOnFB="true" search="onSearch" filterChange="IA_.onFilterChange" afterVariantLoad="IA_.onAfterVariantLoad" showFilterConfiguration="false" class="filterBarTheme sapUiTinyMargin CommonRoundedTable">
+				<fb:filterGroupItems>
+					<fb:FilterGroupItem name="EmployeeID" label="{i18n>employeeID}" groupName="Group" visibleInFilterBar="true">
+						<fb:control>
+							<ComboBox id="PD_id_employeeID"  items="{path:'EmployeeModel>/',length:1000}" showClearIcon="true" showSecondaryValues="true">
+								<core:ListItem
+                                    key="{EmployeeModel>EmployeeID}"
+                                    text="{EmployeeModel>EmployeeID}"
+                                    additionalText="{EmployeeModel>EmployeeName}"
+                                />
+							</ComboBox>
+						</fb:control>
+					</fb:FilterGroupItem>
+				</fb:filterGroupItems>
+			</fb:FilterBar>
+			<Table id="PD_id_Table" sticky="ColumnHeaders,HeaderToolbar" mode="SingleSelectLeft" width="auto" busyIndicatorDelay="0" class="sapUiTinyMargin CommonRoundedTable"  items="{
+				path: 'PayslipModel>/',
+				sorter: [
+					{ path: 'Status', descending: false, group: true }
+				],
+				groupHeaderFactory: '.getGroupHeader'}"  >
+				<headerToolbar>
+					<OverflowToolbar>
+						<Title text="{i18n>payslipDetails} ({= ${PayslipModel>/}.length})"/>
+						<ToolbarSpacer />
+						<Button text="{i18n>create}" tooltip="{i18n>resolve}" press="CA_create" class="myUnifiedBtn"/>
+						<Button text="{i18n>assestAssignupdate}" tooltip="{i18n>downloadBranchData}" press="onCA_update" class="myUnifiedBtn" />
+						<Button text="{i18n>delete}" tooltip="{i18n>downloadBranchData}" press="onCA_delete" class="myUnifiedBtn" />
+					</OverflowToolbar>
+				</headerToolbar>
+				<columns>
+					<Column demandPopin="true">
+						<Text text="{i18n>employeeID}" tooltip="{i18n>employeeID}"/>
+					</Column>
+					<Column demandPopin="true">
+						<Text text="{i18n>description}" tooltip="{i18n>description}"/>
+					</Column>
+					<Column demandPopin="true">
+						<Text text="{i18n>type}" tooltip="{i18n>type}"/>
+					</Column>
+					<Column demandPopin="true" minScreenWidth="Tablet">
+						<Text text="{i18n>startDate}" tooltip="{i18n>startDate}"/>
+					</Column>
+					<Column demandPopin="true" minScreenWidth="Tablet">
+						<Text text="{i18n>endDate}" tooltip="{i18n>endDate}"/>
+					</Column>
+					<Column demandPopin="true" minScreenWidth="Tablet">
+						<Text text="{i18n>totalAmount}" tooltip="{i18n>totalAmount}"/>
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<Text text="{PayslipModel>EmployeeID}" />
+							<Text text="{PayslipModel>Description}" />
+							<Text text="{PayslipModel>Type}" />
+							<Text text="{path:'PayslipModel>StartDate',formatter: '.Formatter.formatDate'}"/>
+							<Text text="{path:'PayslipModel>EndDate',formatter: '.Formatter.formatDate'}"/>
+							<Text text="{path: 'PayslipModel>Amount', formatter: '.Formatter.fromatNumber'} {PayslipModel>Currency}" />
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</content>
+		<footer>
+			<Bar>
+				<contentLeft>
+					<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Footer" type="XML" />
+				</contentLeft>
+				<contentRight></contentRight>
+			</Bar>
+		</footer>
+	</Page>
+</mvc:View>
