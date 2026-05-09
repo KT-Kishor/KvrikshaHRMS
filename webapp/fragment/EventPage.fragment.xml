@@ -149,17 +149,14 @@
             </items>
 
         </HBox>
-         <illustrated:IllustratedMessage
+        <illustrated:IllustratedMessage
     illustrationType="sapIllus-NoActivities"
     title="No Upcoming Events"
     description="There are currently no upcoming events available."
-   visible="{
-    parts: [
-        { path: 'EventCardModel>/UpcomingEvents' },
-        { path: 'EventCardModel>/PastEvents' }
-    ],
-    formatter: '.showUpcomingMessage'
-}"
+    visible="{
+        path: 'EventCardModel>/UpcomingEvents',
+        formatter: '.showUpcomingMessage'
+    }"
     class="sapUiLargeMarginTop sapUiLargeMarginBottom"/>
 
         <!-- ======================= -->
@@ -266,17 +263,14 @@
 
         </HBox>
 
-         <illustrated:IllustratedMessage
+        <illustrated:IllustratedMessage
     illustrationType="sapIllus-NoActivities"
     title="No Past Events"
     description="There are currently no past events available."
-   visible="{
-    parts: [
-        { path: 'EventCardModel>/UpcomingEvents' },
-        { path: 'EventCardModel>/PastEvents' }
-    ],
-    formatter: '.showPastMessage'
-}"
+    visible="{
+        path: 'EventCardModel>/PastEvents',
+        formatter: '.showPastMessage'
+    }"
     class="sapUiLargeMarginTop sapUiLargeMarginBottom"/>
 
     <!-- <IllustratedMessage

@@ -536,39 +536,30 @@ sap.ui.define(
                     }.bind(this)
                 });
             },
-            showUpcomingMessage: function (aUpcoming, aPast) {
+            showUpcomingMessage: function (aUpcoming) {
 
-    aUpcoming = aUpcoming || [];
+                aUpcoming = aUpcoming || [];
 
-    aPast = aPast || [];
+                return aUpcoming.length === 0;
+            },
 
-    return (
-        aUpcoming.length === 0 &&
-        aPast.length > 0
-    );
-},
-showPastMessage: function (aUpcoming, aPast) {
+            showPastMessage: function (aPast) {
 
-    aUpcoming = aUpcoming || [];
+                aPast = aPast || [];
 
-    aPast = aPast || [];
+                return aPast.length === 0;
+            },
+            showNoEventsMessage: function (aUpcoming, aPast) {
 
-    return (
-        aPast.length === 0 &&
-        aUpcoming.length > 0
-    );
-},
-showNoEventsMessage: function (aUpcoming, aPast) {
+                aUpcoming = aUpcoming || [];
 
-    aUpcoming = aUpcoming || [];
+                aPast = aPast || [];
 
-    aPast = aPast || [];
-
-    return (
-        aUpcoming.length === 0 &&
-        aPast.length === 0
-    );
-},
+                return (
+                    aUpcoming.length === 0 &&
+                    aPast.length === 0
+                );
+            },
             isUpcomingEvent: function (sDate) {
 
                 if (!sDate) {
