@@ -12,6 +12,13 @@
             	<BadgeCustomData class="badgeClass" key="badge" value="{EndingSoonModel>/notificationCount}"/>
             </customData>
 		</Button>
+		<Button
+            press="TP_onraisebugpress"
+            icon="sap-icon://incident"
+            tooltip="{i18n>raisebug}"
+            type="Transparent"
+            class="LogNot logoutBtn"
+        />
 			<Button press="onLogout" icon="sap-icon://log" tooltip="{i18n>logoutTooltip}" type="Transparent" class="LogNot logoutBtn"/>
 	</headerContent>
 		<content>

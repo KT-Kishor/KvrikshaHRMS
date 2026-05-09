@@ -1,0 +1,95 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core"
+	xmlns:u="sap.ui.unified"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Dialog  type="Message" class="sapUiContentPadding"    contentWidth="28rem"
+        contentHeight="auto"
+    resizable="true" draggable="true">
+	    <customHeader>
+            <Bar class="barheader">
+                    <contentMiddle>
+                <Title text="{i18n>manageevrnt}" />
+            </contentMiddle>
+              
+            </Bar>
+        </customHeader>
+		  
+		<f:SimpleForm
+            editable="true"
+            layout="ResponsiveGridLayout"
+            labelSpanXL="4"
+            labelSpanL="3"
+            labelSpanM="4"
+            labelSpanS="12"
+            columnsXL="2"
+            columnsL="2"
+            columnsM="1">
+			<f:content>
+				<!-- Branch Code -->
+                <Label text="{i18n>Eventname}" required= "true"/>
+				<Input id="MEF_ideventname" liveChange="onEventnamechange" placeholder=" {i18n>enetereventname}" maxLength="100" valueStateText="{i18n>enetereventname}" value="{EventModel>/EventName}"/>
+			<Label text="{i18n>startdatetime}" required="true"/>
+				<DateTimePicker 
+                 id="MEF_datetimepicker"
+                 placeholder="{i18n>enterdateandtime}"
+                  value="{EventModel>/TimeSlot}"
+                    required="true"
+                    change="ValidateCommonFields"
+                    valueFormat="yyyy-MM-dd HH:mm"
+                    displayFormat="dd/MM/yyyy HH:mm"
+                    valueStateText="{i18n>enterdateandtime}"
+                >
+                </DateTimePicker>
+                 <Label text="{i18n>content}" required= "true"/>
+				<TextArea id="MEF_ideventcontent" value="{EventModel>/Content}" liveChange="onEventContentchange" valueStateText="{i18n>enetereventcontent}" placeholder="{i18n>enetereventcontent}" maxLength="1000" rows="4"/>
+                 <Label text="{i18n>eventlink}" required= "true"/>
+				<Input id="MEF_ideventlink" valueStateText="{i18n>enetereventlink}" liveChange="onEventlinkclick" placeholder="{i18n>enetereventlink}" value="{EventModel>/Link}" maxLength="500"/>
+                 <Label text="{i18n>address}" />
+				<TextArea id="MEF_ideventaddress"  placeholder="{i18n>enetereventaddress}" value="{EventModel>/Address}" maxLength="200"/>
+				
+				<!-- Upload -->
+				<Label text="{i18n>addImage}" />
+				<VBox alignItems="Start" width="100%" renderType="Bare">
+					<HBox width="25%">
+						<u:FileUploader
+                            id="ME_id_FileUploader"
+                            fileSizeExceed="onFileSizeExceeds"
+                            maximumFileSize="5MB"
+                            typeMissmatch="onFileTypeMissmatch"
+                            fileType="jpg,jpeg,png"
+                            change="onEventFileChange"
+                            buttonOnly="true"
+                            sameFilenameAllowed="true"
+                            iconFirst="true"
+                            buttonText="Upload Images"
+                            multiple="true"
+                            uploadOnChange="false"
+                            tooltip="{i18n>allowedSize}"/>
+					</HBox>
+					<!-- Tokenizer -->
+					<HBox width="75%">
+						<ScrollContainer height="60px" width="100%" horizontal="false" vertical="true">
+							<Tokenizer id="MA_id_TokenList" width="100%" tokenDelete="onTokenDelete"
+                            tokens="{tokenModel>/tokens}">
+								<Token key="{tokenModel>key}" text="{tokenModel>text}"/>
+							</Tokenizer>
+						</ScrollContainer>
+					</HBox>
+				</VBox>
+			</f:content>
+		</f:SimpleForm>
+		
+		<footer>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Button text="{i18n>save}" tooltip="{i18n>save}" press="MEF_onsavebuttonpress"
+                id="MEF_id_saveButton" class="marginRight myUnifiedBtn"/>
+				<Button text="{i18n>CancelButton}" tooltip="{i18n>CancelButton}" press="MEF_onCancelButtonPress"
+                id="MEF_id_CancelButton" class="marginRight myUnifiedBtn"/>
+			</Toolbar>
+		</footer>
+	</Dialog>
+</c:FragmentDefinition>

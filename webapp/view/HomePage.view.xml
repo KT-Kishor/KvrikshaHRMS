@@ -31,6 +31,7 @@
 						<IconTabFilter key="idTraning" text="{i18n>training}"/>
 						<IconTabFilter key="idCareer" text="{i18n>careers}"/>
 						<IconTabFilter key="idContact" text="{i18n>contact}"/>
+						<IconTabFilter key="idEvent" text="{i18n>event}"/>
 					</items>
 				</IconTabHeader>
 			</tnt:ToolHeader>
@@ -65,6 +66,9 @@
 					</ScrollContainer>
 					<ScrollContainer id="idTraning" horizontal="false" vertical="true" height="100%" class="sapUiContentPadding Training-background sapUiTinyMargin">
 						<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Training" type="XML"/>
+					</ScrollContainer>
+					<ScrollContainer id="idEvent" horizontal="false" vertical="true" height="100%" class="sapUiContentPadding Training-background sapUiTinyMargin">
+						<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.EventPage" type="XML"/>
 					</ScrollContainer>
 				</pages>
 			</NavContainer>

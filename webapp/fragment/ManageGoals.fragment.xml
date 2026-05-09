@@ -1,0 +1,152 @@
+<core:FragmentDefinition
+    xmlns:odata="sap.ui.comp.odata"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:layout="sap.ui.layout"
+>
+    <Dialog
+        title="{i18n>CreateGoals}"
+        contentWidth="900px"
+        contentHeight="auto"
+        draggable="true"
+        class="sapUiResponsivePadding customGoalDialog"
+    >
+        <customHeader>
+            <Bar>
+                <contentLeft>
+                    <Title text="{i18n>CreateGoals}" />
+                </contentLeft>
+                <contentRight>
+                <Button
+                text="{i18n>FinalSubmit}"
+                type="Accept"
+                press="FMG_onFinalSubmit"
+                visible="{viewModel>/showFinalSubmit}"
+            />
+                    
+                </contentRight>
+            </Bar>
+        </customHeader>
+
+        <content>
+            <VBox class="sapUiResponsiveMargin">
+
+                <Label
+                    text="{i18n>Category}"
+                    class="sapUiSmallMarginBottom"
+                />
+
+                <FlexBox
+                    wrap="Wrap"
+                    items="{topicModel>/topics}"
+                >
+                    <items>
+                        <GenericTile
+                            header="{topicModel>Topic}"
+                            tooltip="{topicModel>Topic}"
+                            press="FMG_onCategoryTilePress"
+                            class="sapUiTinyMargin tileResponsive"
+                        >
+                            <customData>
+                                <core:CustomData
+                                    key="topic"
+                                    value="{topicModel>Topic}"
+                                />
+                            </customData>
+                        </GenericTile>
+                    </items>
+                </FlexBox>
+
+                <!-- QUESTION -->
+                <Label
+                    text="{i18n>Question}"
+                    required="true"
+                />
+
+                <ComboBox
+                    id="FMG_id_QuestionBox"
+                    items="{viewModel>/questionsList}"
+                    selectedKey="{viewModel>/selectedQuestion}"
+                    width="100%"
+                    selectionChange="FMG_onQuestionSelect"
+                >
+                    <core:Item
+                        key="{viewModel>Question}"
+                        text="{viewModel>Question}"
+                    />
+                </ComboBox>
+
+                <Label
+                    text="{i18n>Goaldescriptor}"
+                    required="true"
+                />
+
+                <!-- DESCRIPTION -->
+                <TextArea
+                    id="FMG_id_DescriptionBox"
+                    value="{viewModel>/description}"
+                    growing="true"
+                    rows="7"
+                    growingMaxLines="4"
+                    width="100%"
+                    maxLength="500"
+                    liveChange="MG_onDescriptionChange"
+                />
+
+                <Title
+                    text="{i18n>SelectQuarter}"
+                    level="H5"
+                    class="sapUiMediumMarginTop sapUiSmallMarginBottom"
+                />
+
+                <SegmentedButton
+                    id="FMG_id_QuarterButton"
+                    selectedKey="{viewModel>/selectedQuarter}"
+                    selectionChange="FMG_onQuarterSelect"
+                    width="100%"
+                    enabled="{= !${viewModel>/isEditMode} }"
+                >
+                    <items>
+                        <SegmentedButtonItem
+                            key="Q1"
+                            text="{i18n>Q1}"
+                            enabled="{= !${viewModel>/usedQuarters/${= ${viewModel>/currentYear} }/Q1} }"
+                        />
+
+                        <SegmentedButtonItem
+                            key="Q2"
+                            text="{i18n>Q2}"
+                            enabled="{= !${viewModel>/usedQuarters/${= ${viewModel>/currentYear} }/Q2} }"
+                        />
+
+                        <SegmentedButtonItem
+                            key="Q3"
+                            text="{i18n>Q3}"
+                            enabled="{= !${viewModel>/usedQuarters/${= ${viewModel>/currentYear} }/Q3} }"
+                        />
+
+                        <SegmentedButtonItem
+                            key="Q4"
+                            text="{i18n>Q4}"
+                            enabled="{= !${viewModel>/usedQuarters/${= ${viewModel>/currentYear} }/Q4} }"
+                        />
+                    </items>
+                </SegmentedButton>
+
+            </VBox>
+        </content>
+
+        <buttons>
+            <Button
+                text="{i18n>save}"
+                press="FMG_onSave"
+            />
+
+            <Button
+                text="{i18n>Cancel}"
+                type="Transparent"
+                press="FMG_onCancel"
+            />
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>

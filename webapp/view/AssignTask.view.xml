@@ -47,9 +47,8 @@
                 growingScrollToLoad="true"
                 width="auto"
                 items="{AssignModel>/}"
-                growing="true"
-                growingThreshold="50"
                 mode="MultiSelect"
+				rememberSelections="true"
                 alternateRowColors="true"
                 id="AT_id_TaskTable"
                 sticky="ColumnHeaders,HeaderToolbar">
@@ -65,8 +64,8 @@
 						<!-- <Button text="{i18n>updateenddate}" press="AT_onAssignUpdateEnddate" id="AT_id_updateenddate"
                          type="Transparent" tooltip="{i18n>updateenddate}"/> -->
 						<Button
-                            press="AT_onEditTask" text="{i18n>updateenddate}" id="AT_id_EditTask"
-                            tooltip="{i18n>updateenddate}" type="Transparent"
+                            press="AT_onEditTask" text="{i18n>edit}" id="AT_id_EditTask"
+                            tooltip="{i18n>edit}" type="Transparent"
                         />
 						<Button text="{i18n>delete}" press="AT_onDeleteTask" id="AT_id_DeleteTask"
                             tooltip="{i18n>deleteassigntask}" type="Transparent"/>

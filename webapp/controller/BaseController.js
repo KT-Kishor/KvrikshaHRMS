@@ -109,6 +109,9 @@ sap.ui.define([
             "LeaveOverview": "/LeaveOverview",
             "RaiseBug": "/RaiseBug",
             "CreateAllowance": "/CreateAllowanceApp",
+            "GoalQuestions":"/GoalQuestions",
+            "Goals":"/Goals",
+            "ManageEvent":"/ManageEvent"
           };
 
           const modelPath = tileMap[value];
@@ -209,7 +212,9 @@ const headerMap = {
     "Asset Details":"My Asset",
     "Leave Application":"Apply Leave",
     "Apply Overtime Approval":"Apply Overtime",
-    "Manage Assignment":"Create New Assignment"
+    "Create New Assignment" :  "Manage Assignment",
+    "Bug Details":"Raise Bug",
+    "Payslip Deduction" : "Payslip Deduction"
   };
 
 this.getView().getModel("RaiseBugModel").setProperty(

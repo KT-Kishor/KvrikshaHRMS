@@ -560,7 +560,37 @@ sap.ui.define([
             var yyyy = oDate.getFullYear();
 
             return dd + "/" + mm + "/" + yyyy + " (" + sDayName + ")";
-        }
+        },
 
+        formatEditDateTime: function (sDateTime) {
+
+            if (!sDateTime) {
+
+                return "";
+            }
+
+            // Remove Z
+            sDateTime = sDateTime.replace("Z", "");
+
+            // Split Date & Time
+            var aSplit =
+                sDateTime.split("T");
+
+            if (aSplit.length < 2) {
+
+                return sDateTime;
+            }
+
+            // Date Part
+            var sDate =
+                aSplit[0];
+
+            // Time Part
+            var sTime =
+                aSplit[1].substring(0, 5);
+
+            return sDate + " " + sTime;
+        },
+           
     }
 });

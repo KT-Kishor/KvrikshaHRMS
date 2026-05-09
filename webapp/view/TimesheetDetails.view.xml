@@ -13,6 +13,11 @@
         title="{viewModel>/pageTitle}" class="glassHeader ObjectcustomHeaderToolbar classheader" enableScrolling="false"
     >
     <headerContent>
+    <Button press="Tile_NotifictionBTN" class="sapUiTinyMarginBeginEnd LogNot logoutBtn" tooltip="{i18n>TilenotificationfragName}" icon="sap-icon://bell" type="Transparent" visible="{= ${LoginModel>/Role} !== 'Contractor' }">
+			<customData >
+            	<BadgeCustomData class="badgeClass" key="badge" value="{EndingSoonModel>/notificationCount}"/>
+            </customData>
+		</Button>
      <Button
             press="TP_onraisebugpress"
             icon="sap-icon://incident"

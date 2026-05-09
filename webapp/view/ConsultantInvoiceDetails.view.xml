@@ -32,7 +32,7 @@
 	</m:headerContent>
 		<ObjectPageLayout id="CI_id_NavConsultantInvoicePage">
 			<sections>
-				<ObjectPageSection id="CI_id_FirstSection" title="{i18n>invoiceHeaderDetails}">
+				<ObjectPageSection id="CI_id_FirstSection" title="{i18n>invoiceHeaderDetails}" titleUppercase="false">
 					<subSections>
 						<ObjectPageSubSection >
 							<blocks>

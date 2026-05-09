@@ -522,6 +522,15 @@ sap.ui.define(
             TileV_onPressPaySlipDeduction: function () {
                 this.getRouter().navTo("RoutePayslipDeduction");
             },
+            TileV_onpressGoalQuestions: function () {
+                this.getRouter().navTo("RouteGoalQuestions");
+            },
+            TileV_onpressManageGoals: function () {
+                this.getRouter().navTo("RouteManagegoals");
+            },
+            TileV_onpressManageEvents: function () {
+                this.getRouter().navTo("RouteManageEvent");
+            },
             onTileRefresh: async function () {
                 this.getBusyDialog();
                 const backendModels = {

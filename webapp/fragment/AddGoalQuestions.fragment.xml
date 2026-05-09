@@ -1,0 +1,77 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <Dialog
+        id="FQD_id_Dialog"
+        title="{= ${viewModel>/isEditMode} ? ${i18n>EditQuestionTitle} : ${i18n>AddQuestionTitle} }"
+        draggable="true"
+        resizable="true"
+        contentWidth="520px"
+        class="sapUiPopupWithPadding"
+    >
+        <content>
+            <VBox
+                class="sapUiSmallMarginLeft"
+                width="100%"
+            >
+                <Label
+                    text="{i18n>Department}"
+                    required="true"
+                />
+                <ComboBox
+                    id="FQD_id_Department"
+                    width="100%"
+                    valueStateText="select department"
+                    items="{sEmployeeModel>/}"
+                    change="FQD_onDepartmentChange"
+                >
+                    <core:Item
+                        key="{sEmployeeModel>department}"
+                        text="{sEmployeeModel>department}"
+                    />
+                </ComboBox>
+
+                <Label
+                    text="{i18n>TopicName}"
+                    required="true"
+                />
+                <Input
+                    id="FQD_id_Topic"
+                    maxLength="30"
+                    width="100%"
+                    valueStateText="Enter topic"
+                    liveChange="FQD_onTopicChange"
+                />
+
+                <Label
+                    text="{i18n>Questions}"
+                    required="true"
+                />
+                <TextArea
+                    id="FQD_id_Question"
+                    width="100%"
+                    maxLength="200"
+                    valueStateText="Enter Questions"
+                    growing="true"
+                    growingMaxLines="5"
+                    liveChange="FQD_onQuestionChange"
+                />
+            </VBox>
+        </content>
+
+        <beginButton>
+            <Button
+                text="{= ${viewModel>/isEditMode} ? ${i18n>update} : ${i18n>add} }"
+                press="FQD_onSaveDialogPress"
+            />
+        </beginButton>
+
+        <endButton>
+            <Button
+                text="{i18n>cancel}"
+                press="FQD_onCloseDialogPress"
+            />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

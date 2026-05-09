@@ -1,0 +1,297 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:f="sap.f"
+    xmlns:core="sap.ui.core" xmlns:illustrated="sap.m">
+
+    <VBox width="100%" >
+
+        <!-- Upcoming Events -->
+
+       <Title
+    text="Upcoming Events"
+    level="H2"
+    class="sectionTitle sapUiSmallMarginBegin sapUiSmallMarginTop sapUiSmallMarginBottom"  />
+
+        <HBox
+            wrap="Wrap"
+            justifyContent="Start"
+            width="100%"
+            class="eventCardsContainer sapUiSmallMargin"
+             visible="{= ${EventCardModel>/UpcomingEvents}.length > 0 }"
+            items="{
+                path: 'EventCardModel>/UpcomingEvents'
+            }">
+
+           
+            <items>
+
+               <f:Card
+    width="350px"
+    height = "485px"
+    class="eventCard sapUiSmallMarginEnd sapUiSmallMarginBottom">
+
+   <f:content>
+
+    <VBox
+        class="eventCardContainer">
+
+        <!-- ================= TOP CONTENT ================= -->
+
+        <VBox>
+
+            <!-- EXPAND BUTTON -->
+            <HBox
+                width="100%"
+                justifyContent="End"
+                class="sapUiTinyMarginEnd">
+
+                <Button
+                    icon="sap-icon://full-screen"
+                    type="Unstyled"
+                    class="expandBtn"
+                    press="onExpandCard"/>
+
+            </HBox>
+
+            <!-- IMAGE -->
+            <VBox class="imageContainer">
+
+                <Image
+                    src="{= 'data:image/jpeg;base64,' + ${EventCardModel>File} }"
+                    width="100%"
+                    height="165px"
+                     densityAware="false"
+    decorative="false"
+                    class="cardImage"/>
+
+                <!-- Overlay -->
+                <VBox class="overlayContent">
+
+                    <!-- Date -->
+                    <Text
+                        text="{
+                            path: 'EventCardModel>StartDateTime',
+                            formatter: '.formatCardDate'
+                        }"
+                        class="dateText sapUiTinyMarginBottom"/>
+
+                    <!-- Title -->
+                    <Title
+                        text="{EventCardModel>EventName}"
+                        level="H1"
+                        wrapping="true"
+                        class="titleText sapUiTinyMarginBottom" />
+
+                    <!-- Status -->
+                    <Text
+                        text="{
+                            path: 'EventCardModel>StartDateTime',
+                            formatter: '.formatEventStatus'
+                        }"
+                        class="subTitleText"/>
+
+                </VBox>
+
+            </VBox>
+
+            <!-- CONTENT -->
+            <VBox class="eventContent sapUiMediumMargin">
+
+                <Text
+                    text="{EventCardModel>Content}"
+                    class="blueText"
+                    maxLines="12"/>
+
+            </VBox>
+
+        </VBox>
+
+        <!-- ================= FLEX SPACER ================= -->
+
+        <FlexBox
+            height="100%"
+            renderType="Bare"/>
+
+        <!-- ================= FIXED BUTTON ================= -->
+
+        <HBox
+            width="100%"
+            justifyContent="End"
+            class="">
+
+            <Button
+                text="Register Now"
+                type="Emphasized"
+                class="registerBtn"
+                press="onRegisternow">
+
+                <customData>
+
+                    <core:CustomData
+                        key="registerLink"
+                        value="{EventCardModel>LinkToRegister}"/>
+
+                </customData>
+
+            </Button>
+
+        </HBox>
+        
+
+    </VBox>
+
+</f:content>
+
+    
+
+</f:Card>
+
+            </items>
+
+        </HBox>
+         <illustrated:IllustratedMessage
+    illustrationType="sapIllus-NoActivities"
+    title="No Upcoming Events"
+    description="There are currently no upcoming events available."
+   visible="{
+    parts: [
+        { path: 'EventCardModel>/UpcomingEvents' },
+        { path: 'EventCardModel>/PastEvents' }
+    ],
+    formatter: '.showUpcomingMessage'
+}"
+    class="sapUiLargeMarginTop sapUiLargeMarginBottom"/>
+
+        <!-- ======================= -->
+        <!-- Past Events -->
+        <!-- ======================= -->
+
+        <Title
+            text="Past Events"
+            level="H2"
+           
+            class="sectionTitle sapUiSmallMarginBegin sapUiTinyMarginTop sapUiSmallMarginBottom" />
+
+        <HBox
+            wrap="Wrap"
+            justifyContent="Start"
+            width="100%"
+            class="sapUiSmallMargin"
+            visible="{= ${EventCardModel>/PastEvents}.length > 0 }"
+            items="{
+                path: 'EventCardModel>/PastEvents'
+            }">
+           
+
+            <items>
+
+               <f:Card
+    width="350px"
+    height= "485px"
+    class="eventCard sapUiMediumMarginEnd sapUiSmallMarginBottom">
+
+    <f:content>
+
+        <VBox class="eventCardContainer">
+         <Button
+                    icon="sap-icon://full-screen"
+                    type="Transparent"
+                    class="expandBtn"
+                    press="onExpandCard"/>
+
+            <!-- ================= IMAGE SECTION ================= -->
+
+            <VBox class="imageContainer">
+
+                <Image
+                    src="{= 'data:image/jpeg;base64,' + ${EventCardModel>File} }"
+                    width="100%"
+                    height="160px"
+                    class="cardImage"/>
+
+                <!-- Overlay -->
+                <VBox class="overlayContent">
+
+                    <!-- Date -->
+                   <Text
+    text="{
+        path: 'EventCardModel>StartDateTime',
+        formatter: '.formatCardDate'
+    }"
+    class="dateText sapUiTinyMarginBottom"/>
+
+                    <!-- Title -->
+                    <Title
+                        text="{EventCardModel>EventName}"
+                        level="H1"
+                        class="titleText sapUiTinyMarginBottom"/>
+
+                  
+                    <Text
+    text="{
+        path: 'EventCardModel>StartDateTime',
+        formatter: '.formatEventStatus'
+    }"
+    class="subTitleText"/>
+
+                </VBox>
+
+            </VBox>
+
+            <!-- ================= CONTENT SECTION ================= -->
+
+            <VBox class="eventContent sapUiMediumMargin">
+
+                <!-- Content -->
+                <HBox
+                    alignItems="Start"
+                    class="sapUiSmallMarginBottom">
+
+
+                    <Text
+                        text="{EventCardModel>Content}"
+                        class="blueText sapUiTinyMarginBegin" maxLines="12"/>
+
+                </HBox>
+
+            </VBox>
+
+        </VBox>
+
+    </f:content>
+
+</f:Card>
+
+            </items>
+
+        </HBox>
+
+         <illustrated:IllustratedMessage
+    illustrationType="sapIllus-NoActivities"
+    title="No Past Events"
+    description="There are currently no past events available."
+   visible="{
+    parts: [
+        { path: 'EventCardModel>/UpcomingEvents' },
+        { path: 'EventCardModel>/PastEvents' }
+    ],
+    formatter: '.showPastMessage'
+}"
+    class="sapUiLargeMarginTop sapUiLargeMarginBottom"/>
+
+    <!-- <IllustratedMessage
+    illustrationType="sapIllus-NoActivities"
+    title="No Events Available"
+    description="Currently there are no upcoming or past events available."
+  visible="{
+    parts: [
+        { path: 'EventCardModel>/UpcomingEvents' },
+        { path: 'EventCardModel>/PastEvents' }
+    ],
+    formatter: '.showNoEventsMessage'
+}"
+    class="sapUiLargeMarginTop sapUiLargeMarginBottom"/> -->
+
+    </VBox>
+
+</core:FragmentDefinition>

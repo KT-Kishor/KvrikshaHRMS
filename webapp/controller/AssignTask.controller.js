@@ -158,6 +158,26 @@ sap.ui.define(
 
                     // Extract Employee IDs → IMPORTANT for MultiComboBox
                     const aEmployeeIDs = aSelectedData.map(obj => obj.EmployeeID);
+                    // Get all employees
+let aAllEmployees = this.getView().getModel("LoginDetailsModel").getData() || [];
+
+// Get already assigned employees
+let aAssignedTasks = this.getView().getModel("AssignModel").getData() || [];
+
+// Extract assigned Employee IDs
+let aAssignedEmployeeIDs = aAssignedTasks.map(item => item.EmployeeID);
+
+// Show selected employees + unassigned employees
+let aFilteredEmployees = aAllEmployees.filter(emp =>
+    aEmployeeIDs.includes(emp.EmployeeID) ||
+    !aAssignedEmployeeIDs.includes(emp.EmployeeID)
+);
+
+// Set filtered model
+this.getView().setModel(
+    new JSONModel(aFilteredEmployees),
+    "FilteredLoginDetailsModel"
+);
 
                     // (Optional but recommended) Validate same task
                     const isSameTask = aSelectedData.every(
@@ -204,7 +224,27 @@ sap.ui.define(
                         EndDate: sEndDateFromView,
                     };
 
-                    oModel = new JSONModel(newTaskData);
+                    // Get all employees
+let aAllEmployees = this.getView().getModel("LoginDetailsModel").getData() || [];
+
+// Get already assigned employees for this task
+let aAssignedTasks = this.getView().getModel("AssignModel").getData() || [];
+
+// Extract assigned Employee IDs
+let aAssignedEmployeeIDs = aAssignedTasks.map(item => item.EmployeeID);
+
+// Filter employees who are NOT assigned
+let aFilteredEmployees = aAllEmployees.filter(emp =>
+    !aAssignedEmployeeIDs.includes(emp.EmployeeID)
+);
+
+// Set filtered model for ComboBox
+this.getView().setModel(
+    new JSONModel(aFilteredEmployees),
+    "FilteredLoginDetailsModel"
+);
+
+oModel = new JSONModel(newTaskData);
                 }
 
                 oView.setModel(oModel, "EditTaskModel");
@@ -247,8 +287,6 @@ sap.ui.define(
                 this._fetchCommonData("AssignedTask", "AssignModel", params);
                 this.CommonReadcall(params);
             },
-
-
 
             CommonReadcall: async function (params) {
                 try {

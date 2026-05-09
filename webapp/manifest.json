@@ -39,7 +39,8 @@
       "libs": {
         "sap.m": {},
         "sap.ui.core": {},
-        "sap.ui.richtexteditor": {}
+        "sap.ui.richtexteditor": {},
+        "sap.ui.integration":{}
       }
     },
     "contentDensities": {
@@ -916,6 +917,27 @@
           "target": [
             "TargetPayslipDeduction"
           ]
+        },
+        {
+          "name": "RouteGoalQuestions",
+          "pattern": "GoalQuestions",
+          "target": [
+            "TargetGoalQuestion"
+          ]
+        },
+        {
+          "name": "RouteManagegoals",
+          "pattern": "ManageGoals",
+          "target": [
+            "TargetManageGoals"
+          ]
+        },
+        {
+          "name": "RouteManageEvent",
+          "pattern": "ManageEvent",
+          "target": [
+            "TargetManageEvent"
+          ]
         }
       ],
       "targets": {
@@ -1442,6 +1464,27 @@
           "clearControlAggregation": false,
           "viewId": "PayslipDeduction",
           "viewName": "PayslipDeduction"
+        },
+        "TargetGoalQuestion": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "GoalQuestions",
+          "viewName": "GoalQuestions"
+        },
+        "TargetManageGoals": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "ManageGoals",
+          "viewName": "ManageGoals"
+        },
+        "TargetManageEvent": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "ManageEvent",
+          "viewName": "ManageEvent"
         }
       }
     },

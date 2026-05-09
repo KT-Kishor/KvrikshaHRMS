@@ -231,6 +231,51 @@
                                                             />
                                                         </TileContent>
                                                     </GenericTile>
+                                                    <!-- <GenericTile
+                                                        class="sapUiSmallMargin glassTile blue"
+                                                        visible="{= ${AppVisibilityModel>/GoalQuestions} !== '0' ? true : false }"
+                                                        id="idGoalQuestions"
+                                                        header="{i18n>goalQuestions}"
+                                                        press="TileV_onpressGoalQuestions"
+                                                    >
+                                                        <TileContent
+                                                            unit="{i18n>goalQuestions}"
+                                                        >
+                                                            <ImageContent
+                                                                src="sap-icon://activity-assigned-to-goal"
+                                                            />
+                                                        </TileContent>
+                                                    </GenericTile>
+                                                    <GenericTile
+                                                        class="sapUiSmallMargin glassTile blue"
+                                                        visible="{= ${AppVisibilityModel>/Goals} !== '0' ? true : false }"
+                                                        id="idmanagegoals"
+                                                        header="{i18n>managegoals}"
+                                                        press="TileV_onpressManageGoals"
+                                                    >
+                                                        <TileContent
+                                                            unit="{i18n>managegoals}"
+                                                        >
+                                                            <ImageContent
+                                                                src="sap-icon://target-group"
+                                                            />
+                                                        </TileContent>
+                                                    </GenericTile> -->
+                                                    <GenericTile
+                                                        class="sapUiSmallMargin glassTile blue"
+                                                        visible="{= ${AppVisibilityModel>/ManageEvent} !== '0' ? true : false }"
+                                                        id="idmanageEvents"
+                                                        header="{i18n>manageevrnt}"
+                                                        press="TileV_onpressManageEvents"
+                                                    >
+                                                        <TileContent
+                                                            unit="{i18n>manageevrnt}"
+                                                        >
+                                                            <ImageContent
+                                                                src="sap-icon://marketing-campaign"
+                                                            />
+                                                        </TileContent>
+                                                    </GenericTile>
                                                 </layout:HorizontalLayout>
                                             </ux:blocks>
                                         </ux:ObjectPageSubSection>

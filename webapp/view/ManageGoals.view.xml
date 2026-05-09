@@ -1,0 +1,158 @@
+<mvc:View
+    controllerName="sap.kt.com.minihrsolution.controller.ManageGoals"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:m="sap.m"
+    xmlns:uxap="sap.uxap"
+    xmlns:layout="sap.ui.layout"
+    xmlns:integration="sap.ui.integration.widgets"
+    displayBlock="true"
+>
+<m:Page
+id="MG_id_Page"
+    title="{i18n>manageGoalsPageTitle}"
+>
+ <m:customHeader>
+            <m:Toolbar
+                class="customHeaderToolbar"
+                width="100%"
+            >
+                <!-- LEFT -->
+                <m:Button
+                    press="onPressback"
+                    icon="sap-icon://home"
+                    tooltip="{i18n>navback}"
+                    type="Transparent"
+                    class="notificationBtn"
+                />
+
+                <m:Text
+                    text="{LoginModel>/HeaderName}"
+                    class="headertext sapUiTinyMarginBegin whiteLabel"
+                />
+
+                <!-- SPACE -->
+                <m:ToolbarSpacer />
+
+                <!-- RIGHT -->
+                <m:Button
+                    press="Tile_NotifictionBTN"
+                    class="sapUiTinyMarginBeginEnd logoutBtn"
+                    tooltip="{i18n>TilenotificationfragName}"
+                    icon="sap-icon://bell"
+                    type="Transparent"
+                    visible="{= ${LoginModel>/Role} !== 'Contractor' }"
+                >
+                    <m:customData >
+					<m:BadgeCustomData class="badgeClass" key="badge" value="{EndingSoonModel>/notificationCount}"/>
+				</m:customData>
+
+                </m:Button>
+                <m:Button
+                    press="TP_onraisebugpress"
+                    icon="sap-icon://incident"
+                    tooltip="{i18n>raisebug}"
+                    type="Transparent"
+                    class="Bug"
+                />
+
+                <m:Button
+                    press="onLogout"
+                    icon="sap-icon://log"
+                    tooltip="{i18n>logoutTooltip}"
+                    type="Transparent"
+                    class="logoutBtn"
+                />
+            </m:Toolbar>
+        </m:customHeader>
+    <uxap:ObjectPageLayout
+       id="MG_id_ObjectPageLayout"
+        useIconTabBar="false"
+        upperCaseAnchorBar="false"
+        useTwoColumnsForLargeScreen="false"
+        class="sapUiNoContentPadding"
+    >
+        <uxap:headerTitle>
+            <uxap:ObjectPageDynamicHeaderTitle>
+
+                <!-- EXPANDED -->
+                <uxap:expandedHeading>
+                   <m:Title id="MG_id_TitleExpanded" text="{employeeModel>/name}" />
+                </uxap:expandedHeading>
+
+                <!-- SNAPPED -->
+                <uxap:snappedHeading>
+                    <m:HBox id="MG_id_HeaderHBox" alignItems="Center" >
+                      <m:Avatar id="MG_id_AvatarSmall" displaySize="L" src="{employeeModel>/image}" />
+
+                        <m:VBox id="MG_id_HeaderVBox">
+                            <m:Title text="{employeeModel>/name}" level="H5" />
+                            <m:Text text="{employeeModel>/designation}" class=" sapUiTinyMarginBegin whiteTitle" />
+                            <m:Link text="{employeeModel>/email}" class=" sapUiTinyMarginBegin whiteTitle"/>
+                            <m:Link text="{employeeModel>/mobile}"  class="sapUiTinyMarginBegin whiteTitle"/>
+                        </m:VBox>
+                    </m:HBox>
+                </uxap:snappedHeading>
+
+                <!-- ACTION BUTTON -->
+                <uxap:actions>
+                    <m:Button
+                     id="MG_id_CreateGoalBtn"
+                        text="{i18n>manageGoalButton}"
+                        press="MG_onCreatePress"
+                        visible="{viewModel>/showCreateGoal}"
+                    />
+                </uxap:actions>
+
+            </uxap:ObjectPageDynamicHeaderTitle>
+        </uxap:headerTitle>
+
+        <!-- HEADER CONTENT -->
+        <uxap:headerContent>
+            <m:FlexBox wrap="Wrap" justifyContent="SpaceBetween" width="100%">
+
+                <!-- LEFT SIDE -->
+                <m:FlexBox id="MG_id_LeftFlexBox" alignItems="Center">
+                    <m:Avatar id="MG_id_AvatarLarge"
+                        displaySize="L"
+                        src="{employeeModel>/image}"
+                        class="sapUiSmallMarginEnd"
+                    />
+
+                    <layout:VerticalLayout id="MG_id_LeftDetails">
+                        <m:Text text="{= ${i18n>designationLabel} + ': ' + ${employeeModel>/designation} }" />
+                        <m:Link text="{employeeModel>/email}" />
+                        <m:Link text="{employeeModel>/mobile}" />
+                    </layout:VerticalLayout>
+                </m:FlexBox>
+
+                <!-- RIGHT SIDE -->
+                <layout:VerticalLayout id="MG_id_RightDetails">
+                    <m:Text text="{= ${i18n>departmentLabel} + ': ' + ${employeeModel>/department} }" />
+                    <m:Text text="{= ${i18n>manager} + ': ' + ${employeeModel>/manager} }" />
+                </layout:VerticalLayout>
+
+            </m:FlexBox>
+        </uxap:headerContent>
+
+        <!-- SECTION -->
+        <uxap:sections>
+            <uxap:ObjectPageSection title="{i18n>manageGoalsSection}" showTitle="false">
+                <uxap:subSections>
+                    <uxap:ObjectPageSubSection>
+                        <uxap:blocks>
+                            <m:VBox
+                               id="MG_id_YearContainer"
+                                class="sapUiSmallMargin"
+                                fitContainer="true"
+                                busy="{viewModel>/busy}"
+                                busyIndicatorDelay="0"
+                            />
+                        </uxap:blocks>
+                    </uxap:ObjectPageSubSection>
+                </uxap:subSections>
+            </uxap:ObjectPageSection>
+        </uxap:sections>
+
+    </uxap:ObjectPageLayout>
+</m:Page>
+</mvc:View>

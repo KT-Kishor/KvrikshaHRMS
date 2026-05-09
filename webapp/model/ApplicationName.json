@@ -135,12 +135,40 @@
         "ID": 34,
         "AppName": "Maintain Data"
     },
-      {
+    {
         "ID": 34,
         "AppName": "Login Issue"    
     },
-     {
+    {
         "ID": 35,
+        "AppName": "Raise Bug"    
+    },
+    {
+        "ID": 36,
+        "AppName": "Timesheet Details"  
+    },
+    {
+        "ID": 37,
+        "AppName": "Employee Assignment"  
+    },
+    {
+        "ID": 38,
+        "AppName": "Payslip Deduction"
+    },
+    {
+        "ID" : 39,
+        "AppName": "Allowance Application"
+    },
+    {
+        "ID" : 40,
+        "AppName": "Goal Questions Details"
+    },
+    {
+        "ID" : 41,
+        "AppName": "Manage Goals"
+    },
+     {
+        "ID": 42,
         "AppName": "Others"
     }
 ]

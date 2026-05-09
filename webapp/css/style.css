@@ -3726,5 +3726,261 @@ color: #fff !important;
     color:#788fa6 ;
 }
 .sapMDialogSuccess>header .sapMDialogTitleGroup .sapMDialogIcon.sapUiIcon {
-    color:#788fa6 ;
+    color:#788fa6;
 }
+.sapMPanel .sapMTB.sapMPanelHeaderTB .sapMTitle{
+  color:#fff !important
+}
+.customCard {
+    border-radius: 20px;
+    overflow: hidden;
+}
+/* Image Container */
+.imageContainer {
+    position: relative;
+}
+/* Image */
+.cardImage {
+    object-fit: cover;
+}
+
+/* Overlay Text */
+.overlayContent {
+    position: absolute;
+    top: 40px;
+    left: 20px;
+    color: white;
+}
+/* Date */
+.dateText {
+    color: white;
+    font-size: 1.1rem;
+
+    /* Text Shadow */
+    text-shadow:
+        1px 1px 3px rgba(0, 0, 0, 0.8),
+        0 0 8px rgba(0, 0, 0, 0.6);
+
+    /* Optional Border Effect */
+    -webkit-text-stroke: 0.3px rgba(255, 255, 255, 0.4);
+
+    font-weight: 400;
+
+    letter-spacing: 0.5px;
+}
+
+/* Title */
+.titleText {
+    color: white !important;
+    font-size: 1.5rem !important;
+    text-shadow:
+        1px 1px 3px rgba(0, 0, 0, 0.8),
+        0 0 8px rgba(0, 0, 0, 0.6);
+
+    /* Optional Border Effect */
+    -webkit-text-stroke: 0.3px rgba(255, 255, 255, 0.4);
+        overflow: hidden;
+    font-weight: 600;
+    text-overflow: ellipsis;
+     -webkit-line-clamp: 2;
+       -webkit-box-orient: vertical;
+ display: -webkit-box;
+    letter-spacing: 0.5px;
+}
+
+/* Subtitle */
+.subTitleText {
+    color: white;
+    font-size: 1.1rem;
+     text-shadow:
+        1px 1px 3px rgba(0, 0, 0, 0.8),
+        0 0 8px rgba(0, 0, 0, 0.6);
+
+    /* Optional Border Effect */
+    -webkit-text-stroke: 0.3px rgba(255, 255, 255, 0.4);
+
+    font-weight: 300;
+
+    letter-spacing: 0.5px;
+}
+
+/* Blue Status Text */
+.blueText {
+    color: #000;
+    font-weight: bold;
+}
+
+/* Labels */
+.labelText {
+    color: #6a7f99;
+    font-weight: bold;
+}
+.sectionTitle {
+    background: #e9ebf2;
+    color: #000 !important;
+    font-weight: bold;
+    font-size: 1rem !important;
+    padding: 0.4rem 1.5rem;
+    border-left: 5px solid #000;
+    border-radius: 0 10px 10px 0;
+    display: inline-block;
+    letter-spacing: 0.5px;
+}
+.expandBtn{
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 10;
+   color:#000;
+    border-radius: 50%;
+}
+.minimizeBtn{
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 10;
+}
+.eventCardContainer{
+    height: 100%;
+}
+
+.eventContent{
+    height: 100%;
+}
+.expandregisternow{
+  margin-top: 200px !important;
+  margin-right: -50px !important;
+}
+
+.registerBtn{
+     margin-right: 10px !important;
+     margin-bottom: 10px !important;
+}
+
+/* ================= DIALOG CONTAINER ================= */
+
+.eventDialogContainer {
+    background: white;
+   
+  
+}
+
+/* ================= IMAGE SECTION ================= */
+
+.dialogImageSection {
+    position: relative;
+}
+
+.dialogImage {
+    object-fit: cover;
+}
+
+/* ================= OVERLAY ================= */
+
+.dialogOverlayContent {
+    position: absolute;
+    bottom: 30px;
+    left: 25px;
+    right: 25px;
+    top:25px;
+    bottom: 25px;
+}
+
+/* ================= TITLE ================= */
+
+.dialogTitleText {
+    color: white !important;
+    font-size: 2rem !important;
+    font-weight: bold !important;
+    text-shadow:
+        2px 2px 10px rgba(0,0,0,0.7);
+           overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    display: -webkit-box;
+
+    -webkit-line-clamp: 3;
+
+    -webkit-box-orient: vertical;
+}
+
+/* ================= SUBTITLE ================= */
+
+.dialogSubTitleText {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 300;
+    text-shadow:
+        1px 1px 8px rgba(0,0,0,0.7);
+}
+
+/* ================= ADDRESS ================= */
+
+.dialogAddressText {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #4f5b93;
+}
+
+/* ================= DESCRIPTION ================= */
+
+.dialogDescription {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #444;
+}
+
+ .eventCard {
+    max-width: 350px;
+    margin: 0 auto;
+}
+
+/*@media screen and (max-width: 600px) {
+
+    .eventCard {
+
+        width: 92% !important;
+
+        max-width: 92% !important;
+
+        margin-left: auto !important;
+
+        margin-right: 100px !important;
+
+        display: block;
+
+    }
+
+} */
+
+.sapUxAPObjectPageSection:not(.sapUxAPObjectPageSectionFirstVisible) {
+    padding-top: 1rem !important;
+}
+
+/* ================= DESKTOP ================= */
+ .eventCardsContainer {
+
+    justify-content: flex-start;
+}
+
+/* ================= MOBILE ================= */
+
+@media screen and (max-width: 768px) {
+
+    .eventCardsContainer {
+
+        justify-content: center !important;
+    }
+
+    .eventCard {
+
+        width: 92% !important;
+
+        max-width: 380px !important;
+
+        margin-left: auto !important;
+
+        margin-right: auto !important;
+    }
+} 

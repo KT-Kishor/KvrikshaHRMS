@@ -1,0 +1,101 @@
+{
+  "sap.app": {
+    "id": "kt.ai.sap.com.recruitment.objectcard",
+    "type": "card"
+  },
+
+  "sap.card": {
+    "type": "Object",
+
+    "extension": "./Extension",
+
+    "data": {
+      "extension": {
+        "method": "getQuestionsWithActions"
+      }
+    },
+
+    "header": {
+      "title": "Topic: {Topic}",
+      "subTitle": "Quarter: {Quarter}"
+    },
+
+    "content": {
+      "groups": [
+        {
+          "items": [
+          {
+  "label": "",
+  "value": "Question: {Question}"
+},
+{
+  "label": "",
+  "value": "Description: {Description}",
+  "visible": "{editable2}"
+},
+{
+  "label": "",
+  "type": "TextArea",
+  "value": "Description: {Description}",
+  "visible": "{editable1}"
+},
+{
+  "label": "",
+  "value": "Score: {Score}"
+},
+{
+  "label": "",
+  "value": "Manager Remark: {ScoresRemark}"
+}
+          ]
+        }
+      ]
+    },
+
+  "footer": {
+  "actionsStrip": [
+    {
+      "text": "Edit",
+    "visible": "{= ${isCurrentYear} && !${editable1} && !${parameters>/isFinalSubmitted} && Number(${Score}) > 0 }", 
+    "actions": [
+        {
+          "type": "Custom",
+          "parameters": {
+            "method": "edit",
+            "id": "{GoalId}"
+          }
+        }
+      ]
+    },
+    {
+      "text": "Save",
+      "visible": "{= ${editable1} && !${parameters>/isFinalSubmitted} }",
+      "buttonType": "Transparent",
+      "actions": [
+        {
+          "type": "Custom",
+          "parameters": {
+            "method": "save",
+            "id": "{GoalId}"
+          }
+        }
+      ]
+    },
+    {
+      "text": "Cancel",
+      "visible": "{= ${editable1} && !${parameters>/isFinalSubmitted} }",
+      "buttonType": "Transparent",
+      "actions": [
+        {
+          "type": "Custom",
+          "parameters": {
+            "method": "cancel",
+            "id": "{GoalId}"
+          }
+        }
+      ]
+    }
+  ]
+}
+  }
+}

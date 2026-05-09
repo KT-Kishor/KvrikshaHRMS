@@ -646,6 +646,8 @@ sap.ui.define([], function () {
 
                 // ================= TITLE =================
                 if (headerData.Title) {
+                    y += 5;
+
                     doc.setFont("times", "bold").setFontSize(11);
 
                     let title = evaluateText(headerData.Title, oCompanyModel, oModel);
@@ -740,7 +742,16 @@ sap.ui.define([], function () {
                 let requiredHeight = 45;
 
                 // Check before rendering
-                y = checkPageBreak(y + requiredHeight);
+               if (y + requiredHeight > pageHeight - 30) {
+                    doc.addPage();
+
+                    doc.addImage(oCompanyModel.emailLogoBase64, "PNG", 145, 8, 45, 10);
+                    doc.setGState(new doc.GState({ opacity: 0.1 }));
+                    doc.addImage(oCompanyModel.backgroundLogoBase64, "PNG", backImgX, backImgY, 100, 100);
+                    doc.setGState(new doc.GState({ opacity: 1 }));
+
+                    y = topMargin;
+                }
 
                 y += 10;
 

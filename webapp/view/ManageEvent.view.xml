@@ -1,0 +1,149 @@
+
+<mvc:View
+    controllerName="sap.kt.com.minihrsolution.controller.ManageEvent"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:u="sap.ui.unified"
+    xmlns:fb="sap.ui.comp.filterbar"
+>
+    <Page
+        id="ME_id_Page"
+    >
+    <customHeader>
+	    <core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Header" type="XML" />
+		</customHeader>
+        <content>
+                <!-- <fb:FilterBar
+                    id="ME_id_FilterBar1"
+                    search="ME_onGoPress"
+                    clear="ME_onClearPress"
+                    showRestoreButton="false"
+                    showClearOnFB="true"
+                    showGoOnFB="true"
+                    showFilterConfiguration="false"
+                    useToolbar="false"
+                    class="sapUiTinyMargin CommonRoundedTable"
+                >
+                    <fb:filterGroupItems>
+                        <fb:FilterGroupItem
+                            groupName="Basic"
+                            name="Date"
+                            label="{i18n>date}"
+                            visibleInFilterBar="true"
+                        >
+                            <fb:control>
+                                <DatePicker 
+                                 change="ME_datechange"
+                                 id="ME_idEventdate"
+                                >
+                                
+                                </DatePicker>
+                                
+                            </fb:control>
+                        </fb:FilterGroupItem>
+                    </fb:filterGroupItems>
+                </fb:FilterBar> -->
+
+                <Table
+                    id="ME_id_Table"
+                    inset="false"
+                    mode="SingleSelectLeft"
+                    width="auto"
+                    growing="true"
+                    growingScrollToLoad="true"
+                     items="{
+        path: 'ManageEventModel>/Questions'
+        
+    }"
+     class="sapUiTinyMargin CommonRoundedTable"
+                >
+                    <headerToolbar>
+                        <OverflowToolbar>
+                            <Title
+                                text="{= ${i18n>eventdetails} + ' (' + (${ManageEventModel>/Questions}.length || 0) + ')'}"
+                                level="H2"
+                            />
+                            <ToolbarSpacer />
+
+                            <Button
+                                text="{i18n>addevent}"
+                             tooltip="{i18n>addTooltip}"
+                                press="ME_onCreatePress"
+                            />
+
+                            <Button
+                                text="{i18n>edit}"
+                              tooltip="{i18n>editTooltip}"
+                                press="ME_onUpdatePress"
+                            />
+
+                            <Button
+                                text="{i18n>delete}"
+                              tooltip="{i18n>deleteTooltip}"
+                                press="ME_onDeletePress"
+                            />
+                        </OverflowToolbar>
+                    </headerToolbar>
+
+                    <columns>
+                        <Column
+                            minScreenWidth="Tablet"
+                            demandPopin="true"
+                        >
+                            <Text text="{i18n>Eventname}" />
+                        </Column>
+                        <Column
+                        
+                            minScreenWidth="Tablet"
+                            demandPopin="true"
+                        >
+                            <Text text="{i18n>startdatetime}" />
+                        </Column>
+                        <Column
+                       
+                            minScreenWidth="Phone"
+                            demandPopin="true"
+                        >
+                            <Text text="{i18n>content}" />
+                        </Column>
+                        <Column
+                       
+                            minScreenWidth="Phone"
+                            demandPopin="true"
+                        >
+                            <Text text="{i18n>link}" />
+                        </Column>
+                        <Column
+                       
+                            minScreenWidth="Phone"
+                            demandPopin="true"
+                        >
+                            <Text text="{i18n>address}" />
+                        </Column>
+                        <Column
+                       
+                            minScreenWidth="Phone"
+                            demandPopin="true"
+                        >
+                            <Text text="{i18n>image}" />
+                        </Column>
+                    </columns>
+
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <Text text="{ManageEventModel>EventName}"/>
+                                <Text text="{path:'ManageEventModel>StartDateTime',formatter: '.Formatter.formatEditDateTime'}" />
+                                <!-- <Text text="{ManageEventModel>Content}" /> -->
+                                <ExpandableText text="{ManageEventModel>Content}" maxCharacters="150"/>
+                                <Link text="{ManageEventModel>LinkToRegister}" />
+                                <Text text="{ManageEventModel>Address}" />
+                               <Button text="{i18n>View}" press="ME_viewroom" />
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+        </content>
+    </Page>
+</mvc:View>
