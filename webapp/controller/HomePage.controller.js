@@ -39,55 +39,55 @@ sap.ui.define(
                 sessionStorage.removeItem("homePageReturnTab");
                 this.API = "https://rest.kalpavrikshatechnologies.com";
 
-                var oData = {
-                    pages: [{
-                        pageId: "companyPageId",
-                        header: "Company info",
-                        title: "Kalpavriksha Technologies",
-                        titleUrl: "",
-                        icon: "./image/logo.jpg",
-                        displayShape: "Circle",
-                        groups: [{
-                            heading: "Contact Details",
-                            elements: [],
-                        },
-                        {
-                            heading: "Main Contact",
-                            elements: [{
-                                label: "WhatsApp",
-                                value: "+91 9686145959",
-                                elementType: "pageLink",
-                                pageLinkId: "companyEmployeePageId",
-                            },
-                            {
-                                label: "Email",
-                                value: "accounts@kalpavrikshatechnologies.com",
-                                emailSubject: "Subject",
-                                elementType: "email",
-                            },
-                            {
-                                label: "Address",
-                                value: "#111 Karekal layout , Sharanbasaveshwar Nagar, Near Naganhalli Railway Over Bridge, Gulbarga, Karnataka 585102, IN",
-                                elementType: "text",
-                            },
-                            {
-                                label: "Find Us On Google Map",
-                                value: "Google Map",
-                                elementType: "link",
-                                url: "https://maps.app.goo.gl/zjt8Xy3FsgV13veMA",
-                            },
-                            {
-                                label: "Follow Us On Linked in",
-                                value: "Linked in",
-                                elementType: "link",
-                                url: "https://www.linkedin.com/company/kalpavriksha-technologies/",
-                            },
+                    var oData = {
+                        pages: [{
+                            pageId: "companyPageId",
+                            header: "Company info",
+                            title: "Kvriksha Technologies Private Limited",
+                            titleUrl: "",
+                            icon: "./image/KVPL_logo_T.png",
+                            displayShape: "Circle",
+                            groups: [{
+                                    heading: "Contact Details",
+                                    elements: [],
+                                },
+                                {
+                                    heading: "Main Contact",
+                                    elements: [{
+                                            label: "WhatsApp",
+                                            value: "+91 9686145959",
+                                            elementType: "pageLink",
+                                            pageLinkId: "companyEmployeePageId",
+                                        },
+                                        {
+                                            label: "Email",
+                                            value: "accounts@kalpavrikshatechnologies.com",
+                                            emailSubject: "Subject",
+                                            elementType: "email",
+                                        },
+                                        {
+                                            label: "Address",
+                                            value: "#111 Karekal layout , Sharanbasaveshwar Nagar, Near Naganhalli Railway Over Bridge, Gulbarga, Karnataka 585102, IN",
+                                            elementType: "text",
+                                        },
+                                        {
+                                            label: "Find Us On Google Map",
+                                            value: "Google Map",
+                                            elementType: "link",
+                                            url: "https://maps.app.goo.gl/zjt8Xy3FsgV13veMA",
+                                        },
+                                        {
+                                            label: "Follow Us On Linked in",
+                                            value: "Linked in",
+                                            elementType: "link",
+                                            url: "https://www.linkedin.com/company/kalpavriksha-technologies/",
+                                        },
+                                    ],
+                                },
                             ],
-                        },
-                        ],
-                    },],
-                };
-                var aModel = new JSONModel({
+                        }, ],
+                    };
+                    var aModel = new JSONModel({
                     ui5topics: [{
                         title: "SAPUI5 Overview",
                         description: "Introduction, Features, MVC"
@@ -197,103 +197,103 @@ sap.ui.define(
             },
             formatCardDate: function (sDateTime) {
 
-    if (!sDateTime) {
+                if (!sDateTime) {
 
-        return "";
-    }
+                    return "";
+                }
 
-    // Remove UTC Z
-    sDateTime =
-        sDateTime.replace("Z", "");
+                // Remove UTC Z
+                sDateTime =
+                    sDateTime.replace("Z", "");
 
-    // Split Date & Time
-    var aSplit =
-        sDateTime.split("T");
+                // Split Date & Time
+                var aSplit =
+                    sDateTime.split("T");
 
-    if (aSplit.length < 2) {
+                if (aSplit.length < 2) {
 
-        return sDateTime;
-    }
+                    return sDateTime;
+                }
 
-    // ================= DATE =================
+                // ================= DATE =================
 
-    var aDate =
-        aSplit[0].split("-");
+                var aDate =
+                    aSplit[0].split("-");
 
-    var iYear =
-        parseInt(aDate[0]);
+                var iYear =
+                    parseInt(aDate[0]);
 
-    var iMonth =
-        parseInt(aDate[1]) - 1;
+                var iMonth =
+                    parseInt(aDate[1]) - 1;
 
-    var iDay =
-        parseInt(aDate[2]);
+                var iDay =
+                    parseInt(aDate[2]);
 
-    // ================= TIME =================
+                // ================= TIME =================
 
-    var sTime =
-        aSplit[1].substring(0, 5);
+                var sTime =
+                    aSplit[1].substring(0, 5);
 
-    var aTime =
-        sTime.split(":");
+                var aTime =
+                    sTime.split(":");
 
-    var iHours =
-        aTime[0];
+                var iHours =
+                    aTime[0];
 
-    var iMinutes =
-        aTime[1];
+                var iMinutes =
+                    aTime[1];
 
-    // Create Date WITHOUT timezone conversion
-    var oDate =
-        new Date(
-            iYear,
-            iMonth,
-            iDay
-        );
+                // Create Date WITHOUT timezone conversion
+                var oDate =
+                    new Date(
+                        iYear,
+                        iMonth,
+                        iDay
+                    );
 
-    var aDays = [
-        "Sun",
-        "Mon",
-        "Tue",
-        "Wed",
-        "Thu",
-        "Fri",
-        "Sat"
-    ];
+                var aDays = [
+                    "Sun",
+                    "Mon",
+                    "Tue",
+                    "Wed",
+                    "Thu",
+                    "Fri",
+                    "Sat"
+                ];
 
-    var aMonths = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec"
-    ];
+                var aMonths = [
+                    "Jan",
+                    "Feb",
+                    "Mar",
+                    "Apr",
+                    "May",
+                    "Jun",
+                    "Jul",
+                    "Aug",
+                    "Sep",
+                    "Oct",
+                    "Nov",
+                    "Dec"
+                ];
 
-    var sDay =
-        aDays[oDate.getDay()];
+                var sDay =
+                    aDays[oDate.getDay()];
 
-    var sMonth =
-        aMonths[oDate.getMonth()];
+                var sMonth =
+                    aMonths[oDate.getMonth()];
 
-    return (
-        sDay +
-        ", " +
-        sMonth +
-        " " +
-        iDay +
-        ", " +
-        iHours +
-        ":" +
-        iMinutes
-    );
-},
+                return (
+                    sDay +
+                    ", " +
+                    sMonth +
+                    " " +
+                    iDay +
+                    ", " +
+                    iHours +
+                    ":" +
+                    iMinutes
+                );
+            },
             _openCourseDialog: function (sPath, sTitle) {
                 var that = this;
                 if (!this._pDialog) {
