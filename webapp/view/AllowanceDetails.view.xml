@@ -259,14 +259,14 @@
                                                 text="{i18n>allowancedate}" 
                                             />
                                         </m:Column>
-                                        <m:Column
+                                        <!-- <m:Column
                                             minScreenWidth="Desktop"
                                             demandPopin="true"
                                         >
                                             <m:Label
                                                 text="{i18n>expDetForeignAmount}" 
                                             />
-                                        </m:Column>
+                                        </m:Column> -->
                                         <m:Column
                                             minScreenWidth="Desktop"
                                             demandPopin="true"
@@ -277,10 +277,7 @@
                                         </m:Column>
                                     </m:columns>
                                     <m:items>
-                                        <m:ColumnListItem
-                                         
-                                           
-                                        >
+                                        <m:ColumnListItem >
                                             <m:cells>
                                                 <m:Text
                                                     text="{ItemAllowanceModel>IndexNo}" 
@@ -293,7 +290,7 @@
                                                      formatter: '.Formatter.getDateWithDay'
                                                     }"
                                                 />
-                                                <m:VBox>
+                                                <!-- <m:VBox>
                                                     <m:HBox>
                                                         <m:Text
                                                             text="{ItemAllowanceModel>Currency} {path:'ItemAllowanceModel>ForeignAmount',formatter:'.Formatter.fromatNumber'}"
@@ -305,7 +302,7 @@
                                                             visible="{= ${ItemAllowanceModel>Currency} !== 'INR'}"
                                                         />
                                                     </m:HBox>
-                                                </m:VBox>
+                                                </m:VBox> -->
                                                 <m:Text
                                                     text="INR {path:'ItemAllowanceModel>AllowanceAmount', formatter: '.Formatter.fromatNumber'}"
                                                 />

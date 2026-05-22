@@ -36,8 +36,6 @@ sap.ui.define(
                 await this.AppVisibilityReadCall();
                 var LoginModel = this.getView().getModel("LoginModel");
 
-
-
                 let count = await this.ajaxReadWithJQuery("InboxDetailsSubmittedCount", { ManagerID: LoginModel.getProperty("/EmployeeID") });
                 this.getView().getModel("TileAccessModel").setProperty("/SubmittedCount", count.submittedCount)
 
@@ -104,7 +102,7 @@ sap.ui.define(
                     const firstEntry = Array.isArray(oData.data) ? oData.data[0] : oData.data;
                     this.getOwnerComponent().setModel(new JSONModel(firstEntry), "AppVisibilityModel");
 
-                    const tileNames = ["Home", "Timesheet", "Payslip", "OfferGeneration", "Invoice", "Quotation", "Expense", "ManageAsset", "Recruitment",];
+                    const tileNames = ["Home","Timesheet", "Payslip", "OfferGeneration", "Invoice", "Quotation", "Expense", "ManageAsset", "Recruitment","Approvals"];
 
                     const tileKeys = firstEntry.TileKey?.split(",") || [];
                     const tileMapping = tileNames.reduce((map, name, i) => {
@@ -385,7 +383,6 @@ sap.ui.define(
                 });
             },
             TileV_onPressAdminPaySlip: function () {
-                this.that.getBusyDialog();
                 this.getRouter().navTo("RouteAdminPaySlip",{
                     from:"Tilepage"
                 });
@@ -526,10 +523,20 @@ sap.ui.define(
                 this.getRouter().navTo("RouteGoalQuestions");
             },
             TileV_onpressManageGoals: function () {
-                this.getRouter().navTo("RouteManagegoals");
+                 var LoginModel = this.getView().getModel("LoginModel")
+          var  emps = LoginModel.getProperty("/EmployeeID")
+          this.getRouter().navTo("RouteManagegoals", {
+            employeeId: emps,
+            from: "ManageGoals",
+          });
             },
             TileV_onpressManageEvents: function () {
                 this.getRouter().navTo("RouteManageEvent");
+            },
+            TileV_onpressReviewGoals: function () {
+                this.getRouter().navTo("RouteEmployeeDetails", {
+            sPath: "GoalEmployeeDetailsManageGoal",
+          });
             },
             onTileRefresh: async function () {
                 this.getBusyDialog();

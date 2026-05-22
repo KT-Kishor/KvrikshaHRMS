@@ -41,9 +41,9 @@
                     <Text class="checkmark-text sapUiSmallMarginBegin" text="{i18n>traineeCapmDes3}"/>
 
                     <Text class="section-title sapUiSmallMarginBegin" text="{i18n>traineeInclude}"/>
-                    <Text class="training-text sapUiSmallMarginBegin" text="{i18n>traineeCapminclude}"/>
-                    <Text class="training-text sapUiSmallMarginBegin" text="{i18n>traineeCapminclude2}"/>
-                    <Text class="training-text sapUiSmallMarginBegin" text="{i18n>traineeCapminclude3}"/>
+                    <Text class="training-text sapUiSmallMarginBegin" text="▪ {i18n>traineeCapminclude}"/>
+                    <Text class="training-text sapUiSmallMarginBegin" text="▪ {i18n>traineeCapminclude2}"/>
+                    <Text class="training-text sapUiSmallMarginBegin" text="▪ {i18n>traineeCapminclude3}"/>
                      <Link class="training_Course sapUiSmallMarginBegin" text="View Course Details!" press="onCapmCoursepress"/>
                      <HBox justifyContent="End">
                 <Button text="{i18n>careersapply}"  press="onCapmpress"  class="Takeatour sapUi-Std-PaddingS"
@@ -56,6 +56,13 @@
     <HBox class="footer-bar" alignItems="Center" justifyContent="SpaceBetween" >
         <!-- Left: Copyright -->
         <Text text="{i18n>companynameKT}" class="footer-text"/>
+        <!-- Middle: Links -->
+        <!-- <HBox class="footer-links" justifyContent="Center">
+            <Link text="Disclaimer" href="#" target="_blank" class="footer-link"/>
+            <Link text="Privacy" href="#" target="_blank" class="footer-link"/>
+            <Link text="Modern Slavery Statement" href="#" target="_blank" class="footer-link"/>
+        </HBox> -->
+
         <!-- Right: Social Icons -->
         <HBox class="footer-social" justifyContent="End">
             <core:HTML content="&lt;a href='https://www.instagram.com/kalpavrikshatechnologies/' target='_blank'&gt;

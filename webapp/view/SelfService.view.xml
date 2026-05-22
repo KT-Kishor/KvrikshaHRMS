@@ -195,10 +195,6 @@
                                 class="sapUiTinyMargin avatarClickable"
                             />
                         </m:VBox>
-                        <!-- <layout:VerticalLayout>
-                            <m:Text text="{sEmployeeModel>/0/STDCode} {sEmployeeModel>/0/MobileNo}" wrapping="true" />
-                            <m:Text text="{sEmployeeModel>/0/CompanyEmailID}" wrapping="true" />
-                        </layout:VerticalLayout> -->
                     </m:FlexBox>
                     <!--Permanent Address -->
                     <layout:VerticalLayout class="sapUiSmallMarginBeginEnd">
@@ -1505,6 +1501,134 @@
                                                 text="{path: 'PaySlip>NetPay', formatter: '.Formatter.CurrencyInINRText'}"
                                             />
                                         </m:cells>
+                                    </m:ColumnListItem>
+                                </m:items>
+                            </m:Table>
+                        </ObjectPageSubSection>
+                    </subSections>
+                </ObjectPageSection>
+                <ObjectPageSection
+                    titleUppercase="false"
+                    id="idmyassetself"
+                    title="{i18n>MyAssetTitle}"
+                    visible="{viewModel>/ResignationVisible}"
+                >
+                    <subSections>
+                        <ObjectPageSubSection
+                            id="connect"
+                            titleUppercase="false"
+                        >
+                            <m:Table
+                                sticky="ColumnHeaders"
+                                id="SS_id_myAssetTable"
+                                busyIndicatorDelay="0"
+                                growing="true"
+                                growingThreshold="50"
+                                growingScrollToLoad="true"
+                                items="{path: 'MyAssets>/MyAssetsTable', sorter: { path: 'FinancialYear', descending: false, group: true}                                }"
+                                class="sapUiTinyMargin CommonRoundedTable SelfAttachment"
+                            >
+                                <m:columns>
+                                    <m:Column>
+                                        <m:Text text="Type" />
+                                    </m:Column>
+                                    <m:Column
+                                        demandPopin="true"
+                                        minScreenWidth="Desktop"
+                                        
+                                    >
+                                        <m:Text text="Model" />
+                                    </m:Column>
+                                    <m:Column
+                                        demandPopin="true"
+                                        minScreenWidth="Tablet"
+                                    >
+                                        <m:Text
+                                            text="Description"
+                                        />
+                                    </m:Column>
+                                    <m:Column
+                                        demandPopin="true"
+                                        minScreenWidth="Tablet"
+                                    >
+                                        <m:Text
+                                            text="Serial Number"
+                                        />
+                                    </m:Column>
+                                    <m:Column  demandPopin="true"
+                                        minScreenWidth="Tablet">
+                                        <m:Text text="Equipment Number" />
+                                    </m:Column>
+                                    <m:Column  demandPopin="true"
+                                        minScreenWidth="Tablet">
+                                        <m:Text text="Assigned Date" />
+                                    </m:Column>
+                                    <m:Column  demandPopin="true"
+                                        minScreenWidth="Tablet">
+                                        <m:Text text="Asset Value" />
+                                    </m:Column>
+                                    <!-- <m:Column  demandPopin="true"
+                                        minScreenWidth="Tablet">
+                                        <m:Text text="Status" />
+                                    </m:Column> -->
+                                    
+                                </m:columns>
+                                <m:items>
+                                    <m:ColumnListItem
+                                    >
+                                        <m:cells>
+                                            <m:Text
+                                                text="{MyAssets>Type}"
+                                            />
+                                        </m:cells>
+                                        <m:cells>
+                                            <m:Text
+                                                text="{MyAssets>Model}"
+                                            />
+                                        </m:cells>
+                                        <m:cells>
+                                            <m:Text
+                                                text="{MyAssets>Description}"
+                                            />
+                                        </m:cells>
+                                        <m:cells>
+                                            <m:Text
+                                                text="{MyAssets>SerialNumber}"
+                                            />
+                                        </m:cells>
+                                        <m:cells>
+                                            <m:Text
+                                                text="{MyAssets>EquipmentNumber}"
+                                            />
+                                        </m:cells>
+                                        <m:cells>
+                                            <m:Text
+                                                text="{path: 'MyAssets>AssignedDate',
+                             formatter: '.Formatter.formatDate'
+                             }"
+                                            />
+                                        </m:cells>
+                                        <m:cells>
+                                            <m:Text
+                                                text="{MyAssets>Currency} {
+                            path: 'MyAssets>AssetValue',
+                            formatter: '.Formatter.formatCurrency'
+                        }"
+                                            />
+                                           
+                                        </m:cells>
+                                         <!-- <m:cells>
+                                            <m:ObjectStatus
+                            inverted="false"
+                            text="{MyAssets>Status}"
+                            state="{
+                                    path: 'MyAssets>Status',
+                                    formatter: '.Formatter.formatObjectStatus'
+                                }"
+                            class="sapUiTinyMarginBottom"
+                        />
+                                        </m:cells> -->
+                                        
                                     </m:ColumnListItem>
                                 </m:items>
                             </m:Table>

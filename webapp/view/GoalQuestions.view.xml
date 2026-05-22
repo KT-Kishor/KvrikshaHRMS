@@ -123,34 +123,34 @@
                             <Button
                                
                                 text="{i18n>download}"
-                              tooltip="{i18n>downloadTooltip}"
+                              tooltip="{i18n>download}"
                                 
                                 press="QD_onDownloadExcelPress"
                             />
                             <Button
                                
                                 text="{i18n>upload}"
-                                tooltip="{i18n>uploadTooltip}"
+                                tooltip="{i18n>upload}"
                                
                                 press="QD_onUploadPress"
                             />
 
                             <Button
                                 text="{i18n>add}"
-                             tooltip="{i18n>addTooltip}"
+                             tooltip="{i18n>add}"
                                
                                 press="QD_onCreatePress"
                             />
 
                             <Button
                                 text="{i18n>edit}"
-                              tooltip="{i18n>editTooltip}"
+                              tooltip="{i18n>edit}"
                                 press="QD_onUpdatePress"
                             />
 
                             <Button
                                 text="{i18n>delete}"
-                              tooltip="{i18n>deleteTooltip}"
+                              tooltip="{i18n>delete}"
                             
                                 press="QD_onDeletePress"
                             />

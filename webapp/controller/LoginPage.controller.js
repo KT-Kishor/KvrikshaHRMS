@@ -27,7 +27,8 @@ sap.ui.define(
           });
           this.getOwnerComponent().setModel(model, "LoginModel");
         },
-        _onRouteMatched: function () {
+        _onRouteMatched: async function () {
+          var LoginFunction = await this.commonLoginFunction("LoginPage");
           this.closeBusyDialog();
           this.i18nModel = this.getView().getModel("i18n").getResourceBundle();
           var oLoginModel = new JSONModel({
@@ -78,47 +79,47 @@ sap.ui.define(
           utils._LCvalidatePassword(oEvent);
           this._addPasswordGenerateIcon()
         },
-         SM_onCopyPassword: function (oEvent) {
-            const oIcon = oEvent.getSource();
-            const oInput = oIcon.getParent(); // 👈 actual input owning the icon
-            if (!oInput || !oInput.getValue) return;
-            const pwd = oInput.getValue();
-            if (!pwd) return sap.m.MessageToast.show(this.i18nModel.getText("noPasswordCopy"));
+        SM_onCopyPassword: function (oEvent) {
+          const oIcon = oEvent.getSource();
+          const oInput = oIcon.getParent(); // 👈 actual input owning the icon
+          if (!oInput || !oInput.getValue) return;
+          const pwd = oInput.getValue();
+          if (!pwd) return sap.m.MessageToast.show(this.i18nModel.getText("noPasswordCopy"));
 
-            navigator.clipboard.writeText(pwd)
-                .then(() => {
-                    MessageToast.show(this.i18nModel.getText("passwordCopied"));
-                })
-                .catch(() => {
-                    try {
-                        const oTemp = document.createElement("textarea");
-                        oTemp.value = pwd;
-                        document.body.appendChild(oTemp);
-                        oTemp.select();
-                        document.execCommand("copy");
-                        document.body.removeChild(oTemp);
-                        MessageToast.show(this.i18nModel.getText("passwordCopied"));
-                    } catch (err) {
-                        MessageToast.show(this.i18nModel.getText("copyFailed"));
-                    }
-                });
+          navigator.clipboard.writeText(pwd)
+            .then(() => {
+              MessageToast.show(this.i18nModel.getText("passwordCopied"));
+            })
+            .catch(() => {
+              try {
+                const oTemp = document.createElement("textarea");
+                oTemp.value = pwd;
+                document.body.appendChild(oTemp);
+                oTemp.select();
+                document.execCommand("copy");
+                document.body.removeChild(oTemp);
+                MessageToast.show(this.i18nModel.getText("passwordCopied"));
+              } catch (err) {
+                MessageToast.show(this.i18nModel.getText("copyFailed"));
+              }
+            });
         },
         LP_onpresPassword(oEvent) {
           utils._LCvalidateMandatoryField(oEvent);
-          
-        },
-          _addPasswordGenerateIcon: function () {
-            const aInputs = [$C("FSM_id_newPasswordInput")];
 
-            aInputs.forEach((oInput) => {
-                if (!oInput || oInput._hasCopyIcon) return;
-                oInput.addEndIcon({
-                    src: "sap-icon://copy",
-                    tooltip: "Copy password",
-                    press: this.SM_onCopyPassword.bind(this)
-                });
-                oInput._hasCopyIcon = true;
+        },
+        _addPasswordGenerateIcon: function () {
+          const aInputs = [$C("FSM_id_newPasswordInput")];
+
+          aInputs.forEach((oInput) => {
+            if (!oInput || oInput._hasCopyIcon) return;
+            oInput.addEndIcon({
+              src: "sap-icon://copy",
+              tooltip: "Copy password",
+              press: this.SM_onCopyPassword.bind(this)
             });
+            oInput._hasCopyIcon = true;
+          });
         },
 
         //for OTPsend
@@ -222,6 +223,14 @@ sap.ui.define(
                   oLoginModel.setProperty("/RichText", false);
                   oLoginModel.setProperty("/SimpleForm", true);
                   oLoginModel.setProperty("/CompanyCode", userData.CompanyCode);
+                  debugger
+                  localStorage.setItem("isLoggedIn", "true");
+
+                  localStorage.setItem("_x9A1p", userData._x9A1p);
+                  localStorage.setItem("_k7LmQ", userData._k7LmQ);
+
+                  localStorage.setItem("_aB39X",btoa(userData.EmployeeID));
+                  localStorage.setItem("_mN72P",btoa(userData.EmployeeName));
 
                   // Reset LoginViewModel
                   oVM.setProperty("/userId", ""); oVM.setProperty("/userName", ""); oVM.setProperty("/otp", ""); oVM.setProperty("/password", ""); oVM.setProperty("/isOtpVisible", false); oVM.setProperty("/isPasswordVisible", false); oVM.setProperty("/isSendOtpVisible", false); oVM.setProperty("/sendOtpText", this.i18nModel.getText("sendOtp")); oVM.setProperty("/isOtpSelected", false); oVM.setProperty("/isPasswordSelected", false); oVM.setProperty("/isForgotPasswordVisible", false);
@@ -313,17 +322,17 @@ sap.ui.define(
           }
         },
 
-          SM_onGenerateForgotPassword: function () {
-            var oPwdInput = $C("FSM_id_newPasswordInput");
-       
-            if (!oPwdInput) return;
+        SM_onGenerateForgotPassword: function () {
+          var oPwdInput = $C("FSM_id_newPasswordInput");
 
-            var pwd = utils._LCgenerateStrongPassword();
- 
-            oPwdInput.setValue(pwd).setValueState("None");
-            this._addPasswordGenerateIcon()
-          
-        
+          if (!oPwdInput) return;
+
+          var pwd = utils._LCgenerateStrongPassword();
+
+          oPwdInput.setValue(pwd).setValueState("None");
+          this._addPasswordGenerateIcon()
+
+
         },
         // Close the dialog when the cancel button is pressed
         SM_onPressCancle: function () {

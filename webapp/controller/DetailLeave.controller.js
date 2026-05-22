@@ -94,7 +94,7 @@ sap.ui.define([
             }
         },
         onLogout: function() {
-            this.getRouter().navTo("RouteLoginPage");
+                    this.CommonLogoutFunction(); // Navigate to login page
         },
         BarDisplayFunction: async function(leaveType, selectedYear, userId) {
             let jsonData = {

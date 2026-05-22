@@ -8,12 +8,12 @@ sap.ui.define(
   ],
   function (BaseController, JSONModel, MessageBox, MessageToast, utils) {
     "use strict";
-    
+
     return BaseController.extend(
       "sap.kt.com.minihrsolution.controller.GoalQuestions",
       {
         onInit: function () {
-         
+
           const oViewModel = new JSONModel({
             isEditMode: false,
             selectedDepartment: "",
@@ -25,18 +25,18 @@ sap.ui.define(
         },
 
         QD_onRouteMatched: async function () {
-            var LoginFunction = await this.commonLoginFunction("GoalQuestions");
-                if (!LoginFunction) return;
-                 this.getBusyDialog();
-                  const oView = this.getView();
-                  const oLoginModel = oView.getModel("LoginModel");
-      const oLoginData = oLoginModel.getData();
-      this.oLoginModel = oLoginData;
+          var LoginFunction = await this.commonLoginFunction("GoalQuestions");
+          if (!LoginFunction) return;
+          this.getBusyDialog();
+          const oView = this.getView();
+          const oLoginModel = oView.getModel("LoginModel");
+          const oLoginData = oLoginModel.getData();
+          this.oLoginModel = oLoginData;
           this.i18nModel = this.getOwnerComponent()
             .getModel("i18n")
             .getResourceBundle();
-            this.byId("QD_id_Department").setSelectedKey("")
-          
+          this.byId("QD_id_Department").setSelectedKey("")
+
           if (!this._deptLoaded) {
             await this.QD_loadDepartmentData();
             this._deptLoaded = true;
@@ -44,7 +44,7 @@ sap.ui.define(
           const sFilterDepartment = this.getView()
             .getModel("viewModel")
             .getProperty("/selectedDepartment");
-            oLoginModel.setProperty("/HeaderName", this.i18nModel.getText("QuestionsDetailsTitle"));
+          oLoginModel.setProperty("/HeaderName", this.i18nModel.getText("QuestionsDetailsTitle"));
           await this.QD_loadQuestionsData(sFilterDepartment);
         },
 
@@ -58,20 +58,20 @@ sap.ui.define(
         QD_loadDepartmentData: async function () {
           try {
             let Dept = [];
-              const result = await this.ajaxReadWithJQuery("Designation");
-              Dept = result?.data || result?.results || result || [];
-                const uniqueDeptMap = new Map();
+            const result = await this.ajaxReadWithJQuery("Designation");
+            Dept = result?.data || result?.results || result || [];
+            const uniqueDeptMap = new Map();
 
-        Dept.forEach(item => {
-            if (item.department) {
+            Dept.forEach(item => {
+              if (item.department) {
                 uniqueDeptMap.set(item.department, item);
-            }
-        });
+              }
+            });
 
-        const uniqueDepartments = Array.from(uniqueDeptMap.values());
+            const uniqueDepartments = Array.from(uniqueDeptMap.values());
 
-        //  Set model
-        const oDeptModel = new JSONModel(uniqueDepartments);
+            //  Set model
+            const oDeptModel = new JSONModel(uniqueDepartments);
 
             // const oDeptModel = new JSONModel(Dept);
             this.getView().setModel(oDeptModel, "sEmployeeModel");
@@ -243,7 +243,7 @@ sap.ui.define(
             utils._LCvalidateMandatoryField(question, "ID")
           );
         },
-        
+
         FQD_onTopicChange: function (oEvent) {
           utils._LCvalidateMandatoryField(oEvent);
         },
@@ -284,7 +284,7 @@ sap.ui.define(
                   data: payload,
                 });
 
-                MessageToast.show(this.getText("updateSuccess"));
+                MessageToast.show(this.getText("goalupdatesuccess"));
               } else {
                 await this.ajaxCreateWithJQuery("GoalQuestions", {
                   data: payload,
@@ -341,7 +341,7 @@ sap.ui.define(
                     },
                   });
                 }
-                     this.closeBusyDialog();
+                this.closeBusyDialog();
                 MessageToast.show(
                   this.getText("deleteSuccess", [aSelectedItems.length]),
                 );
@@ -371,26 +371,32 @@ sap.ui.define(
           });
         },
 
-       QD_onCloseUploadDialog: function () {
-    // Close dialog
-    this.byId("QD_id_UploadDialog").close();
+        QD_onCloseUploadDialog: function () {
+          // Close dialog
+          this.byId("QD_id_UploadDialog").close();
 
-    // ✅ Clear FileUploader UI
-    const oFileUploader = this.byId("QD_id_FileUploader");
-    oFileUploader.clear();
+          // ✅ Clear FileUploader UI
+          const oFileUploader = this.byId("QD_id_FileUploader");
+          oFileUploader.clear();
 
-    // ✅ Clear stored file reference
-    this._selectedFile = null;
-},
+          // ✅ Clear stored file reference
+          this._selectedFile = null;
+        },
 
         QD_onDownloadExcelPress: function () {
           try {
             // Get data from model
+            this.getBusyDialog();
             var aData =
-              this.getView()
-                .getModel("Questionmodel")
-                .getProperty("/Questions") || [];
+              this.getView().getModel("Questionmodel").getProperty("/Questions") || [];
+                if (aData.length === 0) {
+ this.closeBusyDialog();
+                MessageToast.show(
+                    "No data available to download"
+                );
 
+                return;
+            }
             // Prepare data for Excel
             var aFormattedData = aData.map(function (item) {
               return {
@@ -405,8 +411,8 @@ sap.ui.define(
               aFormattedData.length > 0
                 ? XLSX.utils.json_to_sheet(aFormattedData)
                 : XLSX.utils.aoa_to_sheet([
-                    ["Department", "Topic", "Question"],
-                  ]);
+                  ["Department", "Topic", "Question"],
+                ]);
 
             // Create workbook
             var oWorkbook = XLSX.utils.book_new();
@@ -414,10 +420,11 @@ sap.ui.define(
 
             // Download Excel file
             XLSX.writeFile(oWorkbook, "GoalQuestions_Data.xlsx");
-
+            this.closeBusyDialog();
             MessageToast.show(this.getText("downloadsuccessfully"));
+           
           } catch (error) {
-            console.error("Download Error:", error);
+             this.closeBusyDialog();
             MessageToast.show(this.getText("downloadFailed"));
           }
         },
@@ -428,146 +435,146 @@ sap.ui.define(
             .getResourceBundle()
             .getText(sKey, aParams);
         },
-         QD_handleValueChange: function (oEvent) {
-    const oFileUploader = this.byId("QD_id_FileUploader");
-    const aFiles = oEvent.getParameter("files"); // ✅ correct way
+        QD_handleValueChange: function (oEvent) {
+          const oFileUploader = this.byId("QD_id_FileUploader");
+          const aFiles = oEvent.getParameter("files"); // ✅ correct way
 
-    if (!aFiles || aFiles.length === 0) {
-        sap.m.MessageToast.show(this.getText("fileRemoved"));
-        this._selectedFile = null;
-        return;
-    }
+          if (!aFiles || aFiles.length === 0) {
+            sap.m.MessageToast.show(this.getText("fileRemoved"));
+            this._selectedFile = null;
+            return;
+          }
 
-    // ✅ store file globally in controller
-    this._selectedFile = aFiles[0];
+          // ✅ store file globally in controller
+          this._selectedFile = aFiles[0];
 
-    oFileUploader.setValue(this._selectedFile.name);
-},
+          oFileUploader.setValue(this._selectedFile.name);
+        },
 
-QD_handleUploadPress: function () {
+        QD_handleUploadPress: function () {
 
-    this.QD_clearTableSelection();
+          this.QD_clearTableSelection();
 
-    // ✅ Use stored file instead of DOM
-    if (!this._selectedFile) {
-        sap.m.MessageToast.show(this.getText("chooseFileFirst"));
-        return;
-    }
+          // ✅ Use stored file instead of DOM
+          if (!this._selectedFile) {
+            sap.m.MessageToast.show(this.getText("chooseFileFirst"));
+            return;
+          }
 
-    const oFile = this._selectedFile;
+          const oFile = this._selectedFile;
 
-   
 
-    const reader = new FileReader();
 
-    reader.onload = async function (e) {
-        try {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: "array" });
-            const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            const jsonData = XLSX.utils.sheet_to_json(sheet);
+          const reader = new FileReader();
 
-            if (!jsonData.length) {
+          reader.onload = async function (e) {
+            try {
+              const data = new Uint8Array(e.target.result);
+              const workbook = XLSX.read(data, { type: "array" });
+              const sheet = workbook.Sheets[workbook.SheetNames[0]];
+              const jsonData = XLSX.utils.sheet_to_json(sheet);
+
+              if (!jsonData.length) {
                 sap.m.MessageToast.show(this.getText("excelEmpty"));
                 return;
-            }
+              }
 
-            const requiredFields = ["Department", "Topic", "Question"];
-            const hasValidHeaders = requiredFields.every(field =>
+              const requiredFields = ["Department", "Topic", "Question"];
+              const hasValidHeaders = requiredFields.every(field =>
                 Object.keys(jsonData[0]).includes(field)
-            );
+              );
 
-            if (!hasValidHeaders) {
+              if (!hasValidHeaders) {
                 sap.m.MessageBox.error(
-                    "Invalid Excel format. Required columns: Department, Topic, Question"
+                  "Invalid Excel format. Required columns: Department, Topic, Question"
                 );
                 return;
-            }
+              }
 
-            const formattedData = jsonData
+              const formattedData = jsonData
                 .map(item => ({
-                    Department: (item.Department || "").toString().trim(),
-                    Topic: (item.Topic || "").toString().trim(),
-                    Question: (item.Question || "")
-                        .toString()
-                        .replace(/\n/g, "")
-                        .replace(/\r/g, "")
-                        .trim()
+                  Department: (item.Department || "").toString().trim(),
+                  Topic: (item.Topic || "").toString().trim(),
+                  Question: (item.Question || "")
+                    .toString()
+                    .replace(/\n/g, "")
+                    .replace(/\r/g, "")
+                    .trim()
                 }))
                 .filter(item =>
-                    item.Department && item.Topic && item.Question
+                  item.Department && item.Topic && item.Question
                 );
 
-            if (!formattedData.length) {
+              if (!formattedData.length) {
                 sap.m.MessageBox.error("No valid rows found in Excel");
                 return;
-            }
+              }
 
-            const aExisting =
+              const aExisting =
                 this.getView()
-                    .getModel("Questionmodel")
-                    ?.getProperty("/Questions") || [];
+                  .getModel("Questionmodel")
+                  ?.getProperty("/Questions") || [];
 
-            let duplicates = [];
-            let unique = formattedData;
+              let duplicates = [];
+              let unique = formattedData;
 
-            try {
+              try {
                 const result = utils.validateDuplicateQuestions(
-                    aExisting,
-                    formattedData
+                  aExisting,
+                  formattedData
                 );
                 duplicates = result.duplicates || [];
                 unique = result.unique || [];
-            } catch (e) {
+              } catch (e) {
                 console.warn("Validation skipped:", e);
-            }
+              }
 
-            if (duplicates.length > 0) {
+              if (duplicates.length > 0) {
                 sap.m.MessageBox.warning(
-                    this.getText("duplicateRecords", [duplicates.length])
+                  this.getText("duplicateRecords", [duplicates.length])
                 );
-            }
+              }
 
-            let successCount = 0;
-               this.getBusyDialog();
-            for (let item of unique) {
+              let successCount = 0;
+              this.getBusyDialog();
+              for (let item of unique) {
                 try {
-                    await this.ajaxCreateWithJQuery("GoalQuestions", {
-                        data: item
-                    });
-                    successCount++;
+                  await this.ajaxCreateWithJQuery("GoalQuestions", {
+                    data: item
+                  });
+                  successCount++;
                 } catch (apiErr) {
-                    console.error("Insert failed:", item, apiErr);
+                  console.error("Insert failed:", item, apiErr);
                 }
+              }
+
+              await this.QD_loadQuestionsData(this.QD_getSelectedDepartment());
+              this.QD_restoreDepartmentFilter();
+
+              sap.m.MessageToast.show(`Uploaded ${successCount} records successfully`);
+
+              // ✅ Cleanup
+              this._selectedFile = null;
+              this.byId("QD_id_FileUploader").clear();
+              this.byId("QD_id_UploadDialog").close();
+
+            } catch (err) {
+              console.error(err);
+              this.closeBusyDialog()
+              sap.m.MessageBox.error(err.message || this.getText("invalidExcel"));
+            } finally {
+              this.closeBusyDialog();
             }
+          }.bind(this);
 
-            await this.QD_loadQuestionsData(this.QD_getSelectedDepartment());
-            this.QD_restoreDepartmentFilter();
-
-            sap.m.MessageToast.show(`Uploaded ${successCount} records successfully`);
-
-            // ✅ Cleanup
-            this._selectedFile = null;
-            this.byId("QD_id_FileUploader").clear();
-            this.byId("QD_id_UploadDialog").close();
-
-        } catch (err) {
-            console.error(err);
-            this.closeBusyDialog()
-            sap.m.MessageBox.error(err.message || this.getText("invalidExcel"));
-        } finally {
-            this.closeBusyDialog();
-        }
-    }.bind(this);
-
-    reader.readAsArrayBuffer(oFile);
-},
+          reader.readAsArrayBuffer(oFile);
+        },
 
         QD_onUploadPress: function () {
           this.byId("QD_id_UploadDialog").open();
         },
 
-      
+
         QD_onDepartmentFilterChange: function (oEvent) {
           const oCombo = oEvent.getSource();
           const sKey = oCombo.getSelectedKey();
@@ -654,11 +661,11 @@ QD_handleUploadPress: function () {
 
         onPressback: function () {
           this.getRouter().navTo("RouteTilePage");
-          
+
         },
-         onLogout() {
-      this.getRouter().navTo("RouteLoginPage");
-    },
+        onLogout() {
+          this.CommonLogoutFunction(); // Navigate to login page
+        },
       },
     );
   },

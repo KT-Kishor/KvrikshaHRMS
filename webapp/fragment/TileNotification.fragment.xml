@@ -31,38 +31,63 @@
     <VBox width="100%">
 
         <!-- 🎉 BIRTHDAY CAROUSEL -->
-        <Carousel
-            visible="{= ${BirthdayModel>/}.length > 0 }"
-            width="100%"
-            height="auto"
-            loop="true"
-            showPageIndicator="true"
-            pages="{BirthdayModel>/}"
-        >
-            <pages>
-                <f:Card width="100%">
-                    <f:header>
-                        <card:Header
-                            title="{BirthdayModel>EmployeeName}"
-                            subtitle="{BirthdayModel>Role}"
-                            iconSrc="data:image/png;base64,{BirthdayModel>ProfilePhoto}"
-                            iconDisplayShape="Circle"
-                        />
-                    </f:header>
+            <Carousel
+                visible="{= ${BirthdayModel>/}.length > 0 }"
+                width="100%"
+                height="auto"
+                loop="true"
+                showPageIndicator="true"
+                pages="{BirthdayModel>/}"
+                class="sapUiSmallMarginBegin"
+            >
+                <pages>
+                    <f:Card width="100%" class="sapUiSmallMargin sapUiSmallMarginBegin">
+                        <f:header>
+                            <card:Header
+                                title="{BirthdayModel>EmployeeName}"
+                                subtitle="{BirthdayModel>Role}"
+                                iconSrc="data:image/png;base64,{BirthdayModel>ProfilePhoto}"
+                                iconDisplayShape="Circle"
+                            />
+                        </f:header>
 
-                    <f:content>
-                        <VBox class="sapUiContentPadding">
-                            <Title text="Happy Birthday!! 🎉" level="H3"/>
-                            <Text text="Wishing you a wonderful birthday and a great year ahead."/>
-                            
-                            <HBox justifyContent="End">
-                                <Button text="Send Wishes" press="onPressCC"/>
-                            </HBox>
-                        </VBox>
-                    </f:content>
-                </f:Card>
-            </pages>
-        </Carousel>
+                        <f:content>
+                            <VBox
+                                class="sapUiContentPadding"
+                                width="100%"
+                                justifyContent="SpaceBetween"
+                                height="100%"
+                            >
+                                <!-- Birthday Text -->
+                                <VBox class="sapUiSmallMarginBegin">
+                                    <Title
+                                        text="Happy Birthday!! 🎉"
+                                        level="H3"
+                                        class="sapUiTinyMarginBottom"
+                                    />
+
+                                    <Text
+                                        text="Wishing you a wonderful birthday and a great year ahead."
+                                        wrapping="true"
+                                    />
+                                </VBox>
+
+                                <!-- Button aligned properly -->
+                                <HBox
+                                    width="100%"
+                                    justifyContent="Center"
+                                    class="sapUiMediumMarginTop"
+                                >
+                                    <Button
+                                        text="Send Wishes"
+                                        press="onPressCC"
+                                    />
+                                </HBox>
+                            </VBox>
+                        </f:content>
+                    </f:Card>
+                </pages>
+            </Carousel>
             <f:Card
                 width="auto"
                 class="sapUiSmallMarginBeginEnd sapUiTinyMarginTop sapUiSmallMargin"

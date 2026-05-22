@@ -76,7 +76,7 @@
         enabled="{= !!${viewModel>/isPayslipDownloadable} &amp;&amp; ${PaySlip>/EmpTable}.length > 0 }"
     />
 
-    <Button
+     <Button
         text="{i18n>consentLetter}"
         type="Transparent"
         visible="{= ${viewModel>/RelievingLetter}  &amp;&amp; (${LoginModel>/Role} === 'Admin' || ${LoginModel>/Role} === 'HR' || ${LoginModel>/Role} === 'HR Manager')}"

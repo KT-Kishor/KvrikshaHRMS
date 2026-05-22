@@ -124,7 +124,6 @@ sap.ui.define([
             },
             //validation function for date
             onLogout: function () {
-                this.getRouter().navTo("RouteLoginPage");
                 this.CommonLogoutFunction();
             },
             //Trainee creation button

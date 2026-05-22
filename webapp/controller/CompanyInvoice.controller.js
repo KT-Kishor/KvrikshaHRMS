@@ -70,7 +70,7 @@ sap.ui.define(
           }
         },
 
-       CompanyInvoice_onSearch: async function () {
+        CompanyInvoice_onSearch: async function () {
           try {
             this.getBusyDialog();
             const filterItems = this.byId("CI_id_InvoiceFilterBar").getFilterGroupItems();
@@ -84,13 +84,26 @@ sap.ui.define(
               const control = item.getControl();
               const key = item.getName();
 
-              if (control && typeof control.getValue === "function") {
+              // MultiComboBox
+              if (control.isA("sap.m.MultiComboBox")) {
+
+                const aSelectedKeys = control.getSelectedKeys();
+
+                if (aSelectedKeys.length > 0) {
+
+                  params[key] = aSelectedKeys.join(",");
+                }
+
+              } else if (control && typeof control.getValue === "function") {
+
                 const value = control.getValue().trim();
 
                 if (key === "InvoiceDate" && value.includes("-")) {
+
                   const [start, end] = value.split("-").map(date =>
                     date.trim().split("/").reverse().join("-")
                   );
+
                   params.InvoiceStartDate = start;
                   params.InvoiceEndDate = end;
                   invoiceDateProvided = true;
@@ -153,13 +166,13 @@ sap.ui.define(
           }
         },
 
-        CI_onPressMSASOW: function () { this.getRouter().navTo("RouteMSA",{ value: "MSA",from:"Invoice"}); },
-        
+        CI_onPressMSASOW: function () { this.getRouter().navTo("RouteMSA", { value: "MSA", from: "Invoice" }); },
+
         onPressClear: function () {
           this.byId("CI_id_InvNo").setValue("");
           this.byId("CI_id_InvoiceDatePicker").setValue("");
           this.byId("CI_id_CustomerNameComboBox").setValue("");
-          this.byId("CI_id_StatusComboBox").setValue("");
+          this.byId("CI_id_StatusComboBox").setSelectedKeys([]);
           this.byId("CI_id_CompanyCodeComboBox").setValue("");
           this._isClearPressed = true;
         },
@@ -194,11 +207,11 @@ sap.ui.define(
         },
 
         CI_onPressAddInvoice: function () {
-          this.getRouter().navTo("RouteCompanyInvoiceDetails", { sPath: "X" ,dash:"CompanyInvoice"});
+          this.getRouter().navTo("RouteCompanyInvoiceDetails", { sPath: "X", dash: "CompanyInvoice" });
         },
 
         CI_onPressInvoiceRow: function (oEvent) {
-          this.getRouter().navTo("RouteCompanyInvoiceDetails", { sPath: encodeURIComponent(oEvent.getSource().getBindingContext("CompanyInvoiceModel").getObject().InvNo) ,dash:"CompanyInvoice" });
+          this.getRouter().navTo("RouteCompanyInvoiceDetails", { sPath: encodeURIComponent(oEvent.getSource().getBindingContext("CompanyInvoiceModel").getObject().InvNo), dash: "CompanyInvoice" });
         },
 
         onPressback: function () {
@@ -208,7 +221,7 @@ sap.ui.define(
         },
 
         onLogout: function () {
-          this.getOwnerComponent().getRouter().navTo("RouteLoginPage");
+          this.CommonLogoutFunction(); // Navigate to login page
         },
         CI_onPressDownload: function () {
           var table = this.byId("CI_id_InvoiceTable");
@@ -219,7 +232,7 @@ sap.ui.define(
               InvoiceDate: Formatter.formatDate(item.InvoiceDate),
               PayByDate: Formatter.formatDate(item.PayByDate),
               TotalAmountCurrency: item.TotalAmount + " " + item.Currency
-              
+
             };
           });
           const aCols = [

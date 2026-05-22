@@ -1,7 +1,6 @@
 <core:FragmentDefinition
     xmlns="sap.m"
-    xmlns:core="sap.ui.core"
-    xmlns:l="sap.ui.layout">
+    xmlns:core="sap.ui.core">
 
     <Dialog
         contentWidth="700px"
@@ -13,34 +12,29 @@
         <!-- ================= HEADER ================= -->
 
         <customHeader>
-
             <Bar>
 
                 <contentMiddle>
-
-                    <Title
-                        text="Event Details"/>
-
+                    <Title text="Event Details"/>
                 </contentMiddle>
 
                 <contentRight>
-
                     <Button
                         icon="sap-icon://exit-full-screen"
                         type="Transparent"
                         press="onCloseExpand"/>
-
                 </contentRight>
 
             </Bar>
-
         </customHeader>
 
         <!-- ================= CONTENT ================= -->
 
         <content>
 
-            <VBox class="eventDialogContainer">
+            <VBox
+                height="100%"
+                renderType="Bare">
 
                 <!-- ================= IMAGE SECTION ================= -->
 
@@ -50,6 +44,7 @@
                         src="{= 'data:image/jpeg;base64,' + ${EventCardModel>File} }"
                         width="100%"
                         height="230px"
+                        densityAware="false"
                         class="dialogImage"/>
 
                     <!-- Overlay -->
@@ -68,7 +63,7 @@
                             text="{EventCardModel>EventName}"
                             level="H1"
                             wrapping="true"
-                            class="dialogTitleText sapUiTinyMarginBottom" />
+                            class="dialogTitleText sapUiTinyMarginBottom"/>
 
                         <!-- Status -->
                         <Text
@@ -77,68 +72,70 @@
                                 formatter: '.formatEventStatus'
                             }"
                             class="dialogSubTitleText"/>
-                         <Text
-                text="{EventCardModel>Address}"
-                class="dialogSubTitleText"/>
+
+                        <!-- Address -->
+                        <Text
+                            text="{EventCardModel>Address}"
+                            class="dialogSubTitleText"/>
 
                     </VBox>
 
                 </VBox>
 
-               <!-- ================= BODY ================= -->
+                <!-- ================= SCROLLABLE BODY ================= -->
 
-<ScrollContainer
-    height="420px"
-    width="100%"
-    vertical="true"
-    horizontal="false"
-    class="sapUiNoContentPadding">
+                <ScrollContainer
+                    vertical="true"
+                    horizontal="false"
+                    height="350px"
+                    width="100%"
+                    class="sapUiSmallMarginTop">
 
-       
-        <!-- Description -->
-        <HBox
-            alignItems="Start"
-            class="sapUiMediumMargin ">
+                    <VBox class="sapUiMediumMargin">
 
-            <Text
-                text="{EventCardModel>Content}"
-                wrapping="true"
-                class="dialogDescription sapUiTinyMarginBegin"/>
+                        <Text
+                            text="{EventCardModel>Content}"
+                            wrapping="true"
+                            class="dialogDescription"/>
 
-        </HBox>
+                    </VBox>
 
-</ScrollContainer>
+                </ScrollContainer>
 
             </VBox>
 
         </content>
+
+        <!-- ================= FOOTER ================= -->
+
         <footer>
 
-    <Toolbar class="dialogFooterToolbar">
+            <Toolbar class="dialogFooterToolbar">
 
-        <ToolbarSpacer/>
+                <ToolbarSpacer/>
 
-        <Button
-            text="Register Now"
-            type="Emphasized"
-            press="onRegisternow"   visible="{
-        path: 'EventCardModel>StartDateTime',
-        formatter: '.isUpcomingEvent'
-    }">
+                <Button
+                    text="Register Now"
+                    type="Emphasized"
+                    press="onRegisternow"
+                    visible="{
+                        path: 'EventCardModel>StartDateTime',
+                        formatter: '.isUpcomingEvent'
+                    }">
 
-            <customData>
+                    <customData>
 
-                <core:CustomData
-                    key="registerLink"
-                    value="{EventCardModel>LinkToRegister}"/>
+                        <core:CustomData
+                            key="registerLink"
+                            value="{EventCardModel>LinkToRegister}"/>
 
-            </customData>
+                    </customData>
 
-        </Button>
+                </Button>
 
-    </Toolbar>
+            </Toolbar>
 
-</footer>
+        </footer>
 
     </Dialog>
 

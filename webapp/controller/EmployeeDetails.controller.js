@@ -7,26 +7,42 @@ sap.ui.define([
             onInit: function () {
                 this.getRouter().getRoute("RouteEmployeeDetails").attachMatched(this._onRouteMatched, this);
             },          
-            _onRouteMatched: async function (oEvent) {
-                try {
-                    var LoginFunction = await this.commonLoginFunction("EmployeeDetails");
-                    if (!LoginFunction) return;
+      _onRouteMatched: async function (oEvent) {
+    try {
 
-                    this.getBusyDialog();
-                    if (oEvent.getParameter("arguments").sPath === 'EmployeeDetails') {
-                        this.onClearEmployeeDetails(); 
-                    }
-                    this.i18nModel = this.getView().getModel("i18n").getResourceBundle();
-                    this.getView().getModel("LoginModel").setProperty("/HeaderName", "Employee Details");
-                    this.byId("ED_id_Status").setSelectedKey("Active");
-                    this.Emp_det_onSearch();
-                    this.closeBusyDialog();
-                } catch (error) {
-                    this.closeBusyDialog();
-                    MessageToast.show(this.i18nModel.getText("commonErrorMessage"));
-                }
-                this.initializeBirthdayCarousel();
-            },
+        this._sPath = oEvent.getParameter("arguments").sPath || "";
+
+        var LoginFunction = await this.commonLoginFunction("EmployeeDetails");
+        if (!LoginFunction) return;
+
+        this.getBusyDialog();
+
+        if (this._sPath === "EmployeeDetails") {
+            this.onClearEmployeeDetails();
+        }
+
+        this.i18nModel = this.getView().getModel("i18n").getResourceBundle();
+
+        this.getView().getModel("LoginModel")
+            .setProperty("/HeaderName", "Employee Details");
+
+        this.byId("ED_id_Status").setSelectedKey("Active");
+
+        this.Emp_det_onSearch();
+
+        this.closeBusyDialog();
+
+    } catch (error) {
+
+        this.closeBusyDialog();
+
+        MessageToast.show(
+            this.i18nModel.getText("commonErrorMessage")
+        );
+    }
+
+    this.initializeBirthdayCarousel();
+},
 
             Emp_det_onSearch: async function () {
                 try {
@@ -73,21 +89,30 @@ sap.ui.define([
                         return match;
                     });
                     
-                    this.getView().getModel("sEmployeeDetails").setData(filteredData);
-                    // const uniqueLocations = [];
-                    // const seenLocations = new Set();
+                // =====================================
+// REMOVE CONTRACTOR & TRAINEE
+// FOR GOAL REVIEW FLOW
+// =====================================
 
-                    // filteredData.forEach((item) => {
-                    //     if (item.BaseLocation && !seenLocations.has(item.BaseLocation)) {
-                    //         seenLocations.add(item.BaseLocation);
-                    //         uniqueLocations.push({
-                    //             BaseLocation: item.BaseLocation
-                    //         });
-                    //     }
-                    // });
+if (this._sPath === "GoalEmployeeDetailsManageGoal") {
 
-                    // const oBaseLocModel = new sap.ui.model.json.JSONModel(uniqueLocations);
-                    // this.getView().setModel(oBaseLocModel, "BaseLocationModel");
+    filteredData = filteredData.filter(function (item) {
+
+        return (
+            item.Role !== "Contractor" &&
+            item.Role !== "Trainee"
+        );
+
+    });
+}
+
+// =====================================
+// SET FILTERED DATA
+// =====================================
+
+this.getView()
+    .getModel("sEmployeeDetails")
+    .setData(filteredData);
                     this.closeBusyDialog();
                 } catch (error) {
                     this.closeBusyDialog();
@@ -116,23 +141,42 @@ sap.ui.define([
             CommonReadCall: async function () {
                 await this._fetchCommonData("EmployeeDetails", "FilterEmployeeDetails", {});
             },
-
             onPressback: function () {
                 this.getRouter().navTo("RouteTilePage");
             },
             onLogout: function () {
                 this.CommonLogoutFunction();
-                this.getRouter().navTo("RouteLoginPage");
             },
 
-            ED_onPressEmployeeRow: function (oEvent) {
-                var EmployeeID = oEvent.getSource().getBindingContext("sEmployeeDetails").getProperty("EmployeeID");
-                var EmployeeRole = oEvent.getSource().getBindingContext("sEmployeeDetails").getProperty("Role");
-                this.getRouter().navTo("SelfService", {
-                    sPath: EmployeeID,
-                    Role: EmployeeRole
-                });
-            },
+ ED_onPressEmployeeRow: function (oEvent) {
+
+    var oContext = oEvent.getSource()
+        .getBindingContext("sEmployeeDetails");
+
+    var EmployeeID = oContext.getProperty("EmployeeID");
+
+    var EmployeeRole = oContext.getProperty("Role");
+
+    // GOAL REVIEW FLOW
+    if (this._sPath === "GoalEmployeeDetailsManageGoal") {
+
+        this.getRouter().navTo("RouteManagegoals", {
+            employeeId: EmployeeID,
+            from: "GoalReview"
+        });
+
+    }
+
+    // NORMAL EMPLOYEE DETAILS FLOW
+    else {
+
+        this.getRouter().navTo("SelfService", {
+            sPath: EmployeeID,
+            Role: EmployeeRole
+        });
+
+    }
+},
              getGroupHeader: function (oGroup) {
                     return this.getStyledGroupHeader(oGroup);
                 },

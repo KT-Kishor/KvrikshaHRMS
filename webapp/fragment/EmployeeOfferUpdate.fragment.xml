@@ -67,7 +67,7 @@
 									<f:content>
 										<m:Label text="{i18n>companyBranch}" required="true" />
 										<m:ComboBox items="{path:'CompanyCodeDetailsModel>/',length:1000}" editable="{viewModel>/editable}" id="EOUF_id_CompanyCode" showSecondaryValues="true" selectedKey="{employeeModel>/CompanyCode}" change="EU_onCompanyCodeChange" valueStateText="{i18n>selectBranch}" filterSecondaryValues="true">
-										<core:ListItem key="{CompanyCodeDetailsModel>companyCode}" text="{CompanyCodeDetailsModel>companyCode}" additionalText="{CompanyCodeDetailsModel>branchCode}"/>
+										<core:ListItem key="{CompanyCodeDetailsModel>companyCode}" text="{CompanyCodeDetailsModel>companyCode}" additionalText="{CompanyCodeDetailsModel>branchCode} , {CompanyCodeDetailsModel>branch}" />
 										</m:ComboBox>
 
 										<m:Label text="{i18n>branch}"/>

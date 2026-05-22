@@ -124,7 +124,7 @@ sap.ui.define([], function () {
                             let extraSpace = totalWords > 1 ? (maxWidth - lineWidth) / (totalWords - 1) : 0;
 
                             words.forEach((word, index) => {
-                                if (word === "WHEREAS" || word.includes("Kalpavriksha Technologies")) {
+                                if (word === "WHEREAS" || word.includes("Kvriksha Technologies Private Limited")) {
                                     doc.setFont("times", "bold");
                                 } else {
                                     doc.setFont("times", "normal");

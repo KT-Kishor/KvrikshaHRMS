@@ -34,7 +34,7 @@
 						<f:content>
 						    <Label text="{i18n>companyBranch}" required="true" />
 							<ComboBox items="{path:'CompanyCodeDetailsModel>/',length:1000}" showSecondaryValues="true" value="{ContractModelWizart>/CompanyCode}" id="CD_id_CompanyCode" valueStateText="{i18n>selectBranch}" change="CD_onCompanyChange" filterSecondaryValues="true">
-						    <core:ListItem key="{CompanyCodeDetailsModel>companyCode}" text="{CompanyCodeDetailsModel>companyCode}" additionalText="{CompanyCodeDetailsModel>branchCode}" />
+						    <core:ListItem key="{CompanyCodeDetailsModel>companyCode}" text="{CompanyCodeDetailsModel>companyCode}" additionalText="{CompanyCodeDetailsModel>branchCode} , {CompanyCodeDetailsModel>branch}"  />
 				            </ComboBox>
 							<Label text="{i18n>branch}" />
 							<ComboBox items="{path:'CompanyCodeDetailsModel>/',length:1000}" showSecondaryValues="true" selectedKey="{ContractModelWizart>/Branch}" id="CD_id_Branch" valueStateText="{i18n>selectBranch}" enabled="false" filterSecondaryValues="true">
@@ -54,6 +54,22 @@
 							<Input value="{ContractModelWizart>/ContarctEmail}"  maxLength="50" placeholder="{i18n>placeConsultantEmail}" id="CD_id_Email"  liveChange="CD_validateEmail"  valueStateText="{i18n>emailValueState}"/>
 							<Label text="{i18n>consultingService}" required="true"/>
 							<Input value="{ContractModelWizart>/ConsultingService}"  valueStateText="{i18n>placeConsultingService}" placeholder="{i18n>placeConsultingService}" id="CD_id_ConsultingService"  liveChange="CD_ValidateConsultantName"  maxLength="50"/>
+							<Label text="{i18n>expCountry}" required="true"/>
+				             <ComboBox change="CD_onChangeCountry" valueStateText="{i18n>expValStaCountry}" id="CD_id_Country" items="{path:'CountryModel>/',length:1000}" selectedKey="{ContractModelWizart>/Country}" showSecondaryValues="true"  >
+					        <core:ListItem key="{CountryModel>countryName}" text="{CountryModel>countryName}" additionalText="{CountryModel>code}"/>
+				            </ComboBox>
+							<Label text="{i18n>state}" required="true" />
+							<ComboBox change="CD_onChangeState" valueStateText="{i18n>expValStaState}" id="CD_id_State" items="{path:'StateModel>/',length:1000}" selectedKey="{ContractModelWizart>/State}" showSecondaryValues="true"  >
+					        <core:ListItem key="{StateModel>stateName}" text="{StateModel>stateName}"/>
+				            </ComboBox>
+							<Label text="{i18n>city}" required="true"/>
+							<ComboBox change="CD_onBaseLocationChange" items="{path:'CityModel>/',length:1000}" id="CD_id_ConLocation"  showSecondaryValues="true" filterSecondaryValues="true" selectedKey="{ContractModelWizart>/contractLocation}" valueStateText="{i18n>city}" >
+							<core:ListItem key="{CityModel>cityName}" text="{CityModel>cityName}" additionalText="{CityModel>branchCode}" />
+							</ComboBox>	   
+							<Label text="{i18n>mobileNo}" required="true" />
+							<Input id="CD_id_codeModel" value="{ContractModelWizart>/STDCode}" editable="false"
+                            visible="true" class="marginLeft" />
+							<Input value="{ContractModelWizart>/MobileNo}" placeholder="{i18n>mobileNo}"  liveChange="CD_validateMobileNo" maxLength="20" id="CD_id_Mobile" valueStateText="{i18n>mobileNoValueState}"/>
 							<Label text="{i18n>rate}" required="true" />
 							<RadioButtonGroup id="rbg3" columns="5" selectedIndex="{= ${ContractModelWizart>/Rate} === 'Hour' ? 0 : (${ContractModelWizart>/Rate} === 'Day' ? 1 : 2)}" select="RadioButtonSelect">
 								<RadioButton text="{i18n>rateHour}" />
@@ -100,24 +116,6 @@
 							<ComboBox id="CD_id_PaymentTerms" valueStateText="{i18n>selectPaymenttermas}" change="CD_validatepayment" selectedKey="{ContractModelWizart>/PaymentTerms}" items="{ContractpaymentModel>/}">
 								<core:Item key="{ContractpaymentModel>days}" text="{ContractpaymentModel>days}" />
 							</ComboBox>
-
-							<Label text="{i18n>expCountry}" required="true"/>
-				             <ComboBox change="CD_onChangeCountry" valueStateText="{i18n>expValStaCountry}" id="CD_id_Country" items="{path:'CountryModel>/',length:1000}" selectedKey="{ContractModelWizart>/Country}" showSecondaryValues="true"  >
-					        <core:ListItem key="{CountryModel>countryName}" text="{CountryModel>countryName}" additionalText="{CountryModel>code}"/>
-				            </ComboBox>
-							<Label text="{i18n>state}" required="true" />
-							<ComboBox change="CD_onChangeState" valueStateText="{i18n>expValStaState}" id="CD_id_State" items="{path:'StateModel>/',length:1000}" selectedKey="{ContractModelWizart>/State}" showSecondaryValues="true"  >
-					        <core:ListItem key="{StateModel>stateName}" text="{StateModel>stateName}"/>
-				            </ComboBox>
-							<Label text="{i18n>city}" required="true"/>
-							<ComboBox change="CD_onBaseLocationChange" items="{path:'CityModel>/',length:1000}" id="CD_id_ConLocation"  showSecondaryValues="true" filterSecondaryValues="true" selectedKey="{ContractModelWizart>/contractLocation}" valueStateText="{i18n>city}" >
-							<core:ListItem key="{CityModel>cityName}" text="{CityModel>cityName}" additionalText="{CityModel>branchCode}" />
-							</ComboBox>	   
-							<Label text="{i18n>mobileNo}" required="true" />
-							<Input id="CD_id_codeModel" value="{ContractModelWizart>/STDCode}" editable="false"
-                            visible="true" class="marginLeft" />
-							<Input value="{ContractModelWizart>/MobileNo}" placeholder="{i18n>mobileNo}"  liveChange="CD_validateMobileNo" maxLength="20" id="CD_id_Mobile" valueStateText="{i18n>mobileNoValueState}"/>
-
 						</f:content>
 					</f:SimpleForm>
 				</WizardStep>
@@ -155,6 +153,14 @@
 							<Text text="{ContractModelWizart>/ContarctEmail}"/>
 							<Label text="{i18n>consultingService}"/>
 							<Text text="{ContractModelWizart>/ConsultingService}"/>
+							<Label text="{i18n>expCountry}"/>
+							<Text text="{ContractModelWizart>/Country}"/>
+						    <Label text="{i18n>state}"/>
+							<Text text="{ContractModelWizart>/State}"/>
+							<Label text="{i18n>contractLocation}"/>
+							<Text  text="{ContractModelWizart>/contractLocation}" />	
+							<Label text="{i18n>mobileNo}"/>
+							<Text text="{= ${ContractModelWizart>/STDCode} + ' ' + ${ContractModelWizart>/MobileNo} }"/>
 							<Label text="{i18n>amount}"/>
 							<Text text="{path:'ContractModelWizart>/Amount', formatter: '.Formatter.CurrencyInINR'} {ContractModelWizart>/Currency} Per {ContractModelWizart>/Rate}" />	
 							<Label text="{i18n>endClientHirer}"/>
@@ -175,14 +181,6 @@
 							<Text text="{ContractModelWizart>/AdditionalRates}"/>
 							<Label text="{i18n>paymentterms}"/>
 							<Text text="{ContractModelWizart>/PaymentTerms}"/>
-							<Label text="{i18n>expCountry}"/>
-							<Text text="{ContractModelWizart>/Country}"/>
-						    <Label text="{i18n>state}"/>
-							<Text text="{ContractModelWizart>/State}"/>
-							<Label text="{i18n>contractLocation}"/>
-							<Text  text="{ContractModelWizart>/contractLocation}" />	
-							<Label text="{i18n>mobileNo}"/>
-							<Text text="{= ${ContractModelWizart>/STDCode} + ' ' + ${ContractModelWizart>/MobileNo} }"/>
 						</f:content>
 					</f:SimpleForm>
 				</WizardStep>

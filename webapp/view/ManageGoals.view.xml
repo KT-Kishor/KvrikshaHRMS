@@ -11,15 +11,15 @@
 id="MG_id_Page"
     title="{i18n>manageGoalsPageTitle}"
 >
- <m:customHeader>
+<m:customHeader>
             <m:Toolbar
                 class="customHeaderToolbar"
                 width="100%"
             >
                 <!-- LEFT -->
                 <m:Button
-                    press="onPressback"
-                    icon="sap-icon://home"
+                    press="MG_onNavBack"
+                     icon="{= ${viewModel>/fromPage} === 'GoalReview' ? 'sap-icon://nav-back' : 'sap-icon://home' }"
                     tooltip="{i18n>navback}"
                     type="Transparent"
                     class="notificationBtn"
@@ -43,8 +43,8 @@ id="MG_id_Page"
                     visible="{= ${LoginModel>/Role} !== 'Contractor' }"
                 >
                     <m:customData >
-					<m:BadgeCustomData class="badgeClass" key="badge" value="{EndingSoonModel>/notificationCount}"/>
-				</m:customData>
+                    <m:BadgeCustomData class="badgeClass" key="badge" value="{EndingSoonModel>/notificationCount}"/>
+                </m:customData>
 
                 </m:Button>
                 <m:Button
@@ -85,10 +85,10 @@ id="MG_id_Page"
                       <m:Avatar id="MG_id_AvatarSmall" displaySize="L" src="{employeeModel>/image}" />
 
                         <m:VBox id="MG_id_HeaderVBox">
-                            <m:Title text="{employeeModel>/name}" level="H5" />
-                            <m:Text text="{employeeModel>/designation}" class=" sapUiTinyMarginBegin whiteTitle" />
-                            <m:Link text="{employeeModel>/email}" class=" sapUiTinyMarginBegin whiteTitle"/>
-                            <m:Link text="{employeeModel>/mobile}"  class="sapUiTinyMarginBegin whiteTitle"/>
+                            <m:Title text="{employeeModel>/name}" level="H5"   wrapping="true"/>
+                            <m:Text text="{employeeModel>/designation}"  wrapping="true" class=" sapUiTinyMarginBegin whiteTitle" />
+                            <m:Link text="{employeeModel>/email}"  wrapping="true" class=" sapUiTinyMarginBegin whiteTitle"/>
+                            <m:Link text="{employeeModel>/mobile}"  wrapping="true" class="sapUiTinyMarginBegin whiteTitle"/>
                         </m:VBox>
                     </m:HBox>
                 </uxap:snappedHeading>
@@ -98,9 +98,18 @@ id="MG_id_Page"
                     <m:Button
                      id="MG_id_CreateGoalBtn"
                         text="{i18n>manageGoalButton}"
+                       class="BrownLabel"
                         press="MG_onCreatePress"
                         visible="{viewModel>/showCreateGoal}"
+                       
                     />
+                     <m:Button
+                   
+                text="{i18n>FinalSubmit}"
+                press="FMG_onFinalSubmit"
+                visible="{viewModel>/showFinalSubmit}"
+                class="BrownLabel"
+            />
                 </uxap:actions>
 
             </uxap:ObjectPageDynamicHeaderTitle>
@@ -119,16 +128,17 @@ id="MG_id_Page"
                     />
 
                     <layout:VerticalLayout id="MG_id_LeftDetails">
-                        <m:Text text="{= ${i18n>designationLabel} + ': ' + ${employeeModel>/designation} }" />
-                        <m:Link text="{employeeModel>/email}" />
-                        <m:Link text="{employeeModel>/mobile}" />
+                        <m:Text text="{= ${i18n>name} + ': ' + ${employeeModel>/name} }"    wrapping="true" />
+                        <m:Text text="{= ${i18n>designationLabel} + ': ' + ${employeeModel>/designation} }" wrapping="true" />
+                        <m:Link text="{employeeModel>/email}" wrapping="true" />
+                        <m:Link text="{employeeModel>/mobile}" wrapping="true" />
                     </layout:VerticalLayout>
                 </m:FlexBox>
 
                 <!-- RIGHT SIDE -->
                 <layout:VerticalLayout id="MG_id_RightDetails">
                     <m:Text text="{= ${i18n>departmentLabel} + ': ' + ${employeeModel>/department} }" />
-                    <m:Text text="{= ${i18n>manager} + ': ' + ${employeeModel>/manager} }" />
+                    <m:Text text="{= ${i18n>managerLabel} + ': ' + ${employeeModel>/manager} }" />
                 </layout:VerticalLayout>
 
             </m:FlexBox>
@@ -136,7 +146,7 @@ id="MG_id_Page"
 
         <!-- SECTION -->
         <uxap:sections>
-            <uxap:ObjectPageSection title="{i18n>manageGoalsSection}" showTitle="false">
+            <uxap:ObjectPageSection showTitle="false">
                 <uxap:subSections>
                     <uxap:ObjectPageSubSection>
                         <uxap:blocks>

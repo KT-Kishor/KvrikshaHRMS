@@ -52,31 +52,137 @@ sap.ui.define([
       if (oLoginModel) {
         oLoginModel.setProperty("/EmployeeID", "");
         oLoginModel.setProperty("/EmployeeName", "");
+
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("_x9A1p");
+        localStorage.removeItem("_k7LmQ");
+        localStorage.removeItem("_aB39X");
+        localStorage.removeItem("_mN72P");
+        localStorage.removeItem("activeTabs");
       }
       this.getRouter().navTo("RouteLoginPage");
     },
 
-    commonLoginFunction: function (value) {
-      return new Promise((resolve) => {
-        const oModel = this.getOwnerComponent().getModel("LoginModel");
-        const TileModel = this.getView().getModel("AppVisibilityModel");
+    initializeLoginModel: function () {
+      let oLoginModel = this.getOwnerComponent().getModel("LoginModel");
+      if (!oLoginModel) {
+        oLoginModel = new JSONModel({
+          // Database connection
+          url: "https://rest.kalpavrikshatechnologies.com/",
+          headers: {
+            name: "$2a$12$LC.eHGIEwcbEWhpi9gEA.umh8Psgnlva2aGfFlZLuMtPFjrMDwSui",
+            password:"$2a$12$By8zKifvRcfxTbabZJ5ssOsheOLdAxA2p6/pdaNvv1xy1aHucPm0u",
+            "Content-Type": "application/json"
+          },
+          isRadioVisible: false
+        });
+        this.getOwnerComponent().setModel(oLoginModel, "LoginModel");
+      }
+    },
+    commonLoginFunction: async function (value) {
+      const isLoggedIn = localStorage.getItem("isLoggedIn");
 
+      // 1. Check if user is even logged in locally
+      if (isLoggedIn !== "true") {
+        // this.closeBusyDialog();
+        this.getRouter().navTo("RouteLoginPage");
+        return false;
+      }
+
+      try {
+        this.getBusyDialog();
+        // 2. Refresh/Validate session with Server
+        this.initializeLoginModel();
+
+        const sEncodedEmployeeID = localStorage.getItem("_aB39X");
+        const sEncodedEmployeeName = localStorage.getItem("_mN72P");
+        // Check localStorage empty
+        if (!sEncodedEmployeeID || !sEncodedEmployeeName) {
+          // this.closeBusyDialog();
+          this.getRouter().navTo("RouteLoginPage");
+          return false;
+        }
+
+        let sEmployeeID = "";
+        let sEmployeeName = "";
+        // Safe Base64 decode
+        try {
+          sEmployeeID = atob(sEncodedEmployeeID);
+          sEmployeeName = atob(sEncodedEmployeeName);
+        } catch (e) {
+          localStorage.clear();
+          // this.closeBusyDialog();
+          MessageToast.show("Session Invalid");
+          this.getRouter().navTo("RouteLoginPage");
+          return false;
+        }
+        const sEncryptedEmployeeID = localStorage.getItem("_x9A1p");
+        const sEncryptedEmployeeName = localStorage.getItem("_k7LmQ");
+
+        // Compare
+        const bEmployeeIDMatch = dcodeIO.bcrypt.compareSync(sEmployeeID, sEncryptedEmployeeID);
+        const bEmployeeNameMatch = dcodeIO.bcrypt.compareSync(sEmployeeName, sEncryptedEmployeeName);
+
+        // If matched then call backend
+        let result;
+        if (bEmployeeIDMatch && bEmployeeNameMatch) {
+          result = await this.ajaxReadWithJQuery("LoginDetails",
+            {
+              EmployeeID: sEmployeeID,
+              EmployeeName: sEmployeeName
+            }
+          );
+        } else {
+          MessageToast.show("Session Invalid");
+          this.getRouter().navTo("RouteLoginPage");
+          return false;
+        }
+
+        if (!result || !result.data || result.data.length === 0) {
+          this.closeBusyDialog();
+          this.getRouter().navTo("RouteLoginPage");
+          return false;
+        }
+
+        // 3. Update the Login Model
+        const userData = result.data;
+        let oLoginModel = this.getOwnerComponent().getModel("LoginModel");
+        if (!oLoginModel) {
+          oLoginModel = new sap.ui.model.json.JSONModel({});
+          this.getOwnerComponent().setModel(oLoginModel, "LoginModel");
+        }
+        oLoginModel.setProperty("/EmployeeID", userData.EmployeeID);
+        oLoginModel.setProperty("/EmployeeName", userData.EmployeeName);
+        oLoginModel.setProperty("/EmailID", userData.EmailID);
+        oLoginModel.setProperty("/Role", userData.Role);
+        oLoginModel.setProperty("/BranchCode", userData.BranchCode);
+        oLoginModel.setProperty("/MobileNo", userData.MobileNo);
+        oLoginModel.setProperty("/RichText", false);
+        oLoginModel.setProperty("/SimpleForm", true);
+        oLoginModel.setProperty("/CompanyCode", userData.CompanyCode);
+
+        // If already logged in and opening Login Page
+        if (isLoggedIn === "true" && value === "LoginPage") {
+          this.closeBusyDialog();
+          this.getRouter().navTo("RouteTilePage");
+          return true;
+        }
+
+        // 4. Permission & Visibility Check
+        const TileModel = this.getView().getModel("AppVisibilityModel");
+        const userId = oLoginModel.getProperty("/EmployeeID");
+        const userName = oLoginModel.getProperty("/EmployeeName");
+        // helper to handle failure consistently
         const fail = () => {
           this.closeBusyDialog();
           this.getRouter().navTo("RouteLoginPage");
-          resolve(false);
+          return false;
         };
 
-        if (!oModel) return fail();
+        if (!userId || !userName) return fail();
 
-        const userId = oModel.getProperty("/EmployeeID");
-        const userName = oModel.getProperty("/EmployeeName");
+        if (value !== "LoginPage" && value && TileModel) {
 
-        if (!userId || !userName) {
-          return fail();
-        }
-
-        if (value && TileModel) {
           const tileMap = {
             "EmployeeOffer": "/GenerateEmployeeOffer",
             "Holiday": "/ListOfHolidays",
@@ -109,18 +215,26 @@ sap.ui.define([
             "LeaveOverview": "/LeaveOverview",
             "RaiseBug": "/RaiseBug",
             "CreateAllowance": "/CreateAllowanceApp",
-            "GoalQuestions":"/GoalQuestions",
-            "Goals":"/Goals",
-            "ManageEvent":"/ManageEvent"
+            "GoalQuestions": "/GoalQuestions",
+            "Goals": "/Goals",
+            "ManageEvent": "/ManageEvent",
+            "GoalReview": "/GoalReview",
           };
 
           const modelPath = tileMap[value];
-          if (modelPath && TileModel.getProperty(modelPath) === '0') {
+
+          // If path exists and access is '0'
+          if (modelPath && TileModel.getProperty(modelPath) === "0") {
             return fail();
           }
         }
-        resolve(true);
-      });
+        this.closeBusyDialog();
+        return true;
+      } catch (error) {
+        this.closeBusyDialog();
+        this.getRouter().navTo("RouteLoginPage");
+        return false;
+      }
     },
 
     _fetchCommonData: async function (entityName, modelName, filter = "") {
@@ -195,32 +309,32 @@ sap.ui.define([
         this._RaiseBugDialog.open();
       }
       this.getView().getModel("RaiseBugModel").setProperty("/RaisedBy", this.getView().getModel("LoginModel").getProperty("/EmployeeName"));
- let sHeaderName = this.getView().getModel("LoginModel").getProperty("/HeaderName");
+      let sHeaderName = this.getView().getModel("LoginModel").getProperty("/HeaderName");
 
-const headerMap = {
-    "Inbox Details": "My Inbox",
-    "My Details": "Self Service",
-    "Bug Details":"Others",
-    "Trainee Offer Details":"Generate Trainee Offer",
-    "Employee Offer Details":"Generate Employee Offer",
-    "Contract Details":"Generate Contract",
-    "MSA Details":"Generate MSA & NDA",
-    "Consultant Invoice":"Contractor Invoice",
-    "Purchase Order":"PO Generate",
-    "Expense Details":"Create Expense",
-    "Allowance Record":"Create Allowance",
-    "Asset Details":"My Asset",
-    "Leave Application":"Apply Leave",
-    "Apply Overtime Approval":"Apply Overtime",
-    "Create New Assignment" :  "Manage Assignment",
-    "Bug Details":"Raise Bug",
-    "Payslip Deduction" : "Payslip Deduction"
-  };
+      const headerMap = {
+        "Inbox Details": "My Inbox",
+        "My Details": "Self Service",
+        "Bug Details": "Others",
+        "Trainee Offer Details": "Generate Trainee Offer",
+        "Employee Offer Details": "Generate Employee Offer",
+        "Contract Details": "Generate Contract",
+        "MSA Details": "Generate MSA & NDA",
+        "Consultant Invoice": "Contractor Invoice",
+        "Purchase Order": "PO Generate",
+        "Expense Details": "Create Expense",
+        "Allowance Record": "Create Allowance",
+        "Asset Details": "My Asset",
+        "Leave Application": "Apply Leave",
+        "Apply Overtime Approval": "Apply Overtime",
+        "Create New Assignment": "Manage Assignment",
+        "Bug Details": "Raise Bug",
+        "Payslip Deduction": "Payslip Deduction"
+      };
 
-this.getView().getModel("RaiseBugModel").setProperty(
-    "/AppName",
-    headerMap[sHeaderName] || sHeaderName
-);
+      this.getView().getModel("RaiseBugModel").setProperty(
+        "/AppName",
+        headerMap[sHeaderName] || sHeaderName
+      );
     },
     onAppnamechanges: function (oEvent) {
       utils._LCstrictValidationComboBox(oEvent)
@@ -825,62 +939,62 @@ this.getView().getModel("RaiseBugModel").setProperty(
     },
     //common confirmation dialog box
     showConfirmationDialog: function (sTitle, sMessage, fnOnConfirm, fnOnCancel, sOkText, sCancelText) {
-  var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
+      var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
 
-  var dialog = new sap.m.Dialog({
-    title: sTitle, // Keep this for accessibility
-    type: "Message",
-    customHeader: new sap.m.Bar({
-      contentLeft: [
-        new sap.ui.core.Icon({
-          src: "sap-icon://question-mark",
-          color: "#788fa6", // Red color
-          size: "1.2rem",
-          class: "sapUiSmallMarginBeginEnd"
+      var dialog = new sap.m.Dialog({
+        title: sTitle, // Keep this for accessibility
+        type: "Message",
+        customHeader: new sap.m.Bar({
+          contentLeft: [
+            new sap.ui.core.Icon({
+              src: "sap-icon://question-mark",
+              color: "#788fa6", // Red color
+              size: "1.2rem",
+              class: "sapUiSmallMarginBeginEnd"
+            }),
+            new sap.m.Title({
+              text: sTitle,
+              class: "sapUiMediumMarginBegin myCustomDialog",
+
+            })
+          ]
+
         }),
-        new sap.m.Title({
-          text: sTitle,
-          class: "sapUiMediumMarginBegin myCustomDialog",
-         
-        })
-      ]
-     
-    }),
-    content: new sap.m.Text({ text: sMessage }),
-    beginButton: new sap.m.Button({
-      text: sOkText || oResourceBundle.getText("OkButton"),
-      press: function () {
-        dialog.close();
-        Promise.resolve()
-          .then(function () {
-            if (typeof fnOnConfirm === "function") {
-              return fnOnConfirm();
-            }
-          }.bind(this))
-          .finally(function () {}.bind(this));
-      }.bind(this)
-    }),
-    endButton: new sap.m.Button({
-      text: sCancelText || oResourceBundle.getText("CancelButton"),
-      type: "Transparent",
-      press: function () {
-        dialog.close();
-        Promise.resolve()
-          .then(function () {
-            if (typeof fnOnCancel === "function") {
-              return fnOnCancel();
-            }
-          }.bind(this))
-          .finally(function () {}.bind(this));
-      }.bind(this)
-    }),
-    afterClose: function () {
-      dialog.destroy();
-    }
-  });
+        content: new sap.m.Text({ text: sMessage }),
+        beginButton: new sap.m.Button({
+          text: sOkText || oResourceBundle.getText("OkButton"),
+          press: function () {
+            dialog.close();
+            Promise.resolve()
+              .then(function () {
+                if (typeof fnOnConfirm === "function") {
+                  return fnOnConfirm();
+                }
+              }.bind(this))
+              .finally(function () { }.bind(this));
+          }.bind(this)
+        }),
+        endButton: new sap.m.Button({
+          text: sCancelText || oResourceBundle.getText("CancelButton"),
+          type: "Transparent",
+          press: function () {
+            dialog.close();
+            Promise.resolve()
+              .then(function () {
+                if (typeof fnOnCancel === "function") {
+                  return fnOnCancel();
+                }
+              }.bind(this))
+              .finally(function () { }.bind(this));
+          }.bind(this)
+        }),
+        afterClose: function () {
+          dialog.destroy();
+        }
+      });
 
-  dialog.open();
-},
+      dialog.open();
+    },
 
     _initMessagePopover: function () {
       var i18n = this.getOwnerComponent().getModel("i18n").getResourceBundle();

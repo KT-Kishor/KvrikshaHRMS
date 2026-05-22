@@ -246,7 +246,8 @@ sap.ui.define([
                     var oModel = this.getView().getModel("employeeModel").getData();
                     oModel.Status = oModel.Status === "Rejected" ? "Saved" : oModel.Status;
                     oModel.CountryCode = this.getView().byId("EOD_id_Country").getSelectedItem().getAdditionalText();
-                    oModel.BranchCode = this.getView().byId("EOUF_id_CompanyCode").getSelectedItem().getAdditionalText();
+                    var sAdditionalText = this.getView().byId("EOD_id_CompanyCode").getSelectedItem().getAdditionalText();
+                    oModel.BranchCode = sAdditionalText.split(",")[0].trim();
                     oModel.JoiningDate = this.byId("EOUF_id_Joindate").getValue().split("/").reverse().join("-");
                     oModel.OfferReleaseDate = this.byId("EOUF_id_Reldate").getValue().split("/").reverse().join("-");
                     delete oModel.CityModel;
@@ -474,7 +475,8 @@ sap.ui.define([
                         var oModel = this.getView().getModel("employeeModel").getData();
                         oModel.Gender = this.getView().byId("EOD_id_Gender").getSelectedKey();
                         oModel.CountryCode = this.getView().byId("EOD_id_Country").getSelectedItem().getAdditionalText();
-                        oModel.BranchCode = this.getView().byId("EOD_id_CompanyCode").getSelectedItem().getAdditionalText();
+                        var sAdditionalText = this.getView().byId("EOD_id_CompanyCode").getSelectedItem().getAdditionalText();
+                        oModel.BranchCode = sAdditionalText.split(",")[0].trim();
                         oModel.Department = this.getView().byId("EOD_id_Designation").getSelectedItem().getAdditionalText();
                         oModel.BaseLocation = oModel.BaseLocation !== "" ? oModel.BaseLocation : this.getView().byId("EOD_id_Location").getSelectedKey();
                         oModel.JoiningDate = oModel.JoiningDate.split("/").reverse().join("-");

@@ -60,7 +60,7 @@
 									    <!-- Select Company Code -->
 										<m:Label text="{i18n>companyBranch}" required="true" />
 										<m:ComboBox items="{path:'CompanyCodeDetailsModel>/',length:1000}" valueStateText="{i18n>combovalueState}" showSecondaryValues="true" value="{oFilteredContractModel>/CompanyCode}" id="CU_id_CompanyCode" change="CU_onCompanyCodeChange" editable="{simpleForm>/editable}" filterSecondaryValues="true">
-										<core:ListItem key="{CompanyCodeDetailsModel>companyCode}" text="{CompanyCodeDetailsModel>companyCode}" additionalText="{CompanyCodeDetailsModel>branchCode}"/>
+										<core:ListItem key="{CompanyCodeDetailsModel>companyCode}" text="{CompanyCodeDetailsModel>companyCode}" additionalText="{CompanyCodeDetailsModel>branchCode} , {CompanyCodeDetailsModel>branch}" />
 										</m:ComboBox>	
 										  <!-- Select Branch -->
 										<m:Label text="{i18n>branch}" />

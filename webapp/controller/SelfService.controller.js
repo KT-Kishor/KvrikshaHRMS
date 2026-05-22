@@ -369,7 +369,7 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
         this.getBusyDialog();
         const oView = this.getView();
         this.i18nModel = oView.getModel("i18n").getResourceBundle();
-        this.companyName = "Kalpavriksha Technologies";
+        this.companyName = "Kvriksha Technologies Private Limited";
         // --- Initialization ---
         this._makeDatePickersReadOnly(["SS_id_Dob", "SS_id_ResgEndDate", "SS_id_DocType"]);
         const viewModel = new sap.ui.model.json.JSONModel({
@@ -698,6 +698,9 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
                 this.byId("SS_id_DocType")?.setValueState("None");
                 this.ReadEmployeeDocument();
                 break;
+                case "My Asset":
+          this.getMyAssetsdata(this.EmployeeID)
+          break;
             }
           },
           () => {
@@ -759,8 +762,46 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
           this.byId("SS_id_DocType").setValue("");
           this.ReadEmployeeDocument();
           break;
+       case "My Asset":
+          this.getMyAssetsdata(this.EmployeeID)
+          break;
       }
     },
+   getMyAssetsdata: function (sEmployeeID) {
+
+   
+this.getBusyDialog();
+    this.ajaxReadWithJQuery("IncomeAsset", "Status=Assigned")
+        .then((oData) => {
+               this.closeBusyDialog();
+            var aResults = Array.isArray(oData.data) ? oData.data : [oData.data];
+
+            // Filter based on Employee ID
+            const filteredData = aResults.filter(item =>
+                item.AssignEmployeeID === sEmployeeID
+            );
+
+            // Set filtered data to model
+            var oModel = new JSONModel({
+                MyAssetsTable: filteredData
+            });
+
+            this.getView().setModel(oModel, "MyAssets");
+
+          
+
+        })
+        .catch((oError) => {
+           
+          this.closeBusyDialog();
+
+            sap.m.MessageToast.show(
+                oError.responseText || oError.message
+            );
+
+        });
+
+},
     _getRequiredDocumentTypeForDegree: function (sDegreeName) {
       if (sDegreeName === "School/10th") {
         return "School/10th";
@@ -1183,86 +1224,96 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
     onManagerChange: function (oEvent) {
       utils._LCvalidateMandatoryField(oEvent.getSource(), "ID");
       const oDataModel = this.getView().getModel("sEmployeeModel").getProperty("/0");
-      const requestData = { ManagerID: oDataModel.ManagerID, Status: "Submitted" };
+      const requestData = {
+        ManagerID: oDataModel.ManagerID,
+        Status: "Submitted",
+        EmpID:this.EmployeeID
+      };
       oDataModel.ManagerID = oEvent.getSource().getSelectedKey();
-      oDataModel.ManagerName = oEvent.getSource().getSelectedItem() ? oEvent.getSource().getSelectedItem().getText() : oEvent.getSource().getValue();
+      oDataModel.ManagerName = oEvent.getSource().getSelectedItem()
+        ? oEvent.getSource().getSelectedItem().getText()
+        : oEvent.getSource().getValue();
+
       var oPayload = {
         data: oDataModel,
         filters: {
           EmployeeID: this.EmployeeID,
         },
       };
-      if (!oDataModel.ManagerName && !oDataModel.ManagerID) {
-        return;
-      }
+
+      if (!oDataModel.ManagerName && !oDataModel.ManagerID) return;
+
       this.getBusyDialog();
       var that = this;
       this.ajaxReadWithJQuery("InboxDetails", requestData)
-        .then((oData) => {
+        .then(async (oData) => {
           this.closeBusyDialog();
-          if (oData.data && oData.data.length > 0 && this.managerID !== oDataModel.ManagerID) {
-            MessageBox.show(this.getView().getModel("i18n").getResourceBundle().getText("managerChangeMsg"), {
-              icon: sap.m.MessageBox.Icon.INFORMATION,
-              title: "Confirmation",
-              actions: [sap.m.MessageBox.Action.OK, "Cancle"],
-              onClose: async function (sAction) {
-                if (sAction === "OK") {
-                  this.getBusyDialog();
-                  // oData.ManagerID = managerId;
-                  await this.updateFunctionForSelf(oPayload, "");
-                  var flag = false;
-                  for (let i = 0; i < oData.data.length; i++) {
-                    oData.data[i].ManagerName = oPayload.data.ManagerName;
-                    oData.data[i].ManagerID = oPayload.data.ManagerID;
-                    oData.data[i].ManagerChanges = "Manager Changes";
+          if ( oData.data && oData.data.length > 0 && this.managerID !== oDataModel.ManagerID) {
 
-                    const payLoad = {
-                      data: oData.data[i],
-                      filters: {
-                        ID: oData.data[i].ID,
-                      },
-                    };
-                    await this.ajaxUpdateWithJQuery("InboxDetails", payLoad)
-                      .then((oData) => {
-                        flag = true;
-                      })
-                      .catch((oError) => {
-                        flag = false;
-                        this.closeBusyDialog();
-                        return;
-                      })
-                      .bind(this);
-                  }
-                  if (flag) {
-                    // sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("managerUpdate"));
+            MessageBox.show(this.getView().getModel("i18n").getResourceBundle().getText("managerChangeMsg"),
+              {
+                icon: sap.m.MessageBox.Icon.INFORMATION,
+                title: "Confirmation",
+                actions: [
+                  sap.m.MessageBox.Action.OK,
+                  "Cancle"
+                ],
+
+                onClose: async function (sAction) {
+                  if (sAction === "OK") {
+                    this.getBusyDialog();
+                    await this.updateFunctionForSelf(oPayload, "");
+                    var flag = false;
+                    for (let i = 0; i < oData.data.length; i++) {
+                      oData.data[i].ManagerName = oPayload.data.ManagerName;
+                      oData.data[i].ManagerID = oPayload.data.ManagerID;
+                      oData.data[i].ManagerChanges = "Manager Changes";
+                      const payLoad = {
+                        data: oData.data[i],
+                        filters: {
+                          ID: oData.data[i].ID,
+                        },
+                      };
+                      await this.ajaxUpdateWithJQuery("InboxDetails",payLoad)
+                        .then((oData) => {
+                          flag = true;
+                        })
+
+                        .catch((oError) => {
+                          flag = false;
+                          this.closeBusyDialog();
+                          return;
+                        });
+                    }
+                    if (flag) {
+                      // sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("managerUpdate"));
+                    } else {
+                      sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("commomerror"));
+                      }
                   } else {
-                    sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("commomerror"));
+                    await this._fetchCommonData(
+                      "EmployeeDetails",
+                      "sEmployeeModel",
+                      {
+                        EmployeeID: this.EmployeeID,
+                      }
+                    ).then(async () => {
+                      oPayload.data = that.getView().getModel("sEmployeeModel").getData()[0];
+                      that.getView().byId("SS_id_Manager").setSelectedKey(oPayload.data.ManagerID);
+                    });
+                    this.closeBusyDialog();
                   }
-                  //sap.ui.core.BusyIndicator.hide(0);
-                } else {
-                  await this._fetchCommonData("EmployeeDetails", "sEmployeeModel", {
-                    EmployeeID: this.EmployeeID,
-                  }).then(async () => {
-                    oPayload.data = that.getView().getModel("sEmployeeModel").getData()[0];
-                    that.getView().byId("SS_id_Manager").setSelectedKey(oPayload.data.ManagerID);
-                    //await that.updateFunctionForSelf(oPayload, "");
-                  });
-                  this.closeBusyDialog();
-                }
-              }.bind(this),
-            });
+                }.bind(this),
+              });
           } else {
             this.getBusyDialog();
-            this.updateFunctionForSelf(oPayload, "");
-            // sap.ui.core.BusyIndicator.hide(0);
+            await this.updateFunctionForSelf(oPayload, "");
           }
         })
-        .bind(this)
         .catch((oError) => {
           MessageToast.show(oError);
           this.closeBusyDialog();
-        })
-        .bind(this);
+        });
       this.getView().getModel("sEmployeeModel").refresh();
       this.byId("SS_id_Manager").setValueState("None");
     },
@@ -1483,7 +1534,6 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
       }
     },
     onLogout: function () {
-      this.getRouter().navTo("LoginPage");
       this.CommonLogoutFunction();
     },
 
@@ -1520,7 +1570,7 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
             var oPayload = {
               data: {
                 DocumentType: docTypeText,
-                EmployeeID: oModel.getData()[0].EmployeeID, 
+                EmployeeID: oModel.getData()[0].EmployeeID,
                 CreatedBy: that.getView().getModel("LoginModel").getData().EmployeeName,
                 CreatedOn: new Date().toISOString(),
                 File: base64,
@@ -2118,7 +2168,7 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
         const mobileNoTwo = sap.ui.getCore().byId("AdEmp_id_RCMobileII").getValue().trim();
         const optionalValid = (name === "" || utils._LCvalidateName(sap.ui.getCore().byId("AdEmp_id_RCNameI"), "ID")) && (mail === "" || utils._LCvalidateEmail(sap.ui.getCore().byId("AdEmp_id_RCMailI"), "ID")) && (RCISTDCode === "" || utils._LCvalidateMobileNumberWithSTD(sap.ui.getCore().byId("AdEmp_id_RCMobileI"), RCISTDCode)) && (mobileNo === "" || utils._LCvalidateMobileNumber(sap.ui.getCore().byId("AdEmp_id_RCMobileI"), "ID")) && (nameTwo === "" || utils._LCvalidateName(sap.ui.getCore().byId("AdEmp_id_RCNameII"), "ID")) && (mailTwo === "" || utils._LCvalidateEmail(sap.ui.getCore().byId("AdEmp_id_RCMailII"), "ID")) && (RCIISTDCode === "" || utils._LCvalidateMandatoryField(sap.ui.getCore().byId("AdEmp_id_RCSTD"), "ID")) && (mobileNoTwo === "" || utils._LCvalidateMobileNumberWithSTD(sap.ui.getCore().byId("AdEmp_id_RCMobileII"), RCIISTDCode));
 
-        
+
         if (!optionalValid) {
           MessageToast.show(this.i18nModel.getText("mandetoryFields"));
           return;
@@ -2562,54 +2612,54 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
     },
 
     onSyncSalary: async function () {
-    try {
-      this.getBusyDialog();
+      try {
+        this.getBusyDialog();
 
-      // Step 1
-      await this.syncSalaryCalculation();
+        // Step 1
+        await this.syncSalaryCalculation();
 
-      // Step 2 → Get Effective Date
-      let sEffectiveDate = await this._getNextEffectiveDateFromPaySlip();
+        // Step 2 → Get Effective Date
+        let sEffectiveDate = await this._getNextEffectiveDateFromPaySlip();
 
-      var salaryData = this.getView().getModel("salaryData").getData();
+        var salaryData = this.getView().getModel("salaryData").getData();
 
-      // Step 3 → fallback from salary table
-      if (!sEffectiveDate && salaryData && salaryData.length > 0) {
-        const latestSalary = salaryData.reduce(function (latest, current) {
-          return new Date(current.EffectiveDate) > new Date(latest.EffectiveDate)
-            ? current
-            : latest;
-        });
+        // Step 3 → fallback from salary table
+        if (!sEffectiveDate && salaryData && salaryData.length > 0) {
+          const latestSalary = salaryData.reduce(function (latest, current) {
+            return new Date(current.EffectiveDate) > new Date(latest.EffectiveDate)
+              ? current
+              : latest;
+          });
 
-        sEffectiveDate = latestSalary.EffectiveDate;
+          sEffectiveDate = latestSalary.EffectiveDate;
+        }
+
+        // Step 4 → final fallback
+        if (!sEffectiveDate) {
+          sEffectiveDate = new Date().toISOString().split("T")[0];
+        }
+
+        // Step 5 → Create payload
+        var oPayload = this.createAppraisalPayload(sEffectiveDate);
+
+        var lastRecord = salaryData[salaryData.length - 1];
+        oPayload.data.EmploymentBond = lastRecord?.EmploymentBond;
+
+        // Step 6 → Save
+        await this.ajaxCreateWithJQuery("SalaryDetails", oPayload);
+
+        // Step 7 → Refresh
+        await this.SS_readSalaryDetails();
+
+        MessageToast.show("Salary synced successfully.");
+
+      } catch (err) {
+        console.error(err);
+        MessageToast.show("Error while syncing salary.");
+      } finally {
+        this.closeBusyDialog();
       }
-
-      // Step 4 → final fallback
-      if (!sEffectiveDate) {
-        sEffectiveDate = new Date().toISOString().split("T")[0];
-      }
-
-      // Step 5 → Create payload
-      var oPayload = this.createAppraisalPayload(sEffectiveDate);
-
-      var lastRecord = salaryData[salaryData.length - 1];
-      oPayload.data.EmploymentBond = lastRecord?.EmploymentBond;
-
-      // Step 6 → Save
-      await this.ajaxCreateWithJQuery("SalaryDetails", oPayload);
-
-      // Step 7 → Refresh
-      await this.SS_readSalaryDetails();
-
-      MessageToast.show("Salary synced successfully.");
-
-    } catch (err) {
-      console.error(err);
-      MessageToast.show("Error while syncing salary.");
-    } finally {
-      this.closeBusyDialog();
-    }
-  },
+    },
 
     _getNextEffectiveDateFromPaySlip: async function () {
       try {
@@ -3198,8 +3248,8 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
         const addressLines = doc.splitTextToSize(address, maxWidth);
         let addressY = textYOffset + lineHeight * 3 + 5;
         addressLines.forEach((line, index) => {
-            const x = (pageWidth - doc.getTextWidth(line)) / 2;
-            doc.text(line, x, addressY + (index * 4)); // 4 = line spacing (adjust if needed)
+          const x = (pageWidth - doc.getTextWidth(line)) / 2;
+          doc.text(line, x, addressY + (index * 4)); // 4 = line spacing (adjust if needed)
         });
         // Save the document
         doc.save(`${employeeDetails.EmployeeName}_IDCard.pdf`);
@@ -3822,187 +3872,187 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
     },
 
     SS_onDownloadConsentLetter: async function () {
-        try {
-            this.getBusyDialog();
+      try {
+        this.getBusyDialog();
 
-            let oEmpData = this.getView().getModel("sEmployeeModel").getData()[0];
+        let oEmpData = this.getView().getModel("sEmployeeModel").getData()[0];
 
-            const oSalaryResponse = await this.ajaxReadWithJQuery("SalaryDetails", {
-                EmployeeID: this.EmployeeID
-            });
+        const oSalaryResponse = await this.ajaxReadWithJQuery("SalaryDetails", {
+          EmployeeID: this.EmployeeID
+        });
 
-            let aData = oSalaryResponse.data;
-            let oSalaryData = {};
+        let aData = oSalaryResponse.data;
+        let oSalaryData = {};
 
-            if (Array.isArray(aData) && aData.length > 0) {
+        if (Array.isArray(aData) && aData.length > 0) {
 
-                // Sort by EffectiveDate (oldest first)
-                aData.sort((a, b) => new Date(a.EffectiveDate) - new Date(b.EffectiveDate));
+          // Sort by EffectiveDate (oldest first)
+          aData.sort((a, b) => new Date(a.EffectiveDate) - new Date(b.EffectiveDate));
 
-                // Always pick OLDEST (correct for your case)
-                oSalaryData = aData[0];
+          // Always pick OLDEST (correct for your case)
+          oSalaryData = aData[0];
 
-            } else {
-                oSalaryData = aData;
-            }
-
-            let oFinalData = {
-                ...oEmpData,
-                ...oSalaryData
-            };
-
-            const oFinalModel = new sap.ui.model.json.JSONModel(oFinalData);
-
-            this.offerGeneratingPdfFunction(oFinalModel);
-
-            this.closeBusyDialog();
-
-        } catch (err) {
-            sap.m.MessageToast.show(err.message || err.responseText);
-            this.closeBusyDialog();
+        } else {
+          oSalaryData = aData;
         }
+
+        let oFinalData = {
+          ...oEmpData,
+          ...oSalaryData
+        };
+
+        const oFinalModel = new sap.ui.model.json.JSONModel(oFinalData);
+
+        this.offerGeneratingPdfFunction(oFinalModel);
+
+        this.closeBusyDialog();
+
+      } catch (err) {
+        sap.m.MessageToast.show(err.message || err.responseText);
+        this.closeBusyDialog();
+      }
     },
 
     offerGeneratingPdfFunction: async function (oModel) {
-        this.getBusyDialog();
+      this.getBusyDialog();
 
-        const _setIfNotZero = (model, path, value, currency) => {
-            if (value && Number(value) !== 0) {
-                model.setProperty(path, currency + " " + Formatter.fromatNumber(value));
-            } else {
-                model.setProperty(path, "");
-            }
-        };
-
-        try {
-            var oEmpModel = oModel.getData();
-            await this._fetchCommonData("PDFCondition", "PDFConditionModel", { Type: "EmployeeConsent" });
-            var oPDFModel = this.getView().getModel("PDFData");
-
-             // Employee details mapping
-            oPDFModel.setProperty("/Type", "Employee Offer");
-            oPDFModel.setProperty("/EmpID", oEmpModel.EmployeeID || "");
-            oPDFModel.setProperty("/EmpName",(oEmpModel.Salutation || "") + " " + (oEmpModel.EmployeeName || ""));
-            oPDFModel.setProperty("/EmpRole", oEmpModel.Designation || "");
-            oPDFModel.setProperty("/EmpAddress",(oEmpModel.CorrespondenceAddress || "").replace(/\n/g, ", "));
-            oPDFModel.setProperty("/CreateDate", Formatter.formatDate(oEmpModel.AppraisalDate));
-            oPDFModel.setProperty("/JoiningDate",Formatter.formatDate(oEmpModel.JoiningDate));
-            oPDFModel.setProperty("/EmpCTC",(oEmpModel.Currency || "INR") + " " + Formatter.fromatNumber(oEmpModel.CTC || oEmpModel.CostofCompany));
-
-            // Bond Condition
-            if (!oEmpModel.EmploymentBond || oEmpModel.EmploymentBond === "0") {
-                oPDFModel.setProperty("/BondCondition", "18 employment months");
-                oPDFModel.setProperty("/BondCondition2", "");
-            } else {
-                oPDFModel.setProperty("/BondCondition", oEmpModel.EmploymentBond + " employment bond year(s)");
-                if (oEmpModel.EmploymentBond === "1") {
-                    oPDFModel.setProperty(
-                        "/BondCondition2",
-                        "any training costs and during 18 employment months, "
-                    );
-                } else {
-                    oPDFModel.setProperty(
-                        "/BondCondition2",
-                        "any training costs and "
-                    );
-                }
-            }
-
-            // Yearly Components / Deductions / Variable / GrossPay
-            const currency = oEmpModel.Currency || "INR";
-
-            _setIfNotZero(oPDFModel, "/YearlyComponents/0/Text", oEmpModel.Total, currency);
-            _setIfNotZero(oPDFModel, "/YearlyComponents/1/Text", oEmpModel.BasicSalary, currency);
-            _setIfNotZero(oPDFModel, "/YearlyComponents/2/Text", oEmpModel.HRA, currency);
-            _setIfNotZero(oPDFModel, "/YearlyComponents/3/Text", oEmpModel.EmployerPF, currency);
-            _setIfNotZero(oPDFModel, "/YearlyComponents/4/Text", oEmpModel.MedicalInsurance, currency);
-            _setIfNotZero(oPDFModel, "/YearlyComponents/5/Text", oEmpModel.Gratuity, currency);
-            _setIfNotZero(oPDFModel, "/YearlyComponents/6/Text", oEmpModel.SpecailAllowance, currency);
-    
-            _setIfNotZero(oPDFModel, "/Deductions/0/Text", oEmpModel.TotalDeduction, currency);
-            _setIfNotZero(oPDFModel, "/Deductions/1/Text", oEmpModel.IncomeTax, currency);
-            _setIfNotZero(oPDFModel, "/Deductions/2/Text", oEmpModel.EmployeePF, currency);
-            _setIfNotZero(oPDFModel, "/Deductions/3/Text", oEmpModel.PT, currency);
-
-            _setIfNotZero(oPDFModel, "/VariableComponents/0/Text", oEmpModel.VariablePay, currency);
-
-            _setIfNotZero(oPDFModel, "/GrossPay/0/Text", oEmpModel.GrossPay, currency);
-            _setIfNotZero(oPDFModel, "/GrossPay/1/Text", oEmpModel.GrossPayMontly, currency);
-
-            if (!oEmpModel.JoiningBonus || oEmpModel.JoiningBonus === "0") {
-                oPDFModel.setProperty("/Notes/0/Text", "0");
-            } else {
-                oPDFModel.setProperty(
-                    "/Notes/0/Text",
-                    currency + " " + Formatter.fromatNumber(oEmpModel.JoiningBonus)
-                );
-            }
-
-             /// --- Company Details Fetch ---
-                    let filter = { companyCode: oEmpModel.CompanyCode };
-                    let apiResponse;
-                    try {
-                        apiResponse = await this.ajaxReadWithJQuery("CompanyCodeDetails", filter);
-                    } catch (err) {
-                        MessageToast.show(err.message || err.responseText);
-                        this.closeBusyDialog();
-                        return;
-                    }
-
-                    const oCompanyDetailsModel = apiResponse.data[0];
-                    oPDFModel.setProperty("/Headers/0/Text", oCompanyDetailsModel.companyName);
-                    oPDFModel.setProperty("/Headers/1/Text", oCompanyDetailsModel.branch);
-
-                    var oPDFConditionModel = this.getView().getModel("PDFConditionModel").getData();
-
-                    // --- Images ---
-                    if (!oCompanyDetailsModel.companylogo64 &&
-                        !oCompanyDetailsModel.signature64 &&
-                        !oCompanyDetailsModel.backgroundLogoBase64 &&
-                        !oCompanyDetailsModel.emailLogoBase64) {
-
-                        try {
-                            const logoBlob = new Blob([new Uint8Array(oCompanyDetailsModel.companylogo?.data)], { type: "image/png" });
-                            const signBlob = new Blob([new Uint8Array(oCompanyDetailsModel.signature?.data)], { type: "image/png" });
-                            const backgroundBlob = new Blob([new Uint8Array(oCompanyDetailsModel.backgroundLogo?.data)], { type: "image/png" });
-                            const emailBlob = new Blob([new Uint8Array(oCompanyDetailsModel.emailLogo?.data)], { type: "image/png" });
-
-                            const [logoBase64, signBase64, backgroundBase64, emailBase64] = await Promise.all([
-                                this._convertBLOBToImage(logoBlob),
-                                this._convertBLOBToImage(signBlob),
-                                this._convertBLOBToImage(backgroundBlob),
-                                this._convertBLOBToImage(emailBlob)
-                            ]);
-
-                            oCompanyDetailsModel.companylogo64 = logoBase64;
-                            oCompanyDetailsModel.signature64 = signBase64;
-                            oCompanyDetailsModel.backgroundLogoBase64 = backgroundBase64;
-                            oCompanyDetailsModel.emailLogoBase64 = emailBase64;
-                        } catch (err) {
-                            console.error("Image compression failed:", err);
-                        }
-                    }
-            
-            // PDF Generation
-            if (
-                oCompanyDetailsModel.companylogo64 &&
-                oCompanyDetailsModel.signature64 &&
-                typeof EmpIPNCAPDF !== "undefined" &&
-                typeof EmpIPNCAPDF._GeneratePDF === "function"
-            ) {
-                EmpIPNCAPDF._GeneratePDF(
-                    this,
-                    oPDFModel.getData(),
-                    oCompanyDetailsModel,
-                    oPDFConditionModel
-                );
-            }
-
-        } catch (err) {
-            sap.m.MessageToast.show(err.message || err.responseText);
-        } finally {
-            this.closeBusyDialog();
+      const _setIfNotZero = (model, path, value, currency) => {
+        if (value && Number(value) !== 0) {
+          model.setProperty(path, currency + " " + Formatter.fromatNumber(value));
+        } else {
+          model.setProperty(path, "");
         }
+      };
+
+      try {
+        var oEmpModel = oModel.getData();
+        await this._fetchCommonData("PDFCondition", "PDFConditionModel", { Type: "EmployeeConsent" });
+        var oPDFModel = this.getView().getModel("PDFData");
+
+        // Employee details mapping
+        oPDFModel.setProperty("/Type", "Employee Offer");
+        oPDFModel.setProperty("/EmpID", oEmpModel.EmployeeID || "");
+        oPDFModel.setProperty("/EmpName", (oEmpModel.Salutation || "") + " " + (oEmpModel.EmployeeName || ""));
+        oPDFModel.setProperty("/EmpRole", oEmpModel.Designation || "");
+        oPDFModel.setProperty("/EmpAddress", (oEmpModel.CorrespondenceAddress || "").replace(/\n/g, ", "));
+        oPDFModel.setProperty("/CreateDate", Formatter.formatDate(oEmpModel.AppraisalDate));
+        oPDFModel.setProperty("/JoiningDate", Formatter.formatDate(oEmpModel.JoiningDate));
+        oPDFModel.setProperty("/EmpCTC", (oEmpModel.Currency || "INR") + " " + Formatter.fromatNumber(oEmpModel.CTC || oEmpModel.CostofCompany));
+
+        // Bond Condition
+        if (!oEmpModel.EmploymentBond || oEmpModel.EmploymentBond === "0") {
+          oPDFModel.setProperty("/BondCondition", "18 employment months");
+          oPDFModel.setProperty("/BondCondition2", "");
+        } else {
+          oPDFModel.setProperty("/BondCondition", oEmpModel.EmploymentBond + " employment bond year(s)");
+          if (oEmpModel.EmploymentBond === "1") {
+            oPDFModel.setProperty(
+              "/BondCondition2",
+              "any training costs and during 18 employment months, "
+            );
+          } else {
+            oPDFModel.setProperty(
+              "/BondCondition2",
+              "any training costs and "
+            );
+          }
+        }
+
+        // Yearly Components / Deductions / Variable / GrossPay
+        const currency = oEmpModel.Currency || "INR";
+
+        _setIfNotZero(oPDFModel, "/YearlyComponents/0/Text", oEmpModel.Total, currency);
+        _setIfNotZero(oPDFModel, "/YearlyComponents/1/Text", oEmpModel.BasicSalary, currency);
+        _setIfNotZero(oPDFModel, "/YearlyComponents/2/Text", oEmpModel.HRA, currency);
+        _setIfNotZero(oPDFModel, "/YearlyComponents/3/Text", oEmpModel.EmployerPF, currency);
+        _setIfNotZero(oPDFModel, "/YearlyComponents/4/Text", oEmpModel.MedicalInsurance, currency);
+        _setIfNotZero(oPDFModel, "/YearlyComponents/5/Text", oEmpModel.Gratuity, currency);
+        _setIfNotZero(oPDFModel, "/YearlyComponents/6/Text", oEmpModel.SpecailAllowance, currency);
+
+        _setIfNotZero(oPDFModel, "/Deductions/0/Text", oEmpModel.TotalDeduction, currency);
+        _setIfNotZero(oPDFModel, "/Deductions/1/Text", oEmpModel.IncomeTax, currency);
+        _setIfNotZero(oPDFModel, "/Deductions/2/Text", oEmpModel.EmployeePF, currency);
+        _setIfNotZero(oPDFModel, "/Deductions/3/Text", oEmpModel.PT, currency);
+
+        _setIfNotZero(oPDFModel, "/VariableComponents/0/Text", oEmpModel.VariablePay, currency);
+
+        _setIfNotZero(oPDFModel, "/GrossPay/0/Text", oEmpModel.GrossPay, currency);
+        _setIfNotZero(oPDFModel, "/GrossPay/1/Text", oEmpModel.GrossPayMontly, currency);
+
+        if (!oEmpModel.JoiningBonus || oEmpModel.JoiningBonus === "0") {
+          oPDFModel.setProperty("/Notes/0/Text", "0");
+        } else {
+          oPDFModel.setProperty(
+            "/Notes/0/Text",
+            currency + " " + Formatter.fromatNumber(oEmpModel.JoiningBonus)
+          );
+        }
+
+        /// --- Company Details Fetch ---
+        let filter = { companyCode: oEmpModel.CompanyCode };
+        let apiResponse;
+        try {
+          apiResponse = await this.ajaxReadWithJQuery("CompanyCodeDetails", filter);
+        } catch (err) {
+          MessageToast.show(err.message || err.responseText);
+          this.closeBusyDialog();
+          return;
+        }
+
+        const oCompanyDetailsModel = apiResponse.data[0];
+        oPDFModel.setProperty("/Headers/0/Text", oCompanyDetailsModel.companyName);
+        oPDFModel.setProperty("/Headers/1/Text", oCompanyDetailsModel.branch);
+
+        var oPDFConditionModel = this.getView().getModel("PDFConditionModel").getData();
+
+        // --- Images ---
+        if (!oCompanyDetailsModel.companylogo64 &&
+          !oCompanyDetailsModel.signature64 &&
+          !oCompanyDetailsModel.backgroundLogoBase64 &&
+          !oCompanyDetailsModel.emailLogoBase64) {
+
+          try {
+            const logoBlob = new Blob([new Uint8Array(oCompanyDetailsModel.companylogo?.data)], { type: "image/png" });
+            const signBlob = new Blob([new Uint8Array(oCompanyDetailsModel.signature?.data)], { type: "image/png" });
+            const backgroundBlob = new Blob([new Uint8Array(oCompanyDetailsModel.backgroundLogo?.data)], { type: "image/png" });
+            const emailBlob = new Blob([new Uint8Array(oCompanyDetailsModel.emailLogo?.data)], { type: "image/png" });
+
+            const [logoBase64, signBase64, backgroundBase64, emailBase64] = await Promise.all([
+              this._convertBLOBToImage(logoBlob),
+              this._convertBLOBToImage(signBlob),
+              this._convertBLOBToImage(backgroundBlob),
+              this._convertBLOBToImage(emailBlob)
+            ]);
+
+            oCompanyDetailsModel.companylogo64 = logoBase64;
+            oCompanyDetailsModel.signature64 = signBase64;
+            oCompanyDetailsModel.backgroundLogoBase64 = backgroundBase64;
+            oCompanyDetailsModel.emailLogoBase64 = emailBase64;
+          } catch (err) {
+            console.error("Image compression failed:", err);
+          }
+        }
+
+        // PDF Generation
+        if (
+          oCompanyDetailsModel.companylogo64 &&
+          oCompanyDetailsModel.signature64 &&
+          typeof EmpIPNCAPDF !== "undefined" &&
+          typeof EmpIPNCAPDF._GeneratePDF === "function"
+        ) {
+          EmpIPNCAPDF._GeneratePDF(
+            this,
+            oPDFModel.getData(),
+            oCompanyDetailsModel,
+            oPDFConditionModel
+          );
+        }
+
+      } catch (err) {
+        sap.m.MessageToast.show(err.message || err.responseText);
+      } finally {
+        this.closeBusyDialog();
+      }
     }
   });
 });

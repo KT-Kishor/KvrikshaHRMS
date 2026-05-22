@@ -52,12 +52,12 @@ sap.ui.define([
             } catch (error) {
                 this.closeBusyDialog();
                 MessageToast.show(error.message || error.responseText);
-            }   
+            }
         },
         onGlobalSearch: function (oEvent) {
             const sQuery = oEvent.getParameter("newValue");
             const oTable = this.byId("idBugTable");
-           const oBinding = oTable.getBinding("items");
+            const oBinding = oTable.getBinding("items");
             let aFilters = [];
             if (sQuery) {
                 aFilters = [
@@ -70,7 +70,7 @@ sap.ui.define([
                             new sap.ui.model.Filter("BugDescription", sap.ui.model.FilterOperator.Contains, sQuery.toString()),
                             new sap.ui.model.Filter("CreatedDate", sap.ui.model.FilterOperator.Contains, sQuery.toString()),
                             new sap.ui.model.Filter("BugID", sap.ui.model.FilterOperator.Contains, sQuery.toString()),
-                             new sap.ui.model.Filter("ResolveDate", sap.ui.model.FilterOperator.Contains, sQuery.toString())
+                            new sap.ui.model.Filter("ResolveDate", sap.ui.model.FilterOperator.Contains, sQuery.toString())
                         ],
                         and: false
                     })
@@ -92,14 +92,14 @@ sap.ui.define([
         },
 
         RB_read: function () {
-         
+
             this.getView().byId("RB_id_SearchField").setValue("")
 
             this.CD_read(false);
         },
-           getGroupHeader: function (oGroup) {
-                    return this.getStyledGroupHeader(oGroup);
-                },
+        getGroupHeader: function (oGroup) {
+            return this.getStyledGroupHeader(oGroup);
+        },
 
         CD_read: async function (flag) {
             const SRaisedBy = this.byId("RB_id_RaisedBy1").getSelectedKey() ||
@@ -477,7 +477,7 @@ sap.ui.define([
         },
 
         onLogout: function () {
-            this.getOwnerComponent().getRouter().navTo("RouteLoginPage");
+            this.CommonLogoutFunction(); // Navigate to login page
         },
 
         Common_Open_BugDialog: function () {

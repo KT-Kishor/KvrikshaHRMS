@@ -149,11 +149,11 @@
             </items>
 
         </HBox>
-        <illustrated:IllustratedMessage
+         <illustrated:IllustratedMessage
     illustrationType="sapIllus-NoActivities"
     title="No Upcoming Events"
     description="There are currently no upcoming events available."
-    visible="{
+   visible="{
         path: 'EventCardModel>/UpcomingEvents',
         formatter: '.showUpcomingMessage'
     }"
@@ -263,11 +263,11 @@
 
         </HBox>
 
-        <illustrated:IllustratedMessage
+         <illustrated:IllustratedMessage
     illustrationType="sapIllus-NoActivities"
     title="No Past Events"
     description="There are currently no past events available."
-    visible="{
+   visible="{
         path: 'EventCardModel>/PastEvents',
         formatter: '.showPastMessage'
     }"

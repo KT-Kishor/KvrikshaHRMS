@@ -149,7 +149,14 @@ sap.ui.define([
             const aAllInvoices = this.InvoiceDashboardModel.getProperty("/Chart1/result") || [];
             const aInvoicesForStatus = aAllInvoices
                 .filter(i => i.Status === sStatus)
-                .sort((a, b) => new Date(b.InvoiceDate) - new Date(a.InvoiceDate));
+                .sort((a, b) => {
+                    const dateDiff = new Date(b.InvoiceDate) - new Date(a.InvoiceDate);
+                    if (dateDiff !== 0) return dateDiff;
+                    // 2. Same Date -> InvNo DESC
+                    const seqA = parseInt((a.InvNo || "").split("-")[1]) || 0;
+                    const seqB = parseInt((b.InvNo || "").split("-")[1]) || 0;
+                    return seqB - seqA;
+                });
 
             // Total Amount
             const iTotalAmount = aInvoicesForStatus.reduce((sum, item) => {
@@ -207,8 +214,15 @@ sap.ui.define([
             const aFiltered = aAllInvoices.filter(i => i.Month === Month);
             if (!aFiltered.length || !aFiltered[0].Records) return;
 
-            const aInvoicesForMonthly = aFiltered[0].Records.sort((a, b) => new Date(b.InvoiceDate) - new Date(a.InvoiceDate));
-
+            const aInvoicesForMonthly = aFiltered[0].Records.sort((a, b) => {
+                // 1. Sort by InvoiceDate DESC
+                const dateDiff = new Date(b.InvoiceDate) - new Date(a.InvoiceDate);
+                if (dateDiff !== 0) return dateDiff;
+                // 2. If same date, sort by InvNo DESC
+                const seqA = parseInt((a.InvNo || "").split("-")[1]) || 0;
+                const seqB = parseInt((b.InvNo || "").split("-")[1]) || 0;
+                return seqB - seqA;
+            });
             const iTotalAmount = aInvoicesForMonthly.reduce((sum, item) => {
                 return sum + (item.Currency === "INR" ? (item.TotalAmount || 0) : (item.AmountInINR || 0));
             }, 0);
@@ -269,8 +283,15 @@ sap.ui.define([
             if (!oCompanyData) return;
             const aCompanyRecords = oCompanyData.Records || [];
 
-            aCompanyRecords.sort((a, b) => new Date(b.InvoiceDate) - new Date(a.InvoiceDate));
-
+            aCompanyRecords.sort((a, b) => {
+                // 1. Sort by InvoiceDate DESC
+                const dateDiff = new Date(b.InvoiceDate) - new Date(a.InvoiceDate);
+                if (dateDiff !== 0) return dateDiff;
+                // 2. If same date, sort by InvNo DESC
+                const seqA = parseInt((a.InvNo || "").split("-")[1]) || 0;
+                const seqB = parseInt((b.InvNo || "").split("-")[1]) || 0;
+                return seqB - seqA;
+            });
             const iTotalAmount = aCompanyRecords.reduce((sum, item) => {
                 return sum + Number(item.ActualAmount || 0);
             }, 0);
@@ -321,23 +342,42 @@ sap.ui.define([
         //Fourth chart click event handler - Yearly Invoice Trend
         onYearlyInvoiceSelect: function (oEvent) {
             const oData = oEvent.getParameter("data")?.[0];
+
             if (!oData || !oData.data?.Year) return;
+
             const sYear = oData.data.Year;
+
             // get yearly data from model
             const aAllYears = this.InvoiceDashboardModel.getProperty("/Chart4") || [];
+
             // find selected year object
             const oYearData = aAllYears.find(y => y.Year === sYear);
+
             if (!oYearData) return;
+
             const aYearRecords = oYearData.Records || [];
-            // sort by InvoiceDate desc
-            aYearRecords.sort((a, b) => new Date(b.InvoiceDate) - new Date(a.InvoiceDate));
+
+            // Sort by InvoiceDate DESC
+            // If same date -> Sort by InvNo DESC
+
+            aYearRecords.sort((a, b) => {
+                // 1. Sort by InvoiceDate DESC
+                const dateDiff = new Date(b.InvoiceDate) - new Date(a.InvoiceDate);
+                if (dateDiff !== 0) return dateDiff;
+                // 2. Same date -> Sort by InvNo DESC
+                const seqA = parseInt(a.InvNo.split("-")[1]);
+                const seqB = parseInt(b.InvNo.split("-")[1]);
+                return seqB - seqA;
+            });
+
             // calculate total
             const iTotalAmount = aYearRecords.reduce((sum, item) => {
                 return sum + Number(item.ActualAmount || 0);
             }, 0);
 
             const iActualAmount = aYearRecords.reduce((sum, item) => {
-                return sum + (Number(item.AllTotalAndActualAmount) || 0);
+                return sum +
+                    (Number(item.AllTotalAndActualAmount) || 0);
             }, 0);
 
             const oView = this.getView();
@@ -352,12 +392,7 @@ sap.ui.define([
                 });
             }
             this._pYearPopover.then(oDialog => {
-                oDialog.setModel(new JSONModel({
-                    Year: sYear,
-                    Records: aYearRecords,
-                    TotalAmount: iTotalAmount,
-                    AllActualAmount: iActualAmount
-                }), "yearPopoverData");   // model name for fragment
+                oDialog.setModel(new JSONModel({ Year: sYear, Records: aYearRecords, TotalAmount: iTotalAmount, AllActualAmount: iActualAmount }), "yearPopoverData");
                 oDialog.open();
             });
         },
@@ -377,13 +412,26 @@ sap.ui.define([
             const sCompany = oData.data.Company;
             // get yearly data from model
             const aAllYears = this.InvoiceDashboardModel.getProperty("/Chart5") || [];
-            // find selected year object
-            const oYearData = aAllYears[sCompany];  // since Chart5 is a map with company name as key
+            // find selected company object
+            const oYearData = aAllYears[sCompany];
             if (!oYearData) return;
-            const aYearRecords = oYearData.Records || [];
+            // Sort records
+            const aYearRecords = (oYearData.Records || []).sort((a, b) => {
+                // 1. Sort by InvoiceDate DESC
+                const dateDiff = new Date(b.InvoiceDate) - new Date(a.InvoiceDate);
+                if (dateDiff !== 0) return dateDiff;
+                // 2. If same date, sort by InvNo DESC
+                const seqA = parseInt((a.InvNo || "").split("-")[1]) || 0;
+                const seqB = parseInt((b.InvNo || "").split("-")[1]) || 0;
+                return seqB - seqA;
+            });
 
-            const iTotalAmount = aYearRecords.reduce((sum, item) => { return sum + Number(item.TotalAmountInINR || 0) }, 0);
+            const iTotalAmount = aYearRecords.reduce((sum, item) => {
+                return sum + Number(item.TotalAmountInINR || 0);
+            }, 0);
+
             const oView = this.getView();
+
             if (!this._pPopover5) {
                 this._pPopover5 = Fragment.load({
                     id: oView.getId(),
@@ -394,12 +442,15 @@ sap.ui.define([
                     return oDialog;
                 });
             }
+
             this._pPopover5.then(oDialog => {
+
                 oDialog.setModel(new JSONModel({
                     Company: sCompany,
                     Records: aYearRecords,
                     TotalAmount: iTotalAmount
-                }), "PaymentBreakdownPopoverData");   // model name for fragment
+                }), "PaymentBreakdownPopoverData");
+
                 oDialog.open();
             });
         },
@@ -424,12 +475,9 @@ sap.ui.define([
 
         //Sixth chart click event handler - Pending Invoice by Company
         onPendingCompanySelect: function (oEvent) {
-
             const oData = oEvent.getParameter("data")?.[0];
             if (!oData || !oData.data?.Company) return;
-
             const CompanyName = oData.data.Company;
-
             const aAllInvoices = this.getView()
                 .getModel("InvoiceDashboardModel")
                 .getProperty("/Chart6") || [];
@@ -438,8 +486,18 @@ sap.ui.define([
 
             if (!aFiltered.length || !aFiltered[0].Records) return;
 
-            const aInvoicesForStatus = aFiltered[0].Records
-                .sort((a, b) => new Date(b.InvoiceDate) - new Date(a.InvoiceDate));
+            const aInvoicesForStatus = aFiltered[0].Records.sort((a, b) => {
+
+                // 1. Sort by InvoiceDate DESC
+                const dateDiff = new Date(b.InvoiceDate) - new Date(a.InvoiceDate);
+
+                if (dateDiff !== 0) return dateDiff;
+
+                // 2. If same date, sort by InvNo DESC
+                const seqA = parseInt((a.InvNo || "").split("-")[1]) || 0;
+                const seqB = parseInt((b.InvNo || "").split("-")[1]) || 0;
+                return seqB - seqA;
+            });
 
             const iTotalAmount = aInvoicesForStatus.reduce((sum, item) => {
                 return sum + (Number(item.PendingAmount || 0));
@@ -465,7 +523,6 @@ sap.ui.define([
                     CompanyName: CompanyName,
                     AllTotalAmount: iTotalAmount
                 }), "PendingInvoicesData");
-
                 oDialog.open();
             });
         },
@@ -484,18 +541,44 @@ sap.ui.define([
 
         // 7 Chart click event handler
         onStatusChartSelectCreditNote: function (oEvent) {
+
             const oData = oEvent.getParameter("data")?.[0];
+
             if (!oData || !oData.data?.Status) return;
+
             const sStatus = oData.data.Status;
+
             // get yearly data from model
             const aAllYears = this.InvoiceDashboardModel.getProperty("/Chart7") || [];
-            // find selected year object
-            const oYearData = aAllYears.find((i) => i.Status === sStatus);
-            if (!oYearData) return;
-            const aYearRecords = oYearData.Records || [];
 
-            const iTotalAmount = aYearRecords.reduce((sum, item) => { return sum + Number(item.TotalAmount || 0) }, 0);
+            // find selected status object
+            const oYearData = aAllYears.find((i) => i.Status === sStatus);
+
+            if (!oYearData) return;
+
+            // Sort records
+            const aYearRecords = (oYearData.Records || []).sort((a, b) => {
+
+                // 1. Sort by InvoiceDate DESC
+                const dateDiff = new Date(b.InvoiceDate) - new Date(a.InvoiceDate);
+
+                if (dateDiff !== 0) {
+                    return dateDiff;
+                }
+
+                // 2. If same date, sort by InvNo DESC
+                const seqA = parseInt((a.InvNo || "").split("-")[1]) || 0;
+                const seqB = parseInt((b.InvNo || "").split("-")[1]) || 0;
+
+                return seqB - seqA;
+            });
+
+            const iTotalAmount = aYearRecords.reduce((sum, item) => {
+                return sum + Number(item.TotalAmount || 0);
+            }, 0);
+
             const oView = this.getView();
+
             if (!this._pPopover7) {
                 this._pPopover7 = Fragment.load({
                     id: oView.getId(),
@@ -506,12 +589,15 @@ sap.ui.define([
                     return oDialog;
                 });
             }
+
             this._pPopover7.then(oDialog => {
+
                 oDialog.setModel(new JSONModel({
                     Status: sStatus,
                     Records: aYearRecords,
                     TotalAmount: iTotalAmount
-                }), "CreditNoteListPopoverData");   // model name for fragment
+                }), "CreditNoteListPopoverData");
+
                 oDialog.open();
             });
         },
@@ -524,18 +610,44 @@ sap.ui.define([
         },
 
         onMonthlyInvoiceSelectCreditNote: function (oEvent) {
-            const oData = oEvent.getParameter("data")?.[0];
-            if (!oData || !oData.data?.Month) return;
-            const sStatus = oData.data.Month;
-            // get yearly data from model
-            const aAllYears = this.InvoiceDashboardModel.getProperty("/Chart8") || [];
-            // find selected year object
-            const oYearData = aAllYears.find((i) => i.Month === sStatus);
-            if (!oYearData) return;
-            const aYearRecords = oYearData.Records || [];
 
-            const iTotalAmount = aYearRecords.reduce((sum, item) => { return sum + Number(item.TotalAmount || 0) }, 0);
+            const oData = oEvent.getParameter("data")?.[0];
+
+            if (!oData || !oData.data?.Month) return;
+
+            const sStatus = oData.data.Month;
+
+            // get monthly data from model
+            const aAllYears = this.InvoiceDashboardModel.getProperty("/Chart8") || [];
+
+            // find selected month object
+            const oYearData = aAllYears.find((i) => i.Month === sStatus);
+
+            if (!oYearData) return;
+
+            // Sort records
+            const aYearRecords = (oYearData.Records || []).sort((a, b) => {
+
+                // 1. Sort by InvoiceDate DESC
+                const dateDiff = new Date(b.InvoiceDate) - new Date(a.InvoiceDate);
+
+                if (dateDiff !== 0) {
+                    return dateDiff;
+                }
+
+                // 2. If same date, sort by InvNo DESC
+                const seqA = parseInt((a.InvNo || "").split("-")[1]) || 0;
+                const seqB = parseInt((b.InvNo || "").split("-")[1]) || 0;
+
+                return seqB - seqA;
+            });
+
+            const iTotalAmount = aYearRecords.reduce((sum, item) => {
+                return sum + Number(item.TotalAmount || 0);
+            }, 0);
+
             const oView = this.getView();
+
             if (!this._pMonthPopover) {
                 this._pMonthPopover = Fragment.load({
                     id: oView.getId(),
@@ -546,16 +658,18 @@ sap.ui.define([
                     return oDialog;
                 });
             }
+
             this._pMonthPopover.then(oDialog => {
+
                 oDialog.setModel(new JSONModel({
                     Month: sStatus,
                     Records: aYearRecords,
                     TotalAmount: iTotalAmount
-                }), "MonthlyListPopoverData");   // model name for fragment
+                }), "MonthlyListPopoverData");
+
                 oDialog.open();
             });
         },
-
         onPendingInvoicePress: function (oEvent) {
             const oContext = oEvent.getSource().getBindingContext("MonthlyListPopoverData");
             if (!oContext) return;
@@ -626,7 +740,7 @@ sap.ui.define([
             oPopover.openBy(oSourceControl);
         },
         onLogout: function () {
-            this.getOwnerComponent().getRouter().navTo("RouteLoginPage");
+            this.CommonLogoutFunction(); // Navigate to login page
         },
         onPressback: function () { this.getRouter().navTo("RouteTilePage") },
         IN_onPressStatusPie: function () { this.invoiceChartTypeModel.setProperty("/statusType", "pie"); },

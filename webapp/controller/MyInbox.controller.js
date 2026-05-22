@@ -81,7 +81,7 @@ sap.ui.define([
     },
 
     onLogout() {
-      this.getRouter().navTo("RouteLoginPage");
+      this.CommonLogoutFunction();
     },
 
     MI_onPressButtons(oEvent) {
@@ -227,25 +227,25 @@ sap.ui.define([
     },
 
     MI_onPressColNavigation: async function (oEvent) {
-             const oData = oEvent.getSource().getBindingContext("MyInboxModelData").getObject();
-              //  Allowed case
-               if (
-                   oData.ResourcePlanningType === "Resource Planning" &&
-                   oData.Status === "Approved"
-               ) {
-                   this.getRouter().navTo("RouteDetailLeave", { sLeaveID: oData.ID });
-                   return;
-               }
+      const oData = oEvent.getSource().getBindingContext("MyInboxModelData").getObject();
+      //  Allowed case
+      if (
+        oData.ResourcePlanningType === "Resource Planning" &&
+        oData.Status === "Approved"
+      ) {
+        this.getRouter().navTo("RouteDetailLeave", { sLeaveID: oData.ID });
+        return;
+      }
 
-              //  Block conditions
-               if (
-                   oData.ResourcePlanningType === "Resource Planning" ||
-                   (oData.Type === "Overtime" && oData.Status === "Submitted")
-               ) {
-                   return sap.m.MessageToast.show(
-                       "This request is not allowed for navigation."
-                   );
-               }
+      //  Block conditions
+      if (
+        oData.ResourcePlanningType === "Resource Planning" ||
+        (oData.Type === "Overtime" && oData.Status === "Submitted")
+      ) {
+        return sap.m.MessageToast.show(
+          "This request is not allowed for navigation."
+        );
+      }
 
       if (oData.Type === "Expense") {
         this.getRouter().navTo("RouteExpensDetails", {
@@ -351,27 +351,18 @@ sap.ui.define([
         sap.ui.getCore().byId("MIF_id_remark").setValueState("Error");
         sap.ui.getCore().byId("MIF_id_remark").setValueStateText(this.getView().getModel('i18n').getResourceBundle().getText("commentsValueState"));
       }
-      if(this.oModelData.ResourcePlanningType === 'Resource Planning') this.CreateLeave();
+      if (this.oModelData.ResourcePlanningType === 'Resource Planning') this.CreateLeave();
     },
 
     CreateLeave: function () {
       var oData = {
-        ID:this.oModelData.ID,
-        employeeID:this.oModelData.EmpID,
-        employeeName:this.oModelData.EmpName,
-        fromDate:this.oModelData.StartDate,
-        toDate:this.oModelData.EndDate,
-        NoofDays:this.oModelData.NoofDays,
-        typeOfLeave:this.oModelData.SubType,
-        status:this.oModelData.Status,
-        halfDay:this.oModelData.HalfDay,
-        email:this.oModelData.EmpEmailID,
-        leaveSessionType:this.oModelData.leaveSessionType,
-        type:"Resource Planning",
+        status: this.oModelData.Status,
+        ResourcePlanningType: "Resource Planning"
       }
-      this.getBusyDialog(); 
-      this.ajaxCreateWithJQuery("Leaves", { data: oData }).then(response => {
-        this.closeBusyDialog(); 
+      this.getBusyDialog();
+      const requestData = { filters: { ID: this.oModelData.ID }, data: oData };
+      this.ajaxUpdateWithJQuery("Leaves", requestData).then(response => {
+        this.closeBusyDialog();
       }).catch((error) => {
         this.closeBusyDialog(); //  Close BusyDialog
         MessageToast.show(error.message || error.responseText);

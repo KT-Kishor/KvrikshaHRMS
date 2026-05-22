@@ -86,34 +86,7 @@
                                                     allowWrapping="true"
                                                     class="sapUiTinyMargin"
                                                 >
-                                                    <GenericTile
-                                                        visible="{= ${AppVisibilityModel>/MyInbox} === '1' }"
-                                                        class="sapUiSmallMargin glassTile blue"
-                                                        header="{i18n>headerInbox}"
-                                                        press="TileV_onpressInbox"
-                                                    >
-                                                        <TileContent
-                                                            unit="Submitted"
-                                                        >
-                                                            <HBox
-                                                                alignItems="Center"
-                                                                justifyContent="Start"
-                                                            >
-                                                                <!-- Icon -->
-                                                                <core:Icon
-                                                                    src="sap-icon://inbox"
-                                                                    size="2rem"
-                                                                    class="sapUiTinyMarginEnd inboxIcon"
-                                                                />
-
-                                                                <!-- Big Number -->
-                                                                <Text
-                                                                    text="{= ${TileAccessModel>/SubmittedCount} || '' }"
-                                                                    class="bigTileNumber"
-                                                                />
-                                                            </HBox>
-                                                        </TileContent>
-                                                    </GenericTile>
+                                                   
                                                     <GenericTile
                                                         visible="{= ${AppVisibilityModel>/SelfService} === '1' ? true : false}"
                                                         class="sapUiSmallMargin glassTile blue"
@@ -176,7 +149,7 @@
                                                     <GenericTile
                                                         visible="{= ${AppVisibilityModel>/LeaveOverview} === '1' ? true : false}"
                                                         class="sapUiSmallMargin glassTile blue"
-                                                        header="{i18n>leaveOverview}"
+                                                        header="{i18n>resourecPlanning}"
                                                         press="TileV_onpressLeaveOverview"
                                                     >
                                                         <TileContent
@@ -231,7 +204,7 @@
                                                             />
                                                         </TileContent>
                                                     </GenericTile>
-                                                    <!-- <GenericTile
+                                                    <GenericTile
                                                         class="sapUiSmallMargin glassTile blue"
                                                         visible="{= ${AppVisibilityModel>/GoalQuestions} !== '0' ? true : false }"
                                                         id="idGoalQuestions"
@@ -260,7 +233,8 @@
                                                                 src="sap-icon://target-group"
                                                             />
                                                         </TileContent>
-                                                    </GenericTile> -->
+                                                    </GenericTile>
+                                                    
                                                     <GenericTile
                                                         class="sapUiSmallMargin glassTile blue"
                                                         visible="{= ${AppVisibilityModel>/ManageEvent} !== '0' ? true : false }"
@@ -326,6 +300,55 @@
                                                             />
                                                         </TileContent>
                                                     </GenericTile>
+                                                    
+                                                </layout:HorizontalLayout>
+                                            </ux:blocks>
+                                        </ux:ObjectPageSubSection>
+                                    </ux:subSections>
+                                </ux:ObjectPageSection>
+                                <ux:ObjectPageSection
+                                    titleUppercase="false"
+                                    title="Approvals"
+                                    class="roomHeaderTitle1"
+                                    visible="{= ${TileAccessModel>/Approvals} === '1' ? true : false}"
+                                >
+                                    <ux:subSections>
+                                        <ux:ObjectPageSubSection
+                                            titleUppercase="false"
+                                        >
+                                            <ux:blocks>
+                                                <layout:HorizontalLayout
+                                                    allowWrapping="true"
+                                                    class="sapUiTinyMargin"
+                                                >
+                                                 <GenericTile
+                                                        visible="{= ${AppVisibilityModel>/MyInbox} === '1' }"
+                                                        class="sapUiSmallMargin glassTile blue"
+                                                        header="{i18n>headerInbox}"
+                                                        press="TileV_onpressInbox"
+                                                    >
+                                                        <TileContent
+                                                            unit="Submitted"
+                                                        >
+                                                            <HBox
+                                                                alignItems="Center"
+                                                                justifyContent="Start"
+                                                            >
+                                                                <!-- Icon -->
+                                                                <core:Icon
+                                                                    src="sap-icon://inbox"
+                                                                    size="2rem"
+                                                                    class="sapUiTinyMarginEnd inboxIcon"
+                                                                />
+
+                                                                <!-- Big Number -->
+                                                                <Text
+                                                                    text="{= ${TileAccessModel>/SubmittedCount} || '' }"
+                                                                    class="bigTileNumber"
+                                                                />
+                                                            </HBox>
+                                                        </TileContent>
+                                                    </GenericTile>
                                                     <GenericTile
                                                         visible="{= ${AppVisibilityModel>/TimeSheetApproval} === '1' ? true : false}"
                                                         class="sapUiSmallMargin glassTile blue"
@@ -340,6 +363,22 @@
                                                             />
                                                         </TileContent>
                                                     </GenericTile>
+                                                    <GenericTile
+                                                        class="sapUiSmallMargin glassTile blue"
+                                                        visible="{= ${AppVisibilityModel>/GoalReview} !== '0' ? true : false }"
+                                                        id="idReviewGoals"
+                                                        header="{i18n>goalreview}"
+                                                        press="TileV_onpressReviewGoals"
+                                                    >
+                                                        <TileContent
+                                                            unit="{i18n>goalreview}"
+                                                        >
+                                                            <ImageContent
+                                                                src="sap-icon://to-be-reviewed"
+                                                            />
+                                                        </TileContent>
+                                                    </GenericTile>
+                                                    
                                                 </layout:HorizontalLayout>
                                             </ux:blocks>
                                         </ux:ObjectPageSubSection>
@@ -878,6 +917,12 @@
                     </l:SplitPane>
                 </l:PaneContainer>
             </l:ResponsiveSplitter>
+<!-- 
+            <Image
+        src="../image/chatbot.png"
+        class="floatingButton"
+        press="onFloatingButtonPress"
+      /> -->
             <footer>
                 <Bar>
                     <contentLeft>

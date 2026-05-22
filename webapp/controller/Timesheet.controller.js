@@ -6,12 +6,12 @@ sap.ui.define([
     "sap/suite/ui/commons/Timeline",
     "sap/suite/ui/commons/TimelineItem",
     "sap/ui/export/Spreadsheet",
-      "../model/formatter",
-], function (BaseController, JSONModel, MessageToast, DateRange, Timeline, TimelineItem, Spreadsheet,Formatter) {
+    "../model/formatter",
+], function (BaseController, JSONModel, MessageToast, DateRange, Timeline, TimelineItem, Spreadsheet, Formatter) {
     "use strict";
     return BaseController.extend("sap.kt.com.minihrsolution.controller.Timesheet", {
 
-            Formatter: Formatter,
+        Formatter: Formatter,
         onInit: function () {
             this.getRouter().getRoute("RouteTimesheet").attachMatched(this._onRouteMatched, this);
         },
@@ -45,14 +45,14 @@ sap.ui.define([
 
         TSD_ReadTimesheetEntries: async function () {
             try {
-              //  this.getBusyDialog();
+                //  this.getBusyDialog();
                 const oData = await this.ajaxReadWithJQuery("Timesheet", { EmployeeID: this.EmployeeID });
                 this.timesheetData = Array.isArray(oData.data) ? oData.data : [oData.data];
             } catch (error) {
                 this.timesheetData = [];
                 MessageToast.show(error.message || error.responseText);
             } finally {
-               // this.closeBusyDialog();
+                // this.closeBusyDialog();
             }
         },
 
@@ -150,12 +150,12 @@ sap.ui.define([
         },
 
         TS_onClear: function () {
-           // this.getBusyDialog();
+            // this.getBusyDialog();
             this.byId("TS_monthComboBox").setSelectedKey("");
             this.byId("TS_id_Year").setValue("");
             setTimeout(() => {
                 this._applyAllFilters();
-               // this.closeBusyDialog();
+                // this.closeBusyDialog();
             }, 500);
         },
 
@@ -178,7 +178,7 @@ sap.ui.define([
             this.getRouter().navTo("RouteTilePage");
         },
         onLogout: function () {
-            this.getRouter().navTo("RouteLoginPage");
+            this.CommonLogoutFunction(); // Navigate to login page
         },
         _initializeCalendarAndLegend: async function () {
             const oCalendar = this.byId("TS_id_calendarTimesheet");
@@ -340,7 +340,7 @@ sap.ui.define([
                     ManagerName: oRow.ManagerName,
                     TaskID: oRow.TaskID,
                     TaskName: oRow.TaskName,
-                    Date:Formatter.formatDate(oRow.Date),
+                    Date: Formatter.formatDate(oRow.Date),
                     HoursWorked: oRow.HoursWorked,
                     Status: oRow.Status,
                     EmployeeComment: sEmployeeComment,
@@ -361,9 +361,9 @@ sap.ui.define([
             ];
             const oSettings = {
                 workbook: { columns: aCols },
-                 context: {
-                        sheetName: this.i18nModel.getText("timesheetDetails"),
-                      },
+                context: {
+                    sheetName: this.i18nModel.getText("timesheetDetails"),
+                },
                 dataSource: aExportData, // Use the prepared data
                 fileName: "Timesheet_Details.xlsx",
                 worker: false
@@ -371,10 +371,10 @@ sap.ui.define([
             const oSheet = new Spreadsheet(oSettings);
             oSheet.build().finally(() => oSheet.destroy());
         },
-        
- getGroupHeader: function (oGroup) {
-                    return this.getStyledGroupHeader(oGroup);
-                },
+
+        getGroupHeader: function (oGroup) {
+            return this.getStyledGroupHeader(oGroup);
+        },
 
     });
 });

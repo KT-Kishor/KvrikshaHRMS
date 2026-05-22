@@ -15,7 +15,7 @@
 				<PlanningCalendar id="LO_id_PlanningCalendar" startDate="{viewModel>/startDate}" rows="{path: 'PlanningModel>/people'}" appointmentsVisualization="Filled" appointmentSelect="handleAppointmentSelect" showEmptyIntervalHeaders="false" showWeekNumbers="true" showDayNamesLine="true" viewKey="{viewModel>/viewKey}">
 				<toolbarContent>
 				<Button text="{i18n>btnLegend}"  press=".onOpenMessagePopover"/>
-				<Button text="Resource Planning"  press=".AL_onPressApplyLeave"/>
+				<Button text="{i18n>Apply_Leave_Plan}"  press=".AL_onPressApplyLeave"/>
 			</toolbarContent>
 					<rows>
 						<PlanningCalendarRow icon="{PlanningModel>pic}" title="{PlanningModel>role}" text="{PlanningModel>name}" appointments="{path : 'PlanningModel>appointments', templateShareable: false}" intervalHeaders="{path: 'PlanningModel>headers', templateShareable: false}">

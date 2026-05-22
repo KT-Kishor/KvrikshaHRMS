@@ -162,7 +162,7 @@ sap.ui.define(
         },
 
         onLogout: function () {
-          this.getOwnerComponent().getRouter().navTo("RouteLoginPage");
+                    this.CommonLogoutFunction(); // Navigate to login page
         },
         CI_onPressDownload: function () {
           var table = this.byId("EI_id_InvoiceTable");

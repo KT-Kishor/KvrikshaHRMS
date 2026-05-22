@@ -5,7 +5,7 @@ sap.ui.define([
   "use strict";
 
   return BaseController.extend("sap.kt.com.minihrsolution.controller.App", {
-    TIMEOUT_DURATION: 5 * 60 * 1000,
+    TIMEOUT_DURATION: 10 * 60 * 1000,
     logoutTimer: null,
     onInit: function () {
       // Reset the timer when the app is initialized
@@ -37,6 +37,7 @@ sap.ui.define([
         clearTimeout(this.logoutTimer);
       }
       this.getView().getModel("LoginModel").setData({});
+      localStorage.clear();
       MessageBox.information(
         "Your session has expired due to inactivity. Please log in again to continue",
         {
@@ -54,6 +55,7 @@ sap.ui.define([
             !sAction // covers ESC/null case
           ) {
           this.getView().getModel("LoginModel").setData({});
+              localStorage.clear();
               window.location.reload(true);
               this.getOwnerComponent().getRouter().navTo("LoginPage");
             }
@@ -67,7 +69,7 @@ sap.ui.define([
       if (this.logoutTimer) {
         clearTimeout(this.logoutTimer);
       }
-
+      localStorage.clear();
       sap.m.MessageBox.information(
         "Your session has expired due to inactivity. Please log in again to continue",
         {

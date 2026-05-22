@@ -33,9 +33,9 @@
 					</fb:FilterGroupItem>
 					<fb:FilterGroupItem name="Status" label="{i18n>status}" groupName="ConsultantInvoice" visibleInFilterBar="true">
 						<fb:control>
-							<ComboBox id="CI_id_StatusComboBox" items="{CompanyInvoiceStatus>/}" showClearIcon="true">
-								<core:ListItem key="{CompanyInvoiceStatus>ID}" text="{CompanyInvoiceStatus>InvoiceStatus}"/>
-							</ComboBox>
+							<MultiComboBox id="CI_id_StatusComboBox" items="{CompanyInvoiceStatus>/}" showClearIcon="true">
+								<core:ListItem key="{CompanyInvoiceStatus>InvoiceStatus}" text="{CompanyInvoiceStatus>InvoiceStatus}"/>
+							</MultiComboBox>
 						</fb:control>
 					</fb:FilterGroupItem>
 					<fb:FilterGroupItem name="CompanyCode" label="{i18n>coCode}" groupName="ConsultantInvoice" visibleInFilterBar="true">

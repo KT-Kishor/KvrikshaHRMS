@@ -50,7 +50,7 @@
 										<f:content>
 										<Label text="{i18n>companyBranch}" required="true" />
 											<ComboBox items="{path:'CompanyCodeDetailsModel>/',length:1000}" showSecondaryValues="true" value="{employeeModel>/CompanyCode}" id="EOD_id_CompanyCode" valueStateText="{i18n>selectBranch}" change="EOD_onCompanyCodeChange" filterSecondaryValues="true">
-						                    <core:ListItem key="{CompanyCodeDetailsModel>companyCode}" text="{CompanyCodeDetailsModel>companyCode}" additionalText="{CompanyCodeDetailsModel>branchCode}" />
+						                    <core:ListItem key="{CompanyCodeDetailsModel>companyCode}" text="{CompanyCodeDetailsModel>companyCode}" additionalText="{CompanyCodeDetailsModel>branchCode} , {CompanyCodeDetailsModel>branch}"  />
 				                            </ComboBox>
 
 											<Label text="{i18n>branch}"/>

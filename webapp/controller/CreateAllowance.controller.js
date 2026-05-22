@@ -493,7 +493,7 @@ this.closeBusyDialog();
         },
 
         onLogout: function () {
-            this.getOwnerComponent().getRouter().navTo("RouteLoginPage");
+                    this.CommonLogoutFunction(); // Navigate to login page
         },
     });
 });

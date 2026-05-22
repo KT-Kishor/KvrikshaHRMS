@@ -1352,7 +1352,7 @@ sap.ui.define([
                     content: "",
                     isFileUploaded: false,
                     button: true,
-                    Subject: "KALPAVRIKSHA TECHNOLOGIES - CREDIT MEMO FOLLOW-UP",
+                    Subject: "Kvriksha Technologies Private Limited - CREDIT MEMO FOLLOW-UP",
                     htmlbody: `
                         <p>Dear Finance Team,</p>
 

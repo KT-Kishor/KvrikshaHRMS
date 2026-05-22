@@ -3436,6 +3436,12 @@ body, html, .sapUiBody {
 .whiteLabel * {
     color: white !important;
 }
+
+.BrownLabel *{
+  color:#000 !important;
+  font-weight: bold !important;
+}
+
 .action * {
     color: white !important;
 }
@@ -3984,3 +3990,76 @@ color: #fff !important;
         margin-right: auto !important;
     }
 } 
+
+.floatingButton {
+  position: fixed;
+  bottom: 100px;
+  right: 100px;
+  cursor: pointer;
+  z-index: 1000;
+
+  height: 100px;
+  width: 100px;
+  padding: 0;
+}
+/* GRID */
+
+.goalGrid {
+    width: 100%;
+    padding: 0.5rem;
+    box-sizing: border-box;
+}
+
+/* CARD */
+
+.goalCards,
+.emptyGoalCard {
+
+    height: 100%;
+    min-height: 355px;
+    border-radius: 12px;
+
+    overflow: hidden;
+}
+
+/* SAP CARD */
+.sapFCard .sapFCardHeader .sapFCardHeaderMainPart {
+    border-radius: 1rem 1rem 0 0;
+    background: #d1efff !important;
+    color: white !important;
+}
+
+.goalCards .sapFCard,
+.emptyGoalCard .sapFCard {
+
+    height: 100%;
+    min-height: 355px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* MOBILE */
+
+@media screen and (max-width: 600px) {
+
+    .goalGrid {
+
+        padding: 0.25rem !important;
+    }
+
+    .goalCards,
+    .emptyGoalCard {
+
+        margin-bottom: 0.75rem !important;
+
+        min-height: 355px;
+        
+    }
+
+    .goalCards .sapFCard,
+    .emptyGoalCard .sapFCard {
+
+        min-height: 355px;
+    }
+}

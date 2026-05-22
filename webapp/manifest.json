@@ -40,7 +40,8 @@
         "sap.m": {},
         "sap.ui.core": {},
         "sap.ui.richtexteditor": {},
-        "sap.ui.integration":{}
+        "sap.ui.integration":{},
+         "sap.suite.ui.commons": {}
       }
     },
     "contentDensities": {
@@ -127,6 +128,16 @@
       "TripType": {
         "type": "sap.ui.model.json.JSONModel",
         "uri": "model/TripType.json",
+        "preload": true
+      },
+      "PayslipType": {
+        "type": "sap.ui.model.json.JSONModel",
+        "uri": "model/PayslipType.json",
+        "preload": true
+      },
+      "PayslipStatus": {
+        "type": "sap.ui.model.json.JSONModel",
+        "uri": "model/PayslipStatus.json",
         "preload": true
       },
       "AllowanceData": {
@@ -337,16 +348,6 @@
       "CompOff": {
         "type": "sap.ui.model.json.JSONModel",
         "uri": "model/CompOff.json",
-        "preload": true
-      },
-      "PayslipType": {
-        "type": "sap.ui.model.json.JSONModel",
-        "uri": "model/PayslipType.json",
-        "preload": true
-      },
-      "PayslipStatus": {
-        "type": "sap.ui.model.json.JSONModel",
-        "uri": "model/PayslipStatus.json",
         "preload": true
       }
     },
@@ -927,7 +928,7 @@
         },
         {
           "name": "RouteManagegoals",
-          "pattern": "ManageGoals",
+          "pattern": "ManageGoals/{employeeId}/{from}",
           "target": [
             "TargetManageGoals"
           ]

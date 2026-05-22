@@ -542,7 +542,6 @@ sap.ui.define(
 
                 return aUpcoming.length === 0;
             },
-
             showPastMessage: function (aPast) {
 
                 aPast = aPast || [];
@@ -550,7 +549,6 @@ sap.ui.define(
                 return aPast.length === 0;
             },
             showNoEventsMessage: function (aUpcoming, aPast) {
-
                 aUpcoming = aUpcoming || [];
 
                 aPast = aPast || [];
@@ -1142,7 +1140,7 @@ sap.ui.define(
                     oEventDate < oNextWeekStart
                 ) {
 
-                    return "This's week event";
+                    return "This week's event";
                 }
 
                 // Next Week

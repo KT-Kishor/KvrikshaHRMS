@@ -5,15 +5,15 @@ sap.ui.define([
     "sap/m/MessageToast",
     "../utils/validation",
     "sap/ui/export/Spreadsheet"
-], function(BaseController, Formatter, JSONModel, MessageToast, utils, Spreadsheet) {
+], function (BaseController, Formatter, JSONModel, MessageToast, utils, Spreadsheet) {
     "use strict";
     return BaseController.extend("sap.kt.com.minihrsolution.controller.PayslipDeduction", {
         Formatter: Formatter,
-        onInit: function() {
+        onInit: function () {
             this.getRouter().getRoute("RoutePayslipDeduction").attachMatched(this._onRouteMatched, this);
         },
 
-        _onRouteMatched: async function(oEvent) {
+        _onRouteMatched: async function (oEvent) {
             var LoginFUnction = await this.commonLoginFunction("PaySlip");
             if (!LoginFUnction) return;
             this.onClearAndSearch("PD_id_Filterbar"); // Clear and search function
@@ -35,7 +35,7 @@ sap.ui.define([
             this.getView().setModel(model, "PayslipformModel");
         },
 
-        _fetchInitialPayslipDeduction: async function() {
+        _fetchInitialPayslipDeduction: async function () {
             try {
                 this.getBusyDialog();
 
@@ -57,11 +57,11 @@ sap.ui.define([
             }
         },
 
-        onSearch: function() {
+        onSearch: function () {
             this._fetchPayslipDeduction();
         },
 
-        _fetchPayslipDeduction: async function() {
+        _fetchPayslipDeduction: async function () {
             try {
                 this.getBusyDialog();
 
@@ -94,11 +94,11 @@ sap.ui.define([
             }
         },
 
-        CA_onPressClear: function() {
+        CA_onPressClear: function () {
             this.getView().byId("PD_id_employeeID").setSelectedKey("")
         },
 
-        _openAllowanceDialog: function(sMode, oData) {
+        _openAllowanceDialog: function (sMode, oData) {
             var oView = this.getView();
             var that = this;
 
@@ -110,13 +110,13 @@ sap.ui.define([
                     id: oView.getId(),
                     name: "sap.kt.com.minihrsolution.fragment.PayslipDeduction",
                     controller: this
-                }).then(function(oDialog) {
+                }).then(function (oDialog) {
                     oView.addDependent(oDialog);
                     return oDialog;
                 });
             }
 
-            this._pDialog.then(function(oDialog) {
+            this._pDialog.then(function (oDialog) {
 
                 // Reset model before opening
                 var oModel = new JSONModel();
@@ -136,9 +136,9 @@ sap.ui.define([
                 } else if (sMode === "UPDATE") {
                     var oUpdateData = Object.assign({}, oData);
                     if (oUpdateData.EmployeeID && typeof oUpdateData.EmployeeID === "string") {
-                        oUpdateData.EmployeeID = oUpdateData.EmployeeID.split(",").map(function(sId) {
+                        oUpdateData.EmployeeID = oUpdateData.EmployeeID.split(",").map(function (sId) {
                             return sId.trim();
-                        }).filter(function(sId) {
+                        }).filter(function (sId) {
                             return sId;
                         });
                     }
@@ -157,11 +157,11 @@ sap.ui.define([
             });
         },
 
-        CA_create: function() {
+        CA_create: function () {
             this._openAllowanceDialog("CREATE");
         },
 
-        onCancelPayslip: function() {
+        onCancelPayslip: function () {
             var oView = this.getView();
 
             // 1. Clear Model Data
@@ -187,12 +187,12 @@ sap.ui.define([
             }
 
             // 3. Close Dialog
-            this._pDialog.then(function(oDialog) {
+            this._pDialog.then(function (oDialog) {
                 oDialog.close();
             });
         },
 
-        _clearAllowanceFormValidation: function() {
+        _clearAllowanceFormValidation: function () {
             var aControls = [
                 this.byId("PD_ID_EmployeeID"),
                 this.byId("PD_ID_DescriptionInput"),
@@ -204,14 +204,14 @@ sap.ui.define([
                 this.byId("PD_ID_Status")
             ];
 
-            aControls.forEach(function(oControl) {
+            aControls.forEach(function (oControl) {
                 if (oControl) {
                     oControl.setValueState(sap.ui.core.ValueState.None);
                 }
             });
         },
 
-        onCA_update: function() {
+        onCA_update: function () {
             var oTable = this.byId("PD_id_Table");
             var oSelectedItem = oTable.getSelectedItem();
 
@@ -234,19 +234,19 @@ sap.ui.define([
             this._openAllowanceDialog("UPDATE", oData);
         },
 
-        onEmployeeIDChange: function(oEvent) {
+        onEmployeeIDChange: function (oEvent) {
             utils._LCstrictValidationComboBox(oEvent)
         },
 
-        onDescriptionLiveChange: function(oEvent) {
+        onDescriptionLiveChange: function (oEvent) {
             utils._LCvalidateMandatoryField(oEvent)
         },
 
-        onChangeType: function(oEvent) {
+        onChangeType: function (oEvent) {
             utils._LCstrictValidationComboBox(oEvent)
         },
 
-        onDatePickerChange: function(oEvent) {
+        onDatePickerChange: function (oEvent) {
             utils._LCvalidateDate(oEvent, "oEvent");
 
             var oStartDate = oEvent.getSource().getDateValue(); // proper Date object
@@ -263,7 +263,7 @@ sap.ui.define([
             }
         },
 
-        onEndDateChange: function(oEvent) {
+        onEndDateChange: function (oEvent) {
             utils._LCvalidateDate(oEvent, "oEvent");
 
             var oEndDate = oEvent.getSource().getDateValue();
@@ -277,7 +277,7 @@ sap.ui.define([
             }
         },
 
-        onAmountLiveChange: function(oEvent) {
+        onAmountLiveChange: function (oEvent) {
             var oInput = oEvent.getSource();
             var sValue = oInput.getValue();
 
@@ -324,28 +324,28 @@ sap.ui.define([
             utils._LCvalidateMandatoryField(oEvent);
         },
 
-        onCurrencyChange: function(oEvent) {
+        onCurrencyChange: function (oEvent) {
             utils._LCstrictValidationComboBox(oEvent);
         },
 
-        onChangeStatus: function(oEvent) {
+        onChangeStatus: function (oEvent) {
             utils._LCstrictValidationComboBox(oEvent);
         },
 
-        onCreatePayslip: async function() {
+        onCreatePayslip: async function () {
             var oView = this.getView();
             var oModel = oView.getModel("PayslipformModel");
             var oData = oModel.getData();
 
             // Validation
             var isMandatoryValid = (
-                    utils._LCstrictValidationComboBox(this.byId(("PD_ID_EmployeeID")), "ID") &&
-                    utils._LCvalidateMandatoryField(this.byId(("PD_ID_DescriptionInput")), "ID") &&
-                    utils._LCstrictValidationComboBox(this.byId(("PD_ID_Type")), "ID") &&
-                    utils._LCvalidateDate(this.byId("PD_ID_StartDate"), "ID") &&
-                    utils._LCvalidateDate(this.byId("PD_ID_EndDate"), "ID") &&
-                    utils._LCvalidateMandatoryField(this.byId(("PD_ID_AmountInput")), "ID") &&
-                    utils._LCstrictValidationComboBox(this.byId(("PD_ID_CurrencyComboBox")), "ID")) &&
+                utils._LCstrictValidationComboBox(this.byId(("PD_ID_EmployeeID")), "ID") &&
+                utils._LCvalidateMandatoryField(this.byId(("PD_ID_DescriptionInput")), "ID") &&
+                utils._LCstrictValidationComboBox(this.byId(("PD_ID_Type")), "ID") &&
+                utils._LCvalidateDate(this.byId("PD_ID_StartDate"), "ID") &&
+                utils._LCvalidateDate(this.byId("PD_ID_EndDate"), "ID") &&
+                utils._LCvalidateMandatoryField(this.byId(("PD_ID_AmountInput")), "ID") &&
+                utils._LCstrictValidationComboBox(this.byId(("PD_ID_CurrencyComboBox")), "ID")) &&
                 utils._LCstrictValidationComboBox(this.byId(("PD_ID_Status")), "ID")
 
             if (!isMandatoryValid) {
@@ -381,7 +381,7 @@ sap.ui.define([
                     MessageToast.show("Allowance created successfully");
                     this._fetchInitialPayslipDeduction();
                     this.onCancelPayslip()
-                    this._pDialog.then(function(oDialog) {
+                    this._pDialog.then(function (oDialog) {
                         oDialog.close();
                     });
 
@@ -400,20 +400,20 @@ sap.ui.define([
             }
         },
 
-        onUpdatePaylsip: async function() {
+        onUpdatePaylsip: async function () {
             var oView = this.getView();
             var oModel = oView.getModel("PayslipformModel");
             var oData = oModel.getData();
 
             // Validation
             var isMandatoryValid = (
-                    utils._LCstrictValidationComboBox(this.byId(("PD_ID_EmployeeID")), "ID") &&
-                    utils._LCvalidateMandatoryField(this.byId(("PD_ID_DescriptionInput")), "ID") &&
-                    utils._LCstrictValidationComboBox(this.byId(("PD_ID_Type")), "ID") &&
-                    utils._LCvalidateDate(this.byId("PD_ID_StartDate"), "ID") &&
-                    utils._LCvalidateDate(this.byId("PD_ID_EndDate"), "ID") &&
-                    utils._LCvalidateMandatoryField(this.byId(("PD_ID_AmountInput")), "ID") &&
-                    utils._LCstrictValidationComboBox(this.byId(("PD_ID_CurrencyComboBox")), "ID")) &&
+                utils._LCstrictValidationComboBox(this.byId(("PD_ID_EmployeeID")), "ID") &&
+                utils._LCvalidateMandatoryField(this.byId(("PD_ID_DescriptionInput")), "ID") &&
+                utils._LCstrictValidationComboBox(this.byId(("PD_ID_Type")), "ID") &&
+                utils._LCvalidateDate(this.byId("PD_ID_StartDate"), "ID") &&
+                utils._LCvalidateDate(this.byId("PD_ID_EndDate"), "ID") &&
+                utils._LCvalidateMandatoryField(this.byId(("PD_ID_AmountInput")), "ID") &&
+                utils._LCstrictValidationComboBox(this.byId(("PD_ID_CurrencyComboBox")), "ID")) &&
                 utils._LCstrictValidationComboBox(this.byId(("PD_ID_Status")), "ID")
 
 
@@ -451,7 +451,7 @@ sap.ui.define([
                     this.closeBusyDialog();
                     MessageToast.show("Allowance updated successfully");
                     this._fetchInitialPayslipDeduction();
-                    this._pDialog.then(function(oDialog) {
+                    this._pDialog.then(function (oDialog) {
                         oDialog.close();
                     });
                 } else {
@@ -466,7 +466,7 @@ sap.ui.define([
             }
         },
 
-        onCA_delete: async function() {
+        onCA_delete: async function () {
             var oTable = this.byId("PD_id_Table");
             var oSelectedItem = oTable.getSelectedItem();
 
@@ -490,7 +490,7 @@ sap.ui.define([
             sap.m.MessageBox.confirm("Are you sure you want to delete this payslip data?", {
                 title: "Confirm Delete",
                 actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
-                onClose: async function(sAction) {
+                onClose: async function (sAction) {
                     if (sAction === sap.m.MessageBox.Action.OK) {
                         try {
                             that.getBusyDialog();
@@ -524,16 +524,16 @@ sap.ui.define([
             });
         },
 
-        onHome: function() {
+        onHome: function () {
             this.CommonLogoutFunction();
         },
 
-        onPressback: function() {
+        onPressback: function () {
             this.getOwnerComponent().getRouter().navTo("RouteTilePage");
         },
 
-        onLogout: function() {
-            this.getOwnerComponent().getRouter().navTo("RouteLoginPage");
+        onLogout: function () {
+            this.CommonLogoutFunction(); // Navigate to login page
         },
     });
 });

@@ -22,8 +22,8 @@ sap.ui.define([
     },
 
     async _onRouteMatched(oEvent) {
-       var LoginFunction = await this.commonLoginFunction("PaySlip");
-          if (!LoginFunction) return;
+      var LoginFunction = await this.commonLoginFunction("PaySlip");
+      if (!LoginFunction) return;
       const currentDate = new Date();
       // Get first day of the month
       const startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
@@ -36,8 +36,8 @@ sap.ui.define([
     },
 
     onLogout: function () {
-                this.CommonLogoutFunction(); // Navigate to login page
-            },
+      this.CommonLogoutFunction(); // Navigate to login page
+    },
 
     LOD_onClearEmployeeDetails: function () {
       this.getView().byId("LOD_id_SubmittedDateFilter").setValue("");

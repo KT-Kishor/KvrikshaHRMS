@@ -490,7 +490,7 @@ oFresherSection.setVisible(nExp <= "0");
                     oCities.setSizeLimit(500);
                     that.getView().setModel(oCities, "cities");
 
-          oCities.attachRequestCompleted(function () { });
+                    oCities.attachRequestCompleted(function() {});
 
                     const oQualModel = new sap.ui.model.json.JSONModel();
                     oQualModel.loadData("model/qualifications.json");
@@ -502,7 +502,6 @@ oFresherSection.setVisible(nExp <= "0");
                     that.getView().setModel(oUniModel, "universities");
 
                     oUniModel.attachRequestCompleted(function() {});
-          oUniModel.attachRequestCompleted(function () { });
 
                     //PreviousJob model definition
                     const oPrevJobModel = new sap.ui.model.json.JSONModel();
@@ -944,61 +943,37 @@ oFresherSection.setVisible(nExp <= "0");
             const oComboBox = oEvent.getSource();
             const sValue = oComboBox.getValue().trim();
 
-      if (!sValue) {
-        oComboBox.setValueState("None");
-        oComboBox.setValueStateText("");
-        return;
-      }
-      utils._LCstrictValidationComboBox(oEvent, "genderInvalid");
-    },
-    MC_onBaseLocationChange: function (oEvent) {
-      try {
-        const oComboBox = oEvent.getSource();
-        const sEnteredKey = oComboBox.getValue();
-        const sSelectedKey = oComboBox.getSelectedKey();
+            if (!sValue) {
+                oComboBox.setValueState("None");
+                oComboBox.setValueStateText("");
+                return;
+            }
+            utils._LCstrictValidationComboBox(oEvent, "genderInvalid");
+        },
 
-        if (!sEnteredKey) {
-          // Empty input is allowed
-          oComboBox.setValueState("None");
-          oComboBox.setValueStateText("");
-          return;
-        }
+        ajaxCreateWithJQuery: function(sUrl, oPayLoad) {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: "https://rest.kalpavrikshatechnologies.com/" + sUrl,
+                    method: "POST",
+                    data: JSON.stringify(oPayLoad),
+                    contentType: "application/json",
+                    headers: {
+                        name: "$2a$12$LC.eHGIEwcbEWhpi9gEA.umh8Psgnlva2aGfFlZLuMtPFjrMDwSui",
+                        password: "$2a$12$By8zKifvRcfxTbabZJ5ssOsheOLdAxA2p6/pdaNvv1xy1aHucPm0u",
+                    },
+                    success: resolve,
+                    error: reject,
+                });
+            });
+        },
 
-        const aItems = oComboBox.getItems();
-        const bValidMatch = aItems.some(function (oItem) {
-          return oItem.getText().toLowerCase() === sEnteredKey.toLowerCase() || oItem.getKey().toLowerCase() === sEnteredKey.toLowerCase();
-        });
-
-        if (!bValidMatch) {
-          oComboBox.setValueState("Error");
-          oComboBox.setValueStateText("Please select a valid location from the list");
-        } else {
-          oComboBox.setValueState("None");
-          oComboBox.setValueStateText("");
-        }
-      } catch (err) { }
-    },
-
-    ajaxCreateWithJQuery: function (sUrl, oPayLoad) {
-      return new Promise((resolve, reject) => {
-        $.ajax({
-          url: "https://rest.kalpavrikshatechnologies.com/" + sUrl,
-          method: "POST",
-          data: JSON.stringify(oPayLoad),
-          contentType: "application/json",
-          headers: {
-            name: "$2a$12$LC.eHGIEwcbEWhpi9gEA.umh8Psgnlva2aGfFlZLuMtPFjrMDwSui",
-            password: "$2a$12$By8zKifvRcfxTbabZJ5ssOsheOLdAxA2p6/pdaNvv1xy1aHucPm0u",
-          },
-          success: resolve,
-          error: reject,
-        });
-      });
-    },
-    _validateMobileNumberLocal: function (oEvent) {
-      const oInput = oEvent.getSource();
-      const sValue = oInput.getValue();
-      const sValueTrimmed = sValue.trim();
+        onMobileChange: function(oEvent) {
+            this._validateMobileNumberLocal(oEvent);
+        },
+        _validateMobileNumberLocal: function(oEvent) {
+            const oInput = oEvent.getSource();
+            const sValue = oInput.getValue().trim();
 
             const iMaxLength = oInput.getMaxLength();
             oInput.setValueState(sap.ui.core.ValueState.None);
@@ -1473,13 +1448,13 @@ oFresherSection.setVisible(nExp <= "0");
                 return;
             }
 
-      if (!this._oSharePopover) {
-        const oJobModel = this.getView().getModel("JobApplicationModel");
-        const sJobId = oJobModel?.getProperty("/ID") || "";
-        const sBaseURL = window.location.origin + window.location.pathname;
-        const sHash = "#/JobView/" + encodeURIComponent(sJobId);
-        const sFullShareURL = `${sBaseURL}?sap-ui-xx-viewCache=false${sHash}`;
-        const sMessage = `Explore this exciting opportunity at Kvriksha Technologies Private Limited.\nApply now or share it with someone who might be a great fit\n${sFullShareURL}`;
+            if (!this._oSharePopover) {
+                const oJobModel = this.getView().getModel("JobApplicationModel");
+                const sJobId = oJobModel?.getProperty("/ID") || "";
+                const sBaseURL = window.location.origin + window.location.pathname;
+                const sHash = "#/JobView/" + encodeURIComponent(sJobId);
+                const sFullShareURL = `${sBaseURL}?sap-ui-xx-viewCache=false${sHash}`;
+                const sMessage = `Explore this exciting opportunity at Kvriksha Technologies Private Limited.\nApply now or share it with someone who might be a great fit\n${sFullShareURL}`;
 
                 const items = [
                     createItem("image/linkedin.png", "LinkedIn", () => {
@@ -1488,16 +1463,11 @@ oFresherSection.setVisible(nExp <= "0");
                         sap.m.MessageToast.show("Opening LinkedIn...");
                     }),
 
-          createItem("image/Mail.png", "Email", () => {
-            this._oSharePopover.close();
-            const sSubject =
-              "Exciting Job Opportunity at Kvriksha Technologies Private Limited";
-            window.location.href =
-              "mailto:?subject=" +
-              encodeURIComponent(sSubject) +
-              "&body=" +
-              encodeURIComponent(sMessage);
-          }),
+                    createItem("image/Mail.png", "Email", () => {
+                        this._oSharePopover.close();
+                        const sSubject = "Exciting Job Opportunity at Kvriksha Technologies Private Limited";
+                        window.location.href = "mailto:?subject=" + encodeURIComponent(sSubject) + "&body=" + encodeURIComponent(sMessage);
+                    }),
 
                     createItem("image/Whatsapp.png", "WhatsApp", () => {
                         this._oSharePopover.close();

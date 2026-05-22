@@ -77,7 +77,7 @@ sap.ui.define([
                 this.currentYear = new Date().getFullYear();
                 this.branch = loginModel.getProperty("/BranchCode");
                 this.i18nModel = this.getView().getModel("i18n").getResourceBundle();
-                loginModel.setProperty("/HeaderName", this.i18nModel.getText("leaveOverview"));
+                loginModel.setProperty("/HeaderName", this.i18nModel.getText("resourecPlanning"));
 
                 // Fetch all active employees (no manager filter)
                 const params = { EmployeeStatus: "Active" };
@@ -154,7 +154,7 @@ sap.ui.define([
             const leaves = this.getView().getModel("LeaveModel").getData();
             let inbox = this.getView().getModel("InboxDetailsModel").getData();
             inbox = inbox.filter(item =>
-                item.Status === "Submitted" || item.Status === "Rejected"
+                item.Status === "Submitted"
             );
 
             const filteredEmpIDs = employees.map(e => e.EmployeeID);
@@ -1086,9 +1086,9 @@ sap.ui.define([
                             EmpID: oData.employeeID,
                             EmpName: oData.employeeName,
                             EmpEmailID: oData.email,
-                            StartDate: oData.fromDate,
+                            StartDate: oData.fromDate,s
                             EndDate: oData.toDate,
-                            status: "Submitted",
+                            Status: "Submitted",
                             EmpComment: oData.comments,
                             NoofDays: oData.NoofDays,
                             HalfDay: oData.halfDay,

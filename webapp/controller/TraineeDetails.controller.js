@@ -12,8 +12,9 @@ sap.ui.define(["./BaseController", "../utils/validation", "sap/ui/model/json/JSO
             this.byId("TD_id_JoiningDate").setMinDate(new Date());
             this.sArgPara = oEvent.getParameter("arguments").sParTrainee;
             this.byId("TD_id_Wizard").getSteps()[0].setValidated(false);
-            this.byId("TD_id_TrainingDetailsBox").setVisible(false);
+            this.byId("TD_id_TrainingAmount").setVisible(false);
             this.byId("TD_id_TrainingAmountLabel").setVisible(false);
+            this.byId("TD_id_Currency").setVisible(false);
             this.i18nModel = this.getView().getModel("i18n").getResourceBundle();
             var jsonData = {
                 NameSalutation: "Mr.",
@@ -255,16 +256,16 @@ sap.ui.define(["./BaseController", "../utils/validation", "sap/ui/model/json/JSO
                 const bValid =
                     utils._LCstrictValidationComboBox(this.getView().byId("TD_id_CompanyCode"), "ID") &&
                     utils._LCvalidateName(this.getView().byId("TD_id_Name"), "ID") &&
-                    utils._LCstrictValidationComboBox(this.getView().byId("TD_id_ReportingManager"), "ID") &&
                     utils._LCvalidateEmail(this.getView().byId("TD_id_EmailID"), "ID") &&
-                    utils._LCstrictValidationComboBox(this.getView().byId("TD_id_TrainingType"), "ID") &&
-                    utils._LCvalidateJoiningBonus(this.getView().byId("TD_id_TrainingAmount"), "ID") &&
-                    utils._LCvalidateMandatoryField(this.byId("TD_id_Currency"), "ID") &&
                     utils._LCvalidateDate(this.getView().byId("TD_id_ReleaseDate"), "ID") &&
                     utils._LCvalidateDate(this.getView().byId("TD_id_JoiningDate"), "ID") &&
                     utils._LCstrictValidationComboBox(this.getView().byId("TD_Id_Country"), "ID") &&
                     utils._LCstrictValidationComboBox(this.getView().byId("TD_Id_State"), "ID") &&
                     utils._LCstrictValidationComboBox(this.getView().byId("TD_id_Location"), "ID") &&
+                    utils._LCstrictValidationComboBox(this.getView().byId("TD_id_ReportingManager"), "ID") &&
+                    utils._LCstrictValidationComboBox(this.getView().byId("TD_id_TrainingType"), "ID") &&
+                    utils._LCvalidateJoiningBonus(this.getView().byId("TD_id_TrainingAmount"), "ID") &&
+                    utils._LCvalidateMandatoryField(this.byId("TD_id_Currency"), "ID") &&
                     oMobileInput.getValue().length <= oMobileInput.getMaxLength() &&
                     utils._LCvalidateMandatoryField(this.getView().byId("TD_id_STDCode"), "ID");
 
@@ -286,15 +287,15 @@ sap.ui.define(["./BaseController", "../utils/validation", "sap/ui/model/json/JSO
                     var isValid =
                         utils._LCstrictValidationComboBox(this.getView().byId("TU_id_CompanyCode"), "ID") &&
                         utils._LCvalidateName(this.getView().byId("TU_id_Name"), "ID") &&
-                        utils._LCstrictValidationComboBox(this.getView().byId("TU_id_Manager"), "ID") &&
                         utils._LCvalidateEmail(this.getView().byId("TU_id_TraineeMail"), "ID") &&
-                        utils._LCstrictValidationComboBox(this.getView().byId("TU_id_TrainingType"), "ID") &&
-                        utils._LCvalidateJoiningBonus(this.getView().byId("TU_id_TrainingAmount"), "ID") &&
-                        utils._LCvalidateMandatoryField(this.byId("TU_id_Currency"), "ID") &&
                         utils._LCstrictValidationComboBox(this.getView().byId("TU_Id_Country"), "ID") &&
                         utils._LCstrictValidationComboBox(this.getView().byId("TU_id_State"), "ID") &&
                         utils._LCvalidateMandatoryField(this.getView().byId("TU_id_Location"), "ID") &&
                         this.TD_validateMobile(this.getView().byId("TU_id_Mobile")) &&
+                        utils._LCstrictValidationComboBox(this.getView().byId("TU_id_Manager"), "ID") &&
+                        utils._LCstrictValidationComboBox(this.getView().byId("TU_id_TrainingType"), "ID") &&
+                        utils._LCvalidateJoiningBonus(this.getView().byId("TU_id_TrainingAmount"), "ID") &&
+                        utils._LCvalidateMandatoryField(this.byId("TU_id_Currency"), "ID") &&
                         utils._LCvalidateMandatoryField(this.getView().byId("TU_id_STDCode"), "ID");
 
                     if (isValid) {
@@ -580,13 +581,17 @@ sap.ui.define(["./BaseController", "../utils/validation", "sap/ui/model/json/JSO
             const oView = this.getView();
             if (sSelectedKey && oComboBox.getValueState() !== "Error") {
                 oView.byId("TD_id_TrainingAmountLabel").setVisible(true);
-                oView.byId("TD_id_TrainingDetailsBox").setVisible(true);
+                oView.byId("TD_id_Currency").setVisible(true);
+                oView.byId("TD_id_TrainingAmount").setVisible(true);
                 oView.byId("TD_id_TrainingAmount").setValue("");
+                // oView.byId("TD_id_Currency").setValue("");
                 oView.byId("TD_id_TrainingAmount").setValueState("None");
             } else {
                 oView.byId("TD_id_TrainingAmountLabel").setVisible(false);
-                oView.byId("TD_id_TrainingDetailsBox").setVisible(false);
+                oView.byId("TD_id_Currency").setVisible(false);
+                oView.byId("TD_id_TrainingAmount").setVisible(false);
                 oView.byId("TD_id_TrainingAmount").setValue("");
+                // oView.byId("TD_id_Currency").setValue("");
                 oView.byId("TD_id_TrainingAmount").setValueState("None");
             }
         },
@@ -608,6 +613,9 @@ sap.ui.define(["./BaseController", "../utils/validation", "sap/ui/model/json/JSO
         },
         TD_TrainingValidate: function (oEvent) {
             utils._LCstrictValidationComboBox(oEvent.getSource(), "ID");
+            if (this.sArgPara === "CreateTraineeFlag") {
+                this.TD_validateStep();
+            }
         },
         TD_STDcode: function (oEvent) {
             utils._LCvalidateMandatoryField(oEvent);
@@ -868,19 +876,19 @@ sap.ui.define(["./BaseController", "../utils/validation", "sap/ui/model/json/JSO
                 var isValid =
                     utils._LCstrictValidationComboBox(this.getView().byId("TD_id_CompanyCode"), "ID") &&
                     utils._LCvalidateName(this.getView().byId("TD_id_Name"), "ID") &&
-                    utils._LCstrictValidationComboBox(this.getView().byId("TD_id_ReportingManager"), "ID") &&
                     utils._LCvalidateEmail(this.getView().byId("TD_id_EmailID"), "ID") &&
-                    utils._LCstrictValidationComboBox(this.getView().byId("TD_id_TrainingType"), "ID") &&
-                    utils._LCvalidateJoiningBonus(this.getView().byId("TD_id_TrainingAmount"), "ID") &&
-                    utils._LCstrictValidationComboBox(this.getView().byId("TD_id_TDuration"), "ID") &&
-                    utils._LCvalidateMandatoryField(this.byId("TD_id_Currency"), "ID") &&
                     utils._LCvalidateDate(this.getView().byId("TD_id_ReleaseDate"), "ID") &&
                     utils._LCvalidateDate(this.getView().byId("TD_id_JoiningDate"), "ID") &&
                     utils._LCstrictValidationComboBox(this.getView().byId("TD_Id_Country"), "ID") &&
                     utils._LCstrictValidationComboBox(this.getView().byId("TD_id_Location"), "ID") &&
-                    // This line is changed to call the local TD_validateMobile function
                     this.TD_validateMobile(this.getView().byId("TD_id_Mobile")) &&
-                    utils._LCvalidateMandatoryField(this.getView().byId("TD_id_STDCode"), "ID");
+                    utils._LCvalidateMandatoryField(this.getView().byId("TD_id_STDCode"), "ID")&&
+                    utils._LCstrictValidationComboBox(this.getView().byId("TD_id_ReportingManager"), "ID") &&
+                    utils._LCstrictValidationComboBox(this.getView().byId("TD_id_TrainingType"), "ID") &&
+                    utils._LCvalidateJoiningBonus(this.getView().byId("TD_id_TrainingAmount"), "ID") &&
+                    utils._LCstrictValidationComboBox(this.getView().byId("TD_id_TDuration"), "ID") &&
+                    utils._LCvalidateMandatoryField(this.byId("TD_id_Currency"), "ID") ;
+                    // This line is changed to call the local TD_validateMobile function
 
                 if (!isValid) {
                     MessageToast.show(this.i18nModel.getText("mandetoryFields"));
@@ -890,7 +898,8 @@ sap.ui.define(["./BaseController", "../utils/validation", "sap/ui/model/json/JSO
                 this.getBusyDialog();
                 // Prepare payload
                 oModel.Currency = this.getView().byId("TD_id_Currency").getValue();
-                oModel.BranchCode = this.getView().byId("TD_id_CompanyCode").getSelectedItem().getAdditionalText();
+                var sAdditionalText = this.getView().byId("TD_id_CompanyCode").getSelectedItem().getAdditionalText();
+                oModel.BranchCode = sAdditionalText.split(",")[0].trim();
                 oModel.ManagerID = this.getView().byId("TD_id_ReportingManager").getSelectedItem().getAdditionalText();
                 oModel.BaseLocation = oModel.BaseLocation !== "" ? oModel.BaseLocation : this.getView().byId("TD_id_Location").getSelectedKey();
                 oModel.Status = "Saved";

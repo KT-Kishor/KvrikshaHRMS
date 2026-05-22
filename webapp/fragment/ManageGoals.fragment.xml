@@ -6,7 +6,7 @@
 >
     <Dialog
         title="{i18n>CreateGoals}"
-        contentWidth="900px"
+        contentWidth="700px"
         contentHeight="auto"
         draggable="true"
         class="sapUiResponsivePadding customGoalDialog"
@@ -16,51 +16,36 @@
                 <contentLeft>
                     <Title text="{i18n>CreateGoals}" />
                 </contentLeft>
-                <contentRight>
-                <Button
-                text="{i18n>FinalSubmit}"
-                type="Accept"
-                press="FMG_onFinalSubmit"
-                visible="{viewModel>/showFinalSubmit}"
-            />
-                    
-                </contentRight>
+                
             </Bar>
         </customHeader>
 
         <content>
-            <VBox class="sapUiResponsiveMargin">
+            <VBox class="sapUiSmallMargin">
 
                 <Label
-                    text="{i18n>Category}"
-                    class="sapUiSmallMarginBottom"
+                    text="{i18n>topic}"
                 />
 
-                <FlexBox
-                    wrap="Wrap"
-                    items="{topicModel>/topics}"
-                >
-                    <items>
-                        <GenericTile
-                            header="{topicModel>Topic}"
-                            tooltip="{topicModel>Topic}"
-                            press="FMG_onCategoryTilePress"
-                            class="sapUiTinyMargin tileResponsive"
-                        >
-                            <customData>
-                                <core:CustomData
-                                    key="topic"
-                                    value="{topicModel>Topic}"
-                                />
-                            </customData>
-                        </GenericTile>
-                    </items>
-                </FlexBox>
+                <ComboBox
+    id="topicCombo"
+    width="100%"
+    selectedKey="{viewModel>/selectedCategory}"
+    selectionChange="FMG_onCategoryChange"
+    items="{topicModel>/topics}"
+   
+>
+    <core:Item
+        key="{topicModel>Topic}"
+        text="{topicModel>Topic}"
+    />
+</ComboBox>
 
                 <!-- QUESTION -->
                 <Label
                     text="{i18n>Question}"
                     required="true"
+                    class="sapUiTinyMarginTop"
                 />
 
                 <ComboBox
@@ -68,7 +53,9 @@
                     items="{viewModel>/questionsList}"
                     selectedKey="{viewModel>/selectedQuestion}"
                     width="100%"
-                    selectionChange="FMG_onQuestionSelect"
+                    
+                    change="FMG_onQuestionSelect"
+                
                 >
                     <core:Item
                         key="{viewModel>Question}"
@@ -79,6 +66,7 @@
                 <Label
                     text="{i18n>Goaldescriptor}"
                     required="true"
+                    class="sapUiTinyMarginTop"
                 />
 
                 <!-- DESCRIPTION -->
@@ -91,12 +79,13 @@
                     width="100%"
                     maxLength="500"
                     liveChange="MG_onDescriptionChange"
+                    valueStateText="{i18n>enterDescription}"
                 />
 
-                <Title
+                <Label
                     text="{i18n>SelectQuarter}"
-                    level="H5"
-                    class="sapUiMediumMarginTop sapUiSmallMarginBottom"
+                    class="sapUiTinyMarginTop"
+                    required = "true"
                 />
 
                 <SegmentedButton

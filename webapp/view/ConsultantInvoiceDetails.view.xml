@@ -124,7 +124,7 @@
 													value="{ConsultantInvoiceModel>/InvoiceTo}"
 													id="CI_id_InputInvoiceTo"
 													liveChange="CID_ValidateCommonFields" maxLength="50" valueStateText="{i18n>validInvoiceToMsg}"
-													editable="{visiablityPlay>/editable}"
+													editable="{= ${visiablityPlay>/editable} &amp;&amp; ${LoginModel>/Role} !== 'Contractor' }"
 													 />
 												<m:Label text="{i18n>invoiceAddress}" required="true" />
 												<m:TextArea
@@ -132,13 +132,13 @@
 													id="CI_id_InputInvoiceAddress"
 													liveChange="CID_ValidateCommonFields"  maxLength="120" valueStateText="{i18n>addressValueState}"
 													rows="2"
-													editable="{visiablityPlay>/editable}" />
+													editable="{= ${visiablityPlay>/editable} &amp;&amp; ${LoginModel>/Role} !== 'Contractor' }"/>
 												<m:Label text="{i18n>gstNo}" />
 												<m:Input
 													value="{ConsultantInvoiceModel>/CompanyGSTNO}"
 													id="CI_id_InputCompGSTNO"
 													 liveChange="CID_ValidateGstNumber" maxLength="15" valueStateText="{i18n>gstNoValueState}"
-													editable="{visiablityPlay>/editable}"
+													editable="{= ${visiablityPlay>/editable} &amp;&amp; ${LoginModel>/Role} !== 'Contractor' }"
 													/>
 											</f:content>
 										</f:SimpleForm>

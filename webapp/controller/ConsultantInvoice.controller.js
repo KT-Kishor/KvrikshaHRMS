@@ -226,7 +226,7 @@ sap.ui.define(
             },
 
             onLogout: function() {
-                this.getRouter().navTo("RouteLoginPage");
+                    this.CommonLogoutFunction(); // Navigate to login page
             },
 
             CI_onClearFilters: function() {

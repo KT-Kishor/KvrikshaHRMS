@@ -16,7 +16,7 @@ sap.ui.define(
       _onRouteMatched: async function () {
         var LoginFunction = await this.commonLoginFunction("A_Payroll");
         if (!LoginFunction) return;
-       
+
         this.getBusyDialog();
         this.checkLoginModel();
         this._makeDatePickersReadOnly(["FST_id_MonthYearPicker"]);
@@ -48,7 +48,7 @@ sap.ui.define(
       },
 
       onLogout: function () {
-        this.getRouter().navTo("RouteLoginPage");
+        this.CommonLogoutFunction(); // Navigate to login page
       },
 
       FST_onUpload: async function (e) {
@@ -281,16 +281,16 @@ sap.ui.define(
           }
 
           // **Salary Calculations**
-          record.Basic = +((((+(empSal.BasicSalary)/12) / record.TotalDays) * record.PayDays).toFixed(2)) || 0;
-          record.HRA = +((((+(empSal.HRA)/12) / record.TotalDays) * record.PayDays).toFixed(2)) || 0;
-          record.EplyrPF = +((((+(empSal.EmployerPF)/12) / record.TotalDays) * record.PayDays).toFixed(2)) || 0;
-          record.MedInsurance = +((((+(empSal.MedicalInsurance)/12) / record.TotalDays) * record.PayDays).toFixed(2)) || 0;
-          record.SpecAllowance = +((((+(empSal.SpecailAllowance)/12) / record.TotalDays) * record.PayDays).toFixed(2)) || 0;
-          record.TDS = +((((+(empSal.IncomeTax)/12) / record.TotalDays) * record.PayDays).toFixed(2)) || 0;
-          record.Gratuity = +((((+(empSal.Gratuity)/12) / record.TotalDays) * record.PayDays).toFixed(2)) || 0;
-          record.EplyePF = +((((+(empSal.EmployeePF)/12) / record.TotalDays) * record.PayDays).toFixed(2)) || 0;
-          record.PT = +((+(empSal.PT)/12).toFixed(2)) || 0;        
-          record.VariablePay = +((+(empSal.VariablePay)/12).toFixed(2)) || 0;        
+          record.Basic = +((((+(empSal.BasicSalary) / 12) / record.TotalDays) * record.PayDays).toFixed(2)) || 0;
+          record.HRA = +((((+(empSal.HRA) / 12) / record.TotalDays) * record.PayDays).toFixed(2)) || 0;
+          record.EplyrPF = +((((+(empSal.EmployerPF) / 12) / record.TotalDays) * record.PayDays).toFixed(2)) || 0;
+          record.MedInsurance = +((((+(empSal.MedicalInsurance) / 12) / record.TotalDays) * record.PayDays).toFixed(2)) || 0;
+          record.SpecAllowance = +((((+(empSal.SpecailAllowance) / 12) / record.TotalDays) * record.PayDays).toFixed(2)) || 0;
+          record.TDS = +((((+(empSal.IncomeTax) / 12) / record.TotalDays) * record.PayDays).toFixed(2)) || 0;
+          record.Gratuity = +((((+(empSal.Gratuity) / 12) / record.TotalDays) * record.PayDays).toFixed(2)) || 0;
+          record.EplyePF = +((((+(empSal.EmployeePF) / 12) / record.TotalDays) * record.PayDays).toFixed(2)) || 0;
+          record.PT = +((+(empSal.PT) / 12).toFixed(2)) || 0;
+          record.VariablePay = +((+(empSal.VariablePay) / 12).toFixed(2)) || 0;
 
           // ESI calculation based on GrossPay condition
           if (empSal.GrossPayMontly <= 21000) {
@@ -300,7 +300,7 @@ sap.ui.define(
 
           // Final GrossPay calculation
           record.GrossPay = +((record.Basic + record.HRA + record.EplyrPF + record.MedInsurance + record.SpecAllowance + record.SecurityDeposit + record.Advance - record.TDS - record.Gratuity - record.EplyePF - record.EplyeESI - record.PT - record.AdvanceDeduction).toFixed(2)) || 0;
-          if(record.Month === "03"){
+          if (record.Month === "03") {
             record.GrossPay = +((record.GrossPay + +(empSal.VariablePay)).toFixed(2));
           }
         }

@@ -123,7 +123,6 @@ sap.ui.define(["./BaseController", "../utils/validation", "sap/m/MessageToast", 
     },
     //Logout function
     onLogout: function () {
-      this.getRouter().navTo("RouteLoginPage");
       this.CommonLogoutFunction();
     },
     //Navigation function

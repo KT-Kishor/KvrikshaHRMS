@@ -7,6 +7,38 @@
   "sap.card": {
     "type": "Object",
 
+    "configuration": {
+      "parameters": {
+        "GoalId": {
+          "value": ""
+        },
+
+        "Topic": {
+          "value": ""
+        },
+
+        "Quarter": {
+          "value": ""
+        },
+
+        "Description": {
+          "value": ""
+        },
+
+        "isEmpty": {
+          "value": false
+        },
+
+        "isFinalSubmitted": {
+          "value": false
+        },
+
+        "showApprovalButtons": {
+          "value": false
+        }
+      }
+    },
+
     "extension": "./Extension",
 
     "data": {
@@ -18,84 +50,162 @@
     "header": {
       "title": "Topic: {Topic}",
       "subTitle": "Quarter: {Quarter}"
+       
     },
 
     "content": {
       "groups": [
         {
           "items": [
-          {
+           {
   "label": "",
-  "value": "Question: {Question}"
+  "value": "{= 'Question: ' + (${Question} && ${Question}.length > 200 ? ${Question}.substring(0,200) + '...' : ${Question}) }"
 },
-{
+          {
+             "type": "Markdown",
   "label": "",
-  "value": "Description: {Description}",
+  "value": "{= 'Description: ' + (${Description} || '') }",
   "visible": "{editable2}"
 },
-{
+            {
+              "id": "goalDescriptionTextArea",
+              "label": "",
+              "type": "TextArea",
+              "value": "{Description}",
+              "visible": "{editable1}"
+            },
+            {
   "label": "",
-  "type": "TextArea",
-  "value": "Description: {Description}",
-  "visible": "{editable1}"
+    "value": "Status: {Status}"
+
+
 },
 {
   "label": "",
-  "value": "Score: {Score}"
+  "value": "{= Number(${Score}) > 0 ? 'Score: ' + '⭐'.repeat(Number(${Score})) : '' }"
 },
-{
-  "label": "",
-  "value": "Manager Remark: {ScoresRemark}"
-}
+
+            {
+              "label": "Solution PDF",
+              "value": "{AttachmentName}",
+              "visible": "{= !!${AttachmentName} }",
+              "actions": [
+                {
+                  "type": "Custom",
+                  "parameters": {
+                    "method": "openPDF",
+                    "id": "{GoalId}"
+                  }
+                }
+              ]
+            }
           ]
         }
       ]
     },
 
-  "footer": {
-  "actionsStrip": [
-    {
-      "text": "Edit",
-    "visible": "{= ${isCurrentYear} && !${editable1} && !${parameters>/isFinalSubmitted} && Number(${Score}) > 0 }", 
-    "actions": [
+    "footer": {
+      "actionsStrip": [
         {
-          "type": "Custom",
-          "parameters": {
-            "method": "edit",
-            "id": "{GoalId}"
-          }
-        }
-      ]
-    },
-    {
-      "text": "Save",
-      "visible": "{= ${editable1} && !${parameters>/isFinalSubmitted} }",
-      "buttonType": "Transparent",
-      "actions": [
+          "text": "View Details",
+          "buttonType": "Transparent",
+          "actions": [
+            {
+              "type": "Custom",
+              "parameters": {
+                "method": "viewDetails",
+                "id": "{GoalId}"
+              }
+            }
+          ]
+        },
+
         {
-          "type": "Custom",
-          "parameters": {
-            "method": "save",
-            "id": "{GoalId}"
-          }
-        }
-      ]
-    },
-    {
-      "text": "Cancel",
-      "visible": "{= ${editable1} && !${parameters>/isFinalSubmitted} }",
-      "buttonType": "Transparent",
-      "actions": [
+          "text": "{= ${Status} === 'Rejected' ? 'Resubmit Goal' : 'Resubmit Solution' }",
+          "visible": "{= (${Status} === 'Rejected Solution' || ${Status} === 'Rejected') && !${editable1} && ${parameters>/showApprovalButtons/value} !== true }",
+          "actions": [
+            {
+              "type": "Custom",
+              "parameters": {
+                "method": "{= ${Status} === 'Rejected' ? 'edit' : 'editSolution' }",
+                "id": "{GoalId}"
+              }
+            }
+          ]
+        },
+
         {
-          "type": "Custom",
-          "parameters": {
-            "method": "cancel",
-            "id": "{GoalId}"
-          }
+          "text": "Save",
+          "visible": "{= ${editable1} && !${parameters>/isFinalSubmitted/value} && ${parameters>/showApprovalButtons/value} !== true }",
+          "buttonType": "Transparent",
+          "actions": [
+            {
+              "type": "Custom",
+              "parameters": {
+                "method": "save",
+                "id": "{GoalId}"
+              }
+            }
+          ]
+        },
+
+        {
+          "text": "Cancel",
+          "visible": "{= ${editable1} && !${parameters>/isFinalSubmitted/value} && ${parameters>/showApprovalButtons/value} !== true }",
+          "buttonType": "Transparent",
+          "actions": [
+            {
+              "type": "Custom",
+              "parameters": {
+                "method": "cancel",
+                "id": "{GoalId}"
+              }
+            }
+          ]
+        },
+        {
+          "text": "{= ${Status} === 'Goal Submitted' ? 'Review Solution' : ((${Status} === 'New' || ${Status} === 'Submitted') ? 'Goal Approve' : 'Approve') }",
+          "visible": "{= (${Status} === 'New' || ${Status} === 'Submitted' || ${Status} === 'Goal Submitted') && ${parameters>/showApprovalButtons/value} === true }",
+        
+          "class":"sapUiTinyMarginEnd",
+          "actions": [
+            {
+              "type": "Custom",
+              "parameters": {
+                "method": "approve",
+                "id": "{GoalId}"
+              }
+            }
+          ]
+        },
+
+        {
+          "text": "{= ${Status} === 'Goal Submitted' ? 'Reject Solution' : ((${Status} === 'New' || ${Status} === 'Submitted') ? 'Goal Reject' : 'Reject') }",
+          "visible": "{= (${Status} === 'New' || ${Status} === 'Submitted' || ${Status} === 'Goal Submitted') && ${parameters>/showApprovalButtons/value} === true }",
+          "actions": [
+            {
+              "type": "Custom",
+              "parameters": {
+                "method": "reject",
+                "id": "{GoalId}"
+              }
+            }
+          ]
+        },
+        {
+          "text": "Submit Solution",
+          "visible": "{= ${Status} === 'Approved' && ${parameters>/showApprovalButtons/value} !== true }",
+          "actions": [
+            {
+              "type": "Custom",
+              "parameters": {
+                "method": "submit",
+                "id": "{GoalId}"
+              }
+            }
+          ]
         }
       ]
     }
-  ]
-}
   }
 }

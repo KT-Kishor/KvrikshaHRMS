@@ -706,6 +706,11 @@ sap.ui.define([
                 oModel.ConsultingService = this.byId("CD_id_ConsultingService").getValue();
                 oModel.ContarctEmail = this.byId("CD_id_Email").getValue();
                 oModel.EndClientHirer = this.byId("CD_id_EndClientHirer").getValue();
+                oModel.Country = this.byId("CD_id_Country").getSelectedKey();
+                oModel.State= this.byId("CD_id_State").getSelectedKey();
+                oModel.contractLocation = this.byId("CD_id_ConLocation").getSelectedKey();
+                oModel.STDCode = this.byId("CD_id_codeModel").getValue();
+                oModel.MobileNo = this.byId("CD_id_Mobile").getValue();
                 oModel.Amount = this.byId("CD_id_Amount").getValue();
                 oModel.Currency = this.byId("CD_id_Currency").getValue();
                 oModel.ClientReportContact = this.byId("CD_id_HiringContact").getValue();
@@ -716,15 +721,11 @@ sap.ui.define([
                 oModel.WarrantyDate = this.byId("CD_id_Warranty").getSelectedKey();
                 oModel.AdditionalRates = this.byId("CD_id_AddRate").getSelectedKey();
                 oModel.PaymentTerms = this.byId("CD_id_PaymentTerms").getSelectedKey();
-                oModel.Country = this.byId("CD_id_Country").getSelectedKey();
-                oModel.State= this.byId("CD_id_State").getSelectedKey();
-                oModel.contractLocation = this.byId("CD_id_ConLocation").getSelectedKey();
-                oModel.STDCode = this.byId("CD_id_codeModel").getValue();
-                oModel.MobileNo = this.byId("CD_id_Mobile").getValue();
+                
 
                 // Include Country and ConLocation in field check
                 const bAllFieldsFilled = oModel.CompanyCode && oModel.AgreementDate && oModel.ConsultantName && oModel.ConsultantAddress && oModel.ConsultingService && oModel.ContarctEmail &&
-                    oModel.EndClientHirer && oModel.Amount && oModel.Currency && oModel.ClientReportContact && oModel.Location && oModel.StartDate && oModel.EndDate && oModel.InsuranceRequirement && oModel.WarrantyDate && oModel.AdditionalRates && oModel.PaymentTerms && oModel.Country && oModel.State && oModel.contractLocation && oModel.STDCode && oModel.MobileNo;
+                oModel.EndClientHirer && oModel.Country && oModel.State && oModel.contractLocation && oModel.STDCode && oModel.MobileNo && oModel.Amount && oModel.Currency && oModel.ClientReportContact && oModel.Location && oModel.StartDate && oModel.EndDate && oModel.InsuranceRequirement && oModel.WarrantyDate && oModel.AdditionalRates && oModel.PaymentTerms;
 
                if (bAllFieldsFilled) {
                 const oMobileInput = this.getView().byId("CD_id_Mobile");
@@ -736,6 +737,11 @@ sap.ui.define([
                     utils._LCvalidateName(this.byId("CD_id_ConsultingService"), "ID") &&
                     utils._LCvalidateEmail(this.byId("CD_id_Email"), "ID") &&
                     utils._LCvalidateName(this.byId("CD_id_EndClientHirer"), "ID") &&
+                    utils._LCstrictValidationComboBox(this.byId("CD_id_Country"), "ID") &&
+                    utils._LCstrictValidationComboBox(this.byId("CD_id_State"), "ID") &&
+                    utils._LCstrictValidationComboBox(this.byId("CD_id_ConLocation"), "ID") &&
+                    oMobileInput.getValue().length <= oMobileInput.getMaxLength() &&
+                    utils._LCvalidateMandatoryField(this.byId("CD_id_codeModel"), "ID") &&
                     utils._LCvalidateAmount(this.byId("CD_id_Amount"), "ID") &&
                     utils._LCvalidateMandatoryField(this.byId("CD_id_Currency"), "ID") &&
                     utils._LCvalidateName(this.byId("CD_id_HiringContact"), "ID") &&
@@ -745,12 +751,7 @@ sap.ui.define([
                     utils._LCstrictValidationComboBox(this.byId("CD_id_InsuranceReq"), "ID") &&
                     utils._LCstrictValidationComboBox(this.byId("CD_id_Warranty"), "ID") &&
                     utils._LCstrictValidationComboBox(this.byId("CD_id_AddRate"), "ID") &&
-                    utils._LCstrictValidationComboBox(this.byId("CD_id_PaymentTerms"), "ID") &&
-                    utils._LCstrictValidationComboBox(this.byId("CD_id_Country"), "ID") &&
-                    utils._LCstrictValidationComboBox(this.byId("CD_id_State"), "ID") &&
-                    utils._LCstrictValidationComboBox(this.byId("CD_id_ConLocation"), "ID") &&
-                    oMobileInput.getValue().length <= oMobileInput.getMaxLength() &&
-                    utils._LCvalidateMandatoryField(this.byId("CD_id_codeModel"), "ID");
+                    utils._LCstrictValidationComboBox(this.byId("CD_id_PaymentTerms"), "ID");
 
                 // Set wizard step validation
                 this.byId("CD_id_Wizard").getSteps()[0].setValidated(bValid);
@@ -782,6 +783,11 @@ sap.ui.define([
                         utils._LCvalidateMandatoryField(this.byId("CD_id_Address"), "ID") &&
                         utils._LCvalidateEmail(this.byId("CD_id_Email"), "ID") &&
                         utils._LCvalidateName(this.byId("CD_id_ConsultingService"), "ID") &&
+                         utils._LCstrictValidationComboBox(this.byId("CD_id_Country"), "ID") &&
+                        utils._LCstrictValidationComboBox(this.byId("CD_id_State"), "ID") &&
+                        utils._LCstrictValidationComboBox(this.byId("CD_id_ConLocation"), "ID") &&
+                         this.CD_validateMobileNo(this.getView().byId("CD_id_Mobile")) &&
+                        utils._LCvalidateMandatoryField(this.byId("CD_id_codeModel"), "ID") &&
                         utils._LCvalidateAmount(this.byId("CD_id_Amount"), "ID") &&
                         utils._LCvalidateMandatoryField(this.byId("CD_id_Currency"), "ID") &&
                         utils._LCvalidateName(this.byId("CD_id_HiringContact"), "ID") &&
@@ -817,7 +823,8 @@ sap.ui.define([
 
                         var oModel = this.getView().getModel("ContractModelWizart");
                         var selectedCurrency = this.byId("CD_id_Currency").getValue();
-                        var branchCode = this.getView().byId("CD_id_CompanyCode").getSelectedItem().getAdditionalText();
+                        var branchText = this.getView().byId("CD_id_CompanyCode").getSelectedItem().getAdditionalText();
+                        var branchCode = branchText.split(",")[0].trim();
 
                         var data = {
                             "ConsultantNameSalutation": oModel.oData.Salutation,

@@ -57,7 +57,7 @@ sap.ui.define(
             },
 
             onLogout: function () {
-                this.getOwnerComponent().getRouter().navTo("RouteLoginPage");
+                    this.CommonLogoutFunction(); // Navigate to login page
             },
 
             AP_onSearch: async function () {
