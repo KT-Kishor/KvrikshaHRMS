@@ -1086,7 +1086,7 @@ sap.ui.define([
                             EmpID: oData.employeeID,
                             EmpName: oData.employeeName,
                             EmpEmailID: oData.email,
-                            StartDate: oData.fromDate,s
+                            StartDate: oData.fromDate,
                             EndDate: oData.toDate,
                             Status: "Submitted",
                             EmpComment: oData.comments,
