@@ -725,7 +725,7 @@
                                 <ux:ObjectPageSection
                                     titleUppercase="false"
                                     title="Expense and Allowance"
-                                    class="roomHeaderTitle1"
+                                    class="roomHeaderTitle1"  wrapTitle="true"
                                     visible="{= ${TileAccessModel>/Expense} === '1' ? true : false}"
                                 >
                                     <ux:subSections>

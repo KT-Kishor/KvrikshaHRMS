@@ -3000,6 +3000,18 @@ body, html, .sapUiBody {
   }
 }
 
+.Dashboardtitle{
+  /* font-size: 12px !important; */
+  margin: 0;
+  padding: 0;
+}
+@media (max-width: 400px) {
+  .Dashboardtitle{
+    font-size: 12px !important;
+  }
+}
+
+
 .v-legend .v-legend-item .v-legend-item-text {
   white-space: normal !important;
   word-break: break-word !important;

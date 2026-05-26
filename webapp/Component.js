@@ -76,211 +76,91 @@ sap.ui.define([
         // TAB SESSION MANAGEMENT
         // =========================
         _initTabSession: function () {
-
+            // 1. Generate a unique ID for this tab instance for this session only
             if (!sessionStorage.getItem("tabId")) {
-                sessionStorage.setItem("tabId", Date.now().toString());
+                let activeTabs = JSON.parse(localStorage.getItem("activeTabs") || "[]");
+                if (activeTabs.length === 0) {
+                    localStorage.removeItem("isLoggedIn");
+                    localStorage.removeItem("_x9A1p");
+                    localStorage.removeItem("_k7LmQ");
+                    localStorage.removeItem("_aB39X");
+                    localStorage.removeItem("_mN72P");
+                    localStorage.removeItem("activeTabs");
+                    sessionStorage.setItem("tabId", Date.now().toString() + "_" + Math.random());
+                }
             }
+            this._tabId = sessionStorage.getItem("tabId");
 
+            // 2. Register this tab in localStorage
             this._registerTab();
 
+            // 3. Attach standard listeners
             window.addEventListener("beforeunload", this._removeTab.bind(this));
-
             window.addEventListener("storage", this._onStorageChange.bind(this));
         },
 
         _registerTab: function () {
+            let tabs = JSON.parse(localStorage.getItem("activeTabs") || "[]");
 
-    const tabId = sessionStorage.getItem(
-        "tabId"
-    );
+            // Clean out any null/undefined values
+            tabs = tabs.filter(id => id);
 
-    // Always get latest tabs
-    let tabs = JSON.parse(
-        localStorage.getItem("activeTabs") || "[]"
-    );
+            // Add this tab if it isn't already tracked
+            if (!tabs.includes(this._tabId)) {
+                tabs.push(this._tabId);
+            }
 
-    // Remove duplicates
-    tabs = tabs.filter(id => id);
-
-    // Add only if not exists
-    if (!tabs.includes(tabId)) {
-        tabs.push(tabId);
-    }
-
-    // Save latest
-    localStorage.setItem(
-        "activeTabs",
-        JSON.stringify(tabs)
-    );
-
-    console.log(
-        "REGISTER TAB:",
-        tabs
-    );
-},
+            localStorage.setItem("activeTabs", JSON.stringify(tabs));
+        },
 
         _removeTab: function () {
+            let tabs = JSON.parse(localStorage.getItem("activeTabs") || "[]");
 
-    const tabId = sessionStorage.getItem(
-        "tabId"
-    );
+            // Immediately remove this tab from the active list
+            tabs = tabs.filter(id => id !== this._tabId);
+            localStorage.setItem("activeTabs", JSON.stringify(tabs));
 
-    let tabs = JSON.parse(
-        localStorage.getItem("activeTabs") || "[]"
-    );
+            setTimeout(() => {
+                const latestTabs = JSON.parse(localStorage.getItem("activeTabs") || "[]");
 
-    tabs = tabs.filter(
-        id => id !== tabId
-    );
-
-    localStorage.setItem(
-        "activeTabs",
-        JSON.stringify(tabs)
-    );
-
-    console.log(
-        "REMOVE TAB:",
-        tabs
-    );
-
-    sessionStorage.removeItem("tabId");
-
-    setTimeout(() => {
-
-        const latestTabs = JSON.parse(
-            localStorage.getItem("activeTabs") || "[]"
-        );
-
-        if (latestTabs.length === 0) {
-
-            localStorage.removeItem(
-                "isLoggedIn"
-            );
-
-            localStorage.removeItem(
-                "_x9A1p"
-            );
-
-            localStorage.removeItem(
-                "_k7LmQ"
-            );
-
-            localStorage.removeItem(
-                "_aB39X"
-            );
-
-            localStorage.removeItem(
-                "_mN72P"
-            );
-
-            localStorage.removeItem(
-                "activeTabs"
-            );
-        }
-
-    }, 1000);
-},
+                // Only clear data if absolutely NO tabs are open anymore
+                if (latestTabs.length === 0) {
+                    localStorage.removeItem("isLoggedIn");
+                    localStorage.removeItem("_x9A1p");
+                    localStorage.removeItem("_k7LmQ");
+                    localStorage.removeItem("_aB39X");
+                    localStorage.removeItem("_mN72P");
+                    localStorage.removeItem("activeTabs");
+                }
+            }, 1500);
+        },
 
         _onStorageChange: function (event) {
-
-            const aProtectedKeys = ["_x9A1p","_k7LmQ","_aB39X","_mN72P"];
-
+            const aProtectedKeys = ["_x9A1p", "_k7LmQ", "_aB39X", "_mN72P"];
             // Ignore tab handling keys
-            if ( event.key === "activeTabs" || event.key === "tabId") {
-                return;
-            }
-
+            if (event.key === "activeTabs" || event.key === "tabId") return;
             // Ignore unrelated keys
-            if (!aProtectedKeys.includes(event.key)) {
-                return;
-            }
+            if (!aProtectedKeys.includes(event.key)) return;
 
             // Ignore first login set
-            if (event.oldValue === null) {
-                return;
-            }
+            if (event.oldValue === null) return;
 
             // Ignore app updates
-            if (window._isAppUpdatingStorage) {
-                return;
-            }
-
+            if (window._isAppUpdatingStorage) return;
             // Prevent multiple trigger
-            if (window._sessionLogoutRunning) {
-                return;
-            }
+            if (window._sessionLogoutRunning) return;
 
             window._sessionLogoutRunning = true;
-
-            MessageToast.show("Session Modified");
-
             // Remove only login keys
             localStorage.removeItem("isLoggedIn");
-
             localStorage.removeItem("_x9A1p");
             localStorage.removeItem("_k7LmQ");
-
             localStorage.removeItem("_aB39X");
             localStorage.removeItem("_mN72P");
 
-            // DO NOT REMOVE
-            // activeTabs
-            // tabId
-
-            this.getRouter().navTo("RouteLoginPage");
+            this.getRouter().navTo("RouteHostel");
         },
 
-        // =========================
-        // LOGIN DATA
-        // =========================
-        // CommonReadCall: async function () {
-
-        //     try {
-        //         const result = await this._fetchCommonData("LoginDetails", {
-        //             EmployeeID: localStorage.getItem("EmployeeID"),
-        //             EmployeeName: localStorage.getItem("EmployeeName")
-        //         });
-
-        //         if (!result || !result.data || result.data.length === 0) {
-
-        //             localStorage.removeItem("isLoggedIn");
-        //             return;
-        //         }
-
-        //         const userData = result.data;
-
-        //         let oLoginModel = this.getModel("LoginModel");
-
-        //         if (!oLoginModel) {
-        //             oLoginModel = new JSONModel({});
-        //             this.setModel(oLoginModel, "LoginModel");
-        //         }
-
-        //         oLoginModel.setProperty("/EmployeeID", userData.EmployeeID);
-        //         oLoginModel.setProperty("/EmployeeName", userData.EmployeeName);
-        //         oLoginModel.setProperty("/EmailID", userData.EmailID);
-        //         oLoginModel.setProperty("/Role", userData.Role);
-        //         oLoginModel.setProperty("/FolderID", userData.FolderID);
-        //         oLoginModel.setProperty("/CompanyCode", userData.CompanyCode);
-
-        //         setTimeout(() => {
-        //             // Current URL hash
-        //             let sHash = window.location.hash;
-        //             // Remove #/
-        //             sHash = sHash.replace(/^#\//, "");
-        //             if(sHash === "" || sHash === "TilePage") {
-        //                 this.getRouter().navTo("RouteTilePage");
-        //             }
-        //         }, 0);
-
-        //     } catch (error) {
-        //         localStorage.removeItem("isLoggedIn");
-        //     }
-        // },
-
-        // =========================
-        // API CALL
-        // =========================
         _fetchCommonData: async function (entityName, modelName, filter = "") {
 
             if (this.getModel(modelName)) return;

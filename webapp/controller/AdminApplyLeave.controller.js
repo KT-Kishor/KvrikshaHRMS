@@ -1315,17 +1315,51 @@ sap.ui.define(
                     }
                 },
 
-                // Selection change handler for leave table
                 onSelectionChange: function (oEvent) {
-                    var oSelectedItem = oEvent.getParameter("listItem");
-                    var oContext = oSelectedItem.getBindingContext("LeaveModel");
-                    var sStatus = oContext.getProperty("status");
-                    var oUpdateButton = this.byId("AL_id_Updatebtn");
-                    var oDeleteButton = this.byId("AL_id_Deletebtn");
-                    var bVisible = sStatus === "Submitted";
-                    oUpdateButton.setVisible(bVisible);
-                    oDeleteButton.setVisible(bVisible);
-                },
+
+    var oSelectedItem = oEvent.getParameter("listItem");
+    var oContext = oSelectedItem.getBindingContext("LeaveModel");
+
+    var sStatus = oContext.getProperty("status");
+    var sFromDate = oContext.getProperty("fromDate");
+
+    var oUpdateButton = this.byId("AL_id_Updatebtn");
+    var oDeleteButton = this.byId("AL_id_Deletebtn");
+
+    // Current Date
+    var oCurrentDate = new Date();
+
+    // Leave From Date
+    var oFromDate = new Date(sFromDate);
+
+    // Remove time portion
+    oCurrentDate = new Date(
+        oCurrentDate.getFullYear(),
+        oCurrentDate.getMonth(),
+        oCurrentDate.getDate()
+    );
+
+    oFromDate = new Date(
+        oFromDate.getFullYear(),
+        oFromDate.getMonth(),
+        oFromDate.getDate()
+    );
+
+    // Update button only for Submitted
+    var bUpdateVisible = (sStatus === "Submitted");
+
+    oUpdateButton.setVisible(bUpdateVisible);
+
+    // Delete button logic
+    var bDeleteVisible =
+        sStatus === "Submitted" ||
+        (
+            sStatus === "Approved" &&
+            oCurrentDate < oFromDate
+        );
+
+    oDeleteButton.setVisible(bDeleteVisible);
+},
 
                 AL_onSearch: async function () {
                     this.getBusyDialog();

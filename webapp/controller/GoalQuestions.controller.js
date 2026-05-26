@@ -383,51 +383,89 @@ sap.ui.define(
           this._selectedFile = null;
         },
 
-        QD_onDownloadExcelPress: function () {
-          try {
-            // Get data from model
-            this.getBusyDialog();
-            var aData =
-              this.getView().getModel("Questionmodel").getProperty("/Questions") || [];
-                if (aData.length === 0) {
- this.closeBusyDialog();
-                MessageToast.show(
-                    "No data available to download"
+       QD_onDownloadExcelPress: function () {
+
+    try {
+
+        // Open Busy Dialog
+        this.getBusyDialog();
+
+        var aData = this.getView()
+            .getModel("Questionmodel")
+            .getProperty("/Questions") || [];
+
+        if (aData.length === 0) {
+
+            this.closeBusyDialog();
+
+            MessageToast.show(
+                "No data available to download"
+            );
+
+            return;
+        }
+
+        var aFormattedData = aData.map(function (item) {
+
+            return {
+                Department: item.Department,
+                Topic: item.Topic,
+                Question: item.Question
+            };
+        });
+
+        // Delay execution for UI update
+        setTimeout(function () {
+
+            try {
+
+                // Create worksheet
+                var oWorksheet =
+                    XLSX.utils.json_to_sheet(aFormattedData);
+
+                // Create workbook
+                var oWorkbook =
+                    XLSX.utils.book_new();
+
+                XLSX.utils.book_append_sheet(
+                    oWorkbook,
+                    oWorksheet,
+                    "Questions"
                 );
 
-                return;
+                // Download file
+                XLSX.writeFile(
+                    oWorkbook,
+                    "GoalQuestions_Data.xlsx"
+                );
+
+                // Close Busy Dialog
+                this.closeBusyDialog();
+
+                MessageToast.show(
+                    this.getText("downloadsuccessfully")
+                );
+
+            } catch (error) {
+
+                this.closeBusyDialog();
+
+                MessageToast.show(
+                    this.getText("downloadFailed")
+                );
             }
-            // Prepare data for Excel
-            var aFormattedData = aData.map(function (item) {
-              return {
-                Department: item.Department,
-                "Topic": item.Topic,
-                Question: item.Question,
-              };
-            });
 
-            // Create worksheet
-            var oWorksheet =
-              aFormattedData.length > 0
-                ? XLSX.utils.json_to_sheet(aFormattedData)
-                : XLSX.utils.aoa_to_sheet([
-                  ["Department", "Topic", "Question"],
-                ]);
+        }.bind(this), 100);
 
-            // Create workbook
-            var oWorkbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(oWorkbook, oWorksheet, "Questions");
+    } catch (error) {
 
-            // Download Excel file
-            XLSX.writeFile(oWorkbook, "GoalQuestions_Data.xlsx");
-            this.closeBusyDialog();
-            MessageToast.show(this.getText("downloadsuccessfully"));
-           
-          } catch (error) {
-             this.closeBusyDialog();
-            MessageToast.show(this.getText("downloadFailed"));
-          }
-        },
+        this.closeBusyDialog();
+
+        MessageToast.show(
+            this.getText("downloadFailed")
+        );
+    }
+},
 
         getText: function (sKey, aParams) {
           return this.getOwnerComponent()

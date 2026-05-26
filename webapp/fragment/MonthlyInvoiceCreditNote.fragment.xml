@@ -9,7 +9,7 @@
         <customHeader >
         <Bar class="Coursetitle" >
            <contentLeft>
-              <Title  text="{i18n>monthlyinvoicefor} {MonthlyListPopoverData>/Month}"  />
+              <Title  text="{i18n>monthlyinvoicefor} {MonthlyListPopoverData>/Month}" class="Dashboardtitle"  />
         </contentLeft>
             <contentRight>
                 <Button icon="sap-icon://decline" press="onCloseDialog" tooltip="Close"/>
@@ -17,6 +17,12 @@
         </Bar>
     </customHeader>
         <content>
+          <ScrollContainer
+        width="100%"
+        height="100%"
+        vertical="true"
+        horizontal="true"
+        focusable="true">
             <Table
             sticky="ColumnHeaders"
                 items="{MonthlyListPopoverData>/Records}"
@@ -43,11 +49,12 @@
                     </ColumnListItem>
                 </items>
             </Table>
+            </ScrollContainer>
         </content>
        <footer>
 			<Toolbar>
 				<ToolbarSpacer/>
-				<Text text="Total Amount : "/>
+				<Text text="Total Amount : " class="Dashboardtitle"/>
 				<ObjectNumber 
 						number="{parts: [{ path: 'MonthlyListPopoverData>/TotalAmount' }], formatter: '.Formatter.fromatNumber'}"
 						unit="INR" />

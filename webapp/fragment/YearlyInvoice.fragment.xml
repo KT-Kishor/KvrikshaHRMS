@@ -10,7 +10,7 @@
            <customHeader >
         <Bar class="Coursetitle" >
         <contentLeft>
-          <Title text="{i18n>yearlyinvoicefor} {yearPopoverData>/Year}"   />
+          <Title text="{i18n>yearlyinvoicefor} {yearPopoverData>/Year}"  class="Dashboardtitle"  />
         </contentLeft>
            
             <contentRight>
@@ -19,6 +19,12 @@
         </Bar>
     </customHeader>
         <content>
+          <ScrollContainer
+        width="100%"
+        height="100%"
+        vertical="true"
+        horizontal="true"
+        focusable="true">
             <Table
             sticky="ColumnHeaders"
                 items="{yearPopoverData>/Records}"
@@ -67,15 +73,16 @@
                     </ColumnListItem>
                 </items>
             </Table>
+            </ScrollContainer>
         </content>
        <footer>
 			<Toolbar>
 				<ToolbarSpacer/>
-				<Text text="{i18n>totalAmount} : "/>
+				<Text text="{i18n>totalAmount} : " class="Dashboardtitle" />
 				<ObjectNumber number="{parts: [{ path: 'yearPopoverData>/TotalAmount' }], formatter: '.Formatter.fromatNumber'}" unit="INR" />
                 <!-- <ToolbarSpacer/> -->
 
-				<Text text="Actual Amount : "/>
+				<Text text="Actual Amount : " class="Dashboardtitle"/>
 				<ObjectNumber number="{parts: [{ path: 'yearPopoverData>/AllActualAmount' }],formatter: '.Formatter.fromatNumber'}" unit="INR"/>
         	</Toolbar>
 		</footer>

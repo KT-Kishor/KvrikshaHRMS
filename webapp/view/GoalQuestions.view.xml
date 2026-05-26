@@ -122,8 +122,8 @@
                             <ToolbarSpacer />
                             <Button
                                
-                                text="{i18n>download}"
-                              tooltip="{i18n>download}"
+                                text="{i18n>DownloadTemplate}"
+                              tooltip="{i18n>DownloadTemplate}"
                                 
                                 press="QD_onDownloadExcelPress"
                             />

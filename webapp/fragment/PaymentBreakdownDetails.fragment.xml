@@ -10,7 +10,7 @@
           <customHeader >
         <Bar class="Coursetitle" >
         <contentLeft>
-           <Title text="{i18n>brktitle} {PaymentBreakdownPopoverData>/Company}" />
+           <Title text="{i18n>brktitle} {PaymentBreakdownPopoverData>/Company}" class="Dashboardtitle"/>
         </contentLeft>
           
             <contentRight>
@@ -19,6 +19,12 @@
         </Bar>
     </customHeader>
         <content>
+          <ScrollContainer
+        width="100%"
+        height="100%"
+        vertical="true"
+        horizontal="true"
+        focusable="true">
             <Table
                 items="{PaymentBreakdownPopoverData>/Records}"
                 sticky="ColumnHeaders"
@@ -43,11 +49,12 @@
                     </ColumnListItem>
                 </items>
             </Table>
+            </ScrollContainer>
         </content>
          <footer>
 			<Toolbar>
 				<ToolbarSpacer/>
-				<Text text="Total Amount : "/>
+				<Text text="Total Amount : " class="Dashboardtitle"/>
 				<ObjectNumber number="{parts: [{ path: 'PaymentBreakdownPopoverData>/TotalAmount' }], formatter: '.Formatter.fromatNumber'}" unit="INR" />
         	</Toolbar>
 		</footer>

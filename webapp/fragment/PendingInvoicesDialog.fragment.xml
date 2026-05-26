@@ -10,7 +10,7 @@
           <customHeader >
         <Bar class="Coursetitle" >
         <contentLeft>
-         <Title text="{i18n>pendingInvoicepayment} {PendingInvoicesData>/CompanyName}"/>
+         <Title text="{i18n>pendingInvoicepayment} {PendingInvoicesData>/CompanyName}" class="Dashboardtitle"/>
         </contentLeft>
            
             <contentRight>
@@ -19,6 +19,12 @@
         </Bar>
     </customHeader>
         <content>
+          <ScrollContainer
+        width="100%"
+        height="100%"
+        vertical="true"
+        horizontal="true"
+        focusable="true">
             <Table
             sticky="ColumnHeaders"
                 items="{PendingInvoicesData>/Invoices}"
@@ -55,11 +61,12 @@
                     </ColumnListItem>
                 </items>
             </Table>
+            </ScrollContainer>
         </content>
          <footer>
 			<Toolbar>
 				<ToolbarSpacer/>
-				<Text text="Total Amount : "/>
+				<Text text="Total Amount : " class="Dashboardtitle"/>
 				<ObjectNumber 
 						number="{parts: [{ path: 'PendingInvoicesData>/AllTotalAmount' }], formatter: '.Formatter.fromatNumber'}"
 						unit="INR" />
