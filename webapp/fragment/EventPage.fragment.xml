@@ -253,6 +253,35 @@
 
             </VBox>
 
+            <FlexBox
+            height="100%"
+            renderType="Bare"/>
+
+        <!-- ================= FIXED BUTTON ================= -->
+
+        <HBox
+            width="100%"
+            justifyContent="End"
+            class="">
+
+            <Button
+                text="Watch Now"
+                type="Emphasized"
+                class="registerBtn"
+                press="onRegisternow">
+
+                <customData>
+
+                    <core:CustomData
+                        key="registerLink"
+                        value="{EventCardModel>LinkToRegister}"/>
+
+                </customData>
+
+            </Button>
+
+        </HBox>
+
         </VBox>
 
     </f:content>

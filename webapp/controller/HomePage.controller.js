@@ -402,32 +402,31 @@ sap.ui.define(
                         );
 
                         // Upcoming Events
-                        const aUpcomingEvents =
-                            aData.filter(function (oItem) {
+                       const aUpcomingEvents = aData.filter(function (oItem) {
 
-                                const oEventDate =
-                                    new Date(oItem.StartDateTime);
+    const oEventDate = new Date(oItem.StartDateTime);
+    const oCurrentDate = new Date();
 
-                                const iEventMonth =
-                                    oEventDate.getMonth();
+    // Remove time portion
+    const oEventOnlyDate = new Date(
+        oEventDate.getFullYear(),
+        oEventDate.getMonth(),
+        oEventDate.getDate()
+    );
 
-                                const iEventYear =
-                                    oEventDate.getFullYear();
+    const oTodayOnlyDate = new Date(
+        oCurrentDate.getFullYear(),
+        oCurrentDate.getMonth(),
+        oCurrentDate.getDate()
+    );
 
-                                const bUpcoming = (
+    // Upcoming = Today or Future
+    const bUpcoming = oEventOnlyDate >= oTodayOnlyDate;
 
-                                    iEventYear > iCurrentYear ||
+    oItem.IsUpcoming = bUpcoming;
 
-                                    (
-                                        iEventYear === iCurrentYear &&
-                                        iEventMonth >= iCurrentMonth
-                                    )
-                                );
-
-                                oItem.IsUpcoming = bUpcoming;
-
-                                return bUpcoming;
-                            });
+    return bUpcoming;
+});
 
                         // ================= SORTING =================
 
@@ -481,33 +480,35 @@ sap.ui.define(
 
                         // Past Events
                         // Previous Months
-                        const aPastEvents =
-                            aData.filter(function (oItem) {
+                       const aPastEvents = aData.filter(function (oItem) {
 
-                                const oEventDate =
-                                    new Date(oItem.StartDateTime);
+        // Event Date
+        const oEventDate = new Date(oItem.StartDateTime);
 
-                                const iEventMonth =
-                                    oEventDate.getMonth();
+        // Current Date
+        const oCurrentDate = new Date();
 
-                                const iEventYear =
-                                    oEventDate.getFullYear();
+        // Create NEW date objects without time
+        const oEventOnlyDate = new Date(
+            oEventDate.getFullYear(),
+            oEventDate.getMonth(),
+            oEventDate.getDate()
+        );
 
-                                const bPast = (
+        const oTodayOnlyDate = new Date(
+            oCurrentDate.getFullYear(),
+            oCurrentDate.getMonth(),
+            oCurrentDate.getDate()
+        );
 
-                                    iEventYear < iCurrentYear ||
+        // Past event condition
+        const bPast = oEventOnlyDate < oTodayOnlyDate;
 
-                                    (
-                                        iEventYear === iCurrentYear &&
-                                        iEventMonth < iCurrentMonth
-                                    )
-                                );
+        // Set property
+        oItem.IsUpcoming = !bPast;
 
-                                // ADD PROPERTY
-                                oItem.IsUpcoming = false;
-
-                                return bPast;
-                            });
+        return bPast;
+    });
 
                         // Model
                         const oModel =
