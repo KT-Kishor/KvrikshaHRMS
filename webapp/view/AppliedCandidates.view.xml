@@ -128,9 +128,8 @@
             width="auto"
             busyIndicatorDelay="0"
             noDataText="{i18n>noData}"
-            growingScrollToLoad="true"
             updateFinished="onTableUpdateFinished"
-            growingThreshold="50"  alternateRowColors="true">
+            alternateRowColors="true">
 					 <headerToolbar>
                 <OverflowToolbar>
                     <content>
