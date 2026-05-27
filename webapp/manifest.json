@@ -919,6 +919,13 @@
             "TargetPayslipDeduction"
           ]
         },
+         {
+          "name": "RoutePolicy",
+          "pattern": "Policy",
+          "target": [
+            "TargetPolicy"
+          ]
+        },
         {
           "name": "RouteGoalQuestions",
           "pattern": "GoalQuestions",
@@ -1465,6 +1472,13 @@
           "clearControlAggregation": false,
           "viewId": "PayslipDeduction",
           "viewName": "PayslipDeduction"
+        },
+         "TargetPolicy": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "Policy",
+          "viewName": "Policy"
         },
         "TargetGoalQuestion": {
           "viewType": "XML",

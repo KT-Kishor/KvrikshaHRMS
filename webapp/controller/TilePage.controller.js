@@ -530,6 +530,9 @@ sap.ui.define(
             from: "ManageGoals",
           });
             },
+            TileV_onpressPolicy: function(){
+                this.getRouter().navTo("RoutePolicy");
+            },
             TileV_onpressManageEvents: function () {
                 this.getRouter().navTo("RouteManageEvent");
             },

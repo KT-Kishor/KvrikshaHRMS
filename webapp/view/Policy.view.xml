@@ -1,0 +1,229 @@
+<mvc:View
+    controllerName="sap.kt.com.minihrsolution.controller.Policy"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.uxap"
+	xmlns:m="sap.m"
+	xmlns:fb="sap.ui.comp.filterbar"
+	xmlns:core="sap.ui.core"
+    class="policyPage"
+>
+	<!-- ================= PAGE ================= -->
+	<m:Page id="PL_id_PolicyPage">
+		<!-- ================= HEADER ================= -->
+		<m:customHeader>
+			<core:Fragment
+                fragmentName="sap.kt.com.minihrsolution.fragment.Header"
+                type="XML"
+            />
+		</m:customHeader>
+		<!-- ================= FILTER BAR ================= -->
+		<fb:FilterBar
+            id="PL_id_FilterBar"
+            search="PL_onSearchPolicy"
+            clear="PL_onClearPolicy"
+            useToolbar="false"
+            showRestoreButton="false"
+            showClearOnFB="true"
+            showGoOnFB="true"
+            showFilterConfiguration="false"
+            class="sapUiResponsiveContentPadding sapUiSmallMargin policyFilterBar"
+        >
+			<fb:filterGroupItems>
+				<!-- SEARCH -->
+				<fb:FilterGroupItem
+                    groupName="Basic"
+                    name="PolicyTitle"
+                    label="{i18n>policy}"
+                    visibleInFilterBar="true"
+                >
+					<fb:control>
+						<m:SearchField
+                            id="PL_id_SearchPolicy"
+                            placeholder="{i18n>searchPolicy}"
+                            liveChange="PL_onLiveSearchPolicy"
+                            search="PL_onSearchPolicy"
+                        />
+					</fb:control>
+				</fb:FilterGroupItem>
+				<!-- STATUS -->
+				<fb:FilterGroupItem
+                    groupName="Basic"
+                    name="Status"
+                    label="{i18n>status}"
+                    visibleInFilterBar="true"
+                >
+					<fb:control>
+						<m:ComboBox
+    id="PL_id_StatusFilter"
+    placeholder="{i18n>selectStatus}"
+    showClearIcon="true"
+    change=".onStatusFilterChange"
+>
+							<core:Item key="Active" text="Active" />
+							<core:Item key="Inactive" text="Inactive" />
+						</m:ComboBox>
+					</fb:control>
+				</fb:FilterGroupItem>
+				<!-- DEPARTMENT -->
+				<fb:FilterGroupItem
+                    groupName="Basic"
+                    name="Department"
+                    label="{i18n>department}"
+                     visibleInFilterBar="{visibilityModel>/showAdminControls}"
+                >
+					<fb:control>
+						<m:ComboBox
+                            id="PL_id_DepartmentFilter"
+                            placeholder="{i18n>selectDepartment}"
+                            showClearIcon="true"
+                            visible="{visibilityModel>/showAdminControls}"
+                            selectionChange="PL_onDepartmentChange"
+                            items="{
+                                path:'DepartmentModel>/'
+                            }"
+                        >
+							<core:Item
+                                key="{DepartmentModel>department}"
+                                text="{DepartmentModel>department}"
+                            />
+						</m:ComboBox>
+					</fb:control>
+				</fb:FilterGroupItem>
+				<!-- ROLE -->
+				<fb:FilterGroupItem
+                    groupName="Basic"
+                    name="Role"
+                    label="{i18n>role}"
+                   visibleInFilterBar="{visibilityModel>/showAdminControls}"
+                >
+					<fb:control>
+						<m:ComboBox
+                            id="PL_id_RoleFilter"
+                            placeholder="{i18n>selectRole}"
+                            showClearIcon="true"
+                            visible="{visibilityModel>/showAdminControls}"
+                            items="{
+                                path:'FilteredRoleModel>/'
+                            }"
+                        >
+							<core:Item
+                                key="{FilteredRoleModel>designationName}"
+                                text="{FilteredRoleModel>designationName}"
+                            />
+						</m:ComboBox>
+					</fb:control>
+				</fb:FilterGroupItem>
+			</fb:filterGroupItems>
+		</fb:FilterBar>
+		<!-- ================= OBJECT PAGE ================= -->
+		<ObjectPageLayout
+            id="PL_id_ObjectPageLayout"
+            showAnchorBar="false"
+            useIconTabBar="false"
+        >
+			<sections>
+				<ObjectPageSection
+                    id="PL_id_PolicySection"
+                    showTitle="false"
+                    titleUppercase="false"
+                    visible="{= !${viewModel>/TraineeRole} &amp;&amp; !${viewModel>/isContractorRole} }"
+                >
+					<subSections>
+						<ObjectPageSubSection id="PL_id_PolicySubSection">
+							<blocks>
+								<m:VBox class="sapUiResponsiveContentPadding">
+									<!-- TITLE -->
+									<m:Title
+                                        text="{i18n>policyTitle}"
+                                        level="H3"
+                                        class="sapUiMediumMarginBottom"
+                                    />
+									<!-- POLICY FLEX -->
+									<m:FlexBox
+                                        id="PL_id_PolicyFlexBox"
+                                        wrap="Wrap"
+                                        justifyContent="Start"
+                                        alignItems="Stretch"
+                                        renderType="Bare"
+                                        class="policyFlex"
+                                        items="{
+                                            path:'policyModel>/policies'
+                                        }"
+                                    >
+										<m:items>
+											<!-- POLICY CARD -->
+											<m:VBox
+                                                class="policyCard sapUiContentPadding"
+                                                justifyContent="SpaceBetween"
+                                            >
+												<m:layoutData>
+													<m:FlexItemData
+                                                        growFactor="1"
+                                                        shrinkFactor="1"
+                                                        baseSize="23%"
+                                                    />
+												</m:layoutData>
+												<!-- CARD HEADER -->
+												<m:HBox
+                                                    alignItems="Center"
+                                                    class="sapUiSmallMarginBottom"
+                                                >
+													<m:Avatar
+                                                        displayShape="Circle"
+                                                        displaySize="M"
+                                                        src="{policyModel>imageUrl}"
+                                                        class="sapUiTinyMarginEnd"
+                                                        initials="{
+                                                            path:'policyModel>name',
+                                                            formatter: '.Formatter.getInitials'
+                                                        }"
+                                                    />
+													<m:Title
+                                                        text="{policyModel>name}"
+                                                        level="H5"
+                                                        wrapping="true"
+                                                        class="policyCardTitle"
+                                                    />
+												</m:HBox>
+												<!-- DESCRIPTION -->
+												<m:Text
+                                                    text="{policyModel>desc}"
+                                                    wrapping="true"
+                                                    maxLines="4"
+                                                />
+												<!-- BUTTON -->
+												<m:HBox
+                                                    justifyContent="End"
+                                                    class="sapUiMediumMarginTop"
+                                                >
+													<m:Button
+                                                        text="{i18n>view}"
+                                                        press="PL_onViewPolicy"
+                                                        type="Transparent"
+                                                    />
+												</m:HBox>
+											</m:VBox>
+										</m:items>
+									</m:FlexBox>
+								</m:VBox>
+							</blocks>
+						</ObjectPageSubSection>
+					</subSections>
+				</ObjectPageSection>
+			</sections>
+		</ObjectPageLayout>
+		<!-- ================= FOOTER ================= -->
+		<m:footer>
+			<m:OverflowToolbar>
+				<m:ToolbarSpacer />
+				<m:Button
+                    id="PL_id_AddButton"
+                    text="{i18n>create}"
+                    press="PL_onCreatePress"
+                    visible="{visibilityModel>/showAdminControls}"
+                   
+                />
+			</m:OverflowToolbar>
+		</m:footer>
+	</m:Page>
+</mvc:View>

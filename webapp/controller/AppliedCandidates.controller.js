@@ -1072,5 +1072,15 @@ if (sExperienceInput) {
             }
             this._oPopover.openBy(oEvent.getSource());
         },
+        groupByCreatedBy: function (oContext) {
+
+    var sCreatedBy =
+        oContext.getProperty("CreatedBy");
+
+    return {
+        key: sCreatedBy,
+        text: sCreatedBy
+    };
+},
     });
 });

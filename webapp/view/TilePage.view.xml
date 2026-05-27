@@ -41,13 +41,13 @@
                     </customData>
                 </Button>
 
-                  <Button
-            press="TP_onraisebugpress"
-            icon="sap-icon://incident"
-            tooltip="{i18n>raisebug}"
-            type="Transparent"
-            class="Bug"
-        />
+                <Button
+                    press="TP_onraisebugpress"
+                    icon="sap-icon://incident"
+                    tooltip="{i18n>raisebug}"
+                    type="Transparent"
+                    class="Bug"
+                />
 
                 <Button
                     press="TileV_onBackPress"
@@ -203,6 +203,21 @@
                                                                 src="sap-icon://message-error"
                                                             />
                                                         </TileContent>
+                                                    </GenericTile>
+                                                   <GenericTile
+                                                        id="TV_id_PolicyTile"
+                                                        class="sapUiSmallMargin glassTile blue"
+                                                        visible="{= ${AppVisibilityModel>/Policy} !== '0' }"
+                                                        header="{i18n>policyTitle}"
+                                                        press="TileV_onpressPolicy">
+
+                                                        <TileContent unit="{i18n>policyUnit}">
+
+                                                            <ImageContent
+                                                                src="sap-icon://insurance-house" />
+
+                                                        </TileContent>
+
                                                     </GenericTile>
                                                     <GenericTile
                                                         class="sapUiSmallMargin glassTile blue"
@@ -725,7 +740,8 @@
                                 <ux:ObjectPageSection
                                     titleUppercase="false"
                                     title="Expense and Allowance"
-                                    class="roomHeaderTitle1"  wrapTitle="true"
+                                    class="roomHeaderTitle1"
+                                    wrapTitle="true"
                                     visible="{= ${TileAccessModel>/Expense} === '1' ? true : false}"
                                 >
                                     <ux:subSections>

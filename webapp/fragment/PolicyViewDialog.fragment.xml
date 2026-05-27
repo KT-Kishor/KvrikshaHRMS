@@ -1,0 +1,310 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout"
+>
+	<Dialog
+        id="FPL_id_PolicyViewDialog"
+        title="{i18n>policyDetails}"
+        contentWidth="92%"
+        contentHeight="95%"
+        stretch="{device>/system/phone}"
+        draggable="true"
+        resizable="true"
+        horizontalScrolling="false"
+        verticalScrolling="true"
+        class="policyResponsiveDialog"
+    >
+		<!-- ================= HEADER ================= -->
+		<customHeader>
+			<OverflowToolbar
+                id="PL_id_ViewDialogHeaderBar"
+                class="policyHeaderToolbar"
+            >
+				<Title
+                    id="PL_id_ViewDialogTitle"
+                    text="{i18n>policyDetails}"
+                    level="H4"
+                    wrapping="true"
+                />
+				<ToolbarSpacer />
+				<Button
+                    id="PL_id_ViewDialogCloseBtn"
+                    icon="sap-icon://decline"
+                    tooltip="{i18n>closeDialog}"
+                    type="Transparent"
+                    press="PL_onCloseViewDialog"
+                />
+			</OverflowToolbar>
+		</customHeader>
+		<!-- ================= CONTENT ================= -->
+		<content>
+			<ScrollContainer
+                width="100%"
+                height="100%"
+                vertical="true"
+                horizontal="false"
+            >
+				<VBox
+                    id="PL_id_MainVBox"
+                    width="100%"
+                    fitContainer="true"
+                    class="sapUiResponsiveContentPadding policyMainContainer"
+                >
+					<!-- ================= TOP SECTION ================= -->
+					<VBox
+                        id="PL_id_TopSectionVBox"
+                        width="100%"
+                        class="policyTopSection"
+                    >
+						<!-- ================================================= -->
+						<!-- DESKTOP = 5 FIELDS IN ONE ROW                     -->
+						<!-- TABLET = 3 FIELDS FIRST ROW + 2 SECOND ROW        -->
+						<!-- MOBILE = 1 FIELD PER ROW                          -->
+						<!-- ================================================= -->
+						<l:Grid
+                            id="PL_id_FirstRowFlexBox"
+                            width="100%"
+                            defaultSpan="XL2 L2 M4 S12"
+                            hSpacing="1"
+                            vSpacing="1"
+                            class="policyGridLayout"
+                        >
+							<!-- ================= TITLE ================= -->
+							<VBox
+                                id="PL_id_TitleVBox"
+                                width="100%"
+                                class="policyFieldBox"
+                            >
+								<Label
+                                    id="PL_id_TitleLabel"
+                                    text="{i18n>title}"
+                                    design="Bold"
+                                    required="{= ${VisibleModel>/EditBtn} !== true }"
+                                />
+								<Text
+                                    id="PL_id_ViewTitleText"
+                                    text="{policyViewModel>/title}"
+                                    visible="{= ${VisibleModel>/EditBtn} === true}"
+                                    wrapping="true"
+                                />
+								<Input
+                                    id="PL_id_ViewTitle"
+                                    width="100%"
+                                    value="{policyViewModel>/title}"
+                                    visible="{= ${VisibleModel>/EditBtn} !== true}"
+                                    liveChange="PL_onLiveChangeValidation"
+                                    maxLength="35"
+                                    placeholder="{i18n>enterPolicyTitle}"
+                                />
+							</VBox>
+							<!-- ================= STATUS ================= -->
+							<VBox
+                                id="PL_id_StatusVBox"
+                                width="100%"
+                                class="policyFieldBox"
+                            >
+								<Label
+                                    id="PL_id_StatusLabel"
+                                    text="{i18n>status}"
+                                    design="Bold"
+                                />
+								<ObjectStatus
+                                    id="PL_id_StatusObject"
+                                    text="{policyViewModel>/status}"
+                                    state="{= ${policyViewModel>/status} === 'Active' ? 'Success' : 'Error' }"
+                                    inverted="false"
+                                    visible="{= ${VisibleModel>/EditBtn} === true}"
+                                />
+								<Select
+                                    id="PL_id_StatusSelect"
+                                    width="100%"
+                                    selectedKey="{policyViewModel>/status}"
+                                    visible="{= ${VisibleModel>/EditBtn} !== true}"
+                                >
+									<items>
+										<core:Item
+                                            id="PL_id_StatusActive"
+                                            key="Active"
+                                            text="{i18n>active}"
+                                        />
+										<core:Item
+                                            id="PL_id_StatusInactive"
+                                            key="Inactive"
+                                            text="{i18n>inactive}"
+                                        />
+									</items>
+								</Select>
+							</VBox>
+							<!-- ================= DEPARTMENT ================= -->
+							<VBox
+                                id="PL_id_DepartmentVBox"
+                                width="100%"
+                                class="policyFieldBox"
+                            >
+								<Label
+                                    id="PL_id_DepartmentLabel"
+                                    text="{i18n>department}"
+                                    design="Bold"
+                                    required="{= ${VisibleModel>/EditBtn} !== true }"
+                                />
+								<Text
+                                    id="PL_id_DepartmentText"
+                                    text="{policyViewModel>/department}"
+                                    visible="{= ${VisibleModel>/EditBtn} === true}"
+                                    wrapping="true"
+                                />
+								<ComboBox
+                                    id="PL_id_ViewDepartment"
+                                    width="100%"
+                                    selectedKey="{policyViewModel>/department}"
+                                    visible="{= ${VisibleModel>/EditBtn} !== true}"
+                                    selectionChange="PL_onDepartmentChange"
+                                    items="{
+                                        path: 'DepartmentModel>/'
+                                    }"
+                                    placeholder="{i18n>selectDepartment}"
+                                >
+									<core:Item
+                                        id="PL_id_DepartmentItem"
+                                        key="{DepartmentModel>department}"
+                                        text="{DepartmentModel>department}"
+                                    />
+								</ComboBox>
+							</VBox>
+							<!-- ================= ROLE ================= -->
+							<VBox
+                                id="PL_id_RoleVBox"
+                                width="100%"
+                                class="policyFieldBox"
+                            >
+								<Label
+                                    id="PL_id_RoleLabel"
+                                    text="{i18n>role}"
+                                    design="Bold"
+                                    required="{= ${VisibleModel>/EditBtn} !== true }"
+                                />
+								<Text
+                                    id="PL_id_RoleText"
+                                    text="{policyViewModel>/role}"
+                                    visible="{= ${VisibleModel>/EditBtn} === true}"
+                                    wrapping="true"
+                                />
+								<ComboBox
+                                    id="PL_id_ViewRole"
+                                    width="100%"
+                                    selectedKey="{policyViewModel>/role}"
+                                    visible="{= ${VisibleModel>/EditBtn} !== true}"
+                                    selectionChange="PL_onSelectionChangeValidation"
+                                    items="{
+                                        path: 'FilteredRoleModel>/'
+                                    }"
+                                    placeholder="{i18n>selectRole}"
+                                >
+									<core:Item
+                                        id="PL_id_RoleItem"
+                                        key="{FilteredRoleModel>designationName}"
+                                        text="{FilteredRoleModel>designationName}"
+                                    />
+								</ComboBox>
+							</VBox>
+							<!-- ================= DATE ================= -->
+							<VBox
+                                id="PL_id_DateVBox"
+                                width="100%"
+                                class="policyFieldBox"
+                            >
+								<Label
+                                    id="PL_id_DateLabel"
+                                    text="{i18n>createdDate}"
+                                    design="Bold"
+                                />
+								<Text
+                                    id="PL_id_CreatedDateText"
+                                    text="{policyViewModel>/uploadedDate}"
+                                    wrapping="true"
+                                />
+							</VBox>
+						</l:Grid>
+						<!-- ================= DESCRIPTION ================= -->
+						<VBox
+                            id="PL_id_DescriptionVBox"
+                            width="100%"
+                            class="policyDescriptionBox sapUiResponsiveContentPadding"
+                        >
+							<Label
+                                id="PL_id_DescriptionLabel"
+                                text="{i18n>description}"
+                                design="Bold"
+                                required="{= ${VisibleModel>/EditBtn} !== true }"
+                            />
+							<Text
+                                id="PL_id_DescriptionText"
+                                text="{policyViewModel>/description}"
+                                visible="{= ${VisibleModel>/EditBtn} === true}"
+                                wrapping="true"
+                            />
+							<TextArea
+                                id="PL_id_ViewDescription"
+                                width="100%"
+                                rows="2"
+                                growing="true"
+                                growingMaxLines="6"
+                                maxLength="100"
+                                value="{policyViewModel>/description}"
+                                liveChange="PL_onLiveChangeValidation"
+                                visible="{= ${VisibleModel>/EditBtn} !== true}"
+                                placeholder="{i18n>enterDescription}"
+                            />
+						</VBox>
+					</VBox>
+					<!-- ================= PDF SECTION ================= -->
+					<VBox
+                        id="PL_id_PdfSectionVBox"
+                        width="100%"
+                        fitContainer="true"
+                        class="sapUiResponsiveContentPadding sapUiSmallMarginTop policyPdfSection"
+                    >
+						<core:HTML id="pdfFrame" />
+					</VBox>
+				</VBox>
+			</ScrollContainer>
+		</content>
+		<!-- ================= FOOTER ================= -->
+		<footer>
+			<OverflowToolbar
+                id="PL_id_FooterBar"
+                class="policyFooterToolbar"
+            >
+				<!-- ================= LEFT ================= -->
+				<CheckBox
+                    id="PL_id_AcknowledgeCheckBox"
+                    text="{i18n>acknowledgePolicy}"
+                    tooltip="{i18n>confirmAcknowledgement}"
+                    selected="{policyViewModel>/acknowledged}"
+                    select="onAcknowledgeCheck"
+                    visible="{= ${policyViewModel>/alreadyAcknowledged} === false }"
+                />
+				<ToolbarSpacer />
+				<!-- ================= RIGHT ================= -->
+				<Button
+                    id="PL_id_AcknowledgeBtn"
+                    text="{i18n>acknowledge}"
+                    tooltip="{i18n>acknowledgeTooltip}"
+                    enabled="{policyViewModel>/acknowledged}"
+                    press="onPressAcknowledge"
+                    visible="{= ${policyViewModel>/alreadyAcknowledged} === false }"
+                />
+				<ToolbarSpacer width="0.5rem" />
+				<Button
+                    id="PL_id_EditSaveBtn"
+                    text="{= ${VisibleModel>/EditBtn} === true ? ${i18n>edit} : ${i18n>save} }"
+                    tooltip="{= ${VisibleModel>/EditBtn} === true ? ${i18n>editPolicyDetails} : ${i18n>savePolicyDetails} }"
+                    press="PL_onPressEditAndSave"
+                  
+                    visible="{= ${visibilityModel>/showAdminControls} === true }"
+                />
+			</OverflowToolbar>
+		</footer>
+	</Dialog>
+</core:FragmentDefinition>

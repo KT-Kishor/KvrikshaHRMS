@@ -118,18 +118,26 @@
             </fb:filterGroupItems>
         </fb:FilterBar>
 
-        <Table
-            id="appliedCandidatesTable"
-            sticky="ColumnHeaders,HeaderToolbar"
-            items="{path: 'DataTableModel>/',sorter: [{path: 'CreatedBy', descending: false, group: true },    
-            {path: 'CreateDate', descending: true }],groupHeaderFactory: '.getGroupHeader'}"
-            mode="SingleSelectLeft"
-            class="sapUiTinyMargin CommonRoundedTable"
-            width="auto"
-            busyIndicatorDelay="0"
-            noDataText="{i18n>noData}"
-            updateFinished="onTableUpdateFinished"
-            alternateRowColors="true">
+       <Table
+    id="appliedCandidatesTable"
+    sticky="ColumnHeaders,HeaderToolbar"
+    items="{
+        path: 'DataTableModel>/',
+        sorter: [
+            {
+                path: 'CreatedBy',
+                descending: true,
+                group: '.groupByCreatedBy'
+            }
+        ]
+    }"
+    mode="SingleSelectLeft"
+    class="sapUiTinyMargin CommonRoundedTable"
+    width="auto"
+    busyIndicatorDelay="0"
+    noDataText="{i18n>noData}"
+    updateFinished="onTableUpdateFinished"
+    alternateRowColors="true">
 					 <headerToolbar>
                 <OverflowToolbar>
                     <content>

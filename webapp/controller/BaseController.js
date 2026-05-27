@@ -219,6 +219,7 @@ sap.ui.define([
             "Goals": "/Goals",
             "ManageEvent": "/ManageEvent",
             "GoalReview": "/GoalReview",
+            "Policy": "/Policy",
           };
 
           const modelPath = tileMap[value];
@@ -328,7 +329,10 @@ sap.ui.define([
         "Apply Overtime Approval": "Apply Overtime",
         "Create New Assignment": "Manage Assignment",
         "Bug Details": "Raise Bug",
-        "Payslip Deduction": "Payslip Deduction"
+        "Payslip Deduction": "Payslip Deduction",
+        "Scheme Upload": "Scheme Upload",
+        "Manage Quotation": "Quotation App",
+
       };
 
       this.getView().getModel("RaiseBugModel").setProperty(

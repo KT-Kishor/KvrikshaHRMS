@@ -1,0 +1,211 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:u="sap.ui.unified"
+	xmlns:f="sap.ui.layout.form"
+>
+	<Dialog
+        id="FPL_id_PolicyDialog"
+        title="{= ${policyDialogModel>/isEdit} ? ${i18n>updatePolicy} : ${i18n>createPolicy} }"
+        contentWidth="40%"
+        contentHeight="70%"
+      
+        stretch="{device>/system/phone}"
+        draggable="true"
+        resizable="true"
+        horizontalScrolling="false"
+        verticalScrolling="true"
+        class="policyResponsiveDialog"
+    >
+		<content>
+			<ScrollContainer
+                width="100%"
+                height="100%"
+                vertical="true"
+                horizontal="false"
+            >
+				<VBox
+                    width="100%"
+                    fitContainer="true"
+                    class="sapUiResponsiveContentPadding policyDialogContent"
+                >
+					<f:SimpleForm
+                        editable="true"
+                        layout="ResponsiveGridLayout"
+                        width="100%"
+                        labelSpanXL="3"
+                        labelSpanL="3"
+                        labelSpanM="12"
+                        labelSpanS="12"
+                        adjustLabelSpan="false"
+                        emptySpanXL="0"
+                        emptySpanL="0"
+                        emptySpanM="0"
+                        emptySpanS="0"
+                        columnsXL="2"
+                        columnsL="2"
+                        columnsM="1"
+                        singleContainerFullSize="true"
+                        class="policySimpleForm"
+                    >
+						<!-- POLICY NAME -->
+						<Label
+                            text="{i18n>policyName}"
+                            required="true"
+                        />
+						<Input
+                            id="PL_id_Title"
+                            width="100%"
+                            value="{policyDialogModel>/title}"
+                            placeholder="{i18n>enterPolicyTitle}"
+                            liveChange="PL_onLiveChangeValidation"
+                            maxLength="35"
+                        />
+						<!-- DESCRIPTION -->
+						<Label
+                            text="{i18n>description}"
+                            required="true"
+                        />
+						<TextArea
+                            id="PL_id_Description"
+                            width="100%"
+                            value="{policyDialogModel>/description}"
+                            rows="2"
+                            growing="true"
+                            growingMaxLines="6"
+                            maxLength="100"
+                            placeholder="{i18n>enterDescription}"
+                            liveChange="PL_onLiveChangeValidation"
+                        />
+						<!-- DEPARTMENT -->
+						<Label
+                            text="{i18n>department}"
+                            required="true"
+                        />
+						<ComboBox
+                            id="PL_id_Department"
+                            width="100%"
+                            selectedKey="{policyDialogModel>/department}"
+                            placeholder="{i18n>selectDepartment}"
+                            items="{
+                                path: 'DepartmentModel>/'
+                            }"
+                            selectionChange="PL_onDepartmentChange"
+                        >
+							<core:Item
+                                key="{DepartmentModel>department}"
+                                text="{DepartmentModel>department}"
+                            />
+						</ComboBox>
+						<!-- ROLE -->
+						<Label
+                            text="{i18n>role}"
+                            required="true"
+                        />
+						<ComboBox
+                            id="PL_id_Role"
+                            width="100%"
+                            selectedKey="{policyDialogModel>/role}"
+                            placeholder="{i18n>selectRole}"
+                            selectionChange="PL_onSelectionChangeValidation"
+                            items="{
+                                path: 'FilteredRoleModel>/'
+                            }"
+                        >
+							<core:Item
+                                key="{FilteredRoleModel>designationName}"
+                                text="{FilteredRoleModel>designationName}"
+                            />
+						</ComboBox>
+						<!-- LOGO -->
+						<Label text="{i18n>uploadLogo}" />
+						<VBox width="100%">
+							<Image
+                                src="{policyDialogModel>/logo}"
+                                width="7rem"
+                                height="7rem"
+                                visible="{= !!${policyDialogModel>/logo} }"
+                                class="sapUiSmallMarginBottom"
+                            />
+							<u:FileUploader
+                                id="PL_id_LogoUploader"
+                                width="100%"
+                                placeholder="{i18n>chooseLogo}"
+                                buttonText="{i18n>browse}"
+                                sameFilenameAllowed="true"
+                                fileType="jpg,jpeg,png"
+                                maximumFileSize="1"
+                                mimeType="image/png,image/jpeg"
+                                fileSizeExceed="PL_onLogoSizeExceed"
+                                typeMissmatch="PL_onLogoTypeMissmatch"
+                                change="PL_onLogoUpload"
+                            />
+						</VBox>
+						<!-- FILE -->
+						<Label
+                            text="{i18n>uploadFile}"
+                            required="true"
+                        />
+						<u:FileUploader
+                            id="PL_id_FileUploader"
+                            width="100%"
+                            placeholder="{i18n>chooseFile}"
+                            buttonText="{i18n>browse}"
+                            sameFilenameAllowed="true"
+                            fileType="pdf"
+                            change="PL_onFileUpload"
+                        />
+						<!-- STATUS -->
+						<Label text="{i18n>status}" />
+						<Select
+                            id="PL_id_Status"
+                            width="100%"
+                            selectedKey="{policyDialogModel>/status}"
+                        >
+							<items>
+								<core:Item
+                                    key="Active"
+                                    text="{i18n>active}"
+                                />
+								<core:Item
+                                    key="Inactive"
+                                    text="{i18n>inactive}"
+                                />
+							</items>
+						</Select>
+						<!-- DATE -->
+						<Label text="{i18n>uploadedDate}" />
+						<DatePicker
+                            id="PL_id_UploadDate"
+                            width="100%"
+                            value="{policyDialogModel>/uploadedDate}"
+                            displayFormat="dd/MM/yyyy"
+                            valueFormat="dd/MM/yyyy"
+                            liveChange="PL_onDateValidation"
+                            change="PL_onDateValidation"
+                        />
+					</f:SimpleForm>
+				</VBox>
+			</ScrollContainer>
+		</content>
+		<!-- FOOTER -->
+		<footer>
+       
+			<OverflowToolbar>
+				<ToolbarSpacer />
+            
+				<Button
+                    text="{= ${policyDialogModel>/isEdit} ? ${i18n>update} : ${i18n>save} }"
+                    press="PL_onSavePolicy"
+                   class="sapUiTinyMarginEnd"
+                />
+			
+				<Button
+                    text="{i18n>cancel}"
+                    press="PL_onCancelPolicy"
+                   
+                />
+			</OverflowToolbar>
+		</footer>
+	</Dialog>
+</core:FragmentDefinition>
