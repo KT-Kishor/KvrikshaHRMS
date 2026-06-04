@@ -118,7 +118,7 @@ sap.ui.define([
               params["SubStartDate"] = oDateFormat.format(startDate);
               params["SubEndDate"] = oDateFormat.format(endDate);
             } else if (sKey === "Type" && oControl.getSelectedKeys().length > 0) {
-              params[sKey] = oControl.getSelectedKeys()[0];
+            params[sKey] = oControl.getSelectedKeys().join(",");
             } else if (sValue) {
               params[sKey] = sValue;
             }
@@ -291,8 +291,8 @@ sap.ui.define([
         oEmpModel.setProperty("/0/ResignationEndDate", oModel.EndDate);
         oEmpModel.setProperty("/0/ResignComment", oModel.EmpComment);
       }
-      this.companyName = "Kvriksha Technologies Private Limited";
-                var data = `
+      this.companyName = "Kalpavriksha Technologies";
+      var data = `
                 <div style="text-align: justify;">
                     <p>Dear <b>${oData.ManagerName}</b>,</p>  
                     <p>I hope this message finds you well.</p>

@@ -493,8 +493,8 @@ sap.ui.define([
                 let gstType = oCustomerModel.getProperty("/Type") || "CGST/SGST";
 
                 aSOWDetails.forEach((item) => {
-                    const rate = parseFloat(item.Rate) > 0 ? parseFloat(item.Rate) : 1;
-                    const unit = parseFloat(item.Unit) > 0 ? parseFloat(item.Unit) : 1;
+                    const rate = parseFloat(item.Rate) > 0 ? parseFloat(item.Rate) : 0;
+                    const unit = parseFloat(item.Unit) > 0 ? parseFloat(item.Unit) : 0;
                     const baseAmount = rate * unit;
 
                     let discountAmount = 0;
@@ -1418,7 +1418,7 @@ sap.ui.define([
                     content: "",
                     isFileUploaded: false,
                     button: true,
-                    Subject: "Kvriksha Technologies Private Limited - INVOICE PAYMENT REMINDER",
+                    Subject: "KALPAVRIKSHA TECHNOLOGIES - INVOICE PAYMENT REMAINDER",
                     htmlbody: `<p>Dear Finance Team,</p>
                         <p>I hope you're doing well. This is a friendly remainder that payment for invoice ${modelData.InvNo}, issued on ${modelData.InvoiceDate}, is still outstanding.</p>
                         <li><b>Invoice No : ${modelData.InvNo}</b></li>

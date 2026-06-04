@@ -9,8 +9,9 @@ sap.ui.define([
     "sap/suite/ui/commons/TimelineItem",
     "sap/collaboration/components/fiori/sharing/attachment/Attachment",
     'sap/ui/export/Spreadsheet',
+    "sap/ui/core/Fragment"
 ],
-    function (Controller, JSONModel, utils, MessageToast, Formatter, MessageBox, Timeline, TimelineItem, Spreadsheet) {
+    function (Controller, JSONModel, utils, MessageToast, Formatter, MessageBox, Timeline, TimelineItem, Spreadsheet, Fragment) {
         "use strict";
         return Controller.extend("sap.kt.com.minihrsolution.controller.ExpenseDetails", {
             Formatter: Formatter,
@@ -399,13 +400,13 @@ sap.ui.define([
                             this.i18nModel.getText("ConfirmActionTitle"),
                             this.i18nModel.getText("backConfirmation"),
                             function () {
-                                this.getRouter().navTo("RouteExpensePage",{
+                                this.getRouter().navTo("RouteExpensePage", {
                                     FileName: "ExpenseDetails"
                                 });
                             }.bind(this),
                         );
                     } else {
-                        this.getRouter().navTo("RouteExpensePage",{
+                        this.getRouter().navTo("RouteExpensePage", {
                             FileName: "ExpenseDetails"
                         });
                     }
@@ -663,21 +664,34 @@ sap.ui.define([
             OnPressAttachment: async function (oEvent) {
                 const oContext = oEvent.getSource().getBindingContext("ItemExpenseModel");
                 const oData = oContext.getObject();
+
                 this.getBusyDialog();
 
                 try {
-                    let data = await this.ajaxReadWithJQuery("getExpenseAttachment", { "ItemID": oData.ItemID });
-                    var sMimeType = data.data[0].AttachmentType || "image/png";
-                    var sFileName = data.data[0].AttachmentName || "Document Preview";
-                    let sAttachment = data.data[0].Attachment;
-                    let sBase64;
+                    const data = await this.ajaxReadWithJQuery("getExpenseAttachment", {
+                        ItemID: oData.ItemID
+                    });
 
-                    if (this.isCompressedBase64(sAttachment)) {
-                        sBase64 = this.decompressBase64(sAttachment);
-                    } else {
-                        sBase64 = sAttachment;
+                    const oAttachment = data?.data?.[0];
+                    if (!oAttachment || !oAttachment.Attachment) {
+                        this.closeBusyDialog();
+                        sap.m.MessageToast.show("No attachment found.");
+                        return;
                     }
-                    this.closeBusyDialog();
+
+                    let sAttachment = oAttachment.Attachment;
+                    const sMimeType = oAttachment.AttachmentType || "image/png";
+                    const sFileName = oAttachment.AttachmentName || "Document Preview";
+
+                    let sBase64 = this.isCompressedBase64(sAttachment)
+                        ? this.decompressBase64(sAttachment)
+                        : sAttachment;
+
+                    if (sBase64.startsWith("data:")) {
+                        sBase64 = sBase64.split(",")[1];
+                    }
+
+                    sBase64 = sBase64.replace(/\s/g, "");
 
                     this.SelectedData = {
                         Attachment: sBase64,
@@ -685,78 +699,117 @@ sap.ui.define([
                         AttachmentName: sFileName
                     };
 
+                    this._sPreviewFileName = sFileName;
+                    this._sPreviewMimeType = sMimeType;
+                    this._sPreviewBase64 = sBase64;
+
                     if (!this._oPreviewDialog) {
-                        this._oPreviewDialog = new sap.m.Dialog({
-                            stretch: true,
-                            contentWidth: "100%",
-                            contentHeight: "100%",
-                            showHeader: true,
-                            verticalScrolling: false,
-                            horizontalScrolling: false,
-                            contentPadding: "0rem",
-                            beginButton: new sap.m.Button({
-                                text: "Download",
-                                icon: "sap-icon://download",
-                                press: this.Exp_Det_onPressDownloadAttachment.bind(this)
-                            }),
-                            endButton: new sap.m.Button({
-                                text: "Close",
-                                press: function () {
-                                    this._oPreviewDialog.close();
-                                }.bind(this)
-                            })
+                        this._oPreviewDialog = await sap.ui.core.Fragment.load({
+                            id: this.getView().getId(),
+                            name: "sap.kt.com.minihrsolution.fragment.DocumentPreview",
+                            controller: this
                         });
+
                         this.getView().addDependent(this._oPreviewDialog);
                     }
 
-                    this._oPreviewDialog.removeAllContent();
-                    this._oPreviewDialog.setTitle(sFileName);
+                    const oDialog = sap.ui.core.Fragment.byId(this.getView().getId(), "previewDialog");
+                    const oImage = sap.ui.core.Fragment.byId(this.getView().getId(), "previewImage");
+                    const oHtml = sap.ui.core.Fragment.byId(this.getView().getId(), "previewHtml");
+
+                    oDialog.setTitle(sFileName);
+                    oImage.setVisible(false);
+                    oHtml.setVisible(false);
+                    oHtml.setContent("");
+
+                    if (this._pdfBlobUrl) {
+                        URL.revokeObjectURL(this._pdfBlobUrl);
+                        this._pdfBlobUrl = null;
+                    }
+
+                    this.closeBusyDialog();
 
                     if (sMimeType.startsWith("image/")) {
-                        // ✅ Fix for Image Fit
-                        const oImage = new sap.m.Image({
-                            src: `data:${sMimeType};base64,${sBase64}`,
-                            width: "100%",
-                            height: "auto",
-                            densityAware: false
-                        });
+                        oImage.setSrc(`data:${sMimeType};base64,${sBase64}`);
+                        oImage.setVisible(true);
+                        oDialog.open();
+                        return;
+                    }
 
-                        // Add a ScrollContainer to keep the image centered and zoomable/scrollable if it's large
-                        const oScrollCont = new sap.m.ScrollContainer({
-                            width: "100%",
-                            height: "100%",
-                            horizontal: true,
-                            vertical: true,
-                            content: [oImage]
-                        });
-
-                        this._oPreviewDialog.addContent(oScrollCont);
-                        this._oPreviewDialog.open();
-
-                    } else if (sMimeType === "application/pdf") {
-                        // ✅ Optimized PDF Blob Handling
+                    if (sMimeType === "application/pdf") {
                         const byteCharacters = atob(sBase64);
-                        const byteNumbers = new Array(byteCharacters.length);
-                        for (let i = 0; i < byteCharacters.length; i++) {
-                            byteNumbers[i] = byteCharacters.charCodeAt(i);
+                        const byteArrays = [];
+
+                        for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+                            const slice = byteCharacters.slice(offset, offset + 512);
+                            const byteNumbers = new Array(slice.length);
+
+                            for (let i = 0; i < slice.length; i++) {
+                                byteNumbers[i] = slice.charCodeAt(i);
+                            }
+
+                            byteArrays.push(new Uint8Array(byteNumbers));
                         }
-                        const byteArray = new Uint8Array(byteNumbers);
-                        const blob = new Blob([byteArray], { type: sMimeType });
+
+                        const blob = new Blob(byteArrays, { type: "application/pdf" });
                         const sBlobUrl = URL.createObjectURL(blob);
                         this._pdfBlobUrl = sBlobUrl;
 
-                        // Use 100% height for the iframe
-                        this._oPreviewDialog.addContent(new sap.ui.core.HTML({
-                            content: `<iframe src="${sBlobUrl}" width="100%" height="99%" style="border:none; display:block;"></iframe>`
-                        }));
-                        this._oPreviewDialog.open();
+                        if (sap.ui.Device.system.phone) {
+                            const oLink = document.createElement("a");
+                            oLink.href = sBlobUrl;
+                            oLink.download = sFileName;
+                            document.body.appendChild(oLink);
+                            oLink.click();
+                            document.body.removeChild(oLink);
 
-                    } else {
-                        this.Exp_Det_onPressDownloadAttachment();
+                            MessageToast.show("File downloaded successfully");
+                            return;
+                        }
+
+                        const sIframe =
+                            "<iframe " +
+                            "src='" + sBlobUrl + "#toolbar=0&navpanes=0&scrollbar=0' " +
+                            "width='100%' " +
+                            "height='100%' " +
+                            "style='border:none;width:100%;height:100vh;display:block;' " +
+                            "allowfullscreen>" +
+                            "</iframe>";
+
+                        oHtml.setContent(sIframe);
+                        oHtml.setVisible(true);
+                        oDialog.open();
+                        return;
                     }
+
+                    this.onDownloadPreview();
+
                 } catch (oError) {
                     this.closeBusyDialog();
                     MessageToast.show("Error loading attachment");
+                }
+            },
+            onDownloadPreview: function () {
+                if (!this._pdfBlobUrl) {
+                    MessageToast.show("No file available for download.");
+                    return;
+                }
+
+                const oLink = document.createElement("a");
+                oLink.href = this._pdfBlobUrl;
+                oLink.download = this._sPreviewFileName || "Document.pdf";
+                document.body.appendChild(oLink);
+                oLink.click();
+                document.body.removeChild(oLink);
+            },
+            onClosePreview: function () {
+                if (this._pdfBlobUrl) {
+                    URL.revokeObjectURL(this._pdfBlobUrl);
+                    this._pdfBlobUrl = null;
+                }
+
+                if (this._oPreviewDialog) {
+                    this._oPreviewDialog.close();
                 }
             },
 
@@ -794,50 +847,50 @@ sap.ui.define([
                 reader.readAsDataURL(oFile);
             },
 
-            Exp_Det_onPressDownloadAttachment: function () {
-                try {
-                    if (!this.SelectedData || !this.SelectedData.Attachment) {
-                        MessageToast.show("Please select an item with an attachment before downloading.");
-                        return;
-                    }
+            // Exp_Det_onPressDownloadAttachment: function () {
+            //     try {
+            //         if (!this.SelectedData || !this.SelectedData.Attachment) {
+            //             MessageToast.show("Please select an item with an attachment before downloading.");
+            //             return;
+            //         }
 
-                    const oData = this.SelectedData;
-                    const sMimeType = oData.AttachmentType || "application/octet-stream";
-                    const sBase64 = oData.Attachment;
-                    const sFileName = oData.AttachmentName || "attachment";
+            //         const oData = this.SelectedData;
+            //         const sMimeType = oData.AttachmentType || "application/octet-stream";
+            //         const sBase64 = oData.Attachment;
+            //         const sFileName = oData.AttachmentName || "attachment";
 
-                    // Convert base64 to binary
-                    const byteCharacters = atob(sBase64);
-                    const byteArrays = [];
+            //         // Convert base64 to binary
+            //         const byteCharacters = atob(sBase64);
+            //         const byteArrays = [];
 
-                    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-                        const slice = byteCharacters.slice(offset, offset + 512);
-                        const byteNumbers = new Array(slice.length);
-                        for (let i = 0; i < slice.length; i++) {
-                            byteNumbers[i] = slice.charCodeAt(i);
-                        }
-                        const byteArray = new Uint8Array(byteNumbers);
-                        byteArrays.push(byteArray);
-                    }
+            //         for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+            //             const slice = byteCharacters.slice(offset, offset + 512);
+            //             const byteNumbers = new Array(slice.length);
+            //             for (let i = 0; i < slice.length; i++) {
+            //                 byteNumbers[i] = slice.charCodeAt(i);
+            //             }
+            //             const byteArray = new Uint8Array(byteNumbers);
+            //             byteArrays.push(byteArray);
+            //         }
 
-                    const blob = new Blob(byteArrays, { type: sMimeType });
-                    const sBlobUrl = URL.createObjectURL(blob);
+            //         const blob = new Blob(byteArrays, { type: sMimeType });
+            //         const sBlobUrl = URL.createObjectURL(blob);
 
-                    // Trigger file download
-                    const link = document.createElement("a");
-                    link.href = sBlobUrl;
-                    link.download = sFileName;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
+            //         // Trigger file download
+            //         const link = document.createElement("a");
+            //         link.href = sBlobUrl;
+            //         link.download = sFileName;
+            //         document.body.appendChild(link);
+            //         link.click();
+            //         document.body.removeChild(link);
 
-                    // Clean up
-                    URL.revokeObjectURL(sBlobUrl);
-                    this.SelectedData = null;
-                } catch (e) {
-                    MessageToast.show("Download failed.");
-                }
-            },
+            //         // Clean up
+            //         URL.revokeObjectURL(sBlobUrl);
+            //         this.SelectedData = null;
+            //     } catch (e) {
+            //         MessageToast.show("Download failed.");
+            //     }
+            // },
 
             Exp_Frg_onItemTypeChange: function (oEvent) {
                 utils._LCstrictValidationComboBox(oEvent);

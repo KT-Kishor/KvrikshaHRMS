@@ -14,8 +14,6 @@
 		<m:BadgeCustomData class="badgeClass" key="badge" value="{EndingSoonModel>/notificationCount}"/>
 	</m:customData>
 
-	
-
 	</m:Button>
 		 <m:Button
             press="TP_onraisebugpress"

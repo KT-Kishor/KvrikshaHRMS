@@ -1,4 +1,4 @@
-sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", "sap/ui/model/json/JSONModel", "sap/m/BusyIndicator", "sap/m/MessageToast", "sap/m/MessageBox", "../utils/SalaryCertificatePDF", "../fonts/EBGaramond", "../fonts/Allura", "../fonts/Poppins", "../fonts/Plight", "sap/suite/ui/commons/Timeline", "sap/suite/ui/commons/TimelineItem", "../utils/PaySlipPDF", "../utils/EmpIPNCAPDF"], (Controller, Formatter, utils, JSONModel, BusyIndicator, MessageToast, MessageBox, jsPDF, EBGaramond, Allura, Poppins, Plight, Timeline, TimelineItem, jsPayslipPDF, EmpIPNCAPDF) => {
+sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", "sap/ui/model/json/JSONModel", "sap/m/BusyIndicator", "sap/m/MessageToast", "sap/m/MessageBox", "../utils/SalaryCertificatePDF", "../fonts/EBGaramond", "../fonts/Allura", "../fonts/Poppins", "../fonts/Plight", "sap/suite/ui/commons/Timeline", "sap/suite/ui/commons/TimelineItem", "../utils/PaySlipPDF", "../utils/EmpIPNCAPDF", "sap/ui/core/Fragment","../utils/TraineeALPDF"], (Controller, Formatter, utils, JSONModel, BusyIndicator, MessageToast, MessageBox, jsPDF, EBGaramond, Allura, Poppins, Plight, Timeline, TimelineItem, jsPayslipPDF, EmpIPNCAPDF, Fragment, TraineeALPDF) => {
   "use strict";
   return Controller.extend("sap.kt.com.minihrsolution.controller.SelfService", {
     Formatter: Formatter,
@@ -369,7 +369,7 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
         this.getBusyDialog();
         const oView = this.getView();
         this.i18nModel = oView.getModel("i18n").getResourceBundle();
-        this.companyName = "Kvriksha Technologies Private Limited";
+        this.companyName = "Kalpavriksha Technologies";
         // --- Initialization ---
         this._makeDatePickersReadOnly(["SS_id_Dob", "SS_id_ResgEndDate", "SS_id_DocType"]);
         const viewModel = new sap.ui.model.json.JSONModel({
@@ -698,9 +698,9 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
                 this.byId("SS_id_DocType")?.setValueState("None");
                 this.ReadEmployeeDocument();
                 break;
-                case "My Asset":
-          this.getMyAssetsdata(this.EmployeeID)
-          break;
+              case "My Asset":
+                this.getMyAssetsdata(this.EmployeeID)
+                break;
             }
           },
           () => {
@@ -762,46 +762,46 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
           this.byId("SS_id_DocType").setValue("");
           this.ReadEmployeeDocument();
           break;
-       case "My Asset":
+        case "My Asset":
           this.getMyAssetsdata(this.EmployeeID)
           break;
       }
     },
-   getMyAssetsdata: function (sEmployeeID) {
+    getMyAssetsdata: function (sEmployeeID) {
 
-   
-this.getBusyDialog();
-    this.ajaxReadWithJQuery("IncomeAsset", "Status=Assigned")
+
+      this.getBusyDialog();
+      this.ajaxReadWithJQuery("IncomeAsset", "Status=Assigned")
         .then((oData) => {
-               this.closeBusyDialog();
-            var aResults = Array.isArray(oData.data) ? oData.data : [oData.data];
+          this.closeBusyDialog();
+          var aResults = Array.isArray(oData.data) ? oData.data : [oData.data];
 
-            // Filter based on Employee ID
-            const filteredData = aResults.filter(item =>
-                item.AssignEmployeeID === sEmployeeID
-            );
+          // Filter based on Employee ID
+          const filteredData = aResults.filter(item =>
+            item.AssignEmployeeID === sEmployeeID
+          );
 
-            // Set filtered data to model
-            var oModel = new JSONModel({
-                MyAssetsTable: filteredData
-            });
+          // Set filtered data to model
+          var oModel = new JSONModel({
+            MyAssetsTable: filteredData
+          });
 
-            this.getView().setModel(oModel, "MyAssets");
+          this.getView().setModel(oModel, "MyAssets");
 
-          
+
 
         })
         .catch((oError) => {
-           
+
           this.closeBusyDialog();
 
-            sap.m.MessageToast.show(
-                oError.responseText || oError.message
-            );
+          MessageToast.show(
+            oError.responseText || oError.message
+          );
 
         });
 
-},
+    },
     _getRequiredDocumentTypeForDegree: function (sDegreeName) {
       if (sDegreeName === "School/10th") {
         return "School/10th";
@@ -988,7 +988,7 @@ this.getBusyDialog();
           this.getView().getModel("viewModel").setProperty("/isEditMode", true);
           this.getView().getModel("viewModel").setProperty("/AdminRole", ["Admin", "HR Manager", "HR"].includes(Role));
         } else {
-          sap.m.MessageToast.show(this.i18nModel.getText("permissionDenied"));
+          MessageToast.show(this.i18nModel.getText("permissionDenied"));
         }
       }
     },
@@ -1227,7 +1227,7 @@ this.getBusyDialog();
       const requestData = {
         ManagerID: oDataModel.ManagerID,
         Status: "Submitted",
-        EmpID:this.EmployeeID
+        EmpID: this.EmployeeID
       };
       oDataModel.ManagerID = oEvent.getSource().getSelectedKey();
       oDataModel.ManagerName = oEvent.getSource().getSelectedItem()
@@ -1248,14 +1248,14 @@ this.getBusyDialog();
       this.ajaxReadWithJQuery("InboxDetails", requestData)
         .then(async (oData) => {
           this.closeBusyDialog();
-          if ( oData.data && oData.data.length > 0 && this.managerID !== oDataModel.ManagerID) {
+          if (oData.data && oData.data.length > 0 && this.managerID !== oDataModel.ManagerID) {
 
             MessageBox.show(this.getView().getModel("i18n").getResourceBundle().getText("managerChangeMsg"),
               {
-                icon: sap.m.MessageBox.Icon.INFORMATION,
+                icon: MessageBox.Icon.INFORMATION,
                 title: "Confirmation",
                 actions: [
-                  sap.m.MessageBox.Action.OK,
+                  MessageBox.Action.OK,
                   "Cancle"
                 ],
 
@@ -1274,7 +1274,7 @@ this.getBusyDialog();
                           ID: oData.data[i].ID,
                         },
                       };
-                      await this.ajaxUpdateWithJQuery("InboxDetails",payLoad)
+                      await this.ajaxUpdateWithJQuery("InboxDetails", payLoad)
                         .then((oData) => {
                           flag = true;
                         })
@@ -1286,10 +1286,10 @@ this.getBusyDialog();
                         });
                     }
                     if (flag) {
-                      // sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("managerUpdate"));
+                      // MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("managerUpdate"));
                     } else {
-                      sap.m.MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("commomerror"));
-                      }
+                      MessageToast.show(this.getView().getModel("i18n").getResourceBundle().getText("commomerror"));
+                    }
                   } else {
                     await this._fetchCommonData(
                       "EmployeeDetails",
@@ -1402,7 +1402,7 @@ this.getBusyDialog();
       var that = this;
       var oSelectedItem = this.byId("EdF_id_EduTable").getSelectedItem();
       if (!oSelectedItem) {
-        sap.m.MessageToast.show(this.i18nModel.getText("selctRowtoDelete"));
+        MessageToast.show(this.i18nModel.getText("selctRowtoDelete"));
         return;
       }
       var oContext = oSelectedItem.getBindingContext("sEducationModel").getProperty("ID");
@@ -1419,13 +1419,13 @@ this.getBusyDialog();
               },
             })
             .then(() => {
-              sap.m.MessageToast.show(that.i18nModel.getText("eduDataDeletSuucess"));
+              MessageToast.show(that.i18nModel.getText("eduDataDeletSuucess"));
               that._fetchCommonData("EducationalDetails", "sEducationModel", { EmployeeID: that.EmployeeID });
               that.closeBusyDialog();
             })
             .catch((error) => {
               that.closeBusyDialog();
-              sap.m.MessageToast.show(error.responseText);
+              MessageToast.show(error.responseText);
             });
         },
         function () {
@@ -1475,7 +1475,7 @@ this.getBusyDialog();
       var that = this;
       var oSelectedItem = this.byId("EmpF_id_EmpTable").getSelectedItem();
       if (!oSelectedItem) {
-        sap.m.MessageToast.show(this.i18nModel.getText("selctRowtoDelete"));
+        MessageToast.show(this.i18nModel.getText("selctRowtoDelete"));
         return;
       }
       var oContext = oSelectedItem.getBindingContext("sEmploymentModel").getProperty("ID");
@@ -1492,12 +1492,12 @@ this.getBusyDialog();
               },
             })
             .then(() => {
-              sap.m.MessageToast.show(that.i18nModel.getText("empDataDeleteSuccess"));
+              MessageToast.show(that.i18nModel.getText("empDataDeleteSuccess"));
               that._fetchCommonData("EmploymentDetails", "sEmploymentModel", { EmployeeID: that.EmployeeID });
               that.closeBusyDialog();
             })
             .catch((error) => {
-              sap.m.MessageToast.show(error.responseText);
+              MessageToast.show(error.responseText);
               that.closeBusyDialog();
             });
         },
@@ -1705,75 +1705,132 @@ this.getBusyDialog();
       }
     },
 
-    openPreviewDocument: function (oEvent) {
+    openPreviewDocument: async function (oEvent) {
+
       const oContext = oEvent.getSource().getBindingContext("DocumentModel");
       const oData = oContext.getObject();
-      const sMimeType = oData.FileType || "image/png";
+
+      const sMimeType = oData.FileType;
       const sBase64 = oData.File;
-      const sFileName = "Document Preview";
+
       if (!this._oPreviewDialog) {
-        this._oPreviewDialog = new sap.m.Dialog({
-          title: sFileName,
-          stretch: true, // Fullscreen on all devices
-          draggable: true,
-          resizable: true,
-          contentWidth: "50%",
-          contentHeight: "auto",
-          horizontalScrolling: false,
-          contentPadding: "0rem",
-          content: [],
-          endButton: new sap.m.Button({
-            text: "Close",
-            type: "Transparent",
-            press: function () {
-              if (this._pdfBlobUrl) {
-                URL.revokeObjectURL(this._pdfBlobUrl);
-                this._pdfBlobUrl = null;
-              }
-              this._oPreviewDialog.close();
-            }.bind(this),
-          }),
+
+        this._oPreviewDialog = await Fragment.load({
+          id: this.getView().getId(),
+          name: "sap.kt.com.minihrsolution.fragment.DocumentPreview",
+          controller: this
         });
+
         this.getView().addDependent(this._oPreviewDialog);
       }
-      this._oPreviewDialog.removeAllContent();
+
+      const oImage = Fragment.byId(
+        this.getView().getId(),
+        "previewImage"
+      );
+
+      const oHtml = Fragment.byId(
+        this.getView().getId(),
+        "previewHtml"
+      );
+
+      oImage.setVisible(false);
+      oHtml.setVisible(false);
+
       if (sMimeType.startsWith("image/")) {
-        const sFileUri = `data:${sMimeType};base64,${sBase64}`;
-        const oImage = new sap.m.Image({
-          src: sFileUri,
-          densityAware: false,
-        });
-        oImage.addStyleClass("imagePreviewFit");
-        this._oPreviewDialog.addContent(oImage);
+
+        oImage.setSrc(
+          `data:${sMimeType};base64,${sBase64}`
+        );
+
+        oImage.setVisible(true);
+
       } else if (sMimeType === "application/pdf") {
-        // Convert base64 to Blob
+
         const byteCharacters = atob(sBase64);
         const byteArrays = [];
+
         for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+
           const slice = byteCharacters.slice(offset, offset + 512);
+
           const byteNumbers = new Array(slice.length);
+
           for (let i = 0; i < slice.length; i++) {
             byteNumbers[i] = slice.charCodeAt(i);
           }
-          const byteArray = new Uint8Array(byteNumbers);
-          byteArrays.push(byteArray);
+
+          byteArrays.push(new Uint8Array(byteNumbers));
         }
-        const blob = new Blob(byteArrays, { type: sMimeType });
-        const sBlobUrl = URL.createObjectURL(blob);
-        this._pdfBlobUrl = sBlobUrl;
-        this._oPreviewDialog.addContent(
-          new sap.ui.core.HTML({
-            content: `<iframe src="${sBlobUrl}" width="100%" height="600px" style="border:none;"></iframe>`,
-          })
-        );
+
+        const blob = new Blob(byteArrays, {
+          type: "application/pdf"
+        });
+
+        const sPdfUrl = URL.createObjectURL(blob);
+
+        if (sap.ui.Device.system.phone) {
+
+          const oLink = document.createElement("a");
+          oLink.href = sPdfUrl;
+          oLink.download = oData.FileName || "Document.pdf";
+
+          document.body.appendChild(oLink);
+          oLink.click();
+          document.body.removeChild(oLink);
+
+          URL.revokeObjectURL(sPdfUrl);
+
+          MessageToast.show("File downloaded successfully");
+          return;
+        }
+
+        this._pdfBlobUrl = sPdfUrl;
+
+        const sIframe =
+          "<iframe " +
+          "src='" + sPdfUrl + "#toolbar=0&navpanes=0&scrollbar=0' " +
+          "width='100%' " +
+          "height='100%' " +
+          "style='border:none;width:100%;height:100vh;display:block;' " +
+          "allowfullscreen>" +
+          "</iframe>";
+
+        oHtml.setContent(sIframe);
+        oHtml.setVisible(true);
+
       } else {
-        this._oPreviewDialog.addContent(
-          new sap.m.Text({
-            text: "Preview not supported.",
-          })
+
+        oHtml.setContent(
+          "<div style='padding:20px'>Preview not supported.</div>"
         );
+
+        oHtml.setVisible(true);
       }
+
       this._oPreviewDialog.open();
+    },
+    onDownloadPreview: function () {
+      if (!this._pdfBlobUrl) {
+        MessageToast.show("No file available for download.");
+        return;
+      }
+
+      const oLink = document.createElement("a");
+      oLink.href = this._pdfBlobUrl;
+      oLink.download = this._sPreviewFileName || "Document.pdf";
+      document.body.appendChild(oLink);
+      oLink.click();
+      document.body.removeChild(oLink);
+    },
+    onClosePreview: function () {
+
+      if (this._pdfBlobUrl) {
+        URL.revokeObjectURL(this._pdfBlobUrl);
+        this._pdfBlobUrl = null;
+      }
+
+      this._oPreviewDialog.close();
     },
 
     onFileSizeExceeds: function () {
@@ -2266,14 +2323,14 @@ this.getBusyDialog();
       var oTable = this.byId("EmpF_id_EmpTable");
       var aSelectedContexts = oTable.getSelectedContexts();
       if (aSelectedContexts.length === 0) {
-        sap.m.MessageToast.show(that.i18nModel.getText("selectRowToEdit")); // Using i18n for message text
+        MessageToast.show(that.i18nModel.getText("selectRowToEdit")); // Using i18n for message text
         return;
       }
       var dataModel = aSelectedContexts[0].getObject();
       // Check if at least one reference set is available
       var referenceDetailsExist = (dataModel.RCISal && dataModel.RCIName && dataModel.RCIAddress && dataModel.RCIEmailID && dataModel.RCIMobileNo) || (dataModel.RCIISal && dataModel.RCIIName && dataModel.RCIIAddress && dataModel.RCIIEmailID && dataModel.RCIIMobileNo);
       if (!referenceDetailsExist) {
-        sap.m.MessageToast.show(that.i18nModel.getText("noReferenceDetails")); // Using i18n for warning message
+        MessageToast.show(that.i18nModel.getText("noReferenceDetails")); // Using i18n for warning message
         return;
       }
       var formattedReferenceData = `<div style="padding-left: 15px; padding-right: 15px;">`;
@@ -2421,7 +2478,7 @@ this.getBusyDialog();
           headerToolbar: new sap.m.Toolbar({ content: [oHeaderBox] }),
         });
         oPanel.addStyleClass("sapUiSmallMarginBottom");
-        var oFragModel = new sap.ui.model.json.JSONModel(offerData);
+        var oFragModel = new JSONModel(offerData);
         oPanel.setModel(oFragModel, "salaryData");
         var oFragment = sap.ui.xmlfragment(this.getView().getId(), "sap.kt.com.minihrsolution.fragment.SalaryDisplay", this);
         oPanel.addContent(oFragment);
@@ -2975,7 +3032,7 @@ this.getBusyDialog();
         const oDate = sap.ui.getCore().byId("FSA_id_Date").getValue();
 
         if (!oNominee || !oDate) {
-          sap.m.MessageToast.show("Please fill all required fields.");
+          MessageToast.show("Please fill all required fields.");
           return;
         }
 
@@ -3062,7 +3119,7 @@ this.getBusyDialog();
         doc.save("SpotAward_Certificate.pdf");
         this.oDialog.close();
       } catch (error) {
-        sap.m.MessageToast.show("An error occurred while generating the certificate. Please try again.");
+        MessageToast.show("An error occurred while generating the certificate. Please try again.");
       } finally {
         this.closeBusyDialog();
       }
@@ -3079,7 +3136,7 @@ this.getBusyDialog();
       var employeeDetails = employeeData && employeeData[0];
 
       if (!employeeDetails) {
-        sap.m.MessageToast.show("Employee details not found.");
+        MessageToast.show("Employee details not found.");
         return;
       }
 
@@ -3102,7 +3159,7 @@ this.getBusyDialog();
         ProfilePhoto: employeeDetails.ProfilePhoto || "",
       };
 
-      var oIdCardModel = new sap.ui.model.json.JSONModel(idCardJson);
+      var oIdCardModel = new JSONModel(idCardJson);
       oView.setModel(oIdCardModel, "IdCardModel");
 
       // Show busy dialog
@@ -3154,10 +3211,10 @@ this.getBusyDialog();
           this.CC_onPressClose();
           this.onPressMerge(oModelData);
         } else {
-          sap.m.MessageToast.show(this.i18nModel.getText("mandetoryFields"));
+          MessageToast.show(this.i18nModel.getText("mandetoryFields"));
         }
       } catch (error) {
-        sap.m.MessageToast.show(error.message || error.responseText);
+        MessageToast.show(error.message || error.responseText);
       }
     },
     CC_onPressClose: function () {
@@ -3254,7 +3311,7 @@ this.getBusyDialog();
         // Save the document
         doc.save(`${employeeDetails.EmployeeName}_IDCard.pdf`);
       } catch (error) {
-        sap.m.MessageToast.show(error.message || error.responseText);
+        MessageToast.show(error.message || error.responseText);
       } finally {
         this.closeBusyDialog();
       }
@@ -3322,7 +3379,7 @@ this.getBusyDialog();
         oCommentField.setEditable(false);
         oCommentField.setValue(sOriginalComment);
 
-        sap.m.MessageToast.show(this.i18nModel.getText("withdrawCancelMsg") || "Withdrawal canceled");
+        MessageToast.show(this.i18nModel.getText("withdrawCancelMsg") || "Withdrawal canceled");
 
         this.SSReg_oDialog.close();
         return;
@@ -3615,7 +3672,7 @@ this.getBusyDialog();
       oCommentField.setEditable(false);
       oCommentField.setValue(sRestoreComment);
 
-      sap.m.MessageToast.show(this.i18nModel.getText("withdrawCancelMsg") || "Withdrawal canceled");
+      MessageToast.show(this.i18nModel.getText("withdrawCancelMsg") || "Withdrawal canceled");
 
       this.SSReg_oDialog.close();
     },
@@ -3737,7 +3794,7 @@ this.getBusyDialog();
     BPD_onPressDownload: async function () {
       const sFinancialYear = this.oModel.getProperty("/SelectedFinancialYear");
       if (!sFinancialYear) {
-        sap.m.MessageToast.show("Please select Financial Year");
+        MessageToast.show("Please select Financial Year");
         return;
       }
 
@@ -3747,13 +3804,13 @@ this.getBusyDialog();
 
       // If there are no records for this financial year, stop execution
       if (aFilteredMonths.length === 0) {
-        sap.m.MessageBox.information("No payslip data found for the selected Financial Year.");
+        MessageBox.information("No payslip data found for the selected Financial Year.");
         return;
       }
 
       this.BPD_oDialog.close();
       // Notify the user immediately
-      sap.m.MessageToast.show("Preparing payslips in the background. The download will begin shortly...");
+      MessageToast.show("Preparing payslips in the background. The download will begin shortly...");
 
       try {
         // 2. Map the filtered records to generate parallel requests ONLY for existing months
@@ -3813,7 +3870,7 @@ this.getBusyDialog();
         }
 
         if (aValidMonthsData.length === 0) {
-          sap.m.MessageBox.information("Unable to retrieve valid payslip details from the server.");
+          MessageBox.information("Unable to retrieve valid payslip details from the server.");
           return;
         }
 
@@ -3863,7 +3920,7 @@ this.getBusyDialog();
         });
 
       } catch (err) {
-        sap.m.MessageBox.error("An error occurred while preparing the payslips: " + (err.message || err.responseText));
+        MessageBox.error("An error occurred while preparing the payslips: " + (err.message || err.responseText));
       }
     },
 
@@ -3873,27 +3930,45 @@ this.getBusyDialog();
 
     SS_onDownloadConsentLetter: async function () {
       try {
+
         this.getBusyDialog();
 
-        let oEmpData = this.getView().getModel("sEmployeeModel").getData()[0];
+        let oEmpData = this.getView()
+          .getModel("sEmployeeModel")
+          .getData()[0];
 
-        const oSalaryResponse = await this.ajaxReadWithJQuery("SalaryDetails", {
-          EmployeeID: this.EmployeeID
-        });
+        // Decide entity based on Role
+        const sEntityName = oEmpData.Role === "Trainee"
+          ? "Trainee"
+          : "SalaryDetails";
 
-        let aData = oSalaryResponse.data;
+        const oFilter = oEmpData.Role === "Trainee"
+          ? {
+            TraineeID: this.EmployeeID
+          }
+          : {
+            EmployeeID: this.EmployeeID
+          };
+
+        const oResponse = await this.ajaxReadWithJQuery(
+          sEntityName,
+          oFilter
+        );
+
+        let aData = oResponse.data;
         let oSalaryData = {};
 
         if (Array.isArray(aData) && aData.length > 0) {
 
-          // Sort by EffectiveDate (oldest first)
-          aData.sort((a, b) => new Date(a.EffectiveDate) - new Date(b.EffectiveDate));
+          aData.sort((a, b) =>
+            new Date(a.EffectiveDate) -
+            new Date(b.EffectiveDate)
+          );
 
-          // Always pick OLDEST (correct for your case)
           oSalaryData = aData[0];
 
         } else {
-          oSalaryData = aData;
+          oSalaryData = aData || {};
         }
 
         let oFinalData = {
@@ -3901,19 +3976,213 @@ this.getBusyDialog();
           ...oSalaryData
         };
 
-        const oFinalModel = new sap.ui.model.json.JSONModel(oFinalData);
+        const oFinalModel =
+          new JSONModel(oFinalData);
 
-        this.offerGeneratingPdfFunction(oFinalModel);
+       if (oEmpData.Role === "Trainee") {
+    this.traineeOfferGeneratingPdfFunction(oFinalModel);
+} else {
+    this.offerGeneratingPdfFunction(oFinalModel);
+}
 
         this.closeBusyDialog();
 
       } catch (err) {
-        sap.m.MessageToast.show(err.message || err.responseText);
+
+        MessageToast.show(
+          err.message || err.responseText
+        );
+
         this.closeBusyDialog();
       }
     },
+    traineeOfferGeneratingPdfFunction: async function (oFinalModel) {
 
-    offerGeneratingPdfFunction: async function (oModel) {
+    this.getBusyDialog();
+
+    try {
+
+        const oEmpModel = oFinalModel.getData();
+
+        await this._fetchCommonData(
+            "PDFCondition",
+            "PDFConditionModel",
+            { Type: "EmployeeConsent" }
+        );
+
+        const oPDFModel = this.getView().getModel("PDFData");
+
+        // Trainee Mapping
+        oPDFModel.setProperty("/Type", oEmpModel.Type);
+        oPDFModel.setProperty("/Amount", oEmpModel.Amount);
+        oPDFModel.setProperty("/Self", "Trainee Offer");
+
+        oPDFModel.setProperty(
+            "/EmpID",
+            oEmpModel.TraineeID || ""
+        );
+
+        oPDFModel.setProperty(
+            "/EmpName",
+            (oEmpModel.Salutation || "") +
+            " " +
+            (oEmpModel.EmployeeName || "")
+        );
+
+        oPDFModel.setProperty(
+            "/EmpRole",
+            oEmpModel.Designation || "Trainee"
+        );
+
+        oPDFModel.setProperty(
+            "/EmpAddress",
+            (oEmpModel.CorrespondenceAddress || "")
+                .replace(/\n/g, ", ")
+        );
+
+        // No AppraisalDate for trainee
+        oPDFModel.setProperty(
+            "/CreateDate",
+            Formatter.formatDate(new Date())
+        );
+
+        oPDFModel.setProperty(
+            "/JoiningDate",
+            Formatter.formatDate(oEmpModel.JoiningDate)
+        );
+
+        // Stipend instead of CTC
+        oPDFModel.setProperty(
+            "/EmpCTC",
+            (oEmpModel.Currency || "INR") +
+            " " +
+            Formatter.fromatNumber(
+                oEmpModel.Stipend || 0
+            )
+        );
+
+        let filter = {
+            companyCode: oEmpModel.CompanyCode
+        };
+
+        const apiResponse =
+            await this.ajaxReadWithJQuery(
+                "CompanyCodeDetails",
+                filter
+            );
+
+        const oCompanyDetailsModel =
+            apiResponse.data[0];
+
+        const oPDFConditionModel =
+            this.getView()
+                .getModel("PDFConditionModel")
+                .getData();
+
+        // Images conversion same as existing code
+        if (
+            !oCompanyDetailsModel.companylogo64 &&
+            !oCompanyDetailsModel.signature64
+        ) {
+
+            const logoBlob = new Blob(
+                [
+                    new Uint8Array(
+                        oCompanyDetailsModel.companylogo?.data
+                    )
+                ],
+                {
+                    type: "image/png"
+                }
+            );
+
+            const signBlob = new Blob(
+                [
+                    new Uint8Array(
+                        oCompanyDetailsModel.signature?.data
+                    )
+                ],
+                {
+                    type: "image/png"
+                }
+            );
+
+            const [logoBase64, signBase64] =
+                await Promise.all([
+                    this._convertBLOBToImage(logoBlob),
+                    this._convertBLOBToImage(signBlob)
+                ]);
+
+            oCompanyDetailsModel.companylogo64 =
+                logoBase64;
+
+            oCompanyDetailsModel.signature64 =
+                signBase64;
+        }
+
+        // Trainee PDF Generator
+        if (
+            typeof TraineeALPDF !== "undefined" &&
+            typeof TraineeALPDF._GeneratePDF === "function"
+        ) {
+          const logoBlob = new Blob(
+    [new Uint8Array(oCompanyDetailsModel.companylogo?.data)],
+    { type: "image/png" }
+);
+
+const signBlob = new Blob(
+    [new Uint8Array(oCompanyDetailsModel.signature?.data)],
+    { type: "image/png" }
+);
+
+const backgroundBlob = new Blob(
+    [new Uint8Array(oCompanyDetailsModel.backgroundLogo?.data)],
+    { type: "image/png" }
+);
+
+const emailBlob = new Blob(
+    [new Uint8Array(oCompanyDetailsModel.emailLogo?.data)],
+    { type: "image/png" }
+);
+
+const [
+    logoBase64,
+    signBase64,
+    backgroundBase64,
+    emailBase64
+] = await Promise.all([
+    this._convertBLOBToImage(logoBlob),
+    this._convertBLOBToImage(signBlob),
+    this._convertBLOBToImage(backgroundBlob),
+    this._convertBLOBToImage(emailBlob)
+]);
+
+oCompanyDetailsModel.companylogo64 = logoBase64;
+oCompanyDetailsModel.signature64 = signBase64;
+oCompanyDetailsModel.backgroundLogoBase64 = backgroundBase64;
+oCompanyDetailsModel.emailLogoBase64 = emailBase64;
+
+            TraineeALPDF._GeneratePDF(
+                this,
+                oPDFModel.getData(),
+                oCompanyDetailsModel,
+                oPDFConditionModel
+            );
+        }
+
+    } catch (err) {
+
+        MessageToast.show(
+            err.message || err.responseText
+        );
+
+    } finally {
+
+        this.closeBusyDialog();
+    }
+},
+
+    offerGeneratingPdfFunction: async function (oFinalModel) {
       this.getBusyDialog();
 
       const _setIfNotZero = (model, path, value, currency) => {
@@ -3925,7 +4194,7 @@ this.getBusyDialog();
       };
 
       try {
-        var oEmpModel = oModel.getData();
+        var oEmpModel = oFinalModel.getData();
         await this._fetchCommonData("PDFCondition", "PDFConditionModel", { Type: "EmployeeConsent" });
         var oPDFModel = this.getView().getModel("PDFData");
 
@@ -4034,22 +4303,22 @@ this.getBusyDialog();
         }
 
         // PDF Generation
-        if (
-          oCompanyDetailsModel.companylogo64 &&
-          oCompanyDetailsModel.signature64 &&
-          typeof EmpIPNCAPDF !== "undefined" &&
-          typeof EmpIPNCAPDF._GeneratePDF === "function"
-        ) {
-          EmpIPNCAPDF._GeneratePDF(
-            this,
-            oPDFModel.getData(),
-            oCompanyDetailsModel,
-            oPDFConditionModel
-          );
-        }
+       if (
+    oCompanyDetailsModel.companylogo64 &&
+    oCompanyDetailsModel.signature64 &&
+    typeof EmpIPNCAPDF !== "undefined" &&
+    typeof EmpIPNCAPDF._GeneratePDF === "function"
+) {
+    EmpIPNCAPDF._GeneratePDF(
+        this,
+        oPDFModel.getData(),
+        oCompanyDetailsModel,
+        oPDFConditionModel
+    );
+}
 
       } catch (err) {
-        sap.m.MessageToast.show(err.message || err.responseText);
+        MessageToast.show(err.message || err.responseText);
       } finally {
         this.closeBusyDialog();
       }

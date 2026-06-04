@@ -332,7 +332,7 @@ sap.ui.define([
         "Payslip Deduction": "Payslip Deduction",
         "Scheme Upload": "Scheme Upload",
         "Manage Quotation": "Quotation App",
-
+        "Policy Management": "Policy Management"
       };
 
       this.getView().getModel("RaiseBugModel").setProperty(

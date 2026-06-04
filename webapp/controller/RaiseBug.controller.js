@@ -32,14 +32,18 @@ sap.ui.define([
 
                 var oToday = new Date();
 
-                // First day of current month
-                var oFirstDay = new Date(oToday.getFullYear(), oToday.getMonth(), 1);
+                // First day of the month, 2 months back
+                var oStartDate = new Date(
+                    oToday.getFullYear(),
+                    oToday.getMonth() - 2,
+                    1
+                );
+                
+                // Today
+                var oEndDate = new Date();
 
-                // Last day of current month
-                var oLastDay = new Date(oToday.getFullYear(), oToday.getMonth() + 1, 0);
-
-                oDateRange.setDateValue(oFirstDay);
-                oDateRange.setSecondDateValue(oLastDay);
+                oDateRange.setDateValue(oStartDate);
+                oDateRange.setSecondDateValue(oEndDate);
 
                 await this._fetchCommonData("AllLoginDetails", "EmpModel");
                 this._FragmentDatePickersReadOnly(["RB_id_ResolveDate"])

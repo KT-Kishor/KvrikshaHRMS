@@ -637,7 +637,7 @@ sap.ui.define(["./BaseController", "../utils/validation", "sap/ui/model/json/JSO
                 await this.ajaxCreateWithJQuery("SowDetails", oJson)
                     .then((oData) => {
                         if (oData.success) {
-                            this.byId("MsaE_id_SowStatus").setValue("New");
+                            this.byId("MsaE_id_SowStatus").setValue("All");
                             this.CommonReadCallForSow();
                             this.SOW_oDialog.close();
                             MessageToast.show(this.i18nModel.getText("sowSuccess"));
@@ -787,7 +787,7 @@ sap.ui.define(["./BaseController", "../utils/validation", "sap/ui/model/json/JSO
                 .getModel("SowReadModel")
                 .getData()
                 .filter((item) => item.SowID === this.Selected.SowID);
-            var Status = oEvent.getSource().getText() === "Inactive All" ? "Inactive" : "Active";
+            var Status = oEvent.getSource().getText() === "Inactive" ? "Inactive" : "Active";
             var oData = {
                 data: FilterData.map((item) => {
                     return {
@@ -800,7 +800,7 @@ sap.ui.define(["./BaseController", "../utils/validation", "sap/ui/model/json/JSO
                     };
                 }),
             };
-            this.byId("MsaE_id_SowStatus").setValue(Status);
+            this.byId("MsaE_id_SowStatus").setValue("All");
             var Message = Status === "Inactive" ? this.i18nModel.getText("sowAllInactive") : this.i18nModel.getText("sowAllActive");
             await this.CommonUpdateCall(oData, Message, "ActiveInactive");
             this.SimpleFormModel.setProperty("/BtnEnable", false);
@@ -809,7 +809,7 @@ sap.ui.define(["./BaseController", "../utils/validation", "sap/ui/model/json/JSO
         CommonUpdateCall: async function (Data, Message, type) {
             var oModelDataPro = this.getView().getModel("oModelDataPro").getData();
 
-            if (utils._LCvalidateMandatoryField(sap.ui.getCore().byId("SOW_id_MsaDesc"), "ID") && utils._LCstrictValidationComboBox(sap.ui.getCore().byId("Sow_id_Currency"), "ID")) {
+            if (type === "ActiveInactive" || utils._LCvalidateMandatoryField(sap.ui.getCore().byId("SOW_id_MsaDesc"), "ID") && utils._LCstrictValidationComboBox(sap.ui.getCore().byId("Sow_id_Currency"), "ID")) {
 
                 if (type !== "ActiveInactive") {
                     if (!oModelDataPro || oModelDataPro.length === 0) return MessageToast.show(this.i18nModel.getText("msaTableValidation"));
@@ -824,6 +824,7 @@ sap.ui.define(["./BaseController", "../utils/validation", "sap/ui/model/json/JSO
                         return MessageToast.show(this.i18nModel.getText("mandatoryFieldsSow"));
                     }
                 }
+
                 this.getBusyDialog();
                 try {
                     var responce = await this.ajaxUpdateWithJQuery("SowDetails", Data);
@@ -1007,7 +1008,7 @@ sap.ui.define(["./BaseController", "../utils/validation", "sap/ui/model/json/JSO
             try {
                 const oData = await this.ajaxCreateWithJQuery("SowDetails", oJson);
                 if (oData.success) {
-                    this.byId("MsaE_id_SowStatus").setValue("New");
+                    this.byId("MsaE_id_SowStatus").setValue("All");
                     await this.CommonReadCallForSow();
                     MessageToast.show(this.i18nModel.getText("sowExpendCreate"));
                     this.SimpleFormModel.setProperty("/BtnEnable", false);
@@ -1041,7 +1042,7 @@ sap.ui.define(["./BaseController", "../utils/validation", "sap/ui/model/json/JSO
                     },
                 })),
             };
-            this.byId("MsaE_id_SowStatus").setValue("Inactive");
+            this.byId("MsaE_id_SowStatus").setValue("All");
             await this.CommonUpdateCall(oJson, this.i18nModel.getText("sowAllRelesedUpdate"), "");
             // this.SOW_oDialog.close();
             this.SimpleFormModel.setProperty("/BtnEnable", false);
@@ -1073,7 +1074,7 @@ sap.ui.define(["./BaseController", "../utils/validation", "sap/ui/model/json/JSO
                     },
                 })),
             };
-            this.byId("MsaE_id_SowStatus").setValue("New");
+            this.byId("MsaE_id_SowStatus").setValue("All");
             await this.CommonUpdateCall(oData, this.i18nModel.getText("sowUpdate"), "");
             // this.SOW_oDialog.close();
             this.SimpleFormModel.setProperty("/BtnEnable", false);

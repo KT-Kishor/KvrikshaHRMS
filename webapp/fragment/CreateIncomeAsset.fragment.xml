@@ -154,6 +154,30 @@
                         key="{CurrencyModel>currency}"
                     />
                 </ComboBox>
+
+       <Label text="{i18n>warranty}" required="true"/>
+
+<Input
+    id="FCIA_id_warranty"
+    value="{CreateIncomeAssetModel>/Warranty}"
+    liveChange="FCIA_onInputLiveChange"
+    valueStateText="{i18n>enterWarranty}"
+    maxLength="20"
+/>
+
+<Label text="{i18n>warrantyDate}" required="true"/>
+
+<DatePicker
+    id="FCIA_id_warrantyDate"
+    required="true"
+    value="{CreateIncomeAssetModel>/WarrantyDate}"
+    valueFormat="dd/MM/yyyy"
+    displayFormat="dd/MM/yyyy"
+    valueStateText="{i18n>selectValidWarrantyDate}"
+    change="onWarrantyDateChange"
+/>
+
+
                 <Label text="{i18n>transferby}"/>
                 <Select
                     id="FCIA_id_transferBy"

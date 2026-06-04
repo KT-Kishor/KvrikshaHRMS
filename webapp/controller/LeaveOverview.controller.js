@@ -64,6 +64,7 @@ sap.ui.define([
                 const loginSuccess = await this.commonLoginFunction("LeaveOverview");
                 if (!loginSuccess) return;
                 this.getBusyDialog();
+                if(!this.getView().getModel("EmpDetails")) await this._fetchCommonData("EmployeeDetails", "EmpDetails");
                 const oViewModel = new JSONModel({
                     startDate: new Date(new Date().setHours(9, 0, 0, 0)), // Start at 9 AM
                     viewKey: "Week"
@@ -80,7 +81,21 @@ sap.ui.define([
                 loginModel.setProperty("/HeaderName", this.i18nModel.getText("resourecPlanning"));
 
                 // Fetch all active employees (no manager filter)
-                const params = { EmployeeStatus: "Active" };
+                const Manager_ID = this.getView()
+                    .getModel("EmpDetails")
+                    .getData()
+                    .find(i => i.EmployeeID === loginModel.getProperty("/EmployeeID"))?.ManagerID;
+
+                const Manager_ManagerID = this.getView()
+                    .getModel("EmpDetails")
+                    .getData()
+                    .find(i => i.EmployeeID === Manager_ID)?.ManagerID;
+
+                const params = {
+                    EmployeeStatus: "Active",
+                    ManagerID: Manager_ID+","+Manager_ManagerID
+                };
+
                 await this._fetchCommonData("EmployeeDetails", "sEmployeeDetails", params);
                 this.CommonReadCall();
                 // Get data from models
@@ -430,7 +445,7 @@ sap.ui.define([
             }
         },
 
-        onPressback: function() {
+        onPressback: function () {
             this.getRouter().navTo("RouteTilePage"); // Navigate to tile page
             this.getView().getModel("LeaveModel").setData({});
             this.getView().getModel("EmpLeaveModel").setData({});

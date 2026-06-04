@@ -2246,10 +2246,9 @@ font-size: 20px;
   height: 33px !important;
 }
 .Recuritmentclass{
-  font-size: 18px;
+  font-size: 16px;
   line-height: 25px;
   text-align: justify !important;
-  color: #000000 !important;
 }
 .aboutTitle{
   color: #000000 !important;
@@ -2966,38 +2965,11 @@ body, html, .sapUiBody {
     border-radius: 12px;
   }
 }
-
-.ProductDemoSection {
-  background-color: #fff;
-  border-radius: 12px;
-  width: 96%;
-  max-width: 1600px;
-  padding: clamp(16px, 3vw, 30px);
-  margin: 20px 30px;   
-  font-size: clamp(18px, 3vw, 32px);
-  font-weight: 700;
-  color: #0057FF;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  text-transform: capitalize;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-
-  background-image: linear-gradient(to right, #F1AD53, #F1AD53);
-  background-repeat: no-repeat;
-  background-size: 100% 3px;
-  background-position: right 100%;
-
-  box-shadow: 4px 4px 40px rgba(0,0,0,0.1);
-  z-index: 1000;
-}
-
-/* Tablet */
-@media (max-width: 768px) {
-  .ProductDemoSection {
-    width: 93%;
-      padding: 20px;
-    margin: 10px 23px;  
-    font-size: clamp(16px, 5vw, 24px);
-  }
+.sapUiRespGridMedia-Std-Phone.sapUiRespGridHSpace1>.sapUiRespGridSpanS12 {
+    width: 95%;
+    width: -webkit-calc(100% - 1rem);
+    width: calc(100% - 1rem);
+    margin-left: -0.5px;
 }
 
 .Dashboardtitle{
@@ -3007,10 +2979,9 @@ body, html, .sapUiBody {
 }
 @media (max-width: 400px) {
   .Dashboardtitle{
-    font-size: 12px !important;
+    font-size: 10px !important;
   }
 }
-
 
 .v-legend .v-legend-item .v-legend-item-text {
   white-space: normal !important;
@@ -3448,12 +3419,10 @@ body, html, .sapUiBody {
 .whiteLabel * {
     color: white !important;
 }
-
 .BrownLabel *{
   color:#000 !important;
   font-weight: bold !important;
 }
-
 .action * {
     color: white !important;
 }
@@ -4076,6 +4045,10 @@ color: #fff !important;
     }
 }
 
+.sapFDynamicPageTitleMainSnapContentVisible .sapFDynamicPageTitleSnapped .sapMText {
+    overflow: hidden;
+    color: #fff !important;
+}
 /* =========================================================
    POLICY PAGE
 ========================================================= */
@@ -4346,4 +4319,12 @@ color: #fff !important;
     .pdfSectionResponsive iframe {
         height: 45vh;
     }
+}
+.policyStatusSelect {
+    min-width: 6rem;
+    max-width: 8rem;
+}
+.policyDepartmentCombo {
+    max-width: 8rem;
+    min-width: 6rem;
 }

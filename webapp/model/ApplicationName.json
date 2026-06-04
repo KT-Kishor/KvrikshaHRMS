@@ -135,7 +135,7 @@
         "ID": 34,
         "AppName": "Maintain Data"
     },
-    {
+      {
         "ID": 34,
         "AppName": "Login Issue"    
     },
@@ -167,8 +167,20 @@
         "ID" : 41,
         "AppName": "Manage Goals"
     },
+    {
+        "ID" : 42,
+        "AppName": "Scheme Upload"
+    },
+    {
+        "ID" : 43,
+        "AppName": "Manage Quotations"
+    },
+    {
+        "ID" : 44,
+        "AppName": "Policy Management"
+    },
      {
-        "ID": 42,
+        "ID": 45,
         "AppName": "Others"
     }
 ]

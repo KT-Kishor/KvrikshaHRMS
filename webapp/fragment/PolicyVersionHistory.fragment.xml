@@ -1,0 +1,90 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <Dialog
+        title="{i18n>policyVersionHistory}"
+        contentWidth="70%"
+        contentHeight="60%"
+        draggable="true"
+        resizable="true"
+    >
+
+        <Table items="{versionModel>/versions}">
+
+            <columns>
+
+                <Column>
+                    <Text text="{i18n>version}" />
+                </Column>
+
+                <Column>
+                    <Text text="{i18n>startDate}" />
+                </Column>
+
+                <Column>
+                    <Text text="{i18n>endDate}" />
+                </Column>
+
+                <Column>
+                    <Text text="{i18n>download}" />
+                </Column>
+
+            </columns>
+
+            <items>
+
+                <ColumnListItem>
+
+                    <cells>
+
+                        <ObjectStatus
+                            text="{versionModel>Version}"
+                            state="{= ${versionModel>Version} === ${versionModel>/versions/0/Version} ? 'Success' : 'None'}"
+                        />
+
+                        <Text
+                            text="{
+                                path: 'versionModel>Start_Date',
+                                type: 'sap.ui.model.type.Date',
+                                formatOptions: {
+                                    pattern: 'dd/MM/yyyy'
+                                }
+                            }" />
+
+                        <!-- END DATE FIX -->
+                        <Text
+                            text="{
+                                path: 'versionModel>End_Date',
+                                type: 'sap.ui.model.type.Date',
+                                formatOptions: {
+                                    pattern: 'dd/MM/yyyy'
+                                }
+                            }" />
+
+                        <Button
+                            icon="sap-icon://pdf-attachment"
+                            press="onDownloadVersionPdf"
+                             tooltip="Download PDF"
+                        />
+
+                    </cells>
+
+                </ColumnListItem>
+
+            </items>
+
+        </Table>
+
+        <endButton>
+
+            <Button
+                text="{i18n>close}"
+                press="onCloseVersionHistory"
+            />
+
+        </endButton>
+
+    </Dialog>
+
+</core:FragmentDefinition>

@@ -1,13 +1,15 @@
 sap.ui.define([
     "./BaseController",
     "sap/ui/model/json/JSONModel",
-    "../model/formatter"
-], function(BaseController,
-    JSONModel, formatter) {
+    "../model/formatter",
+    "sap/ui/core/Fragment",
+    "sap/m/MessageToast"
+], function (BaseController,
+    JSONModel, formatter, Fragment, MessageToast) {
     "use strict";
     return BaseController.extend("sap.kt.com.minihrsolution.controller.AppliedCanDetail", {
         formatter: formatter,
-        onInit: function() {
+        onInit: function () {
             const oViewModel = new JSONModel({
                 isEditMode: false
             });
@@ -15,8 +17,8 @@ sap.ui.define([
             const router = this.getOwnerComponent().getRouter();
             router.getRoute("AppliedCanDetail").attachPatternMatched(this._onObjectMatched, this);
         },
-        
-        _onObjectMatched: async function(oEvent) {
+
+        _onObjectMatched: async function (oEvent) {
             this.getView().getModel("viewModel").setProperty("/isEditMode", false);
             var LoginFUnction = await this.commonLoginFunction("Recruitment");
             if (!LoginFUnction) return;
@@ -45,7 +47,7 @@ sap.ui.define([
                     const oUploadModel = new JSONModel({
                         File: candidateData.ResumeFile || "",
                         FileName: candidateData.AttachmentName || "",
-                        FileType: candidateData.AttachmentType || ""
+                        FileType: candidateData.AttachmentType || "application/pdf"
                     });
                     this.getView().setModel(oUploadModel, "UploadModel");
 
@@ -63,59 +65,59 @@ sap.ui.define([
             } catch (err) {
                 this.closeBusyDialog();
                 console.error("Read failed:", err);
-                sap.m.MessageToast.show("Failed to load application details.");
+                MessageToast.show("Failed to load application details.");
             }
         },
-_applyCountryStateCityFilters: function () {
-                const oModel     = this.getView().getModel("setDataToForm");
-                const oCountryCB = this.byId("AC_Id_Country");
-                const oStateCB   = this.byId("AN_Id_State");
-                const oSourceCB  = this.byId("AN_Id_City");
- 
-                const sCountry   = oModel.getProperty("/Country");     // e.g. "Australia"
-                const sState     = oModel.getProperty("/State");       // e.g. "Queensland"
-                const sSource    = oModel.getProperty("/City");      // e.g. "Bongaree"
- 
-                // Reset all filters
-                oStateCB.getBinding("items")?.filter([]);
-                oSourceCB.getBinding("items")?.filter([]);
- 
-                if (sCountry) {
-                    // Find countryCode by name
-                    const aCountryData = this.getView().getModel("CountryModel").getData();
-                    const oCountryObj = aCountryData.find(c => c.countryName === sCountry);
- 
-                    if (oCountryObj) {
-                        const sCountryCode = oCountryObj.code;
- 
-                        // Filter States by Country
-                        oStateCB.getBinding("items")?.filter([
+        _applyCountryStateCityFilters: function () {
+            const oModel = this.getView().getModel("setDataToForm");
+            const oCountryCB = this.byId("AC_Id_Country");
+            const oStateCB = this.byId("AN_Id_State");
+            const oSourceCB = this.byId("AN_Id_City");
+
+            const sCountry = oModel.getProperty("/Country");     // e.g. "Australia"
+            const sState = oModel.getProperty("/State");       // e.g. "Queensland"
+            const sSource = oModel.getProperty("/City");      // e.g. "Bongaree"
+
+            // Reset all filters
+            oStateCB.getBinding("items")?.filter([]);
+            oSourceCB.getBinding("items")?.filter([]);
+
+            if (sCountry) {
+                // Find countryCode by name
+                const aCountryData = this.getView().getModel("CountryModel").getData();
+                const oCountryObj = aCountryData.find(c => c.countryName === sCountry);
+
+                if (oCountryObj) {
+                    const sCountryCode = oCountryObj.code;
+
+                    // Filter States by Country
+                    oStateCB.getBinding("items")?.filter([
+                        new sap.ui.model.Filter("countryCode", sap.ui.model.FilterOperator.EQ, sCountryCode)
+                    ]);
+
+                    if (sState) {
+                        // Filter Cities by State + Country
+                        const aFilters = [
+                            new sap.ui.model.Filter("stateName", sap.ui.model.FilterOperator.EQ, sState),
                             new sap.ui.model.Filter("countryCode", sap.ui.model.FilterOperator.EQ, sCountryCode)
-                        ]);
- 
-                        if (sState) {
-                            // Filter Cities by State + Country
-                            const aFilters = [
-                                new sap.ui.model.Filter("stateName", sap.ui.model.FilterOperator.EQ, sState),
-                                new sap.ui.model.Filter("countryCode", sap.ui.model.FilterOperator.EQ, sCountryCode)
-                            ];
-                            oSourceCB.getBinding("items")?.filter(aFilters);
-                        }
+                        ];
+                        oSourceCB.getBinding("items")?.filter(aFilters);
                     }
                 }
- 
-                // Ensure values are set back in UI
-                oCountryCB.setValue(sCountry || "");
-                oStateCB.setValue(sState || "");
-                oSourceCB.setValue(sSource || "");
-            },
-        ACD_onEditPress: async function() {
+            }
+
+            // Ensure values are set back in UI
+            oCountryCB.setValue(sCountry || "");
+            oStateCB.setValue(sState || "");
+            oSourceCB.setValue(sSource || "");
+        },
+        ACD_onEditPress: async function () {
             const oViewModel = this.getView().getModel("viewModel");
             const bIsEditMode = oViewModel.getProperty("/isEditMode");
             const oUploadModel = this.getView().getModel("UploadModel");
-                 
+
             const oPayload = {};
-             this._applyCountryStateCityFilters()
+            this._applyCountryStateCityFilters()
             if (oUploadModel) {
                 const uploadData = oUploadModel.getData();
                 oPayload.ResumeFile = uploadData.File || "";
@@ -144,10 +146,10 @@ _applyCountryStateCityFilters: function () {
                             ID: oDataToSave.ID
                         }
                     });
-                    sap.m.MessageToast.show("Details saved successfully!");
+                    MessageToast.show("Details saved successfully!");
                     this.closeBusyDialog();
                 } catch (error) {
-                    sap.m.MessageToast.show(error.message || "Error saving data");
+                    MessageToast.show(error.message || "Error saving data");
                     this.closeBusyDialog();
                     return;
                 }
@@ -156,96 +158,96 @@ _applyCountryStateCityFilters: function () {
             oViewModel.setProperty("/isEditMode", !bIsEditMode);
         },
 
-         AC_onChangeCountry: function (oEvent) {
-                const oSelectedItem = oEvent.getSource().getSelectedItem();
-                const oStateCombo = this.getView().byId("AN_Id_State");
-                const oCityCombo  = this.getView().byId("AN_Id_City");
-                const oStdCodeInp = this.getView().byId("AC_id_ISD");
-                const oModel      = this.getView().getModel("setDataToForm");
+        AC_onChangeCountry: function (oEvent) {
+            const oSelectedItem = oEvent.getSource().getSelectedItem();
+            const oStateCombo = this.getView().byId("AN_Id_State");
+            const oCityCombo = this.getView().byId("AN_Id_City");
+            const oStdCodeInp = this.getView().byId("AC_id_ISD");
+            const oModel = this.getView().getModel("setDataToForm");
 
-                // Reset dependent fields
-                oStateCombo.setSelectedKey("");
-                oStateCombo.getBinding("items")?.filter([]);
-                oCityCombo.setSelectedKey("");
-                oCityCombo.getBinding("items")?.filter([]);
-                oStdCodeInp.setValue("");
+            // Reset dependent fields
+            oStateCombo.setSelectedKey("");
+            oStateCombo.getBinding("items")?.filter([]);
+            oCityCombo.setSelectedKey("");
+            oCityCombo.getBinding("items")?.filter([]);
+            oStdCodeInp.setValue("");
 
-                if (!oSelectedItem) {
-                    // reset model
-                    oModel.setProperty("/Country", "");
-                    oModel.setProperty("/State", "");
-                    oModel.setProperty("/City", "");
-                    oModel.setProperty("/ISD", "");
-                } else {
-                    // fetch country data
-                    const sCountryCode = oSelectedItem.getAdditionalText(); // "IN"
-                    const oCountryData = oSelectedItem.getBindingContext("CountryModel").getObject();
-                    const sCountryName = oSelectedItem.getText();
+            if (!oSelectedItem) {
+                // reset model
+                oModel.setProperty("/Country", "");
+                oModel.setProperty("/State", "");
+                oModel.setProperty("/City", "");
+                oModel.setProperty("/ISD", "");
+            } else {
+                // fetch country data
+                const sCountryCode = oSelectedItem.getAdditionalText(); // "IN"
+                const oCountryData = oSelectedItem.getBindingContext("CountryModel").getObject();
+                const sCountryName = oSelectedItem.getText();
 
-                    // filter states by countryCode
-                    oStateCombo.getBinding("items")?.filter([
-                        new sap.ui.model.Filter("countryCode", sap.ui.model.FilterOperator.EQ, sCountryCode)
-                    ]);
+                // filter states by countryCode
+                oStateCombo.getBinding("items")?.filter([
+                    new sap.ui.model.Filter("countryCode", sap.ui.model.FilterOperator.EQ, sCountryCode)
+                ]);
 
-                    // set model props
-                    oModel.setProperty("/Country", sCountryName || "");
-                    oModel.setProperty("/ISD", oCountryData?.stdCode || "");
+                // set model props
+                oModel.setProperty("/Country", sCountryName || "");
+                oModel.setProperty("/ISD", oCountryData?.stdCode || "");
 
-                    // reflect in UI
-                    oStdCodeInp.setValue(oCountryData?.stdCode || "");
-                }
-            },
+                // reflect in UI
+                oStdCodeInp.setValue(oCountryData?.stdCode || "");
+            }
+        },
 
-            AC_onChangeState: function (oEvent) {
-                const oSelectedItem = oEvent.getSource().getSelectedItem();
-                // Controls
-                const oCityCombo = this.getView().byId("AN_Id_City");
-                const oCountryCB = this.getView().byId("AC_Id_Country");
-                const oModel     = this.getView().getModel("setDataToForm");
+        AC_onChangeState: function (oEvent) {
+            const oSelectedItem = oEvent.getSource().getSelectedItem();
+            // Controls
+            const oCityCombo = this.getView().byId("AN_Id_City");
+            const oCountryCB = this.getView().byId("AC_Id_Country");
+            const oModel = this.getView().getModel("setDataToForm");
 
-                // Clear cities
-                oCityCombo.setSelectedKey("");
-                oCityCombo.getBinding("items")?.filter([]);
+            // Clear cities
+            oCityCombo.setSelectedKey("");
+            oCityCombo.getBinding("items")?.filter([]);
 
-                if (!oSelectedItem) {
-                    oModel.setProperty("/State", "");
-                    oModel.setProperty("/City", "");
-                } else {
-                    const sStateName   = oSelectedItem.getKey() || oSelectedItem.getText();
-                    const sCountryCode = oCountryCB.getSelectedItem()?.getAdditionalText();
+            if (!oSelectedItem) {
+                oModel.setProperty("/State", "");
+                oModel.setProperty("/City", "");
+            } else {
+                const sStateName = oSelectedItem.getKey() || oSelectedItem.getText();
+                const sCountryCode = oCountryCB.getSelectedItem()?.getAdditionalText();
 
-                    // filter cities based on state + country
-                    oCityCombo.getBinding("items")?.filter([
-                        new sap.ui.model.Filter("stateName",   sap.ui.model.FilterOperator.EQ, sStateName),
-                        new sap.ui.model.Filter("countryCode", sap.ui.model.FilterOperator.EQ, sCountryCode)
-                    ]);
+                // filter cities based on state + country
+                oCityCombo.getBinding("items")?.filter([
+                    new sap.ui.model.Filter("stateName", sap.ui.model.FilterOperator.EQ, sStateName),
+                    new sap.ui.model.Filter("countryCode", sap.ui.model.FilterOperator.EQ, sCountryCode)
+                ]);
 
-                    oModel.setProperty("/State", sStateName || "");
-                }
-            },
+                oModel.setProperty("/State", sStateName || "");
+            }
+        },
 
-            AC_onChangeCity: function (oEvent) {
-                const oSelectedItem = oEvent.getSource().getSelectedItem();
-                const oModel        = this.getView().getModel("setDataToForm");
-                if (!oSelectedItem) {
-                    oModel.setProperty("/City", "");
-                } else {
-                    const sCityName = oSelectedItem.getKey() || oSelectedItem.getText();
-                    oModel.setProperty("/City", sCityName || "");
-                }
-            },
+        AC_onChangeCity: function (oEvent) {
+            const oSelectedItem = oEvent.getSource().getSelectedItem();
+            const oModel = this.getView().getModel("setDataToForm");
+            if (!oSelectedItem) {
+                oModel.setProperty("/City", "");
+            } else {
+                const sCityName = oSelectedItem.getKey() || oSelectedItem.getText();
+                oModel.setProperty("/City", sCityName || "");
+            }
+        },
 
-        onPageNavButtonPress: function() {
-            this.getOwnerComponent().getRouter().navTo("AppliedCandidates",{
-                    value: "AppliedCanDetail"
+        onPageNavButtonPress: function () {
+            this.getOwnerComponent().getRouter().navTo("AppliedCandidates", {
+                value: "AppliedCanDetail"
             }); // Navigate to tile page
         },
 
-        onLogout: function() {
+        onLogout: function () {
             this.CommonLogoutFunction(); // Navigate to login page 
         },
 
-        onDownloadResume: function() {
+        onDownloadResume: function () {
             const oData = this.getView().getModel("setDataToForm").getData();
             console.log("Resume Data:", oData);
 
@@ -254,7 +256,7 @@ _applyCountryStateCityFilters: function () {
             const sMimeType = oData.MimeType || "application/octet-stream";
 
             if (!base64String) {
-                sap.m.MessageToast.show("No resume data found.");
+                MessageToast.show("No resume data found.");
                 return;
             }
 
@@ -285,113 +287,189 @@ _applyCountryStateCityFilters: function () {
                 document.body.removeChild(link);
             } catch (e) {
                 console.error("Failed to decode Base64:", e);
-                sap.m.MessageToast.show("Failed to download resume.");
+                MessageToast.show("Failed to download resume.");
             }
         },
 
-        openResumePreview: function() {
-            const oData = this.getView().getModel("setDataToForm").getData();
-            let base64String = oData.ResumeFile;
-            const sMimeType = oData.AttachmentType || "application/pdf";
-            const sFileName = oData.AttachmentName || "Resume.pdf";
+        openResumePreview: async function () {
 
-            if (!base64String) {
-                sap.m.MessageToast.show("No resume data found.");
+            const oUploadData = this.getView()
+                .getModel("UploadModel")
+                .getData();
+
+            let sBase64 = oUploadData.File;
+            const sMimeType = oUploadData.FileType || "application/pdf";
+            const sFileName = oUploadData.FileName || "Resume.pdf";
+
+            if (!sBase64) {
+                MessageToast.show("No resume found.");
                 return;
             }
 
-            // Clean base64 if prefixed
-            if (base64String.startsWith("data:")) {
-                base64String = base64String.split(",")[1];
+            if (sBase64.startsWith("data:")) {
+                sBase64 = sBase64.split(",")[1];
             }
 
-            // Convert base64 to Blob and get object URL
-            const byteCharacters = atob(base64String);
-            const byteNumbers = new Array(byteCharacters.length);
-            for (let i = 0; i < byteCharacters.length; i++) {
-                byteNumbers[i] = byteCharacters.charCodeAt(i);
-            }
-            const byteArray = new Uint8Array(byteNumbers);
-            const blob = new Blob([byteArray], {
-                type: sMimeType
-            });
-            const blobUrl = URL.createObjectURL(blob);
+            sBase64 = sBase64.replace(/\s/g, "");
 
-            // Store blobUrl for cleanup
-            this._pdfBlobUrl = blobUrl;
-
-            // Destroy previous dialog if exists
-            if (this._oResumeDialog) {
-                this._oResumeDialog.destroy();
-                this._oResumeDialog = null;
+            // Handle double encoded PDFs
+            if (sBase64.startsWith("SlZCR")) {
+                sBase64 = atob(sBase64);
             }
 
-            // Create dialog
-            this._oResumeDialog = new sap.m.Dialog({
-                title: sFileName,
-                stretch: true, // Fullscreen on all devices
-                draggable: true,
-                resizable: true,
-                contentWidth: "80%",
-                contentHeight: "80%",
-                horizontalScrolling: false,
-                contentPadding: "0rem",
-                content: [],
-                content: [
-                    new sap.ui.core.HTML({
-                        content: `
-                            <div style="width:100%; height:100%;">
-                                <iframe 
-                                    src="${blobUrl}" 
-                                    style="width:100%; height:600px; border:none;">
-                                </iframe>
-                            </div>
-                        `
-                    })
-                ],
-                beginButton: new sap.m.Button({
-                    text: "Download",
-                    type: "Transparent",
-                    press: function() {
-                        const downloadLink = document.createElement("a");
-                        downloadLink.href = blobUrl;
-                        downloadLink.download = sFileName;
-                        document.body.appendChild(downloadLink);
-                        downloadLink.click();
-                        document.body.removeChild(downloadLink);
+            if (!this._oPreviewDialog) {
+
+                this._oPreviewDialog = await Fragment.load({
+                    id: this.getView().getId(),
+                    name: "sap.kt.com.minihrsolution.fragment.DocumentPreview",
+                    controller: this
+                });
+
+                this.getView().addDependent(this._oPreviewDialog);
+            }
+
+            const oDialog = Fragment.byId(
+                this.getView().getId(),
+                "previewDialog"
+            );
+
+            const oImage = Fragment.byId(
+                this.getView().getId(),
+                "previewImage"
+            );
+
+            const oHtml = Fragment.byId(
+                this.getView().getId(),
+                "previewHtml"
+            );
+
+            oDialog.setTitle(sFileName);
+
+            oImage.setVisible(false);
+            oHtml.setVisible(false);
+            oHtml.setContent("");
+
+            if (this._pdfBlobUrl) {
+                URL.revokeObjectURL(this._pdfBlobUrl);
+                this._pdfBlobUrl = null;
+            }
+
+            // IMAGE
+            if (sMimeType.startsWith("image/")) {
+
+                oImage.setSrc(
+                    `data:${sMimeType};base64,${sBase64}`
+                );
+
+                oImage.setVisible(true);
+                oDialog.open();
+                return;
+            }
+
+            // PDF
+            if (sMimeType.toLowerCase().includes("pdf")) {
+
+                const byteCharacters = atob(sBase64);
+                const byteArrays = [];
+
+                for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+
+                    const slice = byteCharacters.slice(offset, offset + 512);
+
+                    const byteNumbers = new Array(slice.length);
+
+                    for (let i = 0; i < slice.length; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
                     }
-                }),
-                endButton: new sap.m.Button({
-                    text: "Close",
-                    type: "Transparent",
-                    press: function() {
-                        if (this._pdfBlobUrl) {
-                            URL.revokeObjectURL(this._pdfBlobUrl);
-                            this._pdfBlobUrl = null;
-                        }
-                        this._oResumeDialog.close();
-                        this._oResumeDialog.destroy();
-                        this._oResumeDialog = null;
-                    }.bind(this)
-                })
-            });
-            this.getView().addDependent(this._oResumeDialog);
-            this._oResumeDialog.open();
+
+                    byteArrays.push(new Uint8Array(byteNumbers));
+                }
+
+                const blob = new Blob(
+                    byteArrays,
+                    {
+                        type: "application/pdf"
+                    }
+                );
+
+                const sBlobUrl = URL.createObjectURL(blob);
+
+                this._pdfBlobUrl = sBlobUrl;
+
+                // MOBILE DOWNLOAD
+                if (sap.ui.Device.system.phone) {
+
+                    const oLink = document.createElement("a");
+
+                    oLink.href = sBlobUrl;
+                    oLink.download = sFileName;
+
+                    document.body.appendChild(oLink);
+                    oLink.click();
+                    document.body.removeChild(oLink);
+
+                    MessageToast.show(
+                        "File downloaded successfully"
+                    );
+
+                    return;
+                }
+
+                const sIframe =
+                    "<iframe " +
+                    "src='" + sBlobUrl + "#toolbar=0&navpanes=0&scrollbar=0' " +
+                    "width='100%' " +
+                    "height='100%' " +
+                    "style='border:none;width:100%;height:100vh;display:block;' " +
+                    "allowfullscreen>" +
+                    "</iframe>";
+
+                oHtml.setContent(sIframe);
+                oHtml.setVisible(true);
+
+                oDialog.open();
+                return;
+            }
+
+            MessageToast.show("Preview not supported");
+        },
+        onDownloadPreview: function () {
+            if (!this._pdfBlobUrl) {
+                MessageToast.show("No file available for download.");
+                return;
+            }
+
+            const oLink = document.createElement("a");
+            oLink.href = this._pdfBlobUrl;
+            oLink.download = this._sPreviewFileName || "Document.pdf";
+            document.body.appendChild(oLink);
+            oLink.click();
+            document.body.removeChild(oLink);
+        },
+        onClosePreview: function () {
+            if (this._pdfBlobUrl) {
+                URL.revokeObjectURL(this._pdfBlobUrl);
+                this._pdfBlobUrl = null;
+            }
+
+            if (this._oPreviewDialog) {
+                this._oPreviewDialog.close();
+            }
         },
 
-        ACD_onBoardCandidate: function() {
+        ACD_onBoardCandidate: function () {
             var oCandidate = this.getView().getModel("setDataToForm").getData();
             this.getOwnerComponent().getRouter().navTo("RouteEmployeeOfferDetails", {
-               sParOffer: "Recruitment",
-               sParEmployee:oCandidate.ID
+                sParOffer: "Recruitment",
+                sParEmployee: oCandidate.ID
             });
         },
 
-        onFileSizeExceeds: function() {
+        onFileSizeExceeds: function () {
             MessageToast.show(this.i18nModel.getText("fileSizeExceeds"));
         },
 
-        onBeforeUploadStarts: function(oEvent) {
+        onBeforeUploadStarts: function (oEvent) {
             const oFile = oEvent.getParameter("files")[0];
             if (!oFile) {
                 MessageToast.show("No file selected.");
@@ -409,7 +487,7 @@ _applyCountryStateCityFilters: function () {
             const reader = new FileReader();
             const that = this;
 
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 const base64 = e.target.result.split(',')[1];
 
                 that.getView().getModel("UploadModel").setData({
@@ -428,12 +506,12 @@ _applyCountryStateCityFilters: function () {
             reader.readAsDataURL(oFile);
         },
 
-        onTokenDelete: function(oEvent) {
+        onTokenDelete: function (oEvent) {
             const oModel = this.getView().getModel("tokenModel");
             let aTokens = oModel.getProperty("/tokens") || [];
             const aTokensToDelete = oEvent.getParameter("tokens");
 
-            aTokensToDelete.forEach(function(oDeletedToken) {
+            aTokensToDelete.forEach(function (oDeletedToken) {
                 const sKey = oDeletedToken.getKey();
                 aTokens = aTokens.filter(token => token.key !== sKey);
             });
@@ -450,7 +528,7 @@ _applyCountryStateCityFilters: function () {
             }
         },
 
-        SalaryInfoPress: function(oEvent) {
+        SalaryInfoPress: function (oEvent) {
             if (!this._oPopover) {
                 this._oPopover = new sap.m.Popover({
                     contentWidth: "300px",

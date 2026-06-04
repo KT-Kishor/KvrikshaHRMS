@@ -348,7 +348,7 @@
                         >
                             <blocks>
                                 <m:Table
-                                    items="{path:'SowReadModel>/',sorter: {path: 'Description',descending: false,group: true}}"
+                                    items="{path:'SowReadModel>/',sorter: {path: 'Status',descending: false,group: true}}"
                                     busyIndicatorDelay="0"
                                     id="Sow_Id_ReadTable"
                                     mode="SingleSelectLeft"
@@ -417,12 +417,12 @@
                                         >
                                             <m:Text text="{i18n>rate}" />
                                         </m:Column>
-                                        <m:Column
+                                        <!-- <m:Column
                                             minScreenWidth="Tablet"
                                             demandPopin="true"
                                         >
                                             <m:Text text="{i18n>status}" />
-                                        </m:Column>
+                                        </m:Column> -->
                                     </m:columns>
                                     <m:items>
                                         <m:ColumnListItem>
@@ -442,11 +442,11 @@
                                                 <m:Text
                                                     text="{SowReadModel>Rate}"
                                                 />
-                                                <m:ObjectStatus
+                                                <!-- <m:ObjectStatus
                                                     text="{SowReadModel>Status}"
                                                     inverted="false"
                                                     state="{path: 'SowReadModel>Status', formatter: '.Formatter.formatObjectStatus'}"
-                                                />
+                                                /> -->
                                             </m:cells>
                                         </m:ColumnListItem>
                                     </m:items>

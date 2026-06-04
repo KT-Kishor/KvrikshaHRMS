@@ -394,25 +394,25 @@ sap.ui.define(
             .getModel("Questionmodel")
             .getProperty("/Questions") || [];
 
-        if (aData.length === 0) {
+      if (aData.length === 0) {
 
-            this.closeBusyDialog();
+        var aFormattedData = [{
+          Department: "",
+          Topic: "",
+          Question: ""
+        }];
 
-            MessageToast.show(
-                "No data available to download"
-            );
-
-            return;
-        }
+      } else {
 
         var aFormattedData = aData.map(function (item) {
-
-            return {
-                Department: item.Department,
-                Topic: item.Topic,
-                Question: item.Question
-            };
+          return {
+            Department: item.Department,
+            Topic: item.Topic,
+            Question: item.Question
+          };
         });
+      }
+
 
         // Delay execution for UI update
         setTimeout(function () {

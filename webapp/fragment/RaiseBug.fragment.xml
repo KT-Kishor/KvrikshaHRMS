@@ -192,7 +192,7 @@
 							fileSizeExceed="onFileSizeExceed"
 							maximumFileSize="2"
 							typeMissmatch="onFileTypeMissmatch"
-							fileType="jpg,jpeg,png"
+							fileType="jpg,jpeg,png,pdf,doc,docx"
 							change="onSupportrequestChange"
 							buttonOnly="true"
 							sameFilenameAllowed="true"
