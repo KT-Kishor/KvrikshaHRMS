@@ -85,7 +85,7 @@
 								<Text visible="{= ${MyInboxModelData>Type} === 'Expense' || ${MyInboxModelData>Type} === 'Allowance' }" text="Total Amount: {path:'MyInboxModelData>TotalAmount',formatter: '.Formatter.fromatNumber'}" class="sapUiTinyMarginTop" />
 							</VBox>
 							<VBox >
-							<Text text="{MyInboxModelData>SubType}"/>
+							<Text text="{= ${MyInboxModelData>SubType} === 'Overtime' ? ${MyInboxModelData>SubType} + ' (' + ${MyInboxModelData>NoofDays} + ' - ' + ${MyInboxModelData>leaveSessionType} + ')' : ${MyInboxModelData>SubType}}"/>
 							<Text text="{MyInboxModelData>ResourcePlanningType}" visible="{= ${MyInboxModelData>ResourcePlanningType} !== '' }"/>
 							</VBox>
 							<Text text="{path:'MyInboxModelData>SubmittedDate',formatter:'.Formatter.formatDate'}"/>

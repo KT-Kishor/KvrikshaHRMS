@@ -58,100 +58,224 @@ sap.ui.define([
                 })
             });
         },
+        onManagerChange: function (oEvent) {
+            const sManagerID = oEvent.getSource().getSelectedKey();
 
-        _onRouteMatched: async function () {
+            this._onRouteMatched({
+                ManagerID: sManagerID,
+                Value: true
+            });
+        },
+
+        _onRouteMatched: async function (oData) {
+
+            const ManagerID = oData?.ManagerID;
+            const Value = oData?.Value;
+
             try {
-                const loginSuccess = await this.commonLoginFunction("LeaveOverview");
-                if (!loginSuccess) return;
+
                 this.getBusyDialog();
-                if(!this.getView().getModel("EmpDetails")) await this._fetchCommonData("EmployeeDetails", "EmpDetails");
+
+                // Login validation only for initial load
+                if (!Value) {
+                    const loginSuccess = await this.commonLoginFunction("LeaveOverview");
+                    if (!loginSuccess) {
+                        this.closeBusyDialog();
+                        return;
+                    }
+                }
+
+                // Common models
+                if (!this.getView().getModel("EmpDetails")) {
+                    await this._fetchCommonData("EmployeeDetails", "EmpDetails");
+                }
+
+                // View model
                 const oViewModel = new JSONModel({
-                    startDate: new Date(new Date().setHours(9, 0, 0, 0)), // Start at 9 AM
-                    viewKey: "Week"
+                    startDate: new Date(new Date().setHours(9, 0, 0, 0)),
+                    viewKey: "One Month"
                 });
                 this.getView().setModel(oViewModel, "viewModel");
 
-                // User and role info
+                // Manager dropdown model
+                const aData = this.getView().getModel("EmpDetails").getData();
+
+                const aUniqueManagers = Object.values(
+                    aData.reduce((acc, item) => {
+                        acc[item.ManagerID] = {
+                            ManagerID: item.ManagerID,
+                            ManagerName: item.ManagerName
+                        };
+                        return acc;
+                    }, {})
+                );
+
+                this.getView().setModel(
+                    new JSONModel(aUniqueManagers),
+                    "ManagerModel"
+                );
+
+                // User info
                 const loginModel = this.getOwnerComponent().getModel("LoginModel");
+
                 this.userId = loginModel.getProperty("/EmployeeID");
                 this.Type = loginModel.getProperty("/Role");
                 this.currentYear = new Date().getFullYear();
                 this.branch = loginModel.getProperty("/BranchCode");
-                this.i18nModel = this.getView().getModel("i18n").getResourceBundle();
-                loginModel.setProperty("/HeaderName", this.i18nModel.getText("resourecPlanning"));
 
-                // Fetch all active employees (no manager filter)
-                const Manager_ID = this.getView()
-                    .getModel("EmpDetails")
-                    .getData()
-                    .find(i => i.EmployeeID === loginModel.getProperty("/EmployeeID"))?.ManagerID;
+                this.i18nModel = this.getView()
+                    .getModel("i18n")
+                    .getResourceBundle();
 
-                const Manager_ManagerID = this.getView()
-                    .getModel("EmpDetails")
-                    .getData()
-                    .find(i => i.EmployeeID === Manager_ID)?.ManagerID;
+                loginModel.setProperty(
+                    "/HeaderName",
+                    this.i18nModel.getText("resourecPlanning")
+                );
 
-                const params = {
-                    EmployeeStatus: "Active",
-                    ManagerID: Manager_ID+","+Manager_ManagerID
-                };
+                let params;
 
-                await this._fetchCommonData("EmployeeDetails", "sEmployeeDetails", params);
+                // Initial load
+                if (!Value) {
+
+                    const Manager_ID = aData.find(
+                        i => i.EmployeeID === this.userId
+                    )?.ManagerID;
+
+                    if (!Manager_ID) {
+                        MessageBox.error(
+                            "Manager is not assigned to this employee."
+                        );
+                        return;
+                    }
+
+                    params = {
+                        EmployeeStatus: "Active",
+                        ManagerID: Manager_ID,
+                        EmployeeID: this.userId,
+                        flag: "true"
+                    };
+
+                } else {
+
+                    // Manager selected from dropdown
+                    params = {
+                        EmployeeStatus: "Active",
+                        ManagerID: ManagerID,
+                        flag: "true"
+                    };
+                }
+
+                // Read employee data
+                await this._fetchCommonData(
+                    "EmployeeDetails",
+                    "sEmployeeDetails",
+                    params
+                );
+
                 this.CommonReadCall();
-                // Get data from models
-                let employees = this.getView().getModel("sEmployeeDetails").getData();
-                // const allLeaves = this.getView().getModel("LeaveModel").getData();
 
-                // Exclude contractors
-                employees = employees.filter(e => e.Role !== "Contractor");
-                this.getView().getModel("sEmployeeDetails").setData(employees);
+                let employees = this.getView()
+                    .getModel("sEmployeeDetails")
+                    .getData();
 
-                // Filter employees based on role
+                // Remove contractors
+                employees = employees.filter(
+                    e => e.Role !== "Contractor"
+                );
+
+                this.getView()
+                    .getModel("sEmployeeDetails")
+                    .setData(employees);
+
+                // Role based filtering
                 let filteredEmployees = [];
-                if (this.Type === "Admin" || this.Type === "Account Manager" || this.Type === "Account Consultant") {
-                    // Admin sees all active employees
+
+                if (
+                    this.Type === "Admin" ||
+                    this.Type === "Account Manager" ||
+                    this.Type === "Account Consultant"
+                ) {
+
                     filteredEmployees = employees;
-                } else if (["Manager", "HR Manager", "IT Manager"].includes(this.Type)) {
-                    // Manager sees themselves and their team
-                    filteredEmployees = employees.filter(e =>
-                        e.EmployeeID === this.userId || e.ManagerID === this.userId
+
+                } else if (
+                    ["Manager", "HR Manager", "IT Manager"]
+                        .includes(this.Type)
+                ) {
+
+                    filteredEmployees = employees.filter(
+                        e =>
+                            e.EmployeeID === this.userId ||
+                            e.ManagerID === this.userId
                     );
-                } else if (["Employee", "IT Consultant", "HR", "Trainee"].includes(this.Type)) {
-                    // Employee sees themselves, team under same manager, their manager
-                    const currentEmp = employees.find(e => e.EmployeeID === this.userId);
-                    const currentManagerID = currentEmp ? currentEmp.ManagerID : null;
-                    const currentBranch = currentEmp ? currentEmp.BranchCode : null;
-                    filteredEmployees = employees.filter(e =>
-                    (
-                        e.EmployeeID === this.userId || // self
-                        (e.ManagerID === currentManagerID && e.BranchCode === currentBranch) ||
-                        e.EmployeeID === currentManagerID // manager
-                    )
+
+                } else if (
+                    ["Employee", "IT Consultant", "HR", "Trainee"]
+                        .includes(this.Type)
+                ) {
+
+                    const currentEmp = employees.find(
+                        e => e.EmployeeID === this.userId
+                    );
+
+                    const currentManagerID = currentEmp
+                        ? currentEmp.ManagerID
+                        : null;
+
+                    const currentBranch = currentEmp
+                        ? currentEmp.BranchCode
+                        : null;
+
+                    filteredEmployees = employees.filter(
+                        e =>
+                            e.EmployeeID === this.userId ||
+                            (
+                                e.ManagerID === currentManagerID &&
+                                e.BranchCode === currentBranch
+                            ) ||
+                            e.EmployeeID === currentManagerID
                     );
                 }
 
+                // Calendar preparation
                 // const filteredEmpIDs = filteredEmployees.map(e => e.EmployeeID);
                 // const filteredLeaves = allLeaves.filter(l => filteredEmpIDs.includes(l.employeeID));
                 // const approvedLeaves = filteredLeaves.filter(l => l.status === "Approved");
-                // var InboxDetailsModel = this.getView().getModel("InboxDetailsModel").getProperty("/");
                 // await this._preparePlanningCalendarData(filteredEmployees, approvedLeaves, InboxDetailsModel);
 
-                this.initializeBirthdayCarousel(); // Initialize birthday carousel
-                this.closeBusyDialog();
+                this.initializeBirthdayCarousel();
+
+                await this.EmployeeDetReadCall(
+                    "EmployeeDetails",
+                    {
+                        EmployeeID: this.userId
+                    }
+                );
+
+                await this._fetchCommonData(
+                    "ListOfSateData",
+                    "HolidayModel",
+                    {
+                        branchCode: this.branch
+                    }
+                );
+
+                this.BarDisplayFunction(
+                    "All In One Leave",
+                    this.currentYear,
+                    this.userId
+                );
+
             } catch (error) {
-                this.closeBusyDialog();
-                MessageToast.show(error.message || error.responseText);
+
+                MessageToast.show(
+                    error.message || error.responseText
+                );
+
             } finally {
+
                 this.closeBusyDialog();
             }
-
-            this.EmployeeDetReadCall("EmployeeDetails", {
-                "EmployeeID": this.userId
-            })
-            this._fetchCommonData("ListOfSateData", "HolidayModel", {
-                branchCode: this.branch
-            });
-            this.BarDisplayFunction("All In One Leave", this.currentYear, this.userId);
         },
 
         CommonReadCall: async function () {

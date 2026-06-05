@@ -129,7 +129,7 @@
 					visible="{VisibleModel>/RaiseVisible}"
 					id="RB_id_RBStatus"
 					valueStateText="{i18n>entercontractstatus}"
-					value="{RaiseBugModel>/ContractStatus}"
+					selectedKey="{RaiseBugModel>/ContractStatus}"
 					change="onAppnamechanges"
 					items="{RaiseBug>/}"
 				>

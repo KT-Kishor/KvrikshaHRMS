@@ -28,7 +28,7 @@ sap.ui.define(
                 this.CommonReadcall({
                     TaskID: sTaskID
                 });
-                this.FAT_onSearch()
+            
                 this.initializeBirthdayCarousel();
             },
 
@@ -288,40 +288,46 @@ oModel = new JSONModel(newTaskData);
                 this.CommonReadcall(params);
             },
 
-            CommonReadcall: async function (params) {
-                try {
-                    this.getBusyDialog();
-                    const response = await this.ajaxReadWithJQuery(
-                        "AssignedTask",
-                        params
-                    );
-                    if (response.success) {
+                CommonReadcall: async function (params) {
+                    try {
+                        this.getBusyDialog();
+
+                        const response = await this.ajaxReadWithJQuery("AssignedTask", params);
+
+                        const aEmployees = this.getView().getModel("LoginDetailsModel")?.getData() || [];
+                        const aValidEmployeeIDs = aEmployees.map(emp => emp.EmployeeID);
+
+                        if (response.success) {
+                            let taskData = Array.isArray(response.data)
+                                ? response.data
+                                : (response.data ? [response.data] : []);
+
+                            // Keep only rows whose EmployeeID exists in LoginDetailsModel
+                            taskData = taskData.filter(task =>
+                                task.EmployeeID &&
+                                aValidEmployeeIDs.includes(task.EmployeeID)
+                            );
+
+                            // Enrich data with EmployeeName
+                            taskData = taskData.map((task) => {
+                                const emp = aEmployees.find((e) => e.EmployeeID === task.EmployeeID);
+                                task.EmployeeName = emp ? emp.EmployeeName : "";
+                                return task;
+                            });
+
+                            this.getView().setModel(new JSONModel(taskData), "AssignModel");
+                        } else {
+                            this.getView().setModel(new JSONModel([]), "AssignModel");
+                        }
+
                         this.closeBusyDialog();
-                        let taskData = Array.isArray(response.data) ? response.data : [response.data];
-
-                        const aEmployees =
-                            this.getView().getModel("LoginDetailsModel")?.getData() || [];
-
-                        // Enrich data with EmployeeName
-                        taskData = taskData.map((task) => {
-                            if (task.EmployeeID) {
-                                const empIDs = task.EmployeeID.split(",");
-                                const names = empIDs.map((id) => {
-                                    const emp = aEmployees.find((e) => e.EmployeeID === id);
-                                    return emp ? emp.EmployeeName : "";
-                                }).filter((name) => name !== "").join(", ");
-                                task.EmployeeName = names;
-                            }
-                            return task;
-                        });
-
-                        this.getView().setModel(new JSONModel(taskData), "AssignModel");
+                    } catch (error) {
+                        this.closeBusyDialog();
+                        this.getView().setModel(new JSONModel([]), "AssignModel");
+                        MessageToast.show(this.i18nModel.getText("smgerrorassigntask"));
                     }
-                } catch (error) {
-                    this.closeBusyDialog();
-                    MessageToast.show(this.i18nModel.getText("smgerrorassigntask"));
-                }
-            },
+                },
+
 
             //Submit the task details
             FAT_onSubmitTask: async function () {

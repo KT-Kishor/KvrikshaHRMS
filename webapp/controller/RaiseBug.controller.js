@@ -527,6 +527,16 @@ sap.ui.define([
             this.byId("RB_id_AssignedTo").setSelectedKey(this.byId("RB_id_AssignedTo").getSelectedKey())
             this.byId("RB_id_Status").setSelectedKeys(this.byId("RB_id_Status").getSelectedKeys())
             this.byId("RB_id_issuetype").setSelectedKey(this.byId("RB_id_issuetype").getSelectedKey())
+            var oVisibleModel = this.getView().getModel("VisibleModel");
+            if (!oVisibleModel) {
+                oVisibleModel = new JSONModel({
+                    RaiseVisible: true
+                });
+                this.getView().setModel(oVisibleModel, "VisibleModel");
+            } else {
+                oVisibleModel.setProperty("/RaiseVisible", true);
+                oVisibleModel.setProperty("/Visible", true);
+            }
             this.getView().getModel("RaiseBugModel").setProperty("/Submit", false);
             this.Common_Open_BugDialog();
         },

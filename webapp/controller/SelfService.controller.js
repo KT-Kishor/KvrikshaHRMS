@@ -1177,7 +1177,7 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
         }
       } else {
         // Admin/HR Edit Validation
-        const isRequiredValid = utils._LCvalidateEmail(oView.byId("SS_id_Compmail"), "ID") && utils._LCstrictValidationComboBox(oView.byId("SS_id_Country"), "ID") && utils._LCstrictValidationComboBox(oView.byId("SS_id_State"), "ID") && utils._LCstrictValidationComboBox(oView.byId("SS_id_BaseL"), "ID") && utils._LCstrictValidationComboBox(oView.byId("SS_id_Manager"), "ID");
+        const isRequiredValid = utils._LCvalidateEmail(oView.byId("SS_id_Compmail"), "ID") && utils._LCstrictValidationComboBox(oView.byId("SS_id_Country"), "ID") && utils._LCstrictValidationComboBox(oView.byId("SS_id_State"), "ID") && utils._LCstrictValidationComboBox(oView.byId("SS_id_CompanyCode"), "ID") && utils._LCstrictValidationComboBox(oView.byId("SS_id_BaseL"), "ID") && utils._LCstrictValidationComboBox(oView.byId("SS_id_Manager"), "ID");
 
         const passport = oView.byId("SS_id_Passport").getValue().trim();
         const voterId = oView.byId("SS_id_Voterid").getValue().trim();

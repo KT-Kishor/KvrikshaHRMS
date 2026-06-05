@@ -96,6 +96,8 @@ sap.ui.define([
                     subTotal: ""
                 }), "FilteredSOWModel");
 
+                this.FilteredSOWModel = oView.getModel("FilteredSOWModel");
+
                 oView.setModel(new JSONModel({
                     createVisi: true,
                     editVisi: false,
@@ -619,19 +621,22 @@ sap.ui.define([
                 this.totalAmountCalculation();
             },
 
-            onChangeConversionRate: function (oEvent) {
+            onChangeConversionRate: async function (oEvent) {
                 if (oEvent) {
                     utils._LCvalidateAmount(oEvent);
                 }
-                var oModel = this.getView().getModel("SelectedCustomerModel");
+                var oModel = this.SelectedCustomerModel;
                 var oData = oModel.getData();
-                // Decide which amount to use: DueAmount OR Total
-                // var baseAmount = 0;
-                // if (oData.DueAmount) {
+                if (!oEvent) {
+                    this.getBusyDialog();
+                    let data = await this.ajaxReadWithJQuery("ConversionRate", {
+                        "from": this.FilteredSOWModel.getProperty("/Currency")
+                    });
+                    oModel.setProperty("/ConversionRate", data.rate.toFixed(2));
+                    this.closeBusyDialog();
+                }
                 var baseAmount = parseFloat(oData.TotalAmount) || 0;
-                // } else {
-                //     baseAmount = parseFloat(oData.Total) - parseFloat(this.CreditMemoTotal) || 0;
-                // }
+
                 // Apply Conversion Rate
                 var conversionRate = parseFloat(oData.ConversionRate) || 0;
                 var convertedValue = baseAmount * conversionRate;
@@ -740,7 +745,7 @@ sap.ui.define([
 
             CID_onPressback: function () {
                 this.getView().getModel("LoginModel").setProperty("/RichText", false);
-                (this.sourceView === "InvoiceDashboard") ? this.getRouter().navTo("RouteInvoiceDashboard") : this.getRouter().navTo("RouteCompanyInvoice",{FileName: "CompanyInvoiceDetails"});
+                (this.sourceView === "InvoiceDashboard") ? this.getRouter().navTo("RouteInvoiceDashboard") : this.getRouter().navTo("RouteCompanyInvoice", { FileName: "CompanyInvoiceDetails" });
             },
 
             CID_ValidateDate: function (oEvent) {
@@ -911,7 +916,7 @@ sap.ui.define([
                                 type: "Transparent",
                                 press: function () {
                                     oDialog.close();
-                                    that.getRouter().navTo("RouteCompanyInvoice",{FileName: "CompanyInvoiceDetails"});
+                                    that.getRouter().navTo("RouteCompanyInvoice", { FileName: "CompanyInvoiceDetails" });
                                 }
                             }),
                             endButton: new sap.m.Button({
@@ -920,7 +925,7 @@ sap.ui.define([
                                 press: function () {
                                     oDialog.close();
                                     that.CID_onPressGeneratePdf();
-                                    that.getRouter().navTo("RouteCompanyInvoice",{FileName: "CompanyInvoiceDetails"});
+                                    that.getRouter().navTo("RouteCompanyInvoice", { FileName: "CompanyInvoiceDetails" });
                                 }
                             }),
                             afterClose: function () {
@@ -1117,9 +1122,17 @@ sap.ui.define([
                 }
             },
 
-            onChangePaymentConvertionRate: function (oEvent) {
+            onChangePaymentConvertionRate:async function (oEvent) {
                 if (oEvent) utils._LCvalidateAmount(oEvent);
                 var oModelData = this.getView().getModel("PaymentModel");
+                if (!oEvent) {
+                    this.getBusyDialog();
+                    let data = await this.ajaxReadWithJQuery("ConversionRate", {
+                        "from": this.FilteredSOWModel.getProperty("/Currency")
+                    });
+                    oModelData.setProperty("/ConversionRate", data.rate.toFixed(2));
+                    this.closeBusyDialog();
+                }
                 var receivedAmount = parseFloat(oModelData.getData().ReceivedAmount);
                 var conversionRate = parseFloat(oModelData.getData().ConversionRate);
                 var AmountInINR = receivedAmount * conversionRate;

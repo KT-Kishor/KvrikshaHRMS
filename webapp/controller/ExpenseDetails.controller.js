@@ -19,10 +19,11 @@ sap.ui.define([
                 // Attach route matched event for "RouteExpensDetails"
                 this.getRouter().getRoute("RouteExpensDetails").attachMatched(this._onRouteMatched, this);
             },
-
+            
             _onRouteMatched: async function (oEvent) {
                 var LoginFUnction = await this.commonLoginFunction("Expense");
                 if (!LoginFUnction) return;
+                if (!this.getView().getModel("ExpenseTypeModel")) this._fetchCommonData("ExpenseItemType", "ExpenseTypeModel");
                 this.getBusyDialog();
                 this.scrollToSection("objectPageLayoutExpence", "idExpObjectPageSection");
                 try {
@@ -38,7 +39,6 @@ sap.ui.define([
                     await this._fetchCommonData("Expense", "FilteredExpenseModel", {
                         ExpenseID: this.ExpenseID,
                     });
-
                     var viewModel = new JSONModel({
                         isEditMode: false,
                         status: true,
@@ -337,8 +337,16 @@ sap.ui.define([
                 this.getView().getModel("tokenModel").setProperty("/tokens", [])
                 this.openFragment();
             },
-            onChangeCurrency: function (oEvent) {
+            onChangeCurrency: async function (oEvent) {
+                var oModel = this.getView().getModel("ExpenseCreateModel");
                 utils._LCstrictValidationComboBox(oEvent);
+                this.getBusyDialog();
+                let data = await this.ajaxReadWithJQuery("ConversionRate", {
+                    "from": oEvent.getSource().getSelectedItem().getText()
+                });
+                oModel.setProperty("/ConversionRate", data.rate.toFixed(2));
+                this.Exp_Frg_onChangeConverstionRate();
+                this.closeBusyDialog();
             },
             //Update Expense Items
             Exp_Det_onPressExpenseItemEdit: function () {
