@@ -349,6 +349,7 @@ sap.ui.define(["./BaseController", "../utils/validation", "sap/m/MessageToast", 
               GrossPayMontly: oSelectedData.GrossPayMontly,
               HikePercentage: oSelectedData.HikePercentage,
               EffectiveDate: oSelectedData.JoiningDate.split("T")[0],
+              PreviousEmployeeID: oSelectedData.PreviousEmployeeID,
             });
             that.getView().setModel(oEmployeeDetailsModel, "oEmpolyeeDetailsModel");
             that._commonFragmentOpenOffer(that, "OnboardEmployee");

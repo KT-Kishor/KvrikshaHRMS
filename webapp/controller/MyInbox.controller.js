@@ -229,18 +229,15 @@ sap.ui.define([
     MI_onPressColNavigation: async function (oEvent) {
       const oData = oEvent.getSource().getBindingContext("MyInboxModelData").getObject();
       //  Allowed case
-      if (
-        oData.ResourcePlanningType === "Resource Planning" &&
-        oData.Status === "Approved"
-      ) {
-        this.getRouter().navTo("RouteDetailLeave", { sLeaveID: oData.ID });
-        return;
-      }
+      // if (oData.ResourcePlanningType === "Resource Planning" && oData.Status === "Approved") {
+      //   this.getRouter().navTo("RouteDetailLeave", { sLeaveID: oData.ID });
+      //   return;
+      // }
 
       //  Block conditions
       if (
-        oData.ResourcePlanningType === "Resource Planning" ||
-        (oData.Type === "Overtime" && oData.Status === "Submitted")
+        // oData.ResourcePlanningType === "Resource Planning" ||
+        oData.Type === "Overtime" && oData.Status === "Submitted"
       ) {
         return sap.m.MessageToast.show(
           "This request is not allowed for navigation."

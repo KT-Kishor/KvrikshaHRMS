@@ -4328,3 +4328,105 @@ color: #fff !important;
     max-width: 8rem;
     min-width: 6rem;
 }
+
+/* ── Container ── */
+.invoiceTileContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* ── Base Tile ── */
+.tileLayout {
+    flex: 1 1 calc(25% - 0.75rem);
+    min-width: 270px;
+    /* remove max-width completely */
+    min-height: 5rem;
+    box-sizing: border-box;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.tileLayout:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.13);
+    transform: translateY(-2px);
+    cursor: pointer;
+}
+
+/* ── Individual Tile Colors (class-based, not nth-child) ── */
+.tileTotal {
+    border-top: 4px solid #185fa5;
+    background-color: #eef4ff;
+}
+
+.tileReceived {
+    border-top: 4px solid #3b6d11;
+    background-color: #eaf3de;
+}
+
+.tilePending {
+    border-top: 4px solid #854f0b;
+    background-color: #faeeda;
+}
+
+.tileOverdue {
+    border-top: 4px solid #a32d2d;
+    background-color: #fcebeb;
+}
+
+/* ── Typography ── */
+.tileLayout .sapMGTHdrTxt {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+}
+
+.tileLayout .sapMGTSubHdrTxt {
+    font-size: 0.78rem !important;
+}
+
+.tileLayout .sapMNCValue {
+    font-size: 1.6rem !important;
+    font-weight: 600 !important;
+}
+
+.tileLayout .sapMNCIconImage {
+    font-size: 1.4rem !important;
+}
+
+/* ── Large Desktop: 4 tiles per row ── */
+@media (min-width: 1200px) {
+    .tileLayout {
+        flex: 1 1 calc(25% - 0.75rem);
+        max-width: calc(25% - 0.75rem);
+    }
+}
+
+/* ── Small Desktop / Tablet Landscape: 4 tiles per row ── */
+@media (max-width: 1199px) and (min-width: 900px) {
+    .tileLayout {
+        flex: 1 1 calc(25% - 0.75rem);
+        max-width: calc(25% - 0.75rem);
+    }
+}
+
+/* ── Tablet Portrait: 2 tiles per row ── */
+@media (max-width: 899px) and (min-width: 500px) {
+    .tileLayout {
+        flex: 1 1 calc(50% - 0.75rem);
+        max-width: calc(50% - 0.75rem);
+    }
+}
+
+/* ── Mobile: 1 tile per row ── */
+@media (max-width: 499px) {
+    .tileLayout {
+        flex: 1 1 100%;
+        max-width: 100%;
+        min-height: 4rem;
+    }
+}

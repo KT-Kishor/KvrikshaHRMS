@@ -117,28 +117,39 @@
                             />
                         </ComboBox>
                         <!-- LOGO -->
+                        <!-- LOGO -->
                         <Label text="{i18n>uploadLogo}" />
                         <VBox width="100%">
-                            <Image
-                                src="{policyDialogModel>/logo}"
-                                width="7rem"
-                                height="7rem"
-                                visible="{= !!${policyDialogModel>/logo} }"
-                                class="sapUiSmallMarginBottom"
-                            />
                             <u:FileUploader
                                 id="PL_id_LogoUploader"
                                 width="100%"
                                 placeholder="{i18n>chooseLogo}"
                                 buttonText="{i18n>browse}"
-                                sameFilenameAllowed="true"
                                 fileType="jpg,jpeg,png"
                                 maximumFileSize="1"
                                 mimeType="image/png,image/jpeg"
                                 fileSizeExceed="PL_onLogoSizeExceed"
                                 typeMissmatch="PL_onLogoTypeMissmatch"
                                 change="PL_onLogoUpload"
+                                visible="{= !${policyDialogModel>/Logo_Name} }"
                             />
+                            <HBox
+                                width="100%"
+                                alignItems="Center"
+                                justifyContent="SpaceBetween"
+                                visible="{= !!${policyDialogModel>/Logo_Name} }"
+                            >
+                                <Text
+                                    text="{policyDialogModel>/Logo_Name}"
+                                    width="100%"
+                                />
+                                <Button
+                                    icon="sap-icon://decline"
+                                    type="Ghost"
+                                    tooltip="Remove Logo"
+                                    press="PL_onRemoveLogo"
+                                />
+                            </HBox>
                         </VBox>
                         <!-- FILE -->
                         <Label
@@ -153,9 +164,29 @@
                             sameFilenameAllowed="true"
                             fileType="pdf"
                             change="PL_onFileUpload"
+                            visible="{= !${policyDialogModel>/File_Name} }"
                         />
-                         <Label text="{i18n>startDate}" required="true" />
-
+                        <HBox
+                            width="100%"
+                            alignItems="Center"
+                            justifyContent="SpaceBetween"
+                            visible="{= !!${policyDialogModel>/File_Name} }"
+                        >
+                            <Text
+                                text="{policyDialogModel>/File_Name}"
+                                width="90%"
+                            />
+                            <Button
+                                icon="sap-icon://decline"
+                                type="Ghost"
+                                tooltip="Remove PDF"
+                                press="PL_onRemovePdf"
+                            />
+                        </HBox>
+                        <Label
+                            text="{i18n>startDate}"
+                            required="true"
+                        />
                         <DatePicker
                             id="PL_id_StartDate"
                             width="100%"
@@ -164,24 +195,21 @@
                             valueFormat="dd/MM/yyyy"
                             liveChange="PL_onDateValidation"
                             change="PL_onDateValidation"
-                           
-   
-
+                            minDate="{todayModel>/today}"
                         />
-
                         <!-- DATE -->
-                        <Label text="{i18n>uploadedDate}" required="true"/>
+                        <Label text="{i18n>uploadedDate}" />
                         <DatePicker
                             id="PL_id_UploadDate"
                             width="100%"
-                            value="{policyDialogModel>/uploadedDate}"
+                            value="{policyDialogModel>/UploadDate}"
                             displayFormat="dd/MM/yyyy"
                             valueFormat="dd/MM/yyyy"
                             liveChange="PL_onDateValidation"
-                            change="PL_onDateValidation"  
-   
+                            change="PL_onDateValidation"
+                            minDate="{todayModel>/today}"
+                            editable="false"
                         />
-
                     </f:SimpleForm>
                 </VBox>
             </ScrollContainer>

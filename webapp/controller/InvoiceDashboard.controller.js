@@ -98,7 +98,9 @@ sap.ui.define([
                 this.InvoiceDashboardModel.setProperty("/Chart3", response.CompanyWiseData);
                 this.InvoiceDashboardModel.setProperty("/Chart5", response.paymentBreakdownMap);
                 this.InvoiceDashboardModel.setProperty("/Chart6", response.PendingInvoice);
-
+                this.InvoiceDashboardModel.setProperty("/TileData", response.TileData);
+                console.log(response.TileData);
+                
                 var responseData = await this.ajaxCreateWithJQuery("getCompanyInvoiceYearlyTrend", filters);
                 this.InvoiceDashboardModel.setProperty("/Chart4", responseData.data);
                 this.InvoiceDashboardModel.setProperty("/PaymentDetails", responseData.AllPaymentDetails);

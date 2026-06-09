@@ -121,10 +121,7 @@
                             <blocks>
                                 <m:VBox class="sapUiResponsiveContentPadding">
                                     <!-- TITLE -->
-                                    <m:Title
-                                        level="H3"
-                                        class="sapUiMediumMarginBottom"
-                                    />
+                                  
                                     <!-- POLICY FLEX -->
                                     <m:FlexBox
                                         id="PL_id_PolicyFlexBox"

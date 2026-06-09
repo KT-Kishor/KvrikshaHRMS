@@ -3,88 +3,102 @@
     xmlns:core="sap.ui.core"
 >
     <Dialog
-        title="{i18n>policyVersionHistory}"
-        contentWidth="70%"
-        contentHeight="60%"
+        contentWidth="90%"
+        contentHeight="80%"
         draggable="true"
         resizable="true"
     >
+        <customHeader>
+            <Bar>
+                <contentMiddle>
+                    <Title text="{i18n>policyVersionHistory}" />
+                </contentMiddle>
+                <contentRight>
+                    <Button
+                        icon="sap-icon://decline"
+                        type="Transparent"
+                        press="onCloseVersionHistory"
+                    />
+                </contentRight>
+            </Bar>
+        </customHeader>
 
-        <Table items="{versionModel>/versions}">
+        <content>
+            <Table
+                items="{versionModel>/versions}"
+                width="100%"
+                growing="true"
+                growingScrollToLoad="true"
+                autoPopinMode="true"
+            >
+                <columns>
+                    <Column
+                        width="8rem"
+                        demandPopin="true"
+                        minScreenWidth="Tablet"
+                    >
+                        <Text text="{i18n>version}" />
+                    </Column>
+                    <Column
+                        width="10rem"
+                        demandPopin="true"
+                        minScreenWidth="Tablet"
+                    >
+                        <Text text="{i18n>startDate}" />
+                    </Column>
+                    <Column
+                        width="10rem"
+                        demandPopin="true"
+                        minScreenWidth="Desktop"
+                    >
+                        <Text text="{i18n>endDate}" />
+                    </Column>
+                    <Column
+                        width="6rem"
+                        hAlign="Center"
+                    >
+                        <Text text="{i18n>download}" />
+                    </Column>
+                </columns>
 
-            <columns>
+                <items>
+                    <ColumnListItem vAlign="Middle">
+                        <cells>
+                            <ObjectStatus
+                                text="{versionModel>Version}"
+                                state="None"
+                            />
 
-                <Column>
-                    <Text text="{i18n>version}" />
-                </Column>
+                            <Text
+                                text="{
+                                    path: 'versionModel>Start_Date',
+                                    type: 'sap.ui.model.type.Date',
+                                    formatOptions: {
+                                        pattern: 'dd/MM/yyyy'
+                                    }
+                                }"
+                            />
 
-                <Column>
-                    <Text text="{i18n>startDate}" />
-                </Column>
+                            <Text
+                                text="{
+                                    path: 'versionModel>End_Date',
+                                    type: 'sap.ui.model.type.Date',
+                                    formatOptions: {
+                                        pattern: 'dd/MM/yyyy'
+                                    }
+                                }"
+                            />
 
-                <Column>
-                    <Text text="{i18n>endDate}" />
-                </Column>
-
-                <Column>
-                    <Text text="{i18n>download}" />
-                </Column>
-
-            </columns>
-
-            <items>
-
-                <ColumnListItem>
-
-                    <cells>
-
-                        <ObjectStatus
-                            text="{versionModel>Version}"
-                            state="{= ${versionModel>Version} === ${versionModel>/versions/0/Version} ? 'Success' : 'None'}"
-                        />
-
-                        <Text
-                            text="{
-                                path: 'versionModel>Start_Date',
-                                type: 'sap.ui.model.type.Date',
-                                formatOptions: {
-                                    pattern: 'dd/MM/yyyy'
-                                }
-                            }" />
-
-                        <!-- END DATE FIX -->
-                        <Text
-                            text="{
-                                path: 'versionModel>End_Date',
-                                type: 'sap.ui.model.type.Date',
-                                formatOptions: {
-                                    pattern: 'dd/MM/yyyy'
-                                }
-                            }" />
-
-                        <Button
-                            icon="sap-icon://pdf-attachment"
-                            press="onDownloadVersionPdf"
-                             tooltip="Download PDF"
-                        />
-
-                    </cells>
-
-                </ColumnListItem>
-
-            </items>
-
-        </Table>
-
-        <endButton>
-
-            <Button
-                text="{i18n>close}"
-                press="onCloseVersionHistory"
-            />
-
-        </endButton>
-
+                            <Button
+                                icon="sap-icon://pdf-attachment"
+                                type="Emphasized"
+                                tooltip="Download PDF"
+                                press="onDownloadVersionPdf"
+                            />
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
     </Dialog>
-
 </core:FragmentDefinition>

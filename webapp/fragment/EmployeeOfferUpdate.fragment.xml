@@ -15,21 +15,10 @@
 	</m:customData>
 
 	</m:Button>
-	 <m:Button
-            press="TP_onraisebugpress"
-            icon="sap-icon://incident"
-            tooltip="{i18n>raisebug}"
-            type="Transparent"
-            class="LogNot logoutBtn"
-        />
+	 <m:Button press="TP_onraisebugpress" icon="sap-icon://incident" tooltip="{i18n>raisebug}" type="Transparent" class="LogNot logoutBtn"/>
 	<m:Button press="onLogout" icon="sap-icon://log" tooltip="{i18n>logoutTooltip}" type="Transparent" class="LogNot logoutBtn"/>
 	</m:headerContent>
-		<ObjectPageLayout id="EODF_id_ObjectPageLayoutEmp"
-                          selectedSection="{viewModel>/selectedSection}"
-                          useIconTabBar="true"
-                          showTitleInHeaderContent="true"		  
-						  preserveHeaderStateOnScroll="true"
-                          >
+		<ObjectPageLayout id="EODF_id_ObjectPageLayoutEmp" selectedSection="{viewModel>/selectedSection}" useIconTabBar="true" showTitleInHeaderContent="true" preserveHeaderStateOnScroll="true">
 			<headerTitle>
 				<ObjectPageDynamicHeaderTitle class="sapUiTinyMargin">
 					<!-- Expanded heading to display Consultant Name and Designation -->
@@ -40,12 +29,7 @@
 						<m:Label text="{employeeModel>/Designation}" wrapping="true" width="100%" class="whiteTitle" />
 					</expandedContent>
 					<expandedContent>
-						 <m:Title
-                            text="{employeeModel>/Status}"
-                            wrapping="true"
-                            width="100%"
-							class="whiteTitle"
-                        />
+						 <m:Title text="{employeeModel>/Status}" wrapping="true" width="100%" class="whiteTitle"/>
 					</expandedContent>
 				</ObjectPageDynamicHeaderTitle>
 			</headerTitle>
@@ -57,19 +41,8 @@
 						<ObjectPageSubSection titleUppercase="false">
 							<blocks>
 								<!-- SimpleForm for displaying and editing Employee details -->
-								<f:SimpleForm  id="EOU_id_Form"
-                                              editable="true"
-                                              layout="ColumnLayout"
-                                              columnsM="2"
-											  busyIndicatorDelay="0"
-                                              columnsL="2"
-                                              columnsXL="2">
+								<f:SimpleForm id="EOU_id_Form" editable="true" layout="ColumnLayout" columnsM="2" busyIndicatorDelay="0" columnsL="2" columnsXL="2">
 									<f:content>
-										<m:Label text="{i18n>companyBranch}" required="true" />
-										<m:ComboBox items="{path:'CompanyCodeDetailsModel>/',length:1000}" editable="{viewModel>/editable}" id="EOUF_id_CompanyCode" showSecondaryValues="true" selectedKey="{employeeModel>/CompanyCode}" change="EU_onCompanyCodeChange" valueStateText="{i18n>selectBranch}" filterSecondaryValues="true">
-										<core:ListItem key="{CompanyCodeDetailsModel>companyCode}" text="{CompanyCodeDetailsModel>companyCode}" additionalText="{CompanyCodeDetailsModel>branchCode} , {CompanyCodeDetailsModel>branch}" />
-										</m:ComboBox>
-
 										<m:Label text="{i18n>branch}"/>
 										<m:ComboBox valueStateText="{i18n>selectBranch}" 
 										id="EOUF_id_Branch" items="{path:'CompanyCodeDetailsModel>/',length:1000}" 
@@ -80,10 +53,7 @@
 										
 										<m:Label text="{i18n>salutation}" required="true" />
 										<!-- Consultant Name Field -->
-										<m:Select editable="{viewModel>/editable}"
-											selectedKey="{employeeModel>/Salutation}"
-											items="{Salutation>/salutation}"
-											width="100%"  change="onSalutationChange">
+										<m:Select editable="{viewModel>/editable}" selectedKey="{employeeModel>/Salutation}" items="{Salutation>/salutation}" width="100%"  change="onSalutationChange">
 											<!-- Binding the key and text of the Select control to the NameSalutation model -->
 											<core:Item key="{Salutation>text}" text="{Salutation>text}" />
 										</m:Select>
