@@ -1918,56 +1918,143 @@ sap.ui.define([
     },
 
     compressBase64: function (base64) {
-      // Base64 → binary
-      const binary = atob(base64);
-      const len = binary.length;
-      const bytes = new Uint8Array(len);
+            // Base64 → binary
+            const binary = atob(base64);
+            const len = binary.length;
+            const bytes = new Uint8Array(len);
 
-      for (let i = 0; i < len; i++) {
-        bytes[i] = binary.charCodeAt(i);
-      }
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binary.charCodeAt(i);
+            }
 
-      // gzip compress (browser)
-      const compressed = window.pako.gzip(bytes);
+            // gzip compress (browser)
+            const compressed = window.pako.gzip(bytes);
 
-      // compressed → Base64
-      let compressedBinary = "";
-      compressed.forEach(b => {
-        compressedBinary += String.fromCharCode(b);
-      });
+            // compressed → Base64
+            let compressedBinary = "";
+            compressed.forEach(b => {
+                compressedBinary += String.fromCharCode(b);
+            });
 
-      return btoa(compressedBinary);
-    },
+            return btoa(compressedBinary);
+        },
 
-    decompressBase64: function (base64) {
-      const binary = atob(base64);
-      const len = binary.length;
-      const bytes = new Uint8Array(len);
+        decompressBase64: function (base64) {
+            const binary = atob(base64);
+            const len = binary.length;
+            const bytes = new Uint8Array(len);
 
-      for (let i = 0; i < len; i++) {
-        bytes[i] = binary.charCodeAt(i);
-      }
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binary.charCodeAt(i);
+            }
 
-      const decompressed = window.pako.ungzip(bytes);
+            const decompressed = window.pako.ungzip(bytes);
 
-      let resultBinary = "";
-      decompressed.forEach(b => {
-        resultBinary += String.fromCharCode(b);
-      });
+            let resultBinary = "";
+            decompressed.forEach(b => {
+                resultBinary += String.fromCharCode(b);
+            });
 
-      return btoa(resultBinary);
-    },
-    isCompressedBase64: function (base64) {
-      try {
-        const binary = atob(base64);
+            return btoa(resultBinary);
+        },
 
-        // GZIP magic numbers: 0x1F 0x8B
-        return binary.charCodeAt(0) === 0x1F && binary.charCodeAt(1) === 0x8B;
-      } catch (e) {
-        return false;
-      }
-    }
+        isCompressedBase64: function (base64) {
+            try {
+                const binary = atob(base64);
 
+                // GZIP magic numbers: 0x1F 0x8B
+                return binary.charCodeAt(0) === 0x1F && binary.charCodeAt(1) === 0x8B;
+            } catch (e) {
+                return false;
+            }
+        },
 
-  })
+        compressAndConvertFile: function (oFile) {
+            return new Promise((resolve, reject) => {
+
+                // PDF / DOC / DOCX validation
+                if (
+                    oFile.type === "application/pdf" ||
+                    oFile.type === "application/msword" ||
+                    oFile.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                ) {
+
+                    if (oFile.size > 3 * 1024 * 1024) {
+                        reject("Attachment file size should not be more than 3 MB.");
+                        return;
+                    }
+
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        resolve({
+                            File: e.target.result.split(",")[1],
+                            FileName: oFile.name,
+                            FileType: oFile.type
+                        });
+                    };
+
+                    reader.readAsDataURL(oFile);
+                    return;
+                }
+
+                // Image compression
+                if (oFile.type.startsWith("image/")) {
+
+                    const reader = new FileReader();
+
+                    reader.onload = function (e) {
+
+                        const img = new Image();
+
+                        img.onload = function () {
+
+                            const canvas = document.createElement("canvas");
+                            const ctx = canvas.getContext("2d");
+
+                            let width = img.width;
+                            let height = img.height;
+
+                            if (width > 1200) {
+                                height = height * (1200 / width);
+                                width = 1200;
+                            }
+
+                            canvas.width = width;
+                            canvas.height = height;
+
+                            ctx.drawImage(img, 0, 0, width, height);
+
+                            const compressedData =
+                                canvas.toDataURL("image/jpeg", 0.7);
+
+                            resolve({
+                                File: compressedData.split(",")[1],
+                                FileName: oFile.name,
+                                FileType: "image/jpeg"
+                            });
+                        };
+
+                        img.src = e.target.result;
+                    };
+
+                    reader.readAsDataURL(oFile);
+                    return;
+                }
+
+                // DOC/DOCX
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    resolve({
+                        File: e.target.result.split(",")[1],
+                        FileName: oFile.name,
+                        FileType: oFile.type
+                    });
+                };
+
+                reader.readAsDataURL(oFile);
+            });
+        },
+    })
 });
