@@ -19,7 +19,7 @@ sap.ui.define([
                 // Attach route matched event for "RouteExpensDetails"
                 this.getRouter().getRoute("RouteExpensDetails").attachMatched(this._onRouteMatched, this);
             },
-            
+
             _onRouteMatched: async function (oEvent) {
                 var LoginFUnction = await this.commonLoginFunction("Expense");
                 if (!LoginFUnction) return;
@@ -30,6 +30,7 @@ sap.ui.define([
                     this.byId("objectPageLayoutExpence").setHeaderContentPinned(true); /// Header content pinned
                     this.i18nModel = this.getView().getModel("i18n").getResourceBundle();
                     this.ExpenseID = oEvent.getParameter("arguments").sPath;
+                    this.sourceView = oEvent.getParameter("arguments").dash || "Expensepage";
 
                     this.MyInBox = false;
                     if (this.ExpenseID.includes("MyInbox")) {
@@ -402,6 +403,10 @@ sap.ui.define([
             Exp_Det_onPressBackBtn: function () {
                 if (this.MyInBox) {
                     this.getRouter().navTo("RouteMyInbox", { sMyInBox: "ExpenseDetail" });
+                } else if (this.sourceView === "ExpenseDashboard") {
+                    this.getRouter().navTo("RouteExpensedashboard");
+                } else if (this.sourceView === "EmpExpense") {
+                    this.getRouter().navTo("RouteEmployeeExpense");
                 } else {
                     if (this.ViewModel.getProperty("/isEditMode")) {
                         this.showConfirmationDialog(
@@ -423,6 +428,7 @@ sap.ui.define([
                     this.byId("Exp_id_Destination").setValueState("None");
                     this.byId("Exp_id_EmpRemark").setValueState("None");
                 }
+
             },
 
             Exp_Det_onEditOrSavePress: function () {
@@ -823,36 +829,97 @@ sap.ui.define([
 
             onBeforeUploadStarts: function (oEvent) {
                 const oFile = oEvent.getParameter("files")[0];
-                if (!oFile) return MessageToast.show("No file selected.");
+
+                if (!oFile) {
+                    MessageToast.show("No file selected.");
+                    return;
+                }
 
                 const oModel = this.getView().getModel("tokenModel");
                 let aTokens = oModel.getProperty("/tokens") || [];
 
                 // Restrict to one file
-                if (aTokens.length >= 1) return MessageBox.error("Only one file can be uploaded at a time.");
+                if (aTokens.length >= 1) {
+                    MessageBox.error("Only one file can be uploaded at a time.");
+                    return;
+                }
 
-                const reader = new FileReader();
                 const that = this;
 
-                reader.onload = function (e) {
-                    const base64 = e.target.result.split(',')[1];
-                    const compressedBase64 = that.compressBase64(base64);
-                    const oUploadModel = that.getView().getModel("UploadModel");
-                    if (!oUploadModel) {
-                        that.getView().setModel(new sap.ui.model.json.JSONModel(), "UploadModel");
+                let oUploadModel = that.getView().getModel("UploadModel");
+                if (!oUploadModel) {
+                    oUploadModel = new sap.ui.model.json.JSONModel();
+                    that.getView().setModel(oUploadModel, "UploadModel");
+                }
+
+                // PDF / DOC / DOCX
+                if (
+                    oFile.type === "application/pdf" ||
+                    oFile.type === "application/msword" ||
+                    oFile.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                ) {
+
+                    const MAX_SIZE_MB = 5;
+
+                    if (oFile.size > MAX_SIZE_MB * 1024 * 1024) {
+                        MessageBox.error(
+                            "Attachment file size should not be more than " +
+                            MAX_SIZE_MB +
+                            " MB."
+                        );
+                        return;
                     }
-                    that.getView().getModel("UploadModel").setData({
-                        File: compressedBase64,
-                        FileName: oFile.name,
-                        FileType: oFile.type
-                    });
-                    aTokens.push({ key: oFile.name, text: oFile.name });
-                    oModel.setProperty("/tokens", aTokens);
 
-                    MessageToast.show("File uploaded successfully: " + oFile.name);
-                };
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const base64 = e.target.result.split(",")[1];
+                        const compressedBase64 =  that.compressBase64(base64);
+                        
 
-                reader.readAsDataURL(oFile);
+                        oUploadModel.setData({
+                            File: compressedBase64,
+                            FileName: oFile.name,
+                            FileType: oFile.type
+                        });
+
+                        aTokens.push({
+                            key: oFile.name,
+                            text: oFile.name
+                        });
+
+                        oModel.setProperty("/tokens", aTokens);
+                        MessageToast.show("File uploaded successfully: " + oFile.name);
+                    };
+
+                    reader.readAsDataURL(oFile);
+                    return;
+                }
+
+                // IMAGE
+                if (oFile.type.startsWith("image/")) {
+
+                    that.compressAndConvertFile(oFile).then(function (oFileData) {
+
+                            oUploadModel.setData({
+                                File: oFileData.File,
+                                FileName: oFileData.FileName,
+                                FileType: oFileData.FileType
+                            });
+
+                            aTokens.push({
+                                key: oFileData.FileName,
+                                text: oFileData.FileName
+                            });
+
+                            oModel.setProperty("/tokens", aTokens);
+                            MessageToast.show("File uploaded successfully: " + oFileData.FileName);
+                        }).catch(function (err) {
+                            MessageBox.error(err || "File upload failed");
+                        });
+
+                    return;
+                }
+                MessageBox.error("Only Image, PDF, DOC and DOCX files are allowed.");
             },
 
             // Exp_Det_onPressDownloadAttachment: function () {

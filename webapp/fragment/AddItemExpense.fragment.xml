@@ -51,7 +51,7 @@
 					<Label text=""></Label>
 					<HBox alignItems="Center" width="100%" renderType="Bare">
 						<VBox width="20%">
-							<u:FileUploader id="fileUploader" fileSizeExceed="onFileSizeExceeds" maximumFileSize="5MB" fileType="pdf,jpg,jpeg,png,doc,docx" change="onBeforeUploadStarts" buttonOnly="true" sameFilenameAllowed="true" iconFirst="true" buttonText="Attachment" />
+							<u:FileUploader id="fileUploader" fileType="pdf,jpg,jpeg,png,doc,docx" change="onBeforeUploadStarts" buttonOnly="true" sameFilenameAllowed="true" iconFirst="true" buttonText="Attachment" />
 						</VBox>
 						<VBox width="80%">
 							<Tokenizer id="tokenizer" width="100%" tokenDelete="onTokenDelete" tokens="{tokenModel>/tokens}">
@@ -62,15 +62,14 @@
 				</f:content>
 			</f:SimpleForm>
 		</VBox>
-		<footer>
-			<Toolbar>
-				<ToolbarSpacer />
+		<VBox width="100%" class="sapUiTinyMarginTop">
+    <HBox width="100%" justifyContent="End">
 				<!-- This pushes the buttons to the right -->
 				<Button text="{i18n>submit}" type="Transparent" press="Exp_Det_onPressSubmit" visible="{viewModel>/SubmitBtn}" />
 				<Button text="{i18n>save}" type="Transparent" press="Exp_Det_onPressSaveExpense" visible="{viewModel>/SaveBtn}" />
 				<Button text="{i18n>close}" type="Transparent" class="spaceBetween sendMail" press="Exp_Det_onPressClose" />
-			</Toolbar>
-		</footer>
-
+			
+</HBox>
+       </VBox>
 	</Dialog>
 </core:FragmentDefinition>

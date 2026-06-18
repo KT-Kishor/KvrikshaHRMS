@@ -288,7 +288,8 @@ sap.ui.define([
             });
             var ExpenseID = oEvent.getSource().getBindingContext("ExpenseModel").getObject().ExpenseID;
             this.getRouter().navTo("RouteExpensDetails", {
-                sPath: ExpenseID.replaceAll("/", "")
+                sPath: ExpenseID.replaceAll("/", ""),
+                dash: "Expensepage"
             });
         },
 
@@ -520,7 +521,20 @@ sap.ui.define([
         getGroupHeader: function (oGroup) {
             return this.getStyledGroupHeader(oGroup);
         },
+        Exp_onPressEmployeeDashboard: function () {
+            this.getRouter().navTo("RouteEmployeeExpense");
+        },
+        
+          EE_onPress: function () {
 
+    this.getRouter().navTo(
+        "RouteExpensePage",
+        {
+            FileName: "ExpenseApplication"
+        }
+    );
+
+},
         exp_validateTravelAllownce: function (oEvent) {
             utils._LCstrictValidationComboBox(oEvent.getSource(), "ID");
         }

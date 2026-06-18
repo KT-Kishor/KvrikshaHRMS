@@ -10,11 +10,25 @@
 >
     <Page>
         <customHeader>
-            <core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Header" type="XML"/>
+            <core:Fragment
+                fragmentName="sap.kt.com.minihrsolution.fragment.Header"
+                type="XML"
+            />
         </customHeader>
 
         <content>
-            <fb:FilterBar id="Exp-id-FilterBar" showFilterConfiguration="false" persistencyKey="myPersKey" useToolbar="false" clear="Exp_onPressClear" showClearOnFB="true" search="Exp_onSearch" filterChange=".onFilterChange" afterVariantLoad=".onAfterVariantLoad" class="sapUiTinyMargin CommonRoundedTable">
+            <fb:FilterBar
+                id="Exp-id-FilterBar"
+                showFilterConfiguration="false"
+                persistencyKey="myPersKey"
+                useToolbar="false"
+                clear="Exp_onPressClear"
+                showClearOnFB="true"
+                search="Exp_onSearch"
+                filterChange=".onFilterChange"
+                afterVariantLoad=".onAfterVariantLoad"
+                class="sapUiTinyMargin CommonRoundedTable"
+            >
                 <fb:filterGroupItems>
                     <fb:FilterGroupItem
                         name="EmployeeID"
@@ -170,6 +184,14 @@
                         <!-- <ToolbarSeparator/> -->
                         <ToolbarSpacer />
                         <ToolbarSpacer />
+                        <Button
+                            id="Exp_id_EmployeeDashboardBtn"
+                            type="Transparent"
+                            text="Dashboard"
+                            tooltip="Dashboard"
+                        
+                            press="Exp_onPressEmployeeDashboard"
+                        />
                         <Button
                             type="Transparent"
                             text="{i18n>downloadPerdiem}"

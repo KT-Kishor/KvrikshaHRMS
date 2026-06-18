@@ -91,12 +91,11 @@
 			</f:content>
 		</f:SimpleForm>
 		<!-- Buttons for Submit and Close actions -->
-		<footer>
-			<Toolbar>
-				<ToolbarSpacer/>
+		<VBox width="100%" class="sapUiTinyMarginTop">
+    <HBox width="100%" justifyContent="End">
 			<Button text="{i18n>expCreateBtn}" type="Transparent" press="Exp_Frg_onPressSubmit" class="sendMail" />
 			<Button text="{i18n>close}" type="Transparent" class="sendMail" press="Exp_Frg_onPressClose" />
-			</Toolbar>
-		</footer>
+			</HBox>
+       </VBox>
 	</Dialog>
 </core:FragmentDefinition>
