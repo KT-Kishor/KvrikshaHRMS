@@ -73,13 +73,12 @@
 		    <core:Item key="{PayslipStatus>ID}" text="{PayslipStatus>Value}" />
 			</ComboBox>	
 		</form:SimpleForm>
-		<footer>
-			<Toolbar>
-				<ToolbarSpacer/>
-				<Button text="Create" press="onCreatePayslip"  visible="{modeModel>/isCreate}" />
-				<Button text="Save" press="onUpdatePaylsip" visible="{modeModel>/isUpdate}" />
-				<Button text="Cancel" press="onCancelPayslip" />
-			</Toolbar>
-		</footer>
+		 <VBox width="100%" class="sapUiSmallMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
+				<Button text="Create" type="Transparent" press="onCreatePayslip"  visible="{modeModel>/isCreate}" />
+				<Button text="Save" type="Transparent" press="onUpdatePaylsip" visible="{modeModel>/isUpdate}" />
+				<Button text="Cancel" type="Transparent" press="onCancelPayslip" class="closeBtnMargin" />
+			 </HBox>
+       </VBox>
 	</Dialog>
 </core:FragmentDefinition>

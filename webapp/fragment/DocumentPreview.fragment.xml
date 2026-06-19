@@ -24,7 +24,7 @@
                 visible="false"/>
         </content>
 
-        <beginButton>
+     <beginButton>
             <Button
                 text="Download"
                 type="Transparent"

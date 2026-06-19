@@ -106,15 +106,14 @@
               editable="{viewModel>/editableResignatin}"
 			visible="true"
         />
-<footer>
-	<Toolbar>
-		<ToolbarSpacer/>
+<VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
 		<Button text="{i18n>View}" press=".onShowMore" type="Transparent" visible="{= !!${CommentsModel>/Comments} &amp;&amp; ${CommentsModel>/Comments}.length > 0 }"/>
 		<!-- <Button text="{i18n>View}" press=".onShowMore" type="Transparent"/> -->
 		<Button text="{i18n>withdrawResign}" visible="{viewModel>/CanWithdrawResignation}" type="Transparent" press="onWithdrawResignation" class="submit"/>
 		<Button text="{= ${PDFData>/PreviewFlag} ? ${i18n>applyResign} : ${i18n>preview} }" type="{= ${PDFData>/PreviewFlag} ? 'Transparent' : 'Transparent' }" press="RF_onPressHandlePreview" class="submit" visible="{viewModel>/BtnVisible}" />
-		<Button text="{i18n>close}" press="RF_onPressCloseDialog" type="Transparent" class="submit" />
-	</Toolbar>
-</footer>
+		<Button text="{i18n>close}" press="RF_onPressCloseDialog" type="Transparent" class="submit closeBtnMargin" />
+	</HBox>
+       </VBox>
     </Dialog>
 </core:FragmentDefinition>

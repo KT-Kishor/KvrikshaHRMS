@@ -93,19 +93,21 @@
                 />
 			</f:content>
 		</f:SimpleForm>
-		<beginButton>
+		<VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
 			<Button
                 text="{i18n>save}"
                 type="Transparent"
                 press="FAU_onSaveReturn"
             />
-		</beginButton>
-		<endButton>
+		
 			<Button
                 text="{i18n>assestAssignCancel}"
                 type="Transparent"
                 press="FAU_onCancelReturn"
+                class="closeBtnMargin"
             />
-		</endButton>
+	</HBox>
+       </VBox>
 	</Dialog>
 </core:FragmentDefinition>

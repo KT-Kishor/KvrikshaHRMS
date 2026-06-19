@@ -6,91 +6,102 @@
     <Dialog
         id="FPL_id_PolicyVersionDialog"
         title="{i18n>policyCreateNewVersion}"
-        contentWidth="30%"
-        contentHeight="35%"
-        draggable="true"
-        resizable="true"
+        horizontalScrolling="false"
+        verticalScrolling="false"
     >
+    
         <content>
-            <VBox class="sapUiSmallMargin">
-                <!-- START DATE -->
-                <Label
-                    text="{i18n>startDate}"
-                    required="true"
-                />
-                <DatePicker
-                    id="PLV_id_StartDate"
-                    minDate="{policyDialogModel>/minStartDate}"
-                    value="{
-        path: 'policyDialogModel>/Start_Date',
-        type: 'sap.ui.model.type.Date',
-        formatOptions: {
-            pattern: 'dd/MM/yyyy'
-        }
-    }"
-                    valueState="None"
-                    change="PL_onDateValidation"
-                    valueStateText="Please select a valid start date"
-                />
-                <!-- VERSION -->
-                <Label
-                    text="{i18n>version}"
-                    required="true"
-                />
-                <Input
-                    id="PL_id_Version"
-                    value="{policyDialogModel>/Version}"
-                    editable="true"
-                    maxLength="5"
-                    placeholder="{i18n>versionPlaceholder}"
-                    liveChange="PL_onLiveChangeValidation"
-                />
-                <!-- PDF UPLOAD -->
-                <Label
-                    text="{i18n>uploadPdf}"
-                    required="true"
-                />
-                <u:FileUploader
-                    id="PL_id_NewVersionFile"
-                    width="100%"
-                    placeholder="{i18n>chooseFile}"
-                    buttonText="{i18n>browse}"
-                    sameFilenameAllowed="true"
-                    fileType="pdf"
-                    change="PL_onVersionFileUpload"
-                    visible="{= !${policyDialogModel>/Version_File_Name} }"
-                />
-                <HBox
-                    visible="{= !!${policyDialogModel>/Version_File_Name} }"
-                    alignItems="Center"
-                    justifyContent="SpaceBetween"
-                    width="100%"
-                >
-                    <Text
-                        text="{policyDialogModel>/Version_File_Name}"
-                        width="90%"
+            <ScrollContainer
+                width="100%"
+                height="100%"
+                vertical="true"
+                horizontal="false"
+            >
+                <VBox class="sapUiSmallMargin">
+                    <!--  START DATE  -->
+                    <Label
+                        text="{i18n>startDate}"
+                        required="true"
                     />
-                    <Button
-                        icon="sap-icon://decline"
-                        type="Ghost"
-                        tooltip="Remove PDF"
-                        press="PL_onRemoveVersionPdf"
+                    <DatePicker
+                        id="PLV_id_StartDate"
+                        width="100%"
+                        minDate="{policyDialogModel>/minStartDate}"
+                        value="{ path: 'policyDialogModel>/Start_Date', type: 'sap.ui.model.type.Date', formatOptions: { pattern: 'dd/MM/yyyy' } }"
+                        valueState="None"
+                        change="PL_onDateValidation"
+                        valueStateText="Please select a valid start date"
                     />
-                </HBox>
-            </VBox>
+                    <!--  VERSION  -->
+                    <Label
+                        text="{i18n>version}"
+                        required="true"
+                    />
+                    <Input
+                        id="PL_id_Version"
+                        width="100%"
+                        value="{policyDialogModel>/Version}"
+                        editable="true"
+                        maxLength="5"
+                        placeholder="{i18n>versionPlaceholder}"
+                        liveChange="PL_onLiveChangeValidation"
+                    />
+                    <!--  PDF UPLOAD  -->
+                    <Label
+                        text="{i18n>uploadPdf}"
+                        required="true"
+                    />
+                    <u:FileUploader
+                        id="PL_id_NewVersionFile"
+                        width="100%"
+                        placeholder="{i18n>chooseFile}"
+                        buttonText="{i18n>browse}"
+                        sameFilenameAllowed="true"
+                        fileType="pdf"
+                        change="PL_onVersionFileUpload"
+                        visible="{= !${policyDialogModel>/Version_File_Name} }"
+                        maximumFileSize="5"
+                        fileSizeExceed="FileSizeExceeds"
+                    />
+                    <HBox
+                        visible="{= !!${policyDialogModel>/Version_File_Name} }"
+                        alignItems="Center"
+                        justifyContent="SpaceBetween"
+                        width="100%"
+                    >
+                        <Text
+                            text="{policyDialogModel>/Version_File_Name}"
+                            width="90%"
+                        />
+                        <Button
+                            icon="sap-icon://decline"
+                            type="Ghost"
+                            tooltip="Remove PDF"
+                            press="PL_onRemoveVersionPdf"
+                        />
+                    </HBox>
+                </VBox>
+            </ScrollContainer>
         </content>
-        <footer>
-            <OverflowToolbar>
-                <ToolbarSpacer />
-                <Button
-                    text="{i18n>save}"
-                    press="PL_onSaveNewVersion"
-                />
-                <Button
-                    text="{i18n>cancel}"
-                    press="PL_onCancelNewVersion"
-                />
-            </OverflowToolbar>
-        </footer>
+        <!--  FIXED FOOTER — always visible on all devices, never hides behind ...  -->
+      <VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
+            <Button
+                text="{i18n>save}"
+                press="PL_onSaveNewVersion"
+                type="Transparent"
+                id="PL_id_versionSaveButton"
+            />
+            <Button
+                text="{i18n>cancel}"
+                press="PL_onCancelNewVersion"
+                type="Transparent"
+                id="PL_id_versionCancelButton"
+                class="marginRight closeBtnMargin"
+
+            />
+     </HBox>
+     </VBox>
+        
     </Dialog>
 </core:FragmentDefinition>

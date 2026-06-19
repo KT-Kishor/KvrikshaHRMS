@@ -2,124 +2,135 @@
     xmlns="sap.m"
     xmlns:core="sap.ui.core"
     xmlns:u="sap.ui.unified"
+    xmlns:uxap="sap.uxap"
     xmlns:f="sap.ui.layout.form"
 >
-    <Dialog
-        id="FPL_id_PolicyDialog"
-        title="{= ${policyDialogModel>/isEdit} ? ${i18n>updatePolicy} : ${i18n>createPolicy} }"
-        contentWidth="40%"
-        contentHeight="70%"
-        stretch="{device>/system/phone}"
-        draggable="true"
-        resizable="true"
-        horizontalScrolling="false"
-        verticalScrolling="true"
-        class="policyResponsiveDialog"
-    >
-        <content>
+     <Dialog
+    id="FPL_id_PolicyDialog"
+    title="{= ${policyDialogModel>/isEdit} ? ${i18n>updatePolicy} : ${i18n>createPolicy} }"
+   contentWidth="{= ${device>/system/phone} ? '100%' : '70%' }"
+
+stretch="{device>/system/phone}"
+draggable="{= !${device>/system/phone} }"
+resizable="{= !${device>/system/phone} }"
+    horizontalScrolling="false"
+    verticalScrolling="true">
+        <content >
             <ScrollContainer
                 width="100%"
                 height="100%"
                 vertical="true"
-                horizontal="false"
             >
                 <VBox
                     width="100%"
-                    fitContainer="true"
-                    class="sapUiResponsiveContentPadding policyDialogContent"
+                    class="sapUiResponsiveContentPadding sapUiTinyMarginTop"
                 >
-                    <f:SimpleForm
-                        editable="true"
-                        layout="ResponsiveGridLayout"
+                    <!--  ROW 1: Policy Name + Description  -->
+                    <FlexBox
                         width="100%"
-                        labelSpanXL="3"
-                        labelSpanL="3"
-                        labelSpanM="12"
-                        labelSpanS="12"
-                        adjustLabelSpan="false"
-                        emptySpanXL="0"
-                        emptySpanL="0"
-                        emptySpanM="0"
-                        emptySpanS="0"
-                        columnsXL="2"
-                        columnsL="2"
-                        columnsM="1"
-                        singleContainerFullSize="true"
-                        class="policySimpleForm"
+                        wrap="Wrap"
+                        justifyContent="SpaceAround"
                     >
-                        <!-- POLICY NAME -->
-                        <Label
-                            text="{i18n>policyName}"
-                            required="true"
-                        />
-                        <Input
-                            id="PL_id_Title"
-                            width="100%"
-                            value="{policyDialogModel>/title}"
-                            placeholder="{i18n>enterPolicyTitle}"
-                            liveChange="PL_onLiveChangeValidation"
-                            maxLength="50"
-                        />
-                        <!-- DESCRIPTION -->
-                        <Label
-                            text="{i18n>description}"
-                            required="true"
-                        />
-                        <TextArea
-                            id="PL_id_Description"
-                            width="100%"
-                            value="{policyDialogModel>/description}"
-                            rows="2"
-                            growing="true"
-                            growingMaxLines="6"
-                            maxLength="100"
-                            placeholder="{i18n>enterDescription}"
-                            liveChange="PL_onLiveChangeValidation"
-                        />
-                        <!-- DEPARTMENT -->
-                        <Label
-                            text="{i18n>department}"
-                            required="true"
-                        />
-                        <ComboBox
-                            id="PL_id_Department"
-                            width="100%"
-                            selectedKey="{policyDialogModel>/department}"
-                            placeholder="{i18n>selectDepartment}"
-                            items="{
-                                path: 'DepartmentModel>/'
-                            }"
-                            selectionChange="PL_onDepartmentChange"
+                        <VBox
+                            width="{= ${device>/system/phone} ? '100%' : '48%' }"
+                            class="sapUiTinyMarginBottom"
                         >
-                            <core:Item
-                                key="{DepartmentModel>department}"
-                                text="{DepartmentModel>department}"
+                            <Label
+                                text="{i18n>policyName}"
+                                required="true"
                             />
-                        </ComboBox>
-                        <!-- ROLE -->
-                        <Label
-                            text="{i18n>role}"
-                            required="true"
-                        />
-                        <ComboBox
-                            id="PL_id_Role"
-                            width="100%"
-                            selectedKey="{policyDialogModel>/role}"
-                            placeholder="{i18n>selectRole}"
-                            selectionChange="PL_onSelectionChangeValidation"
-                            items="{
-                                path: 'FilteredRoleModel>/'
-                            }"
+                            <Input
+                                id="PL_id_Title"
+                                width="100%"
+                                value="{policyDialogModel>/title}"
+                                placeholder="{i18n>enterPolicyTitle}"
+                                liveChange="PL_onLiveChangeValidation"
+                                maxLength="50"
+                            />
+                        </VBox>
+                        <VBox
+                            width="{= ${device>/system/phone} ? '100%' : '48%' }"
+                            class="sapUiTinyMarginBottom"
                         >
-                            <core:Item
-                                key="{FilteredRoleModel>designationName}"
-                                text="{FilteredRoleModel>designationName}"
+                            <Label
+                                text="{i18n>description}"
+                                required="true"
                             />
-                        </ComboBox>
-                        <!-- LOGO -->
-                        <!-- LOGO -->
-                        <Label text="{i18n>uploadLogo}" />
-                        <VBox width="100%">
+                            <TextArea
+                                id="PL_id_Description"
+                                width="100%"
+                                value="{policyDialogModel>/description}"
+                                rows="1"
+                                growing="true"
+                                growingMaxLines="6"
+                                maxLength="100"
+                                placeholder="{i18n>enterDescription}"
+                                liveChange="PL_onLiveChangeValidation"
+                            />
+                        </VBox>
+                    </FlexBox>
+                    <!--  ROW 2: Department + Role  -->
+                    <FlexBox
+                        width="100%"
+                        wrap="Wrap"
+                        justifyContent="SpaceAround"
+                    >
+                        <VBox
+                            width="{= ${device>/system/phone} ? '100%' : '48%' }"
+                            class="sapUiTinyMarginBottom"
+                        >
+                            <Label
+                                text="{i18n>department}"
+                                required="true"
+                            />
+                            <ComboBox
+                                id="PL_id_Department"
+                                width="100%"
+                                selectedKey="{policyDialogModel>/department}"
+                                placeholder="{i18n>selectDepartment}"
+                                items="{ path: 'DepartmentModel>/' }"
+                                selectionChange="PL_onDepartmentChange"
+                            >
+                                <core:Item
+                                    key="{DepartmentModel>department}"
+                                    text="{DepartmentModel>department}"
+                                />
+                            </ComboBox>
+                        </VBox>
+                        <VBox
+                            width="{= ${device>/system/phone} ? '100%' : '48%' }"
+                            class="sapUiTinyMarginBottom"
+                        >
+                            <Label
+                                text="{i18n>role}"
+                                required="true"
+                            />
+                            <MultiComboBox
+                                id="PL_id_Role"
+                                width="100%"
+                                selectedKeys="{policyDialogModel>/role}"
+                                placeholder="{i18n>selectRole}"
+                                selectionChange="PL_onSelectionChangeValidation"
+                                items="{ path: 'FilteredRoleModel>/' }"
+                            >
+                                <core:Item
+                                    key="{FilteredRoleModel>designationName}"
+                                    text="{FilteredRoleModel>designationName}"
+                                />
+                            </MultiComboBox>
+                        </VBox>
+                    </FlexBox>
+                    <!--  ROW 3: Upload Logo + Upload File  -->
+                    <FlexBox
+                        width="100%"
+                        wrap="Wrap"
+                        justifyContent="SpaceAround"
+                    >
+                        <VBox
+                            width="{= ${device>/system/phone} ? '100%' : '48%' }"
+                            class="sapUiTinyMarginBottom"
+                        >
+                            <Label text="{i18n>uploadLogo}" />
                             <u:FileUploader
                                 id="PL_id_LogoUploader"
                                 width="100%"
@@ -151,83 +162,118 @@
                                 />
                             </HBox>
                         </VBox>
-                        <!-- FILE -->
-                        <Label
-                            text="{i18n>uploadFile}"
-                            required="true"
-                        />
-                        <u:FileUploader
-                            id="PL_id_FileUploader"
-                            width="100%"
-                            placeholder="{i18n>chooseFile}"
-                            buttonText="{i18n>browse}"
-                            sameFilenameAllowed="true"
-                            fileType="pdf"
-                            change="PL_onFileUpload"
-                            visible="{= !${policyDialogModel>/File_Name} }"
-                        />
-                        <HBox
-                            width="100%"
-                            alignItems="Center"
-                            justifyContent="SpaceBetween"
-                            visible="{= !!${policyDialogModel>/File_Name} }"
+                        <VBox
+                            width="{= ${device>/system/phone} ? '100%' : '48%' }"
+                            class="sapUiTinyMarginBottom"
                         >
-                            <Text
-                                text="{policyDialogModel>/File_Name}"
-                                width="90%"
+                            <Label
+                                text="{i18n>uploadFile}"
+                                required="true"
                             />
-                            <Button
-                                icon="sap-icon://decline"
-                                type="Ghost"
-                                tooltip="Remove PDF"
-                                press="PL_onRemovePdf"
+                           <u:FileUploader
+    id="PL_id_FileUploader"
+    width="100%"
+    placeholder="{i18n>chooseFile}"
+    buttonText="{i18n>browse}"
+    sameFilenameAllowed="true"
+    fileType="pdf"
+    change="PL_onFileUpload"
+    visible="{= !${policyDialogModel>/File_Name} }"
+    maximumFileSize="5"
+    fileSizeExceed="FileSizeExceeds"
+/>
+                            <HBox
+                                width="100%"
+                                alignItems="Center"
+                                justifyContent="SpaceBetween"
+                                visible="{= !!${policyDialogModel>/File_Name} }"
+                            >
+                                <Text
+                                    text="{policyDialogModel>/File_Name}"
+                                    width="100%"
+                                />
+                                <Button
+                                    icon="sap-icon://decline"
+                                    type="Ghost"
+                                    tooltip="Remove PDF"
+                                    press="PL_onRemovePdf"
+                                />
+                            </HBox>
+                        </VBox>
+                    </FlexBox>
+                    <!--  ROW 4: Start Date + Uploaded Date  -->
+                    <FlexBox
+                        width="100%"
+                        wrap="Wrap"
+                        justifyContent="SpaceAround"
+                    >
+                        <VBox
+                            width="{= ${device>/system/phone} ? '100%' : '48%' }"
+                            class="sapUiTinyMarginBottom"
+                        >
+                            <Label
+                                text="{i18n>startDate}"
+                                required="true"
                             />
-                        </HBox>
-                        <Label
-                            text="{i18n>startDate}"
-                            required="true"
+                            <DatePicker
+                                id="PL_id_StartDate"
+                                width="100%"
+                                value="{policyDialogModel>/Start_Date}"
+                                displayFormat="dd/MM/yyyy"
+                                valueFormat="dd/MM/yyyy"
+                                liveChange="PL_onDateValidation"
+                                change="PL_onDateValidation"
+                                minDate="{todayModel>/minDate}"
+                                maxDate="{todayModel>/maxDate}"
+                            />
+                        </VBox>
+                        <VBox
+                            width="{= ${device>/system/phone} ? '100%' : '48%' }"
+                            class="sapUiTinyMarginBottom"
+                        >
+                            <Label text="{i18n>uploadedDate}" />
+                            <DatePicker
+                                id="PL_id_UploadDate"
+                                width="100%"
+                                value="{policyDialogModel>/UploadDate}"
+                                displayFormat="dd/MM/yyyy"
+                                valueFormat="dd/MM/yyyy"
+                                liveChange="PL_onDateValidation"
+                                change="PL_onDateValidation"
+                                minDate="{todayModel>/today}"
+                                editable="false"
+                            />
+                        </VBox>
+                    </FlexBox>
+                    <!--  MOBILE FOOTER BUTTONS (visible only on phone)  -->
+                    <FlexBox
+                        width="100%"
+                        justifyContent="End"
+                        visible="{device>/system/phone}"
+                        class="sapUiSmallMarginTop"
+                    >
+                        <Button
+                            text="{= ${policyDialogModel>/isEdit} ? ${i18n>update} : ${i18n>save} }"
+                            type="Transparent"
+                            press="PL_onSavePolicy"
+                            class="sapUiTinyMarginEnd"
                         />
-                        <DatePicker
-                            id="PL_id_StartDate"
-                            width="100%"
-                            value="{policyDialogModel>/Start_Date}"
-                            displayFormat="dd/MM/yyyy"
-                            valueFormat="dd/MM/yyyy"
-                            liveChange="PL_onDateValidation"
-                            change="PL_onDateValidation"
-                            minDate="{todayModel>/today}"
+                        <Button
+                            text="{i18n>cancel}"
+                            type="Transparent"
+                            press="PL_onCancelPolicy"
                         />
-                        <!-- DATE -->
-                        <Label text="{i18n>uploadedDate}" />
-                        <DatePicker
-                            id="PL_id_UploadDate"
-                            width="100%"
-                            value="{policyDialogModel>/UploadDate}"
-                            displayFormat="dd/MM/yyyy"
-                            valueFormat="dd/MM/yyyy"
-                            liveChange="PL_onDateValidation"
-                            change="PL_onDateValidation"
-                            minDate="{todayModel>/today}"
-                            editable="false"
-                        />
-                    </f:SimpleForm>
+                    </FlexBox>
                 </VBox>
             </ScrollContainer>
         </content>
-        <!-- FOOTER -->
-        <footer>
-            <OverflowToolbar>
-                <ToolbarSpacer />
-                <Button
-                    text="{= ${policyDialogModel>/isEdit} ? ${i18n>update} : ${i18n>save} }"
-                    press="PL_onSavePolicy"
-                    class="sapUiTinyMarginEnd"
-                />
-                <Button
-                    text="{i18n>cancel}"
-                    press="PL_onCancelPolicy"
-                />
-            </OverflowToolbar>
-        </footer>
+        <!--  DESKTOP FOOTER (beginButton/endButton hidden on phone via Dialog's own footer)  -->
+       <VBox width="100%" class="sapUiTinyMarginTop sapUiBlueColorFooter fotterbtns">
+<HBox width="100%" justifyContent="End">
+<Button text="{= ${policyDialogModel>/isEdit} ? ${i18n>update} : ${i18n>save} }" press="PL_onSavePolicy" type="Transparent" id="PL_id_saveButton" class="marginRight"/>
+<Button text="{i18n>cancel}" press="PL_onCancelPolicy" type="Transparent" id="PL_id_cancelButton" class="marginRight closeBtnMargin"/>
+</HBox>
+</VBox>
+
     </Dialog>
 </core:FragmentDefinition>

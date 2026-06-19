@@ -1,13 +1,14 @@
 sap.ui.define(
     [
-        "./BaseController",
+      "./BaseController",
         "sap/m/MessageToast",
         "../utils/validation",
-        "sap/ui/model/json/JSONModel"
+        "sap/ui/model/json/JSONModel",
+        "sap/m/MessageBox",
     ],
-    function (BaseController, MessageToast, utils, JSONModel) {
+    function (BaseController, MessageToast, utils, JSONModel, MessageBox) {
         "use strict";
-    const $C = (id) => sap.ui.getCore().byId(id);
+        const $C = (id) => sap.ui.getCore().byId(id);
 
         return BaseController.extend(
             "sap.kt.com.minihrsolution.controller.TilePage", {
@@ -22,8 +23,8 @@ sap.ui.define(
                 }
             },
             _onRouteMatched: async function () {
-                  var model = new JSONModel({ RaiseVisible: false});
-                  this.getView().setModel(model, "VisibleModel");
+                var model = new JSONModel({ RaiseVisible: false });
+                this.getView().setModel(model, "VisibleModel");
                 if (!this.that)
                     this.that = this.getOwnerComponent().getModel("ThisModel")?.getData().that;
                 var LoginFunction = await this.commonLoginFunction("TilePage");
@@ -32,7 +33,7 @@ sap.ui.define(
                 this.getBusyDialog();
                 this.i18nModel = this.getView().getModel("i18n").getResourceBundle();
                 this.byId("id_ObjectPageLayoutTile").setSelectedSection('0');
-                
+
                 await this.AppVisibilityReadCall();
                 var LoginModel = this.getView().getModel("LoginModel");
 
@@ -43,17 +44,31 @@ sap.ui.define(
                 // Set default value outside
                 var oEndingSoonModel = new JSONModel({ "notificationCount": 0 });
                 this.getOwnerComponent().setModel(oEndingSoonModel, "EndingSoonModel");
+
                 // Check role
-                if (LoginModel.getProperty("/Role") === "Admin") {
-                    let data = await this.ajaxReadWithJQuery("getDashboardEndingSoonSummary", {});
-                    // Update value after API call
+               const sRole = LoginModel.getProperty("/Role");
+                const sEmployeeID = LoginModel.getProperty("/EmployeeID");
+
+                if (
+                    sRole === "Admin" ||
+                    sRole === "IT Manager" ||
+                    sRole === "IT Consultant"
+                ) {
+                    let data = await this.ajaxReadWithJQuery(
+                        "getDashboardEndingSoonSummary",
+                        {
+                            Role: sRole,
+                            EmployeeID: sEmployeeID
+                        }
+                    );
+
                     oEndingSoonModel.setProperty("/notificationCount", data.data);
                 }
 
                 await this._fetchCommonData("AllLoginDetails", "EmpModel");
                 await this._fetchCommonData("EmployeeDetails", "EmpDetails");
                 await this._fetchCommonData("Trainee", "traineePayslipModel", { Type: "Stipend" });
-           
+
                 this.CreateEmployeeModel();
                 this.initializeBirthdayCarousel();
 
@@ -68,8 +83,8 @@ sap.ui.define(
                     Save: false
                 });
                 this.getView().setModel(model, "RaiseBugModel")
-                
-        
+
+
             },
             CreateEmployeeModel: function () {
                 var empData = this.getView().getModel("EmpDetails").getData() || [];
@@ -102,7 +117,7 @@ sap.ui.define(
                     const firstEntry = Array.isArray(oData.data) ? oData.data[0] : oData.data;
                     this.getOwnerComponent().setModel(new JSONModel(firstEntry), "AppVisibilityModel");
 
-                    const tileNames = ["Home","Timesheet", "Payslip", "OfferGeneration", "Invoice", "Quotation", "Expense", "ManageAsset", "Recruitment","Approvals"];
+                    const tileNames = ["Home", "Timesheet", "Payslip", "OfferGeneration", "Invoice", "Quotation", "Expense", "ManageAsset", "Recruitment", "Approvals"];
 
                     const tileKeys = firstEntry.TileKey?.split(",") || [];
                     const tileMapping = tileNames.reduce((map, name, i) => {
@@ -176,54 +191,54 @@ sap.ui.define(
                     MessageToast.show(that.i18nModel.getText("empnotfound"));
                 }
             },
-          
+
             SM_onGenerateForgotPassword: function () {
-            var oPwdInput = $C("RP_id_NewPW");
-            if (!oPwdInput) return;
+                var oPwdInput = $C("RP_id_NewPW");
+                if (!oPwdInput) return;
 
-            var pwd = utils._LCgenerateStrongPassword();
-            oPwdInput.setValue(pwd).setValueState("None");
-            this._addPasswordGenerateIcon()
-        
-        },
-         _addPasswordGenerateIcon: function () {
-            const aInputs = [$C("RP_id_NewPW")];
+                var pwd = utils._LCgenerateStrongPassword();
+                oPwdInput.setValue(pwd).setValueState("None");
+                this._addPasswordGenerateIcon()
 
-            aInputs.forEach((oInput) => {
-                if (!oInput || oInput._hasCopyIcon) return;
-                oInput.addEndIcon({
-                    src: "sap-icon://copy",
-                    tooltip: "Copy password",
-                    press: this.SM_onCopyPassword.bind(this)
+            },
+            _addPasswordGenerateIcon: function () {
+                const aInputs = [$C("RP_id_NewPW")];
+
+                aInputs.forEach((oInput) => {
+                    if (!oInput || oInput._hasCopyIcon) return;
+                    oInput.addEndIcon({
+                        src: "sap-icon://copy",
+                        tooltip: "Copy password",
+                        press: this.SM_onCopyPassword.bind(this)
+                    });
+                    oInput._hasCopyIcon = true;
                 });
-                oInput._hasCopyIcon = true;
-            });
-        },
-         SM_onCopyPassword: function (oEvent) {
-            const oIcon = oEvent.getSource();
-            const oInput = oIcon.getParent(); // 👈 actual input owning the icon
-            if (!oInput || !oInput.getValue) return;
-            const pwd = oInput.getValue();
-            if (!pwd) return sap.m.MessageToast.show(this.i18nModel.getText("noPasswordCopy"));
+            },
+            SM_onCopyPassword: function (oEvent) {
+                const oIcon = oEvent.getSource();
+                const oInput = oIcon.getParent(); // 👈 actual input owning the icon
+                if (!oInput || !oInput.getValue) return;
+                const pwd = oInput.getValue();
+                if (!pwd) return sap.m.MessageToast.show(this.i18nModel.getText("noPasswordCopy"));
 
-            navigator.clipboard.writeText(pwd)
-                .then(() => {
-                    MessageToast.show(this.i18nModel.getText("passwordCopied"));
-                })
-                .catch(() => {
-                    try {
-                        const oTemp = document.createElement("textarea");
-                        oTemp.value = pwd;
-                        document.body.appendChild(oTemp);
-                        oTemp.select();
-                        document.execCommand("copy");
-                        document.body.removeChild(oTemp);
+                navigator.clipboard.writeText(pwd)
+                    .then(() => {
                         MessageToast.show(this.i18nModel.getText("passwordCopied"));
-                    } catch (err) {
-                        MessageToast.show(this.i18nModel.getText("copyFailed"));
-                    }
-                });
-        },
+                    })
+                    .catch(() => {
+                        try {
+                            const oTemp = document.createElement("textarea");
+                            oTemp.value = pwd;
+                            document.body.appendChild(oTemp);
+                            oTemp.select();
+                            document.execCommand("copy");
+                            document.body.removeChild(oTemp);
+                            MessageToast.show(this.i18nModel.getText("passwordCopied"));
+                        } catch (err) {
+                            MessageToast.show(this.i18nModel.getText("copyFailed"));
+                        }
+                    });
+            },
             TP_onupdatepress: function () {
                 var oView = this.getView();
                 // Ensure user selection is reset before opening
@@ -349,14 +364,14 @@ sap.ui.define(
             TileV_onpressTrainee: function () {
                 this.getRouter().navTo("RouteTrainee", {
                     value: "Trainee",
-                    from : "TilePage"
+                    from: "TilePage"
                 });
             },
             TileV_onPressOffer: function () {
                 //this.getBusyDialog();
                 this.getRouter().navTo("RouteEmployeeOffer", {
                     valueEmp: "EmployeeOffer",
-                    from : "TilePage"
+                    from: "TilePage"
                 });
             },
             TileV_onpresslistofholidays: function () {
@@ -372,19 +387,19 @@ sap.ui.define(
                 this.getRouter().navTo("RouteCompOff");
             },
             TileV_onpressConsultantInvoice: function () {
-                this.getRouter().navTo("RouteConsultantInvoiceApplication",{
-                    from:"Tilepage"
+                this.getRouter().navTo("RouteConsultantInvoiceApplication", {
+                    from: "Tilepage"
                 });
             },
             TileV_onpressContract: function () {
                 this.getRouter().navTo("RouteContract", {
                     valueEmp: "Contract",
-                    from : "TilePage"
+                    from: "TilePage"
                 });
             },
             TileV_onPressAdminPaySlip: function () {
-                this.getRouter().navTo("RouteAdminPaySlip",{
-                    from:"Tilepage"
+                this.getRouter().navTo("RouteAdminPaySlip", {
+                    from: "Tilepage"
                 });
             },
             TileV_onpressSelfservice: function () {
@@ -436,13 +451,13 @@ sap.ui.define(
                 });
             },
             TileV_onpressMSA: function () {
-                this.getRouter().navTo("RouteMSA",{
-                    from:"Tilepage"
+                this.getRouter().navTo("RouteMSA", {
+                    from: "Tilepage"
                 });
             },
             TileV_onpressExpenseApp: function () {
                 // this.getBusyDialog();
-                this.getRouter().navTo("RouteExpensePage",{
+                this.getRouter().navTo("RouteExpensePage", {
                     FileName: "ExpenseApplication"
                 });
             },
@@ -452,35 +467,35 @@ sap.ui.define(
                 });
             },
             TileV_onPressIncomeAsset: function () {
-                this.getRouter().navTo("RouteIncomeAsset",{
+                this.getRouter().navTo("RouteIncomeAsset", {
                     from: "TilePage"
                 });
             },
             TileV_onPressAssetAssignment: function () {
-                this.getRouter().navTo("RouteAssetAssignment",{
+                this.getRouter().navTo("RouteAssetAssignment", {
                     asset: "AssetAssignment"
                 });
             },
             TileV_onPressHrQuotation: function () {
-                this.getRouter().navTo("RouteHrQuotation",{
-                    from:"Tilepage"
+                this.getRouter().navTo("RouteHrQuotation", {
+                    from: "Tilepage"
                 });
             },
             TileV_MyAsset: function () {
                 this.getRouter().navTo("MyAsset");
             },
             TileV_onpressPoApp: function () {
-                this.getRouter().navTo("PurchaseOrder",{
+                this.getRouter().navTo("PurchaseOrder", {
                     fileName: "NewPurchaseOrder",
-                    from:"PurchaseOrder"
+                    from: "PurchaseOrder"
                 });
             },
             TileV_Recruitment: function () {
                 this.getRouter().navTo("Recruitment");
             },
             TileV_RecruitementDashbord: function () {
-                this.getRouter().navTo("AppliedCandidates",{
-                 value: "Candidates"
+                this.getRouter().navTo("AppliedCandidates", {
+                    value: "Candidates"
                 });
             },
             TileV_JobPosting: function () {
@@ -490,13 +505,13 @@ sap.ui.define(
                 this.getRouter().navTo("RouteInvoiceDashboard");
             },
             TileV_onpressExpenseInvoiceDashboard: function () {
-                this.getRouter().navTo("ExpenseInvoice",{
-                    from:"Tilepage"
+                this.getRouter().navTo("ExpenseInvoice", {
+                    from: "Tilepage"
                 });
             },
             TileV_onpressAllowanceApp: function () {
-                this.getRouter().navTo("RouteAllowancePage",{
-                    from:"Tilepage"
+                this.getRouter().navTo("RouteAllowancePage", {
+                    from: "Tilepage"
                 });
             },
             TileV_onpressSendGreetings: function () {
@@ -506,7 +521,7 @@ sap.ui.define(
                 this.getRouter().navTo("RouteLeaveOverview");
             },
             TileV_onpressCreditNoteApp: function () {
-                this.getRouter().navTo("RouteCreditNote",{
+                this.getRouter().navTo("RouteCreditNote", {
                     FileName: "CreditNote"
                 });
             },
@@ -523,23 +538,36 @@ sap.ui.define(
                 this.getRouter().navTo("RouteGoalQuestions");
             },
             TileV_onpressManageGoals: function () {
-                 var LoginModel = this.getView().getModel("LoginModel")
-          var  emps = LoginModel.getProperty("/EmployeeID")
-          this.getRouter().navTo("RouteManagegoals", {
-            employeeId: emps,
-            from: "ManageGoals",
-          });
+                var LoginModel = this.getView().getModel("LoginModel")
+                var emps = LoginModel.getProperty("/EmployeeID")
+                this.getRouter().navTo("RouteManagegoals", {
+                    employeeId: emps,
+                    from: "ManageGoals",
+                });
             },
-            TileV_onpressPolicy: function(){
+            TileV_onpressPolicy: function () {
                 this.getRouter().navTo("RoutePolicy");
             },
+            TileV_onpressHiringDashboard: function () {
+                this.getRouter().navTo("RouteHiringDashboard");
+            },
+            TP_onPressEmployeeExpense: function () {
+                this.getRouter().navTo("RouteEmployeeExpense");
+            },
+
             TileV_onpressManageEvents: function () {
                 this.getRouter().navTo("RouteManageEvent");
             },
             TileV_onpressReviewGoals: function () {
                 this.getRouter().navTo("RouteEmployeeDetails", {
-            sPath: "GoalEmployeeDetailsManageGoal",
-          });
+                    sPath: "GoalEmployeeDetailsManageGoal",
+                });
+            },
+            TileV_onpressExpenseDashboard: function () {
+                this.getRouter().navTo("RouteExpensedashboard");
+            },
+            TileV_onpressCandidateQuestion: function () {
+                this.getRouter().navTo("RouteManageCandidateQuestion");
             },
             onTileRefresh: async function () {
                 this.getBusyDialog();
@@ -695,21 +723,21 @@ sap.ui.define(
                 } else {
                     this._RaiseBugDialog.open();
                 }
-                this.getView().getModel("RaiseBugModel").setProperty("/RaisedBy",this.getView().getModel("LoginModel").getProperty("/EmployeeName"));
+                this.getView().getModel("RaiseBugModel").setProperty("/RaisedBy", this.getView().getModel("LoginModel").getProperty("/EmployeeName"));
             },
 
             RB_onCancelButtonPress: function () {
                 const oView = this.getView();
                 // 1️⃣ Clear model data
                 const oBugModel = oView.getModel("RaiseBugModel");
-                if (oBugModel) oBugModel.setData({ AppName: "", BugDescription: "", Email: "",Save:false });
+                if (oBugModel) oBugModel.setData({ AppName: "", BugDescription: "", Email: "", Save: false });
 
                 if (oBugModel) oBugModel.setProperty("/attachments", []);
 
                 if (oBugModel) oBugModel.setProperty("/tokens", []);
 
                 // 4️⃣ Reset ValueState
-                const aFields = ["RB_id_appname", "RB_id_bugDescription", "RB_id_RaisedBy", "RB_id_Email","RB_id_type"];
+                const aFields = ["RB_id_appname", "RB_id_bugDescription", "RB_id_RaisedBy", "RB_id_Email", "RB_id_type"];
 
                 aFields.forEach(id => {
                     const oControl = sap.ui.getCore().byId(oView.createId(id));
@@ -728,7 +756,7 @@ sap.ui.define(
             onAppnamechanges: function (oEvent) {
                 utils._LCstrictValidationComboBox(oEvent)
             },
-              ontypenamechanges: function (oEvent) {
+            ontypenamechanges: function (oEvent) {
                 utils._LCstrictValidationComboBox(oEvent)
             },
             onBugdescriptionchnages: function (oEvent) {
@@ -795,10 +823,10 @@ sap.ui.define(
                     BugDescription: oBugModel.BugDescription,
                     RaisedBy: oBugModel.RaisedBy,
                     CreatedDate: todayDate,
-                    AssignedTo:oBugModel.EmployeeName,
+                    AssignedTo: oBugModel.EmployeeName,
                     Status: "Open",
                     AssignedToID: oBugModel.Email,
-                    IssueType:oBugModel.IssueType,
+                    IssueType: oBugModel.IssueType,
                     RaisedID: this.getView().getModel("LoginModel").getProperty("/EmployeeID"),
                     ...photoPayload
                 };
@@ -833,31 +861,51 @@ sap.ui.define(
                 if (aAttachments.length + oFiles.length > 3) return sap.m.MessageToast.show("You can upload maximum 3 files only");
 
                 Array.from(oFiles).forEach((oFile) => {
-                    // Check duplicate file name
-                    const bDuplicate = aAttachments.some(file => file.filename === oFile.name);
-                    if (bDuplicate) return MessageToast.show("This file is more than 2 MB and cannot be uploaded");
+
+                    // Duplicate validation
+                    const bDuplicate = aAttachments.some(
+                        file => file.filename === oFile.name
+                    );
+
+                    if (bDuplicate) {
+                        MessageToast.show("File already uploaded");
+                        return;
+                    }
 
                     // File type validation
-                    if (!oFile.type.match(/^image\/(jpeg|jpg|png)$/)) return MessageToast.show("Only JPG, JPEG, PNG allowed");
+                    // if (!oFile.type.match(/^image\/(jpeg|jpg|png)$/)) {
+                    //     MessageToast.show("Only JPG, JPEG, PNG files are allowed");
+                    //     return;
+                    // }
 
-                    const oReader = new FileReader();
+                    // Compress image
+                    this.compressAndConvertFile(oFile)
+                        .then((oFileData) => {
 
-                    oReader.onload = (e) => {
-                        const sBase64 = e.target.result.split(",")[1];
-                        aAttachments.push({
-                            filename: oFile.name,
-                            fileType: oFile.type,
-                            content: sBase64
+                            aAttachments.push({
+                                filename: oFileData.FileName,
+                                fileType: oFileData.FileType,
+                                content: oFileData.File
+                            });
+
+                            aTokens.push({
+                                key: oFileData.FileName,
+                                text: oFileData.FileName
+                            });
+
+                            oRaiseBugModel.setProperty("/attachments", aAttachments);
+                            oRaiseBugModel.setProperty("/tokens", aTokens);
+
+                            MessageToast.show(
+                                oFileData.FileName + " uploaded successfully"
+                            );
+                        })
+                        .catch((err) => {
+                            MessageBox.error(err);
                         });
-                        aTokens.push({
-                            key: oFile.name,
-                            text: oFile.name
-                        });
-                        oRaiseBugModel.setProperty("/attachments", aAttachments);
-                        oRaiseBugModel.setProperty("/tokens", aTokens);
-                    };
-                    oReader.readAsDataURL(oFile);
+
                 });
+
                 oEvent.getSource().clear();
             },
             onTokenDelete: function (oEvent) {
@@ -880,7 +928,75 @@ sap.ui.define(
                 });
                 oRaiseBugModel.setProperty("/attachments", aAttachments);
                 oRaiseBugModel.setProperty("/tokens", aTokens);
-            }
+            },
+       AA_acceptrequest: async function (oEvent) {
+
+           
+    sap.m.MessageBox.confirm(
+        "Are you sure you want to accept this return request?",
+        {
+            title: "Confirmation",
+            actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+            emphasizedAction: sap.m.MessageBox.Action.YES,
+
+            onClose: async function (sAction) {
+
+                if (sAction !== sap.m.MessageBox.Action.YES) {
+                    return;
+                }
+
+                try {
+
+                    var oContext = oEvent.getSource().getBindingContext("Returntilemodel");
+                    var oData = oContext.getObject();
+                    var sPath = oContext.getPath();
+
+                    var sID = oData.ID;
+
+                    let data = await this.ajaxReadWithJQuery("ReturnSlots", {
+                        EmployeeID: this.getView().getModel("LoginModel").getProperty("/EmployeeID")
+                    });
+
+                    var sLocation = data.data[0].Location;
+
+                  
+                       var oPayload = {
+                        Status: "Accepted",
+                        ReturnLocation:sLocation,
+                        Type:oData.Type,
+                        Model:oData.Model,
+                        AssignEmployeeID:oData.AssignEmployeeID,
+                        AssignEmployeeName:oData.AssignEmployeeName,
+                        AcceptReqEmpID:this.getView().getModel("LoginModel").getProperty("/EmployeeID"),
+                        AcceptrequestEmpName:this.getView().getModel("LoginModel").getProperty("/EmployeeName"),
+                        ReturnRequestDate:oData.ReturnRequestDate,
+                        ReturnSlot:oData.ReturnSlot
+
+                    };
+                    this.getBusyDialog()
+                    await this.ajaxUpdateWithJQuery("IncomeAsset", {
+                        filters: {
+                            ID: sID
+                        },
+                        data: oPayload
+                    });
+
+                    var oModel = this.getView().getModel("Returntilemodel");
+                    oModel.setProperty(sPath + "/Status", "Accepted");
+                    this.closeBusyDialog()
+
+                    sap.m.MessageToast.show("Request Accepted");
+
+                } catch (oError) {
+
+                    sap.m.MessageBox.error("Failed to accept request");
+                    console.error(oError);
+                }
+
+            }.bind(this)
+        }
+    );
+}
 
 
         });

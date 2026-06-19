@@ -85,7 +85,17 @@
 								<Text visible="{= ${MyInboxModelData>Type} === 'Expense' || ${MyInboxModelData>Type} === 'Allowance' }" text="Total Amount: {path:'MyInboxModelData>TotalAmount',formatter: '.Formatter.fromatNumber'}" class="sapUiTinyMarginTop" />
 							</VBox>
 							<VBox >
-							<Text text="{= ${MyInboxModelData>SubType} === 'Overtime' ? ${MyInboxModelData>SubType} + ' (' + ${MyInboxModelData>NoofDays} + ' - ' + ${MyInboxModelData>leaveSessionType} + ')' : ${MyInboxModelData>SubType}}"/>
+						<Text
+    text="{
+        parts: [
+            'MyInboxModelData>SubType',
+            'MyInboxModelData>NoofDays',
+            'MyInboxModelData>leaveSessionType'
+        ],
+        formatter: '.Formatter.formatSubTypeText'
+    }"
+/>
+
 							<Text text="{MyInboxModelData>ResourcePlanningType}" visible="{= ${MyInboxModelData>ResourcePlanningType} !== '' }"/>
 							</VBox>
 							<Text text="{path:'MyInboxModelData>SubmittedDate',formatter:'.Formatter.formatDate'}"/>
@@ -96,15 +106,19 @@
 			</Table>
 		</content>
 		<footer>
-			<Bar id="MI_id_FooterBar">
+			<Bar id="MI_id_FooterBar" class="customFooterBar">
 			    <contentLeft>
                     <core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Footer" type="XML" />
                 </contentLeft>
 				<contentRight>
+				   <FlexBox class="TraineeButtons"  wrap="Wrap"
+    justifyContent="End"
+    alignItems="Center">
 					<Button id="MI_id_ButApprove" text="{i18n>approve}" press="MI_onPressButtons" type="Transparent" visible="false"/>
 					<Button id="MI_id_ButReject" text="{i18n>reject}" press="MI_onPressButtons" type="Transparent" visible="false"/>
 					<Button id="MI_id_ButReSend" text="{i18n>resend}" press="MI_onPressButtons" type="Transparent" visible="false"/>
 					<Button id="MI_id_ButPaid" text="{i18n>paid}" press="MI_onPressButtons" type="Transparent" visible="false"/>
+					</FlexBox>
 				</contentRight>
 			</Bar>
 		</footer>

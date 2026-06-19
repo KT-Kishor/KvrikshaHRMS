@@ -570,7 +570,7 @@
         },
         {
           "name": "RouteExpensDetails",
-          "pattern": "ExpenseDetails/{sPath}",
+          "pattern": "ExpenseDetails/{sPath}/{dash}",
           "target": "TargetExpenseDetails"
         },
         {
@@ -683,6 +683,13 @@
           "pattern": "AssetAssignment/:from:",
           "target": [
             "TargetAssetAssignment"
+          ]
+        },
+        {
+          "name": "RouteReturnslots",
+          "pattern": "Returnslots",
+          "target": [
+            "TargetReturnslots"
           ]
         },
         {
@@ -927,6 +934,25 @@
           ]
         },
         {
+          "name": "RouteHiringDashboard",
+          "pattern": "HiringDashboard",
+          "target": [
+            "TargetHiringDashboard"
+          ]
+        },
+         {
+          "name": "RouteHiringDashboardOverview",
+          "pattern": "HiringDashboardOverview",
+          "target": [
+            "TargetHiringDashboardOverview"
+          ]
+        },
+         {
+          "name": "RouteEmployeeExpense",
+          "pattern": "EmployeeExpense",
+          "target": ["TargetEmployeeExpense"]
+        },
+        {
           "name": "RouteGoalQuestions",
           "pattern": "GoalQuestions",
           "target": [
@@ -946,7 +972,28 @@
           "target": [
             "TargetManageEvent"
           ]
-        }
+        },
+        {
+          "name": "RouteManageCandidateQuestion",
+          "pattern": "ManageCandidateQuestion",
+          "target": [
+            "TargetManageCandidateQuestion"
+          ]
+        },
+        {
+          "name": "RouteExpensedashboard",
+          "pattern": "Expensedashboard",
+          "target": [
+            "TargetExpensedashboard"
+          ]
+        },
+        {
+          "name": "RouteQuestionDetail",
+          "pattern": "QuestionDetail",
+          "target": [
+            "TargetCandidateQuestionDetail"
+          ]
+        } 
       ],
       "targets": {
         "TargetView1": {
@@ -1272,6 +1319,13 @@
           "viewId": "AssetAssignment",
           "viewName": "AssetAssignment"
         },
+         "TargetReturnslots": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "RetrunSlots",
+          "viewName": "RetrunSlots"
+        },
         "TargetAssetDetails": {
           "viewType": "XML",
           "transition": "slide",
@@ -1480,6 +1534,27 @@
           "viewId": "Policy",
           "viewName": "Policy"
         },
+         "TargetHiringDashboard":{
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation":false,
+          "viewId": "HiringDashboard",
+          "viewName":"HiringDashboard"
+        },
+        "TargetHiringDashboardOverview":{
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation":false,
+          "viewId": "HiringDashboardOverview",
+          "viewName":"HiringDashboardOverview"
+        },
+         "TargetEmployeeExpense": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "EmployeeExpense",
+          "viewName": "EmployeeExpense"
+        },
         "TargetGoalQuestion": {
           "viewType": "XML",
           "transition": "slide",
@@ -1500,6 +1575,27 @@
           "clearControlAggregation": false,
           "viewId": "ManageEvent",
           "viewName": "ManageEvent"
+        },
+        "TargetManageCandidateQuestion": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "CandidateQuestion",
+          "viewName": "CandidateQuestion"
+        },
+        "TargetExpensedashboard": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "ExpenseDashBoard",
+          "viewName": "ExpenseDashBoard"
+        },
+       "TargetCandidateQuestionDetail": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "CandidateQuestionDetailPage",
+          "viewName": "CandidateQuestionDetailPage"
         }
       }
     },

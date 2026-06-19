@@ -179,8 +179,20 @@
         "ID" : 44,
         "AppName": "Policy Management"
     },
+    {
+        "ID" : 45,
+        "AppName": "Expense Dashboard"
+    },
+    {
+        "ID" : 45,
+        "AppName": "Candidate Question"
+    },
+      {
+        "ID" : 46,
+        "AppName": "Return Slots"
+    },
      {
-        "ID": 45,
+        "ID": 47,
         "AppName": "Others"
     }
 ]

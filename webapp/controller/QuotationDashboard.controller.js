@@ -147,6 +147,9 @@ sap.ui.define([
     QD_onChangeCurrentMonthIssuedBy: function () {
       this.CommonReadCall("QuotationStats", { QuotationIssuedBy: this.getView().byId("QD_id_QuoIssuedByFirst").getValue() }, "GetBarChatCurrentMonth", "QD_id_VizFrame2", "QD_id_Popover2", "Status", "Per Day Quotation v/s Employee");
     },
+     onLogout: function () {
+          this.CommonLogoutFunction()
+        },
   });
 }
 );

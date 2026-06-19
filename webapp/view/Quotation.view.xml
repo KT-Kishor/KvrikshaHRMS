@@ -20,7 +20,7 @@
                 showClearOnFB="true"
                 showFilterConfiguration="false"
                 search=".Q_onSearch"
-                class="sapUiTinyMargin"
+               class="sapUiTinyMargin CommonRoundedTable"
             >
                 <filterbar:filterGroupItems>
                     <filterbar:FilterGroupItem
@@ -142,7 +142,7 @@
                 id="Q_id_Table"
                 sticky="ColumnHeaders,HeaderToolbar"
                 busyIndicatorDelay="0"
-                class="sapUiTinyMargin"
+                class="sapUiTinyMargin CommonRoundedTable"
                 width="auto"
                 inset="false"
                 growing="true"

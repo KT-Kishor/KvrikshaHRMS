@@ -6,7 +6,7 @@
          <VBox >
             <MessageStrip
                 text="{i18n>msgstrip}"
-                showIcon="true">
+                showIcon="true" class="sapUiTinyMargin">
             </MessageStrip>
         <f:SimpleForm id="idEntryForm"
 
@@ -45,11 +45,12 @@
             </f:content>
         </f:SimpleForm>
      </VBox>
-        <beginButton>
+     <VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
             <Button text="{i18n>submit}" type="Transparent" press="FUS_onCreateDialogSubmit" enabled="{/isFileValid}"/>
-        </beginButton>
-        <endButton>
-            <Button text="{i18n>btnCancel}" type="Transparent" press="FUS_onCreateDialogCancel"/>
-        </endButton>
+       
+            <Button text="{i18n>btnCancel}" type="Transparent" press="FUS_onCreateDialogCancel" class="closeBtnMargin"/>
+        </HBox>
+       </VBox>
     </Dialog>
 </core:FragmentDefinition>

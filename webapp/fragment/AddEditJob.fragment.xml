@@ -401,7 +401,8 @@
                 </f:content>
             </f:SimpleForm>
         </content>
-        <buttons>
+       <VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
             <Button
                 text="{= ${temporaryModel>/isEdit} ? 'Save' : 'Submit' }"
                 id="IDbutton"
@@ -412,7 +413,9 @@
                 text="Close"
                 type="Transparent"
                 press="onCloseDialog"
+                class="closeBtnMargin"
             />
-        </buttons>
+      </HBox>
+       </VBox>
     </Dialog>
 </core:FragmentDefinition>

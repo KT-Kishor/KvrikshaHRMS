@@ -14,18 +14,22 @@
     xmlns:viz.data="sap.viz.ui5.data"
     xmlns:layout="sap.ui.layout"
 >
-    <Page>
+    <Page  class="classheader glassHeader ObjectcustomHeaderToolbar" navButtonPress="QD_onPressBack" showNavButton="true">
+    
         <headerContent>
-            <Button
-                press="QD_onPressBack"
-                type="Transparent"
-                icon="sap-icon://nav-back"
-            />
-            <Title
-                text="{i18n>qDashboard}"
-                class="boldBlackText"
-            />
-            <ToolbarSpacer />
+           <Button press="Tile_NotifictionBTN" class="sapUiTinyMarginBeginEnd LogNot logoutBtn" tooltip="{i18n>TilenotificationfragName}" icon="sap-icon://bell" type="Transparent" visible="{= ${LoginModel>/Role} !== 'Contractor' }">
+			<customData >
+            	<BadgeCustomData class="badgeClass" key="badge" value="{EndingSoonModel>/notificationCount}"/>
+            </customData>
+		</Button>
+		<Button
+            press="TP_onraisebugpress"
+            icon="sap-icon://incident"
+            tooltip="{i18n>raisebug}"
+            type="Transparent"
+            class="LogNot logoutBtn"
+        />
+			<Button press="onLogout" icon="sap-icon://log" tooltip="{i18n>logoutTooltip}" type="Transparent" class="LogNot logoutBtn"/>
         </headerContent>
         <content>
             <fb:FilterBar
@@ -35,6 +39,7 @@
                 useToolbar="false"
                 showClearOnFB="false"
                 search=".QD_onSearch"
+                class="sapUiTinyMargin CommonRoundedTable"
             >
                 <fb:filterGroupItems>
                     <fb:FilterGroupItem

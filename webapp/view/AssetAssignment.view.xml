@@ -129,6 +129,14 @@
                                 key="{AssetAssignmentStatus>/1/ID}"
                                 text="{AssetAssignmentStatus>/1/Value}"
                             />
+                             <core:ListItem
+                                key="{AssetAssignmentStatus>/2/ID}"
+                                text="{AssetAssignmentStatus>/2/Value}"
+                            />
+                             <core:ListItem
+                                key="{AssetAssignmentStatus>/3/ID}"
+                                text="{AssetAssignmentStatus>/3/Value}"
+                            />
                         </ComboBox>
                     </fb:control>
                 </fb:FilterGroupItem>
@@ -159,6 +167,18 @@
                     />
 
                     <ToolbarSpacer />
+                     <Button
+                        text="Accept Request"
+                        tooltip="Accept Request"
+                        type="Transparent"
+                        press="AA_acceptrequest"
+                    />
+                     <Button
+                        text="Create Slot"
+                        tooltip="Create Slot"
+                        type="Transparent"
+                        press="AA_onPressslot"
+                    />
                     <Button
                         text="{i18n>assestAssignassign}"
                         tooltip="{i18n>assestAssignAssignAsset}"
@@ -308,7 +328,7 @@
                             text="{assetModel>Currency} {path:'assetModel>AssetValue',formatter:'.Formatter.fromatNumber'}"
                         />
                         <VBox class="sapUiTinyMarginTopBottom"
-                        visible="{= ${assetModel>Status}!== 'Assigned'}">
+                        visible="{= ${assetModel>Status}=== 'Returned'}">
                             <Text
                                 text="{= 'To: ' + ${assetModel>ReturnEmpID}}"
                                 class="sapUiTinyMarginBottom"
@@ -330,11 +350,11 @@
                             />
                         </VBox>
 							<Button  text="{i18n>View}" press=".onShowMore"
-                            visible="{= ${assetModel>Status}!== 'Assigned'}" />
+                            visible="{= ${assetModel>Status}=== 'Returned'}" />
 
                         <ObjectStatus
                             inverted="false"
-                            state="{= ${assetModel>Status} === 'Assigned' ? 'Indication05' : 'Success' }"
+                       state="{= ${assetModel>Status} === 'Assigned' ? 'Indication05' : ${assetModel>Status} === 'Return request' ? 'Warning' : 'Success' }"
                             text="{assetModel>Status}"
                         />
                     </cells>

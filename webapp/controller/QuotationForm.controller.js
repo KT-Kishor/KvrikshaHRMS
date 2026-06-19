@@ -110,6 +110,9 @@ sap.ui.define([
             utils._LCstrictValidationComboBox(oEvent);
             this.QF_onCallVariant(oEvent.getSource().getSelectedKey());
         },
+         onLogout: function () {
+          this.CommonLogoutFunction()
+        },
 
         QF_onModelSelectionChange: function () {
             const properties = ["Variant", "Transmission", "Color", "Fuel", "BoardPlate", "Make", "Emission", "EXShowroom", "TCS1Perc", "ROADTAX", "AddOnInsurance", "TempCharges", "RegHypCharge", "ShieldOfTrust4YR45K", "EXTDWarrantyFOR4YR80K", "STDFittings", "FastTag", "VAS", "RSA", "DiscountOffers", "ConsumerScheme", "EXShowroomAfterScheme", "TotalOnRoad"];

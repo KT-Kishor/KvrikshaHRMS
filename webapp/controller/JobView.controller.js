@@ -423,13 +423,13 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "../utils/vali
                     oDialog.setModel(oJobModel, "JobApplicationModel");
 
                     const oJobApplicationModelFromView = that.getView().getModel("JobApplicationModel");
-const oExperienceSection = Fragment.byId("jobFormFrag", "experienceSection");
-const oFresherSection = Fragment.byId("jobFormFrag", "fresherSection");
+                    const oExperienceSection = Fragment.byId("jobFormFrag", "experienceSection");
+                    const oFresherSection = Fragment.byId("jobFormFrag", "fresherSection");
 
-const nExp =oJobApplicationModelFromView.getProperty("/Experience") || 0;
+                    const nExp =oJobApplicationModelFromView.getProperty("/Experience") || 0;
 
-oExperienceSection.setVisible(nExp > "0");
-oFresherSection.setVisible(nExp <= "0");
+                    oExperienceSection.setVisible(nExp > "0");
+                    oFresherSection.setVisible(nExp <= "0");
 
                     if (oJobApplicationModelFromView) {
                         oDialog.setModel(oJobApplicationModelFromView, "JobApplicationModel");
@@ -1454,7 +1454,7 @@ oFresherSection.setVisible(nExp <= "0");
                 const sBaseURL = window.location.origin + window.location.pathname;
                 const sHash = "#/JobView/" + encodeURIComponent(sJobId);
                 const sFullShareURL = `${sBaseURL}?sap-ui-xx-viewCache=false${sHash}`;
-                const sMessage = `Explore this exciting opportunity at Kvriksha Technologies Private Limited.\nApply now or share it with someone who might be a great fit\n${sFullShareURL}`;
+                const sMessage = `Explore this exciting opportunity at Kalpavriksha Technologies.\nApply now or share it with someone who might be a great fit\n${sFullShareURL}`;
 
                 const items = [
                     createItem("image/linkedin.png", "LinkedIn", () => {
@@ -1465,7 +1465,7 @@ oFresherSection.setVisible(nExp <= "0");
 
                     createItem("image/Mail.png", "Email", () => {
                         this._oSharePopover.close();
-                        const sSubject = "Exciting Job Opportunity at Kvriksha Technologies Private Limited";
+                        const sSubject = "Exciting Job Opportunity at Kalpavriksha Technologies";
                         window.location.href = "mailto:?subject=" + encodeURIComponent(sSubject) + "&body=" + encodeURIComponent(sMessage);
                     }),
 

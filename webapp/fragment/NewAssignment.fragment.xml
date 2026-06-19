@@ -40,13 +40,12 @@
             </f:content>
         </f:SimpleForm>
 
-        <footer>
-        <Toolbar>
-        <ToolbarSpacer />
+         <VBox width="100%" class="sapUiSmallMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
  <Button text="{i18n>save}" type="Transparent" press="MA_onPressSave" class="submit" visible="{visiblePlay>/save}"/>
                 <Button text="{i18n>submit}" type="Transparent" press="NAF_onSubmitTask" class="submit" visible="{visiblePlay>/submit}"/>
-                <Button text="{i18n>close}" press="NAF_onTaskClose" class="sendMail" type="Transparent"/>
-        </Toolbar>
-        </footer>
+                <Button text="{i18n>close}" press="NAF_onTaskClose" class="sendMail closeBtnMargin" type="Transparent"/>
+       </HBox>
+       </VBox>
     </Dialog>
 </core:FragmentDefinition>

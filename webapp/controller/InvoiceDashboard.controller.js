@@ -99,7 +99,6 @@ sap.ui.define([
                 this.InvoiceDashboardModel.setProperty("/Chart5", response.paymentBreakdownMap);
                 this.InvoiceDashboardModel.setProperty("/Chart6", response.PendingInvoice);
                 this.InvoiceDashboardModel.setProperty("/TileData", response.TileData);
-                console.log(response.TileData);
                 
                 var responseData = await this.ajaxCreateWithJQuery("getCompanyInvoiceYearlyTrend", filters);
                 this.InvoiceDashboardModel.setProperty("/Chart4", responseData.data);
@@ -108,6 +107,8 @@ sap.ui.define([
                 var responseCreditNote = await this.ajaxCreateWithJQuery("getCreditNoteBarChartData", filters);
                 this.InvoiceDashboardModel.setProperty("/Chart7", responseCreditNote.data.StatusChart);
                 this.InvoiceDashboardModel.setProperty("/Chart8", responseCreditNote.data.MonthChart);
+                this.InvoiceDashboardModel.setProperty("/CreditNoteTotalAmount", responseCreditNote.data.CreditNoteTotalAmount);
+                this.InvoiceDashboardModel.setProperty("/CreditNoteCount", responseCreditNote.data.CreditNoteCount);
                 this.closeBusyDialog();
             } catch (error) {
                 MessageToast.show(error.message || error.responseText);
@@ -199,6 +200,7 @@ sap.ui.define([
             this.onCommonPaymentAmountPress(oContext, oEvent.getSource());
         },
         onInvoiceNumberPress: function (oEvent) {
+
             this.getRouter().navTo("RouteCompanyInvoiceDetails", { sPath: encodeURIComponent(oEvent.getSource().getBindingContext("popoverData").getObject().InvNo), dash: "InvoiceDashboard" });
         },
         onPressFirstChart: function (oEvent) {

@@ -5,15 +5,14 @@
     <Dialog
         id="FQD_id_Dialog"
         title="{= ${viewModel>/isEditMode} ? ${i18n>EditQuestionTitle} : ${i18n>AddQuestionTitle} }"
-        draggable="true"
-        resizable="true"
         contentWidth="520px"
-        class="sapUiPopupWithPadding"
+    
     >
-        <content>
+    
+        <content >
             <VBox
-                class="sapUiSmallMarginLeft"
-                width="100%"
+                class="sapUiTinyMargin"
+               
             >
                 <Label
                     text="{i18n>Department}"
@@ -60,18 +59,22 @@
             </VBox>
         </content>
 
-        <beginButton>
+
+<VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
+      
             <Button
+                type="Transparent"
                 text="{= ${viewModel>/isEditMode} ? ${i18n>update} : ${i18n>add} }"
                 press="FQD_onSaveDialogPress"
             />
-        </beginButton>
-
-        <endButton>
             <Button
+            type="Transparent"
                 text="{i18n>cancel}"
                 press="FQD_onCloseDialogPress"
+                class="closeBtnMargin"
             />
-        </endButton>
+      </HBox>
+      </VBox>
     </Dialog>
 </core:FragmentDefinition>

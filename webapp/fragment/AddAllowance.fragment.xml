@@ -73,12 +73,11 @@
 			</f:content>
 		</f:SimpleForm>
 		<!-- Buttons for Submit and Close actions -->
-		<footer>
-			<Toolbar>
-				<ToolbarSpacer/>
+		<VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
 			<Button text="{i18n>applyallowance}" type="Transparent" press="Exp_Frg_onPressSubmit" class="sendMail" />
-			<Button text="{i18n>close}" type="Transparent" class="sendMail" press="Exp_Frg_onPressClose" />
-			</Toolbar>
-		</footer>
+			<Button text="{i18n>close}" type="Transparent" class="sendMail closeBtnMargin" press="Exp_Frg_onPressClose" />
+			</HBox>
+       </VBox>
 	</Dialog>
 </core:FragmentDefinition>

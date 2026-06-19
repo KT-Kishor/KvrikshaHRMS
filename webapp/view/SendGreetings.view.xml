@@ -172,7 +172,8 @@
 				<m:contentLeft>
 					<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Footer" type="XML" />
 				</m:contentLeft>
-				<m:contentRight>
+				<m:contentRight >
+				<m:HBox class="GreetingButtons">
 					<m:Button
 						id="Wish_id_SendMail"
 						text="Send Mail"
@@ -186,6 +187,7 @@
 						type="Transparent"
 						press="onCancelWishMail"
 					/>
+					</m:HBox>
 				</m:contentRight>
 			</m:Bar>
 		</m:footer>

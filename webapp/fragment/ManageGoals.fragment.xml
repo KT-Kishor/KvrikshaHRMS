@@ -125,17 +125,21 @@
             </VBox>
         </content>
 
-        <buttons>
+      <VBox width="100%" class="sapUiSmallMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
             <Button
                 text="{i18n>save}"
                 press="FMG_onSave"
+                type="Transparent"
             />
 
             <Button
                 text="{i18n>Cancel}"
                 type="Transparent"
                 press="FMG_onCancel"
+                class="closeBtnMargin"
             />
-        </buttons>
+       </HBox>
+       </VBox>
     </Dialog>
 </core:FragmentDefinition>

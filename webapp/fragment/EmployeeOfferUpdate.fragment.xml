@@ -43,6 +43,10 @@
 								<!-- SimpleForm for displaying and editing Employee details -->
 								<f:SimpleForm id="EOU_id_Form" editable="true" layout="ColumnLayout" columnsM="2" busyIndicatorDelay="0" columnsL="2" columnsXL="2">
 									<f:content>
+										<m:Label text="{i18n>companyBranch}" required="true" />
+										<m:ComboBox items="{path:'CompanyCodeDetailsModel>/',length:1000}" editable="{viewModel>/editable}" id="EOUF_id_CompanyCode" showSecondaryValues="true" selectedKey="{employeeModel>/CompanyCode}" change="EU_onCompanyCodeChange" valueStateText="{i18n>selectBranch}" filterSecondaryValues="true">
+										<core:ListItem key="{CompanyCodeDetailsModel>companyCode}" text="{CompanyCodeDetailsModel>companyCode}" additionalText="{CompanyCodeDetailsModel>branchCode} , {CompanyCodeDetailsModel>branch}" />
+										</m:ComboBox>
 										<m:Label text="{i18n>branch}"/>
 										<m:ComboBox valueStateText="{i18n>selectBranch}" 
 										id="EOUF_id_Branch" items="{path:'CompanyCodeDetailsModel>/',length:1000}" 
@@ -259,17 +263,19 @@
 			</sections>
 		</ObjectPageLayout>
 		<m:footer>
-			<m:Bar id="idbar">
+			<m:Bar id="idbar" class="customFooterBar">
 				<m:contentLeft>
 					<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Footer" type="XML" />
 				</m:contentLeft>
 				<m:contentRight>
+				<m:FlexBox  wrap="Wrap" justifyContent="End" alignItems="Center" class="TraineeButtons">
 					<!-- Save/Edit and Merge Buttons -->
 					<m:Button text="{i18n>tileFooter}" press="EOUF_onSendEmail"  id="EOUF_id_EmpmailBut" visible="{= ${viewModel>/isVisiable} }" enabled="{viewModel>/isEditMode}" type="Transparent"/>
 					<m:Button text="{= ${viewModel>/editable} ? ${i18n>save} : ${i18n>edit} }"
                               press="EOUF_onEditOrSavePress"  id="EOUF_id_SaveBut" visible="{= ${viewModel>/ediBut} }" type="{= ${viewModel>/isEditMode} ? 'Transparent' : 'Transparent' }" />
 					<m:Button text="{i18n>GeneratePDF}" press="EOUF_onPressMerge" visible="{= ${viewModel>/isVisiable} }" id="EOUF_id_EmpmergeButton" enabled="{viewModel>/isEditMode}" type="Transparent"/>
-				</m:contentRight>
+					</m:FlexBox>
+				</m:contentRight>	
 			</m:Bar>
 		</m:footer>
 	</m:Page>

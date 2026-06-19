@@ -39,13 +39,12 @@
 			</f:content>
 		</f:SimpleForm>
 		<!-- Buttons for Submit and Close actions -->
-		<footer>
-			<Toolbar>
-				<ToolbarSpacer/>
+	<VBox width="100%" class="sapUiSmallMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
 				<Button text="{i18n>submit}" type="Transparent" press="AL_onPressSubmit" class="sendMail" visible="{= !${LeaveTempModel>/isUpdate} }"/>
 				<Button text="{i18n>save}" type="Transparent" press="AL_onPressSave" class="sendMail" visible="{= ${LeaveTempModel>/isUpdate} }"/>
-				<Button text="{i18n>close}" class="sendMail" press="AL_onPressClose" type="Transparent"/>
-			</Toolbar>
-		</footer>
+				<Button text="{i18n>close}" class="sendMail closeBtnMargin" press="AL_onPressClose" type="Transparent"/>
+			</HBox>
+			</VBox>
 	</Dialog>
 </core:FragmentDefinition>

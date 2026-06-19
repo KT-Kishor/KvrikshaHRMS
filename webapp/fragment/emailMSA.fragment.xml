@@ -20,9 +20,11 @@
 				</f:SimpleForm>
 			</l:VerticalLayout>
 		</content>
-		<buttons>
+		 <VBox width="100%" class="sapUiSmallMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
         	<Button id="idSendMail" text="{i18n>sendMail}" class="sapUiSmallMarginEnd" type="Transparent" press="onSendMail"/>
-			<Button id="idCancelMail" text="{i18n>cancel}" type="Transparent" press="onCancelMail"/>
-		</buttons>
+			<Button id="idCancelMail" text="{i18n>cancel}" type="Transparent" press="onCancelMail" class="closeBtnMargin"/>
+		 </HBox>
+       </VBox>
 	</Dialog>
 </core:FragmentDefinition>

@@ -1,0 +1,123 @@
+<core:FragmentDefinition
+	xmlns:f="sap.ui.layout.form"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<Dialog
+        id="RS_id_returnslot"
+        busyIndicatorDelay="0"
+        contentWidth="25%"
+        title="{i18n>managereturn}"
+        afterClose="onDialogClose" >
+		<f:SimpleForm
+            id="RS_id_Returndailogue"
+            busyIndicatorDelay="0"
+            editable="true"
+            layout="ColumnLayout"
+            labelSpanXL="4"
+            labelSpanL="4"
+            labelSpanM="12"
+            labelSpanS="12"
+            columnsXL="2"
+            columnsL="2"
+            columnsM="2">
+			<f:content>
+				<Label text="{i18n>employeeName}" required="true"/>
+				<ComboBox
+                    id="RS_id_Employeename"
+                    items="{AdminModel>/}"
+                    change="RS_onChangeemployeename"
+                    showSecondaryValues="true" filterSecondaryValues="true"
+                    value="{Returnslotmodel>/EmpName}"
+                    valueStateText="{i18n>commonNameValueState}"
+                    placeholder="{i18n>selectemployeename}"
+                    editable="false"
+                    
+                >
+					<core:ListItem
+                        key="{AdminModel>EmployeeID}"
+                        text="{AdminModel>EmployeeName}"
+                        additionalText="{AdminModel>EmployeeID}"
+                    />
+				</ComboBox>
+				<Label text="{i18n>Available}" />
+				
+			
+
+                             <RadioButtonGroup id="RS_id_Available" columns="3" select=".onavailableTypeSelect" 
+                   >
+                                <buttons>
+                                    <RadioButton text="Daily" />
+                                    <RadioButton text="Weekly" />
+                                    <RadioButton text="Monthly" />
+                                </buttons>
+                            </RadioButtonGroup> 
+				<Label text="{i18n>startDate}" required="true"/>
+				<DatePicker
+                 id="RS_id_StartDate"
+                    required="true"
+                    valueFormat="dd/MM/yyyy"
+                    displayFormat="dd/MM/yyyy"
+                    change="RS_onDateLiveChange"
+                    valueStateText="{i18n>selectDatepick}"
+                    value="{path:'Returnslotmodel>/StartDate'}"/>
+					<Label text="{i18n>endDate}" required="true"/>
+				<DatePicker
+                    id="RS_id_EndDate"
+                    required="true"
+                    valueFormat="dd/MM/yyyy"
+                    displayFormat="dd/MM/yyyy"
+                    change="RS_onDateEndLiveChange"
+                    valueStateText="{i18n>selectDatepick}"
+                    value="{path:'Returnslotmodel>/EndDate'}"/>
+				<Label text="{i18n>StartTime}" />
+                <TimePicker
+                id="RS_id_StartTime"
+                    required="true"
+                   valueFormat="hh a"
+                   displayFormat="hh a"
+                    change="RS_onTimeLiveChange"
+                    valueStateText="{i18n>selectTime}"
+                    value="{path:'Returnslotmodel>/StartTime'}"/>
+                <Label text="{i18n>EndTime}" />
+                <TimePicker
+                id="RS_id_EndTime"
+                    required="true" 
+                   valueFormat="hh a"
+                   displayFormat="hh a"
+                    change="RS_onTimeLiveChange"
+                    valueStateText="{i18n>selectTime}"
+                    value="{path:'Returnslotmodel>/EndTime'}"/>
+                <Label text="Location" required="true"/>
+                <Input
+                    id="RS_id_Location"
+                    value="{Returnslotmodel>/Location}"
+                    maxLength="150"
+                    valueStateText="{i18n>invalidLocation}"
+                    placeholder="{i18n>invalidLocation}"
+                    liveChange="LocationChange"
+
+                    />
+
+                         
+			
+			</f:content>
+		</f:SimpleForm>
+       	<VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
+    
+			 	<Button
+                text="{i18n>save}"
+                type="Transparent"
+                press="RS_onSaveReturnSlot"
+            />
+				<Button
+                text="{i18n>assestAssignCancel}"
+                type="Transparent"
+                press="RS_onCancelReturnSlot"
+                class="closeBtnMargin"
+            />
+			
+			</HBox>
+			</VBox>
+	</Dialog>
+</core:FragmentDefinition>

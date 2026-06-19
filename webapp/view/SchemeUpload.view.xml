@@ -21,7 +21,7 @@
                 showFilterConfiguration="false"
                 filterChange="SU_onFilterChange"
                 afterVariantLoad="SU_onAfterVariantLoad"
-                class="sapUiTinyMargin"
+                class="sapUiTinyMargin CommonRoundedTable"
             >
                 <fb:filterGroupItems>
                     <fb:FilterGroupItem
@@ -96,7 +96,7 @@
             <Table
             growingScrollToLoad="true"
                 id="SU_id_Quotationtable"
-                class="sapUiTinyMargin"
+                class="sapUiTinyMargin CommonRoundedTable"
                 width="auto"
                 inset="false"
                 items="{MainModel>/results}"

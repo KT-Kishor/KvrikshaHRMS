@@ -439,6 +439,111 @@
                     </Table>
                 </f:content>
             </f:Card>
+
+             <f:Card
+                width="auto"
+                class="sapUiSmallMarginBeginEnd sapUiTinyMarginTop sapUiSmallMargin"
+                visible="{= ${Returntilemodel>/length} > 0
+                        &amp;&amp; (
+                            ${LoginModel>/Role} === 'Admin' ||
+                            ${LoginModel>/Role} === 'IT Manager' ||
+                            ${LoginModel>/Role} === 'IT Consultant')}"
+            >
+                <f:content>
+                    <Table
+                        items="{Returntilemodel>/}"
+                        sticky="ColumnHeaders,HeaderToolbar"
+                        busy="{setModelforBusy>/busyIndicator}"
+                    >
+                        <headerToolbar>
+                            <OverflowToolbar>
+                                <Title
+                                    text="{i18n>returnrequest}"
+                                    level="H1"
+                                />
+                            </OverflowToolbar>
+                        </headerToolbar>
+                        <columns>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>Type}" />
+                            </Column>
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>Model}" />
+                            </Column>
+                            <Column
+                                minScreenWidth="Desktop"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>employeeName}" />
+                            </Column>
+                             <Column
+                                minScreenWidth="Desktop"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>returnrequestdate}" />
+                            </Column>
+                             <Column
+                                minScreenWidth="Desktop"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>returnslot}" />
+                            </Column>
+                         
+                            <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>status}" />
+                            </Column>
+                             <Column
+                                minScreenWidth="Tablet"
+                                demandPopin="true"
+                            >
+                                <Text text="{i18n>Action}" />
+                            </Column>
+                        </columns>
+                        
+                        <items>
+                            <ColumnListItem>
+                                <cells>
+                                    <Text text="{Returntilemodel>Type}" />
+                                    <Text text="{Returntilemodel>Model}" />
+                                    <VBox>
+                                    <Text text="{Returntilemodel>AssignEmployeeID}" />
+                                    <Text text="{Returntilemodel>AssignEmployeeName}" />
+                                    </VBox>
+
+                                     <Text
+                                                text="{path: 'Returntilemodel>ReturnRequestDate',
+                             formatter: '.Formatter.formatDate'
+                             }"/>
+                              <Text
+                                                text="{path: 'Returntilemodel>ReturnSlot'}"/>
+        <ObjectStatus
+                            inverted="false"
+                            state="{= ${Returntilemodel>Status} === 'Return request' ? 'Warning' : 'Success' }"
+                            text="{Returntilemodel>Status}"
+                        />
+
+   
+ <Button
+        text="Accept"
+        type="Accept"
+        visible="{= ${Returntilemodel>Status} === 'Return request' }"
+        press="AA_acceptrequest"
+         />
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </f:content>
+            </f:Card>
         </VBox>
         </ScrollContainer>
 </Dialog>

@@ -227,60 +227,62 @@ sap.ui.define(
                     oDialog.open();
                 },
 
-               onEventFileChange: function (oEvent) {
-    var oFile = oEvent.getParameter("files")[0];
+             onEventFileChange: function (oEvent) {
+            var oFile = oEvent.getParameter("files")[0];
 
-    if (!oFile) {
-        return;
-    }
+            if (!oFile) {
+                return;
+            }
 
-    var oEventModel = this.getView().getModel("EventModel");
-    var oTokenModel = this.getView().getModel("tokenModel");
-    var oFileUploader = oEvent.getSource();
+            var oEventModel = this.getView().getModel("EventModel");
+            var oTokenModel = this.getView().getModel("tokenModel");
+            var oFileUploader = oEvent.getSource();
 
-    var oReader = new FileReader();
-    var sExistingFileName = oEventModel.getProperty("/FileName");
+            var sExistingFileName = oEventModel.getProperty("/FileName");
 
-// Duplicate Check
-if (sExistingFileName === oFile.name) {
-    MessageToast.show("Same file already uploaded");
-    return;
-}
+            // Duplicate Check
+            if (sExistingFileName === oFile.name) {
+                MessageToast.show("Same file already uploaded");
+                return;
+            }
 
-    oReader.onload = function (e) {
-        var sBase64 = e.target.result.split(",")[1];
+            this.compressAndConvertFile(oFile)
+                .then(function (oFileData) {
 
-        // Remove previous file data and overwrite with latest file
-        oEventModel.setProperty("/File", "");
-        oEventModel.setProperty("/FileName", "");
-        oEventModel.setProperty("/FileType", "");
+                    // Clear old file
+                    oEventModel.setProperty("/File", "");
+                    oEventModel.setProperty("/FileName", "");
+                    oEventModel.setProperty("/FileType", "");
 
-        // Set latest file data
-        oEventModel.setProperty("/File", sBase64);
-        oEventModel.setProperty("/FileName", oFile.name);
-        oEventModel.setProperty("/FileType", oFile.type);
+                    // Set new file
+                    oEventModel.setProperty("/File", oFileData.File);
+                    oEventModel.setProperty("/FileName", oFileData.FileName);
+                    oEventModel.setProperty("/FileType", oFileData.FileType);
 
-        // Replace old token with latest token
-        oTokenModel.setProperty("/tokens", [{
-            key: oFile.name,
-            text: oFile.name
-        }]);
+                    // Replace old token
+                    oTokenModel.setProperty("/tokens", [{
+                        key: oFileData.FileName,
+                        text: oFileData.FileName
+                    }]);
 
-        MessageToast.show("File uploaded successfully");
-    };
-    
+                    MessageToast.show("File uploaded successfully");
 
-    oReader.onerror = function () {
-        MessageToast.show("Failed to read file");
-    };
+                    if (oFileUploader && oFileUploader.clear) {
+                        oFileUploader.clear();
+                    }
 
-    oReader.readAsDataURL(oFile);
+                }.bind(this))
+                .catch(function (err) {
 
-    // Optional: clear uploader value so same file can be reselected later
-    if (oFileUploader && oFileUploader.clear) {
-        oFileUploader.clear();
-    }
-},
+                    MessageBox.error(err || "File upload failed");
+
+                    if (oFileUploader && oFileUploader.clear) {
+                        oFileUploader.clear();
+                    }
+
+                });
+
+        },
                 onTokenDelete: function (oEvent) {
 
     // Deleted Tokens

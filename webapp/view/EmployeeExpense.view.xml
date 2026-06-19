@@ -1,0 +1,579 @@
+<mvc:View
+    controllerName="sap.kt.com.minihrsolution.controller.EmployeeExpense"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:fb="sap.ui.comp.filterbar"
+    xmlns:layout="sap.ui.layout"
+    xmlns:f="sap.f"
+    xmlns:card="sap.f.cards"
+    xmlns:viz="sap.viz.ui5.controls"
+    xmlns:vizFeeds="sap.viz.ui5.controls.common.feeds"
+    xmlns:vizData="sap.viz.ui5.data"
+>
+    <Page
+        id="EE_id_Page"
+        title="{i18n>employeeDashboard}"
+        showNavButton="true"
+        navButtonPress="EE_onPress"
+        class="classheader ObjectcustomHeaderToolbar glassHeader "
+    >
+        <!-- HEADER -->
+        <headerContent>
+            <Button
+                press="Tile_NotifictionBTN"
+                class="sapUiTinyMarginBeginEnd LogNot logoutBtn"
+                tooltip="{i18n>TilenotificationfragName}"
+                icon="sap-icon://bell"
+                type="Transparent"
+                visible="{= ${LoginModel>/Role} !== 'Contractor' }"
+            >
+                <customData>
+                    <BadgeCustomData
+                        class="badgeClass"
+                        key="badge"
+                        value="{EndingSoonModel>/notificationCount}"
+                    />
+                </customData>
+            </Button>
+            <Button
+                press="TP_onraisebugpress"
+                icon="sap-icon://incident"
+                tooltip="{i18n>raisebug}"
+                type="Transparent"
+                class="LogNot logoutBtn"
+            />
+            <Button
+                press="onLogout"
+                icon="sap-icon://log"
+                tooltip="{i18n>logoutTooltip}"
+                type="Transparent"
+                class="LogNot logoutBtn"
+            />
+        </headerContent>
+        <content>
+            <!-- ================= FILTER BAR ================= -->
+            <fb:FilterBar
+                id="EE_id_FilterBar"
+                search="EE_onGoPress"
+                clear="EE_onClearPress"
+                showClearOnFB="true"
+                showGoOnFB="true"
+                useToolbar="false"
+                showFilterConfiguration="false"
+                class="sapUiTinyMargin CommonRoundedTable"
+            >
+                <fb:filterGroupItems>
+                    <fb:FilterGroupItem
+                        groupName="Basic"
+                        name="ExpenseDate"
+                        label="{i18n>expenseDate}"
+                        visibleInFilterBar="true"
+                    >
+                        <fb:control>
+                            <DateRangeSelection
+                                id="EE_id_ExpenseDate"
+                                width="18rem"
+                                displayFormat="dd/MM/yyyy"
+                                delimiter=" - "
+                            />
+                        </fb:control>
+                    </fb:FilterGroupItem>
+                </fb:filterGroupItems>
+            </fb:FilterBar>
+            <!-- ================= KPI SECTION ================= -->
+            <FlexBox
+                wrap="Wrap"
+                justifyContent="SpaceAround"
+                alignItems="Start"
+                class="invoiceTileContainer sapUiSmallMarginTop"
+            >
+                <GenericTile
+                    class="tileLayout tileTotal blueTile"
+                    header="{i18n>totalExpense}"
+                    press="onTilePress"
+                >
+                    <customData>
+                        <core:CustomData
+                            key="type"
+                            value="TOTAL"
+                        />
+                    </customData>
+                    <tileContent>
+                        <TileContent unit="INR">
+                            <content>
+                                <NumericContent
+                                    value="{
+        path:'EE_ExpenseModel>/totalExpense',
+        formatter:'.formatter.fromatNumber'
+    }"
+                                    scale="K"
+                                    indicator="Up"
+                                    icon="sap-icon://money-bills"
+                                    valueColor="Good"
+                                />
+                            </content>
+                        </TileContent>
+                    </tileContent>
+                </GenericTile>
+                <GenericTile
+                    class="tileLayout tileTotal orangeTile"
+                    header="{i18n>companyExpense}"
+                    press="onTilePress"
+                >
+                    <customData>
+                        <core:CustomData
+                            key="type"
+                            value="COMPANY"
+                        />
+                    </customData>
+                    <tileContent>
+                        <TileContent unit="INR">
+                            <content>
+                                <NumericContent
+                                    value="{
+        path:'EE_ExpenseModel>/companyExpense',
+        formatter:'.formatter.fromatNumber'
+    }"
+                                    scale="K"
+                                    indicator="Down"
+                                    icon="sap-icon://paid-leave"
+                                    valueColor="Critical"
+                                />
+                            </content>
+                        </TileContent>
+                    </tileContent>
+                </GenericTile>
+                <GenericTile
+                    class="tileLayout tileTotal redTile"
+                    header="{i18n>pendingExpense}"
+                    press="onTilePress"
+                >
+                    <customData>
+                        <core:CustomData
+                            key="type"
+                            value="PENDING"
+                        />
+                    </customData>
+                    <tileContent>
+                        <TileContent unit="INR">
+                            <content>
+                                <NumericContent
+                                    value="{
+        path:'EE_ExpenseModel>/pendingExpense',
+        formatter:'.formatter.fromatNumber'
+    }"
+                                    scale="K"
+                                    indicator="Down"
+                                    icon="sap-icon://pending"
+                                    valueColor="Error"
+                                />
+                            </content>
+                        </TileContent>
+                    </tileContent>
+                </GenericTile>
+                <GenericTile
+                    class="tileLayout tileTotal greenTile"
+                    header="{i18n>reimbursementAmount}"
+                    press="onTilePress"
+                >
+                    <customData>
+                        <core:CustomData
+                            key="type"
+                            value="REIMBURSEMENT"
+                        />
+                    </customData>
+                    <tileContent>
+                        <TileContent unit="INR">
+                            <content>
+                                <NumericContent
+                                    value="{
+        path:'EE_ExpenseModel>/reimbursementAmount',
+        formatter:'.formatter.fromatNumber'
+    }"
+                                    scale="K"
+                                    indicator="Up"
+                                    icon="sap-icon://payment-approval"
+                                    valueColor="Good"
+                                />
+                            </content>
+                        </TileContent>
+                    </tileContent>
+                </GenericTile>
+            </FlexBox>
+            <layout:Grid
+                defaultSpan="XL6 L6 M12 S12"
+                class="sapUiTinyMargin"
+            >
+                <!-- LEFT SIDE CARD -->
+                <f:Card class="sapUiTinyMargin">
+                    <f:header>
+                        <card:Header
+                            title="{i18n>expenseTypeBreakdown}"
+                            subtitle="{i18n>expenseTypeDistribution}"
+                        />
+                    </f:header>
+                    <f:content>
+                        <ScrollContainer
+                            height="350px"
+                            width="100%"
+                            vertical="true"
+                            horizontal="false"
+                        >
+                            <!-- No Data Message -->
+                            <VBox
+                                width="100%"
+                                height="350px"
+                                justifyContent="Center"
+                                alignItems="Center"
+                                visible="{= ${EE_ExpenseChartModel>/byExpenseType}.length === 0 }"
+                            >
+                                <Text
+                                    text="No Data"
+                                    class="sapUiMediumMargin"
+                                />
+                            </VBox>
+                            <!-- Expense Type List -->
+                            <List
+                                items="{EE_ExpenseChartModel>/byExpenseType}"
+                                showSeparators="None"
+                                visible="{= ${EE_ExpenseChartModel>/byExpenseType}.length > 0 }"
+                            >
+                                <CustomListItem>
+                                    <HBox
+                                        width="100%"
+                                        alignItems="Center"
+                                        class="sapUiSmallMargin"
+                                    >
+                                        <!-- Icon -->
+                                        <core:Icon
+                                            src="{
+                    path: 'EE_ExpenseChartModel>ItemType',
+                    formatter: '.formatter.getItemTypeIcon'
+                }"
+                                            size="1.5rem"
+                                            class="categoryIcon sapUiTinyMarginEnd"
+                                        />
+                                        <!-- Category + Progress -->
+                                        <VBox
+                                            width="70%"
+                                            class="sapUiSmallMarginBottom"
+                                        >
+                                            <Title
+                                                text="{EE_ExpenseChartModel>ItemType}"
+                                                level="H5"
+                                            />
+                                            <ProgressIndicator
+                                                percentValue="{EE_ExpenseChartModel>Percentage}"
+                                                displayValue="{EE_ExpenseChartModel>Percentage}%"
+                                                showValue="false"
+                                                width="100%"
+                                                state="Success"
+                                            />
+                                        </VBox>
+                                        <!-- Amount -->
+                                        <Text
+                                            text="{
+                    parts:[
+                        {path:'EE_ExpenseChartModel>Amount'},
+                        {value:'INR'}
+                    ],
+                    formatter:'.formatter.formatAmountWithCurrency'
+                }"
+                                            class="sapUiMediumMarginBegin categoryAmount"
+                                        />
+                                    </HBox>
+                                </CustomListItem>
+                            </List>
+                        </ScrollContainer>
+                    </f:content>
+                </f:Card>
+                <!-- RIGHT SIDE PIE CHART -->
+                <f:Card class="sapUiTinyMargin">
+                    <f:header>
+                        <card:Header
+                            title="{i18n>paymentBreakdown}"
+                            subtitle="{i18n>expensePaymentAnalysis}"
+                        />
+                    </f:header>
+                    <f:content>
+                        <viz:VizFrame
+                            id="EE_id_ExpenseTypeChart"
+                            vizType="donut"
+                            width="100%"
+                            height="350px"
+                            selectData="onExpenseChartSelect"
+                            uiConfig="{applicationSet:'fiori'}"
+                        >
+                            <viz:dataset>
+                                <vizData:FlattenedDataset
+                                    data="{EE_ExpenseChartModel>/typeChart}"
+                                >
+                                    <vizData:dimensions>
+                                        <vizData:DimensionDefinition
+                                            name="Expense Type"
+                                            value="{EE_ExpenseChartModel>ExpenseType}"
+                                        />
+                                    </vizData:dimensions>
+                                    <vizData:measures>
+                                        <vizData:MeasureDefinition
+                                            name="Amount"
+                                            value="{EE_ExpenseChartModel>Amount}"
+                                        />
+                                    </vizData:measures>
+                                </vizData:FlattenedDataset>
+                            </viz:dataset>
+
+                            <viz:feeds>
+                                <vizFeeds:FeedItem
+                                    uid="size"
+                                    type="Measure"
+                                    values="Amount"
+                                />
+
+                                <vizFeeds:FeedItem
+                                    uid="color"
+                                    type="Dimension"
+                                    values="Expense Type"
+                                />
+                            </viz:feeds>
+                        </viz:VizFrame>
+                    </f:content>
+                </f:Card>
+            </layout:Grid>
+            <!-- ================= MONTHLY CHART ================= -->
+            <layout:Grid
+                defaultSpan="XL6 L6 M12 S12"
+                class="sapUiTinyMargin"
+            >
+                <f:Card class="sapUiTinyMargin">
+                    <f:header>
+                        <card:Header
+                            title="{i18n>monthlyExpenseTrend}"
+                            subtitle="{i18n>financialYearOverview}"
+                        />
+                    </f:header>
+                    <f:content>
+                        <viz:VizFrame
+                            id="EE_id_MonthlyChart"
+                            vizType="line"
+                            width="100%"
+                            height="350px"
+                            selectData="onMonthlyChartSelect"
+                            uiConfig="{applicationSet:'fiori'}"
+                            vizProperties="{
+        title: { visible: false }
+    }"
+                        >
+                            <viz:dataset>
+                                <vizData:FlattenedDataset
+                                    data="{EE_ExpenseChartModel>/monthly}"
+                                >
+                                    <vizData:dimensions>
+                                        <vizData:DimensionDefinition
+                                            name="Month"
+                                            value="{EE_ExpenseChartModel>Month}"
+                                        />
+                                    </vizData:dimensions>
+                                    <vizData:measures>
+                                        <vizData:MeasureDefinition
+                                            name="Total Amount"
+                                            value="{EE_ExpenseChartModel>TotalAmount}"
+                                        />
+                                    </vizData:measures>
+                                </vizData:FlattenedDataset>
+                            </viz:dataset>
+                            <viz:feeds>
+                                <vizFeeds:FeedItem
+                                    uid="valueAxis"
+                                    type="Measure"
+                                    values="Total Amount"
+                                />
+                                <vizFeeds:FeedItem
+                                    uid="categoryAxis"
+                                    type="Dimension"
+                                    values="Month"
+                                />
+                            </viz:feeds>
+                        </viz:VizFrame>
+                    </f:content>
+                </f:Card>
+                <!-- ================= STATUS CHART ================= -->
+                <f:Card class="sapUiTinyMargin">
+                    <f:header>
+                        <card:Header
+                            title="{i18n>tripTypeAnalysis}"
+                            subtitle="{i18n>expenseByTripType}"
+                        />
+                    </f:header>
+                    <f:content>
+                        <viz:VizFrame
+                            id="EE_id_TripTypeChart"
+                            vizType="column"
+                            width="100%"
+                            height="350px"
+                            selectData="onTripChartSelect"
+                            uiConfig="{applicationSet:'fiori'}"
+                            vizProperties="{
+        title: { visible: false }
+    }"
+                        >
+                            <viz:dataset>
+                                <vizData:FlattenedDataset
+                                    data="{EE_ExpenseChartModel>/tripType}"
+                                >
+                                    <vizData:dimensions>
+                                        <vizData:DimensionDefinition
+                                            name="Trip Type"
+                                            value="{EE_ExpenseChartModel>TripType}"
+                                        />
+                                    </vizData:dimensions>
+                                    <vizData:measures>
+                                        <vizData:MeasureDefinition
+                                            name="Amount"
+                                            value="{EE_ExpenseChartModel>Amount}"
+                                        />
+                                    </vizData:measures>
+                                </vizData:FlattenedDataset>
+                            </viz:dataset>
+                            <viz:feeds>
+                                <vizFeeds:FeedItem
+                                    uid="valueAxis"
+                                    type="Measure"
+                                    values="Amount"
+                                />
+                                <vizFeeds:FeedItem
+                                    uid="categoryAxis"
+                                    type="Dimension"
+                                    values="Trip Type"
+                                />
+                                <vizFeeds:FeedItem
+                                    uid="color"
+                                    type="Dimension"
+                                    values="Trip Type"
+                                />
+                            </viz:feeds>
+                        </viz:VizFrame>
+                    </f:content>
+                </f:Card>
+            </layout:Grid>
+            <layout:Grid
+                defaultSpan="XL12 L12 M12 S12"
+                class="sapUiTinyMargin"
+            >
+                <!-- ================= TOP 10 EXPENSES TABLE ================= -->
+                <f:Card class="sapUiTinyMargin sapUiResponsiveContentPadding">
+                    <f:content>
+                        <Table
+                            id="EE_id_TopExpenseTable"
+                            width="100%"
+                            items="{EE_ExpenseChartModel>/Top10Expenses}"
+                            mode="SingleSelectMaster"
+                            itemPress="onTopExpenseRowPress"
+                            growing="true"
+                            growingScrollToLoad="true"
+                            sticky="HeaderToolbar,ColumnHeaders"
+                            class="sapUiNoContentPadding"
+                        >
+                            <headerToolbar>
+                                <OverflowToolbar>
+                                    <Title
+                                        text="{i18n>top10Expenses}"
+                                        level="H4"
+                                    />
+                                    <ToolbarSpacer />
+                                    <SearchField
+                                        width="15rem"
+                                        liveChange="EE_onGlobalSearch"
+                                        placeholder="{i18n>search}"
+                                    >
+                                        <layoutData>
+                                            <OverflowToolbarLayoutData
+                                                minWidth="5rem"
+                                                maxWidth="15rem"
+                                                shrinkable="true"
+                                                priority="High"
+                                            />
+                                        </layoutData>
+                                    </SearchField>
+                                </OverflowToolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column
+                                    demandPopin="true"
+                                    minScreenWidth="Tablet"
+                                >
+                                    <Text text="{i18n>expExpenseName}" />
+                                </Column>
+                                <Column
+                                    demandPopin="true"
+                                    minScreenWidth="Tablet"
+                                >
+                                    <Text text="{i18n>employee}" />
+                                </Column>
+                                <Column
+                                    demandPopin="true"
+                                    minScreenWidth="Tablet"
+                                >
+                                    <Text text="{i18n>costCenter}" />
+                                </Column>
+                                <Column
+                                    demandPopin="true"
+                                    minScreenWidth="Tablet"
+                                >
+                                    <Text text="{i18n>triptype}" />
+                                </Column>
+                                <Column
+                                    demandPopin="true"
+                                    minScreenWidth="Tablet"
+                                >
+                                    <Text text="{i18n>amount}" />
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem type="Navigation">
+                                    <cells>
+                                        <Text
+                                            text="{EE_ExpenseChartModel>ExpenseName}"
+                                        />
+                                        <Text
+                                            text="{EE_ExpenseChartModel>EmployeeName}"
+                                        />
+                                        <Text
+                                            text="{EE_ExpenseChartModel>CostCenter}"
+                                        />
+                                        <Text
+                                            text="{EE_ExpenseChartModel>TripType}"
+                                        />
+                                        <ObjectNumber
+                                            number="{
+        parts:[
+            {path:'EE_ExpenseChartModel>TotalAmount'},
+            {value:'INR'}
+        ],
+        formatter:'.formatter.formatAmountWithCurrency'
+    }"
+                                            emphasized="true"
+                                            state="Success"
+                                        />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </f:content>
+                </f:Card>
+            </layout:Grid>
+        </content>
+        <!-- FOOTER -->
+        <footer>
+            <Bar>
+                <contentLeft>
+                    <core:Fragment
+                        fragmentName="sap.kt.com.minihrsolution.fragment.Footer"
+                        type="XML"
+                    />
+                </contentLeft>
+            </Bar>
+        </footer>
+    </Page>
+</mvc:View>

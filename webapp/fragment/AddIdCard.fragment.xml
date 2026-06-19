@@ -32,11 +32,9 @@
             uploadUrl="upload/"
             tooltip="{i18n>fileUploadId}"
             change="IC_onHandleUploadPress"
-            maximumFileSize="5MB"
             fileType="jpg,jpeg,png"
             buttonOnly="true"  
-            id="IC_id_file"  
-            fileSizeExceed="onFileSizeExceeds"						 
+            id="IC_id_file"  					 
             valueStateText="{i18n>fileUploaderValueState}"               
             uploadComplete="handleUploadComplete"/>
     </HBox>
@@ -58,13 +56,22 @@
 			</f:content>
 		</f:SimpleForm>
 		
-        <footer> 
-            <Toolbar>
-                <ToolbarSpacer/>
-                <Button text="{i18n>save}" type="Transparent" press="IC_onPressSave" class="submit" visible="{viewModel>/PhotoSave}"/>
-                <Button text="{i18n>close}" type="Transparent" class="submit" press="IC_onPressClose" />
-            </Toolbar>
-        </footer>
+       
+<VBox width="100%" class="sapUiSmallMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
+        <Button
+            text="{i18n>save}"
+            press="IC_onPressSave"
+              type="Transparent"
+            visible="{viewModel>/PhotoSave}"
+            class="sapUiTinyMarginEnd" />
+
+        <Button
+            text="{i18n>close}"
+            type="Transparent"
+            press="IC_onPressClose" class="sapUiTinyMarginEnd closeBtnMargin" />
+    </HBox>
+</VBox>
 		<!-- <FlexBox justifyContent="End">			
 		</FlexBox> -->
 	</Dialog>

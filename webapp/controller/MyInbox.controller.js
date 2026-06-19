@@ -246,7 +246,8 @@ sap.ui.define([
 
       if (oData.Type === "Expense") {
         this.getRouter().navTo("RouteExpensDetails", {
-          sPath: oData.ID + "|MyInbox"
+          sPath: oData.ID + "|MyInbox",
+          dash: "MyInbox"
         });
       } else if (oData.Type === "Leave") {
         this.getOwnerComponent().setModel(new sap.ui.model.json.JSONModel({ from: "MyInbox" }), "NavSource");

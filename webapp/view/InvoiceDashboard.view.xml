@@ -119,7 +119,24 @@
                                 scale="K"/>
                         </TileContent>
                     </GenericTile>
-
+                    
+                    <GenericTile
+                        class="tileLayout tileReceived"
+                        header="Total Credit Notes"
+                        subheader="All Credit Notes"
+                        sizeBehavior="Small"
+                        state="Loaded"
+                        frameType="Stretch">
+                        <TileContent footer="{= 'Credit Notes : ' + ${InvoiceDashboardModel>/CreditNoteCount}}">
+                            <NumericContent
+                                value="{InvoiceDashboardModel>/CreditNoteTotalAmount}"
+                                icon="sap-icon://payment-approval"
+                                indicator="Up"
+                                valueColor="Good"
+                                withMargin="false"
+                                scale="K"/>
+                        </TileContent>
+                    </GenericTile>
                 </FlexBox>
 				<layout:Grid defaultSpan="XL6 L6 M12 S12" class="sapUiTinyMargin">
 					<layout:content>

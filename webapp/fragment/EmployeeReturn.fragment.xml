@@ -1,0 +1,131 @@
+<core:FragmentDefinition
+    xmlns:f="sap.ui.layout.form"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <Dialog
+        id="RS_id_empreturnslot"
+        busyIndicatorDelay="0"
+        contentWidth="25%"
+        title="{i18n>managereturn}"
+        afterClose="onDialogClose"
+    >
+        <f:SimpleForm
+            id="RS_id_empReturndailogue"
+            busyIndicatorDelay="0"
+            editable="true"
+            layout="ColumnLayout"
+            labelSpanXL="4"
+            labelSpanL="4"
+            labelSpanM="12"
+            labelSpanS="12"
+            columnsXL="2"
+            columnsL="2"
+            columnsM="2"
+        >
+            <f:content>
+                <Label
+                    text="{i18n>assetType}"
+                    required="true"
+                />
+                <Text
+                    id="RS_ID_Type"
+                    text=""
+                />
+
+                <Label
+                    text="{i18n>AssetModel}"
+                    required="true"
+                />
+                <Text
+                    id="RS_ID_AssetModel"
+                    text=""
+                />
+
+                <Button
+                    text="Check Available Slots"
+                    type="Transparent"
+                    press="RS_onViewAvailability"
+                />
+
+                <Label
+                    text="{i18n>assestAssignReturnDate}"
+                    required="true"
+                />
+
+                <DatePicker
+                    id="RS_id_ReturnDate"
+                    required="true"
+                    valueFormat="dd/MM/yyyy"
+                    displayFormat="dd/MM/yyyy"
+                    change="SS_onDateLiveChange"
+                    valueStateText="{i18n>selectDatepick}"
+                    value="{path:'SlotModel>/ReturnDate'}"
+                />
+
+                <Label
+                    text="{i18n>Slots}"
+                    required="true"
+                    id="idradioLabel"
+                />
+
+                <RadioButtonGroup
+                    id="RS_id_SlotGroup"
+                    columns="3"
+                    buttons="{slotdata>/}"
+                    select="RS_onSelectSlot"
+                >
+                    <buttons>
+                        <RadioButton
+                            text="{= ${slotdata>StartTime} + ' - ' + ${slotdata>EndTime} }"
+                        />
+                    </buttons>
+                </RadioButtonGroup>
+
+                   <Label
+                />
+
+             <Text
+             id="idNoSlotsAvailableText"
+    text="No slots available."
+    visible="{= ${slotdata>/}.length === 0 }"
+    class="sapUiLargeMarginBegin slot"
+/> 
+
+
+                <Label text="{i18n>comments}" />
+
+                <TextArea
+                    rows="2"
+                    cols="20"
+                    maxLength="200"
+                    id="RS_id_Comments"
+                    required="true"
+                    placeholder="{i18n>enterComments}"
+                    liveChange="SS_validatecomments"
+                    valueStateText="{i18n>commentsValueState}"
+                    value="{SlotModel>/Comments}"
+                />
+            </f:content>
+        </f:SimpleForm>
+      
+
+       	<VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
+    
+			   <Button
+                text="{i18n>save}"
+                type="Transparent"
+                press="RS_onSaveSlot"
+            />
+				 <Button
+                text="{i18n>assestAssignCancel}"
+                type="Transparent"
+                press="RS_onCancelSlot"
+                class="closeBtnMargin"
+            />
+			
+			</HBox>
+			</VBox>
+    </Dialog>
+</core:FragmentDefinition>

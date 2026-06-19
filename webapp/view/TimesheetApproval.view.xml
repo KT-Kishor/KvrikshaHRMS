@@ -122,13 +122,17 @@
             </Table>
         </content>
         <footer>
-            <Bar>
+            <Bar >
                 <contentLeft>
                     <core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Footer" type="XML" />
                 </contentLeft>
                 <contentRight>
+                <FlexBox class="TraineeButtons"  wrap="Wrap"
+    justifyContent="End"
+    alignItems="Center">
                    <Button text="Approve" press="TSA_onApprove" type="Transparent" enabled="{viewModel>/canApproveReject}"/>
                    <Button text="Reject" press="TSA_onReject" type="Transparent" enabled="{viewModel>/canApproveReject}"/>
+                   </FlexBox>
                 </contentRight>
             </Bar>
         </footer>

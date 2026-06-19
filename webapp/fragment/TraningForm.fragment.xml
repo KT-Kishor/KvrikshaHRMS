@@ -24,10 +24,12 @@
             </f:SimpleForm>
         </content>
         
-        <buttons>
-            <Button text="{i18n>submit}"  press="FTF_onSubmitForm"/>
-            <Button text="{i18n>CancelButton}"  press="FTF_onCancelform"/>
-        </buttons>
+     <VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
+            <Button text="{i18n>submit}" type="Transparent"  press="FTF_onSubmitForm"/>
+            <Button text="{i18n>CancelButton}" class="closeBtnMargin" type="Transparent" press="FTF_onCancelform"/>
+       </HBox>
+       </VBox>
     </Dialog>
 
 </core:FragmentDefinition>

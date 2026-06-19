@@ -12,6 +12,7 @@
     displayBlock="true"
     height="100%"
     busyIndicatorDelay="0"
+    xmlns:core="sap.ui.core"
 >
     <m:Page
         navButtonPress="PO_onButtonPress"
@@ -718,7 +719,17 @@
         </ObjectPageLayout>
         <m:footer>
             <m:Bar id="IA_id_FooterBar">
+
+            <m:contentLeft>
+                    <core:Fragment
+                        fragmentName="sap.kt.com.minihrsolution.fragment.Footer"
+                        type="XML"
+                    />
+                </m:contentLeft>
                 <m:contentRight>
+                <m:FlexBox class="TraineeButtons"  wrap="Wrap"
+    justifyContent="End"
+    alignItems="Center">
                     <m:Button
                         id="POO_idSubmitButton"
                         text="{i18n>submit}"
@@ -750,6 +761,7 @@
                         type="Transparent"
                         press="POO_onPDFButtonPress"
                     />
+                    </m:FlexBox>
                 </m:contentRight>
             </m:Bar>
         </m:footer>

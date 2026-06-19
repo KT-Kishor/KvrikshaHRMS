@@ -1,4 +1,4 @@
-sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", "sap/ui/model/json/JSONModel", "sap/m/BusyIndicator", "sap/m/MessageToast", "sap/m/MessageBox", "../utils/SalaryCertificatePDF", "../fonts/EBGaramond", "../fonts/Allura", "../fonts/Poppins", "../fonts/Plight", "sap/suite/ui/commons/Timeline", "sap/suite/ui/commons/TimelineItem", "../utils/PaySlipPDF", "../utils/EmpIPNCAPDF", "sap/ui/core/Fragment","../utils/TraineeALPDF"], (Controller, Formatter, utils, JSONModel, BusyIndicator, MessageToast, MessageBox, jsPDF, EBGaramond, Allura, Poppins, Plight, Timeline, TimelineItem, jsPayslipPDF, EmpIPNCAPDF, Fragment, TraineeALPDF) => {
+sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", "sap/ui/model/json/JSONModel", "sap/m/BusyIndicator", "sap/m/MessageToast", "sap/m/MessageBox", "../utils/SalaryCertificatePDF", "../fonts/EBGaramond", "../fonts/Allura", "../fonts/Poppins", "../fonts/Plight", "sap/suite/ui/commons/Timeline", "sap/suite/ui/commons/TimelineItem", "../utils/PaySlipPDF", "../utils/EmpIPNCAPDF", "sap/ui/core/Fragment", "../utils/TraineeALPDF"], (Controller, Formatter, utils, JSONModel, BusyIndicator, MessageToast, MessageBox, jsPDF, EBGaramond, Allura, Poppins, Plight, Timeline, TimelineItem, jsPayslipPDF, EmpIPNCAPDF, Fragment, TraineeALPDF) => {
   "use strict";
   return Controller.extend("sap.kt.com.minihrsolution.controller.SelfService", {
     Formatter: Formatter,
@@ -367,11 +367,15 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
         if (!LoginFUnction) return;
         this.initializeBirthdayCarousel();
         this.getBusyDialog();
+
+        var SlotModel = new sap.ui.model.json.JSONModel();
+        this.getView().setModel(SlotModel, "SlotModel");
         const oView = this.getView();
         this.i18nModel = oView.getModel("i18n").getResourceBundle();
-        this.companyName = "Kalpavriksha Technologies";
+        this.companyName = "Kvriksha Technologies Private Limited";
         // --- Initialization ---
         this._makeDatePickersReadOnly(["SS_id_Dob", "SS_id_ResgEndDate", "SS_id_DocType"]);
+
         const viewModel = new sap.ui.model.json.JSONModel({
           fragmentSave: false,
           fragmentSubmit: false,
@@ -769,16 +773,15 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
     },
     getMyAssetsdata: function (sEmployeeID) {
 
-
       this.getBusyDialog();
-      this.ajaxReadWithJQuery("IncomeAsset", "Status=Assigned")
+      this.ajaxReadWithJQuery("IncomeAsset", "")
         .then((oData) => {
           this.closeBusyDialog();
           var aResults = Array.isArray(oData.data) ? oData.data : [oData.data];
 
           // Filter based on Employee ID
           const filteredData = aResults.filter(item =>
-            item.AssignEmployeeID === sEmployeeID
+            item.AssignEmployeeID === sEmployeeID && (item.Status === "Assigned" || item.Status === "Accepted" || item.Status === "Return request")
           );
 
           // Set filtered data to model
@@ -1551,6 +1554,12 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
       var oModel = this.getView().getModel("sEmployeeModel");
       var oFile = oEvent.getParameter("files")[0];
       var that = this;
+      if (!oFile) {
+        MessageToast.show("Please select a file");
+        return;
+      }
+
+      // Check duplicate document type
       var aUploadedDocs = this.getView().getModel("DocumentModel")?.getProperty("/items") || [];
       var isAlreadyUploaded = aUploadedDocs.some(function (doc) {
         return doc.DocumentType === docTypeText;
@@ -1560,56 +1569,171 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
         return;
       }
       function uploadFile() {
+
         that.getBusyDialog();
-        if (oFile) {
-          var reader = new FileReader();
+
+        // PDF / DOC / DOCX
+        if (
+          oFile.type === "application/pdf" ||
+          oFile.type === "application/msword" ||
+          oFile.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ) {
+
+          const MAX_SIZE_MB = 5;
+
+          if (oFile.size > MAX_SIZE_MB * 1024 * 1024) {
+            that.closeBusyDialog();
+            MessageBox.error(
+              "Document size should not exceed " +
+              MAX_SIZE_MB +
+              " MB."
+            );
+            return;
+          }
+
+          const reader = new FileReader();
+
           reader.onload = function (e) {
-            var base64 = e.target.result.split(",")[1];
-            var sExtension = oFile.name.split('.').pop();
-            var sCustomFileName = oModel.getData()[0].EmployeeID + "_" + docTypeText + "." + sExtension;
-            var oPayload = {
+
+            const base64 = e.target.result.split(",")[1];
+
+            const compressedBase64 =
+              that.compressBase64(base64);
+
+            const sExtension =
+              oFile.name.split(".").pop();
+
+            const sCustomFileName =
+              oModel.getData()[0].EmployeeID +
+              "_" +
+              docTypeText +
+              "." +
+              sExtension;
+
+            const oPayload = {
               data: {
                 DocumentType: docTypeText,
                 EmployeeID: oModel.getData()[0].EmployeeID,
-                CreatedBy: that.getView().getModel("LoginModel").getData().EmployeeName,
+                CreatedBy: that.getView()
+                  .getModel("LoginModel")
+                  .getData().EmployeeName,
                 CreatedOn: new Date().toISOString(),
-                File: base64,
+                File: compressedBase64,
                 FileName: sCustomFileName,
-                FileType: oFile.type,
-              },
+                FileType: oFile.type
+              }
             };
-            that
-              .ajaxCreateWithJQuery("EmployeeDocument", oPayload)
+
+            that.ajaxCreateWithJQuery(
+              "EmployeeDocument",
+              oPayload
+            )
               .then(function () {
-                MessageToast.show("File upload sucessfully");
+                that.closeBusyDialog();
+                MessageToast.show(
+                  "File uploaded successfully"
+                );
                 that.ReadEmployeeDocument();
-                that.byId("SS_id_DocType").setSelectedKey("");
+                that.byId("SS_id_DocType")
+                  .setSelectedKey("");
               })
               .catch(function (err) {
-                MessageToast.show("File upload failed");
                 that.closeBusyDialog();
+                MessageBox.error(
+                  err || "File upload failed"
+                );
               });
           };
+
           reader.readAsDataURL(oFile);
+          return;
         }
+
+        // IMAGE
+        if (oFile.type.startsWith("image/")) {
+
+          that.compressAndConvertFile(oFile)
+
+            .then(function (oFileData) {
+
+              const sExtension =
+                oFile.name.split(".").pop();
+
+              const sCustomFileName =
+                oModel.getData()[0].EmployeeID +
+                "_" +
+                docTypeText +
+                "." +
+                sExtension;
+
+              const oPayload = {
+                data: {
+                  DocumentType: docTypeText,
+                  EmployeeID: oModel.getData()[0].EmployeeID,
+                  CreatedBy: that.getView()
+                    .getModel("LoginModel")
+                    .getData().EmployeeName,
+                  CreatedOn: new Date().toISOString(),
+                  File: oFileData.File,
+                  FileName: sCustomFileName,
+                  FileType: oFileData.FileType
+                }
+              };
+
+              return that.ajaxCreateWithJQuery(
+                "EmployeeDocument",
+                oPayload
+              );
+            })
+
+            .then(function () {
+              that.closeBusyDialog();
+              MessageToast.show(
+                "File uploaded successfully"
+              );
+              that.ReadEmployeeDocument();
+              that.byId("SS_id_DocType")
+                .setSelectedKey("");
+            })
+
+            .catch(function (err) {
+              that.closeBusyDialog();
+              MessageBox.error(
+                err || "File upload failed"
+              );
+            });
+
+          return;
+        }
+
+        that.closeBusyDialog();
+
+        MessageBox.error(
+          "Only Image, PDF, DOC and DOCX files are allowed."
+        );
       }
-      // Show warning dialog for specific document types
-      if (docTypeText === "Previous Company 3 Months Payslip" || docTypeText === "UG Degree Certificate" || docTypeText === "PG Degree Certificate") {
+      // Warning popup for specific document types
+      if (
+        docTypeText === "Previous Company 3 Months Payslip" ||
+        docTypeText === "UG Degree Certificate" ||
+        docTypeText === "PG Degree Certificate"
+      ) {
         var sWarningMsg = "";
         if (docTypeText === "Previous Company 3 Months Payslip") {
           sWarningMsg = this.i18nModel.getText("mergeSalarySlipWarning");
         } else {
           sWarningMsg = this.i18nModel.getText("mergeSemesterDocWarning");
         }
+
         MessageBox.warning(sWarningMsg, {
           actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
           onClose: function (sAction) {
             if (sAction === MessageBox.Action.OK) {
               uploadFile();
-            } else if (sAction === MessageBox.Action.CANCEL) {
+            } else {
               that.byId("SS_id_DocType").setSelectedKey("");
             }
-          },
+          }
         });
         return;
       }
@@ -1621,12 +1745,21 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
         if (showBusy) {
           this.getBusyDialog();
         }
-        const oData = await this.ajaxReadWithJQuery("EmployeeDocument", { EmployeeID: this.EmployeeID });
+
+        const oData = await this.ajaxReadWithJQuery(
+          "EmployeeDocument",
+          { EmployeeID: this.EmployeeID }
+        );
+
         const offerData = Array.isArray(oData.data) ? oData.data : [oData.data];
-        const wrappedData = {
-          items: offerData,
-        };
-        this.getOwnerComponent().setModel(new JSONModel(wrappedData), "DocumentModel");
+        offerData.forEach(function (item) {
+          if (item.File) {
+            const padding = (item.File.match(/=*$/) || [""])[0].length;
+            item.FileSize = (item.File.length * 3) / 4 - padding;
+          }
+        });
+
+        this.getOwnerComponent().setModel(new JSONModel({ items: offerData }), "DocumentModel");
       } catch (error) {
         MessageToast.show(error.message || error.responseText);
       } finally {
@@ -1711,7 +1844,18 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
       const oData = oContext.getObject();
 
       const sMimeType = oData.FileType;
-      const sBase64 = oData.File;
+      let sBase64 = oData.File;
+
+      // Decompress if PDF/DOC was stored compressed
+      if (this.isCompressedBase64(sBase64)) {
+        sBase64 = this.decompressBase64(sBase64);
+      }
+
+      if (sBase64.startsWith("data:")) {
+        sBase64 = sBase64.split(",")[1];
+      }
+
+      sBase64 = sBase64.replace(/\s/g, "");
 
       if (!this._oPreviewDialog) {
 
@@ -1969,38 +2113,44 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
     IC_onHandleUploadPress: function (oEvent) {
       var oFileUploader = oEvent.getSource();
       var oFile = oFileUploader.oFileUpload.files[0];
+
       if (!oFile) {
         return MessageToast.show("No file selected.");
       }
+
       var validMimeTypes = ["image/jpeg", "image/png", "image/jpg"];
       var validExtensions = ["jpg", "jpeg", "png"];
+
       var fileName = oFile.name.toLowerCase();
       var fileExtension = fileName.split(".").pop();
-      if (!validMimeTypes.includes(oFile.type) && !validExtensions.includes(fileExtension)) {
+
+      if (!validMimeTypes.includes(oFile.type) &&
+        !validExtensions.includes(fileExtension)
+      ) {
         MessageToast.show("Invalid file type.");
         oFileUploader.clear();
         return;
       }
-      if (oFile.size > 5 * 1024 * 1024) {
-        // 5MB = 5 * 1024 * 1024 bytes
-        MessageToast.show("File size exceeds the limit of 5 MB.");
-        oFileUploader.clear();
-        return;
-      }
-      var oReader = new FileReader();
-      oReader.onload = function (e) {
-        var sFileBinary = e.target.result.split(",")[1];
+
+      this.compressAndConvertFile(oFile).then(function (oFileData) {
         var oModel = this.getView().getModel("IdCardModel");
         if (oModel) {
-          oModel.setProperty("/Attachment", sFileBinary);
-          oModel.setProperty("/name", oFile.name);
-          oModel.setProperty("/mimeType", oFile.type);
-          this.onPressDisplayImageOnCanvas(sFileBinary, oFile.type);
-          this.getView().getModel("IdCardModel").setProperty("/name", oFile.name);
+          oModel.setProperty("/Attachment", oFileData.File);
+          oModel.setProperty("/name", oFileData.FileName);
+          oModel.setProperty("/mimeType", oFileData.FileType);
+
+          this.onPressDisplayImageOnCanvas(
+            oFileData.File,
+            oFileData.FileType
+          );
         }
+
         oFileUploader.clear();
-      }.bind(this);
-      oReader.readAsDataURL(oFile);
+        MessageToast.show("Image uploaded successfully");
+      }.bind(this)).catch(function (err) {
+        MessageBox.error(err || "Upload failed");
+        oFileUploader.clear();
+      });
     },
 
     onPressDisplayImageOnCanvas: function (sFileBinary, sFileType) {
@@ -3979,11 +4129,11 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
         const oFinalModel =
           new JSONModel(oFinalData);
 
-       if (oEmpData.Role === "Trainee") {
-    this.traineeOfferGeneratingPdfFunction(oFinalModel);
-} else {
-    this.offerGeneratingPdfFunction(oFinalModel);
-}
+        if (oEmpData.Role === "Trainee") {
+          this.traineeOfferGeneratingPdfFunction(oFinalModel);
+        } else {
+          this.offerGeneratingPdfFunction(oFinalModel);
+        }
 
         this.closeBusyDialog();
 
@@ -3998,16 +4148,16 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
     },
     traineeOfferGeneratingPdfFunction: async function (oFinalModel) {
 
-    this.getBusyDialog();
+      this.getBusyDialog();
 
-    try {
+      try {
 
         const oEmpModel = oFinalModel.getData();
 
         await this._fetchCommonData(
-            "PDFCondition",
-            "PDFConditionModel",
-            { Type: "EmployeeConsent" }
+          "PDFCondition",
+          "PDFConditionModel",
+          { Type: "EmployeeConsent" }
         );
 
         const oPDFModel = this.getView().getModel("PDFData");
@@ -4018,169 +4168,169 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
         oPDFModel.setProperty("/Self", "Trainee Offer");
 
         oPDFModel.setProperty(
-            "/EmpID",
-            oEmpModel.TraineeID || ""
+          "/EmpID",
+          oEmpModel.TraineeID || ""
         );
 
         oPDFModel.setProperty(
-            "/EmpName",
-            (oEmpModel.Salutation || "") +
-            " " +
-            (oEmpModel.EmployeeName || "")
+          "/EmpName",
+          (oEmpModel.Salutation || "") +
+          " " +
+          (oEmpModel.EmployeeName || "")
         );
 
         oPDFModel.setProperty(
-            "/EmpRole",
-            oEmpModel.Designation || "Trainee"
+          "/EmpRole",
+          oEmpModel.Designation || "Trainee"
         );
 
         oPDFModel.setProperty(
-            "/EmpAddress",
-            (oEmpModel.CorrespondenceAddress || "")
-                .replace(/\n/g, ", ")
+          "/EmpAddress",
+          (oEmpModel.CorrespondenceAddress || "")
+            .replace(/\n/g, ", ")
         );
 
         // No AppraisalDate for trainee
         oPDFModel.setProperty(
-            "/CreateDate",
-            Formatter.formatDate(new Date())
+          "/CreateDate",
+          Formatter.formatDate(new Date())
         );
 
         oPDFModel.setProperty(
-            "/JoiningDate",
-            Formatter.formatDate(oEmpModel.JoiningDate)
+          "/JoiningDate",
+          Formatter.formatDate(oEmpModel.JoiningDate)
         );
 
         // Stipend instead of CTC
         oPDFModel.setProperty(
-            "/EmpCTC",
-            (oEmpModel.Currency || "INR") +
-            " " +
-            Formatter.fromatNumber(
-                oEmpModel.Stipend || 0
-            )
+          "/EmpCTC",
+          (oEmpModel.Currency || "INR") +
+          " " +
+          Formatter.fromatNumber(
+            oEmpModel.Stipend || 0
+          )
         );
 
         let filter = {
-            companyCode: oEmpModel.CompanyCode
+          companyCode: oEmpModel.CompanyCode
         };
 
         const apiResponse =
-            await this.ajaxReadWithJQuery(
-                "CompanyCodeDetails",
-                filter
-            );
+          await this.ajaxReadWithJQuery(
+            "CompanyCodeDetails",
+            filter
+          );
 
         const oCompanyDetailsModel =
-            apiResponse.data[0];
+          apiResponse.data[0];
 
         const oPDFConditionModel =
-            this.getView()
-                .getModel("PDFConditionModel")
-                .getData();
+          this.getView()
+            .getModel("PDFConditionModel")
+            .getData();
 
         // Images conversion same as existing code
         if (
-            !oCompanyDetailsModel.companylogo64 &&
-            !oCompanyDetailsModel.signature64
+          !oCompanyDetailsModel.companylogo64 &&
+          !oCompanyDetailsModel.signature64
         ) {
 
-            const logoBlob = new Blob(
-                [
-                    new Uint8Array(
-                        oCompanyDetailsModel.companylogo?.data
-                    )
-                ],
-                {
-                    type: "image/png"
-                }
-            );
+          const logoBlob = new Blob(
+            [
+              new Uint8Array(
+                oCompanyDetailsModel.companylogo?.data
+              )
+            ],
+            {
+              type: "image/png"
+            }
+          );
 
-            const signBlob = new Blob(
-                [
-                    new Uint8Array(
-                        oCompanyDetailsModel.signature?.data
-                    )
-                ],
-                {
-                    type: "image/png"
-                }
-            );
+          const signBlob = new Blob(
+            [
+              new Uint8Array(
+                oCompanyDetailsModel.signature?.data
+              )
+            ],
+            {
+              type: "image/png"
+            }
+          );
 
-            const [logoBase64, signBase64] =
-                await Promise.all([
-                    this._convertBLOBToImage(logoBlob),
-                    this._convertBLOBToImage(signBlob)
-                ]);
+          const [logoBase64, signBase64] =
+            await Promise.all([
+              this._convertBLOBToImage(logoBlob),
+              this._convertBLOBToImage(signBlob)
+            ]);
 
-            oCompanyDetailsModel.companylogo64 =
-                logoBase64;
+          oCompanyDetailsModel.companylogo64 =
+            logoBase64;
 
-            oCompanyDetailsModel.signature64 =
-                signBase64;
+          oCompanyDetailsModel.signature64 =
+            signBase64;
         }
 
         // Trainee PDF Generator
         if (
-            typeof TraineeALPDF !== "undefined" &&
-            typeof TraineeALPDF._GeneratePDF === "function"
+          typeof TraineeALPDF !== "undefined" &&
+          typeof TraineeALPDF._GeneratePDF === "function"
         ) {
           const logoBlob = new Blob(
-    [new Uint8Array(oCompanyDetailsModel.companylogo?.data)],
-    { type: "image/png" }
-);
+            [new Uint8Array(oCompanyDetailsModel.companylogo?.data)],
+            { type: "image/png" }
+          );
 
-const signBlob = new Blob(
-    [new Uint8Array(oCompanyDetailsModel.signature?.data)],
-    { type: "image/png" }
-);
+          const signBlob = new Blob(
+            [new Uint8Array(oCompanyDetailsModel.signature?.data)],
+            { type: "image/png" }
+          );
 
-const backgroundBlob = new Blob(
-    [new Uint8Array(oCompanyDetailsModel.backgroundLogo?.data)],
-    { type: "image/png" }
-);
+          const backgroundBlob = new Blob(
+            [new Uint8Array(oCompanyDetailsModel.backgroundLogo?.data)],
+            { type: "image/png" }
+          );
 
-const emailBlob = new Blob(
-    [new Uint8Array(oCompanyDetailsModel.emailLogo?.data)],
-    { type: "image/png" }
-);
+          const emailBlob = new Blob(
+            [new Uint8Array(oCompanyDetailsModel.emailLogo?.data)],
+            { type: "image/png" }
+          );
 
-const [
-    logoBase64,
-    signBase64,
-    backgroundBase64,
-    emailBase64
-] = await Promise.all([
-    this._convertBLOBToImage(logoBlob),
-    this._convertBLOBToImage(signBlob),
-    this._convertBLOBToImage(backgroundBlob),
-    this._convertBLOBToImage(emailBlob)
-]);
+          const [
+            logoBase64,
+            signBase64,
+            backgroundBase64,
+            emailBase64
+          ] = await Promise.all([
+            this._convertBLOBToImage(logoBlob),
+            this._convertBLOBToImage(signBlob),
+            this._convertBLOBToImage(backgroundBlob),
+            this._convertBLOBToImage(emailBlob)
+          ]);
 
-oCompanyDetailsModel.companylogo64 = logoBase64;
-oCompanyDetailsModel.signature64 = signBase64;
-oCompanyDetailsModel.backgroundLogoBase64 = backgroundBase64;
-oCompanyDetailsModel.emailLogoBase64 = emailBase64;
+          oCompanyDetailsModel.companylogo64 = logoBase64;
+          oCompanyDetailsModel.signature64 = signBase64;
+          oCompanyDetailsModel.backgroundLogoBase64 = backgroundBase64;
+          oCompanyDetailsModel.emailLogoBase64 = emailBase64;
 
-            TraineeALPDF._GeneratePDF(
-                this,
-                oPDFModel.getData(),
-                oCompanyDetailsModel,
-                oPDFConditionModel
-            );
+          TraineeALPDF._GeneratePDF(
+            this,
+            oPDFModel.getData(),
+            oCompanyDetailsModel,
+            oPDFConditionModel
+          );
         }
 
-    } catch (err) {
+      } catch (err) {
 
         MessageToast.show(
-            err.message || err.responseText
+          err.message || err.responseText
         );
 
-    } finally {
+      } finally {
 
         this.closeBusyDialog();
-    }
-},
+      }
+    },
 
     offerGeneratingPdfFunction: async function (oFinalModel) {
       this.getBusyDialog();
@@ -4303,25 +4453,666 @@ oCompanyDetailsModel.emailLogoBase64 = emailBase64;
         }
 
         // PDF Generation
-       if (
-    oCompanyDetailsModel.companylogo64 &&
-    oCompanyDetailsModel.signature64 &&
-    typeof EmpIPNCAPDF !== "undefined" &&
-    typeof EmpIPNCAPDF._GeneratePDF === "function"
-) {
-    EmpIPNCAPDF._GeneratePDF(
-        this,
-        oPDFModel.getData(),
-        oCompanyDetailsModel,
-        oPDFConditionModel
-    );
-}
+        if (
+          oCompanyDetailsModel.companylogo64 &&
+          oCompanyDetailsModel.signature64 &&
+          typeof EmpIPNCAPDF !== "undefined" &&
+          typeof EmpIPNCAPDF._GeneratePDF === "function"
+        ) {
+          EmpIPNCAPDF._GeneratePDF(
+            this,
+            oPDFModel.getData(),
+            oCompanyDetailsModel,
+            oPDFConditionModel
+          );
+        }
 
       } catch (err) {
         MessageToast.show(err.message || err.responseText);
       } finally {
         this.closeBusyDialog();
       }
+    },
+
+    onPDFDownloadForEmployee: function () {
+      var that = this;
+
+      // 1. Get logged-in employee from LoginModel
+      var oLoginData = this.getOwnerComponent().getModel("LoginModel").getData();
+      var sEmpId = oLoginData.EmployeeID;
+      var sEmpName = oLoginData.EmployeeName;
+
+      if (!sEmpId) {
+        MessageToast.show("Employee information missing");
+        return;
+      }
+
+      // 2. Show busy dialog while fetching data
+      this.getBusyDialog();
+
+      // 3. Read assets with filter (AssignEmployeeID = current employee)
+      this.ajaxReadWithJQuery("IncomeAsset", { AssignEmployeeID: sEmpId })
+        .then(function (oData) {
+          // 4. Close busy dialog
+          that.closeBusyDialog();
+
+          // 5. Extract data array
+          var aAssets = Array.isArray(oData.data) ? oData.data : [oData.data];
+
+          if (!aAssets || aAssets.length === 0) {
+            MessageToast.show("No assets found for " + sEmpName);
+            return;
+          }
+
+          // 6. Generate PDF directly from fetched assets
+          that.generateEmployeeAssetHistoryPDF(sEmpId, sEmpName, aAssets);
+        })
+        .catch(function (err) {
+          that.closeBusyDialog();
+          MessageToast.show("Error loading assets: " + (err.message || "Unknown error"));
+        });
+    },
+
+    // Helper to generate PDF from asset array
+    generateEmployeeAssetHistoryPDF: function (sEmpId, sEmpName, aAssets) {
+      // Build events from the asset array (exactly the same logic as before)
+      var events = [];
+      var uniqueAssets = new Set();
+      var uniqueBranches = new Set();
+      var transferCount = 0;
+
+      var formatDateForEvent = function (sDate) {
+        if (!sDate || sDate === "1899-11-30T00:00:00.000Z") return null;
+        var d = new Date(sDate);
+        return isNaN(d.getTime()) ? null : d;
+      };
+
+      aAssets.forEach(function (oAsset) {
+        var assetName = oAsset.Model || oAsset.SerialNumber || oAsset.ID || "Asset";
+        uniqueAssets.add(assetName);
+
+        function addEvent(type, date, title, details, branch, isTransfer) {
+          var dateObj = formatDateForEvent(date);
+          if (!dateObj) return;
+          events.push({
+            type: type,
+            date: dateObj,
+            dateStr: dateObj.toLocaleDateString("en-GB"),
+            title: title,
+            details: details,
+            assetName: assetName,
+            branch: branch || ""
+          });
+          if (branch) uniqueBranches.add(branch);
+          if (isTransfer) transferCount++;
+        }
+
+        // ---- PICKED by employee ----
+        if (oAsset.AssetCreationDate && oAsset.PickedEmployeeID === sEmpId) {
+          addEvent("PICKED", oAsset.AssetCreationDate, "Asset picked",
+            ["Branch: " + (oAsset.PickedBranch || "-")], oAsset.PickedBranch);
+        }
+
+        // ---- ASSIGNED TO employee ----
+        if (oAsset.AssignedDate && oAsset.AssignEmployeeID === sEmpId) {
+          addEvent("ASSIGNED", oAsset.AssignedDate, "Asset assigned to you",
+            ["Assigned by: " + (oAsset.AssignedByEmployeeName || "-") + " (" + (oAsset.AssignedByEmployeeID || "-") + ")",
+            "Branch: " + (oAsset.AssignBranch || "-")], oAsset.AssignBranch);
+        }
+
+        // ---- ASSIGNED BY employee (to someone else) ----
+        if (oAsset.AssignedDate && oAsset.AssignedByEmployeeID === sEmpId) {
+          addEvent("ASSIGNED", oAsset.AssignedDate, "You assigned asset",
+            ["Assigned to: " + (oAsset.AssignEmployeeName || "-") + " (" + (oAsset.AssignEmployeeID || "-") + ")",
+            "Branch: " + (oAsset.AssignBranch || "-")], oAsset.AssignBranch);
+        }
+
+        if (oAsset.ReturnRequestDate && oAsset.AssignEmployeeID === sEmpId && oAsset.ReturnRequestDate !== "1899-11-30T00:00:00.000Z") {
+          addEvent("RETRUN REQUEST", oAsset.AssignedDate, "You requested asset",
+            ["Return request to: " + (oAsset.ReturnrequestEmpName || "-") + " (" + (oAsset.ReturnrequestEmpID || "-") + ")",
+            "Branch: " + (oAsset.AssignBranch || "-")], oAsset.AssignBranch);
+        }
+
+        if (oAsset.AcceptReqEmpID) {
+          addEvent("ACCEPTED", oAsset.ReturnRequestDate, "Asset Accepted",
+            ["Accepted By: " + (oAsset.AcceptrequestEmpName || "-") + " (" + (oAsset.AcceptReqEmpID || "-") + ")",
+            "Branch: " + (oAsset.AssignBranch || "-")], oAsset.AssignBranch);
+        }
+
+        // ---- TRANSFER by employee ----
+        if (oAsset.TransferDate && oAsset.TransferDate !== "1899-11-30T00:00:00.000Z" && oAsset.TransferByID === sEmpId) {
+          addEvent("TRANSFER", oAsset.TransferDate, "You transferred asset",
+            ["Transfer branch: " + (oAsset.TransferBranch || "-"),
+            "Reference no: " + (oAsset.ReferenceNumber || "-")], oAsset.TransferBranch, true);
+        }
+
+        // ---- RETURN to employee ----
+        if (oAsset.ReturnDate && oAsset.ReturnDate !== "1899-11-30T00:00:00.000Z" && oAsset.ReturnEmpID === sEmpId) {
+          addEvent("RETURN", oAsset.ReturnDate, "Asset returned to you",
+            ["Return branch: " + (oAsset.ReturnBranch || "-"),
+            "Comment: " + (oAsset.Comments || "-")], oAsset.ReturnBranch);
+        }
+
+        // ---- TRASH by employee ----
+        if (oAsset.TrashDate && oAsset.TrashDate !== "1899-11-30T00:00:00.000Z" && oAsset.TrashByEmployeeID === sEmpId) {
+          addEvent("TRASH", oAsset.TrashDate, "You trashed asset",
+            ["Branch: " + (oAsset.TrashBranch || "-"),
+            "Comment: " + (oAsset.TrashComments || "-")], oAsset.TrashBranch);
+        }
+      });
+
+      // Sort events chronologically
+      events.sort(function (a, b) { return a.date - b.date; });
+
+      var totalEvents = events.length;
+      var totalAssets = uniqueAssets.size;
+      var totalBranches = uniqueBranches.size;
+
+      // ---- PDF generation (jsPDF) ----
+      var doc = new jspdf.jsPDF("p", "mm", "a4");
+      var pageWidth = doc.internal.pageSize.getWidth();
+      var pageHeight = doc.internal.pageSize.getHeight();
+      var margin = 12;
+      var contentWidth = pageWidth - (margin * 2);
+      var y = 12;
+
+      var addPageIfNeeded = function (requiredHeight) {
+        if (y + requiredHeight > pageHeight - 15) {
+          doc.addPage();
+          y = 15;
+        }
+      };
+
+      var drawFilledRect = function (x, y, w, h, color, radius = 3) {
+        doc.setFillColor(color[0], color[1], color[2]);
+        doc.roundedRect(x, y, w, h, radius, radius, "F");
+      };
+
+      var drawBorderRect = function (x, y, w, h, color, radius = 3) {
+        doc.setDrawColor(color[0], color[1], color[2]);
+        doc.setFillColor(255, 255, 255);
+        doc.roundedRect(x, y, w, h, radius, radius, "FD");
+      };
+
+      // Header
+      drawFilledRect(margin, y, contentWidth, 38, [28, 37, 54], 4);
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(18);
+      doc.text("My Asset History", margin + 6, y + 12);
+      doc.setFontSize(9);
+      doc.text("EMPLOYEE — " + sEmpName + " (" + sEmpId + ")", margin + 6, y + 24);
+      doc.setFontSize(8);
+      doc.text("Generated " + new Date().toLocaleDateString("en-GB") + " · " + totalEvents + " events across " + totalAssets + " assets · Confidential", margin + 6, y + 33);
+      y += 46;
+
+      // Metrics cards
+      var cardWidth = (contentWidth - 6) / 4;
+      var gap = 2;
+      var metrics = [
+        { label: "Total events", value: totalEvents },
+        { label: "Assets used", value: totalAssets },
+        { label: "Branches", value: totalBranches },
+        { label: "Transfers", value: transferCount }
+      ];
+      metrics.forEach(function (metric, idx) {
+        var x = margin + (idx * (cardWidth + gap));
+        // shadow
+        doc.setFillColor(235, 235, 235);
+        doc.roundedRect(x + 1, y + 1, cardWidth, 28, 3, 3, "F");
+        drawFilledRect(x, y, cardWidth, 28, [255, 255, 255], 3);
+        doc.setDrawColor(210, 210, 210);
+        doc.roundedRect(x, y, cardWidth, 28, 3, 3, "D");
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(8);
+        doc.setTextColor(100, 100, 100);
+        doc.text(metric.label, x + 6, y + 10);
+        doc.setFontSize(16);
+        doc.setTextColor(28, 37, 54);
+        doc.text(metric.value.toString(), x + 6, y + 23);
+      });
+      y += 38;
+
+      // Timeline title
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(14);
+      doc.setTextColor(20, 20, 20);
+      doc.text("Event Timeline", margin, y);
+      y += 10;
+
+      if (events.length === 0) {
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(10);
+        doc.setTextColor(150, 150, 150);
+        doc.text("No events found for this employee.", margin, y);
+        doc.save(sEmpName.replace(/\s/g, "_") + "_My_Asset_History.pdf");
+        return;
+      }
+
+      // Event cards
+      events.forEach(function (event) {
+        var detailsHeight = 0;
+        var wrappedDetails = [];
+        var allDetails = ["Asset: " + event.assetName, ...event.details];
+        allDetails.forEach(function (detail) {
+          var lines = doc.splitTextToSize(detail, contentWidth - 30);
+          wrappedDetails.push(lines);
+          detailsHeight += (lines.length * 4.5) + 1.5;
+        });
+        var cardHeight = 16 + detailsHeight + 8;
+        addPageIfNeeded(cardHeight);
+
+        drawBorderRect(margin, y, contentWidth, cardHeight, [220, 220, 220], 4);
+        doc.setFillColor(255, 255, 255);
+        doc.roundedRect(margin, y, contentWidth, cardHeight, 4, 4, "F");
+
+        // Left color bar
+        var eventColor = [100, 100, 100];
+        if (event.type === "PICKED") eventColor = [46, 125, 50];
+        else if (event.type === "ASSIGNED") eventColor = [25, 118, 210];
+        else if (event.type === "TRANSFER") eventColor = [245, 124, 0];
+        else if (event.type === "RETURN") eventColor = [123, 31, 162];
+        else if (event.type === "TRASH") eventColor = [158, 158, 158];
+        drawFilledRect(margin, y, 6, cardHeight, eventColor, 0);
+
+        // Type badge
+        doc.setFillColor(60, 60, 60);
+        doc.roundedRect(margin + 12, y + 6, 32, 8, 2, 2, "F");
+        doc.setTextColor(255, 255, 255);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(7);
+        doc.text(event.type, margin + 16, y + 12);
+
+        // Title
+        doc.setTextColor(40, 40, 40);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(10);
+        doc.text(event.title, margin + 50, y + 11);
+
+        // Date
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(8);
+        doc.setTextColor(120, 120, 120);
+        doc.text(event.dateStr, pageWidth - margin - 25, y + 11);
+
+        // Details
+        var innerY = y + 20;
+        doc.setTextColor(70, 70, 70);
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(9);
+        wrappedDetails.forEach(function (lines) {
+          doc.text(lines, margin + 12, innerY);
+          innerY += (lines.length * 4.5) + 1.5;
+        });
+
+        y += cardHeight + 6;
+      });
+
+      var sFileName = sEmpName.replace(/\s/g, "_") + "_My_Asset_History.pdf";
+      doc.save(sFileName);
+    },
+    SS_returnrequest: async function () {
+      var LoginModel = this.getOwnerComponent().getModel("LoginModel").getData()
+      var oTable = this.byId("SS_id_myAssetTable");
+      var oSelectedItem = oTable.getSelectedItem();
+
+      if (!oSelectedItem) {
+        MessageToast.show(this.i18nModel.getText("Pleaseselectanasset"));
+        return;
+      }
+      // Get selected row data
+      var oRowData = oSelectedItem.getBindingContext("MyAssets").getObject();
+      this.AssetData = oSelectedItem.getBindingContext("MyAssets").getObject();
+
+
+
+      if (oRowData.Status === "Accepted") {
+        MessageToast.show(this.i18nModel.getText("Pleasechooseanassignedasset"));
+        return;
+      }
+      this.ID = oRowData.ID
+      this.getBusyDialog()
+      var oToday = new Date();
+
+      // Today's date
+      var sStartDate = oToday.toISOString().split("T")[0];
+
+      // Last date of current month
+      var oLastDate = new Date(
+        oToday.getFullYear(),
+        oToday.getMonth() + 1,
+        0
+      );
+
+      var sEndDate = oLastDate.toISOString().split("T")[0];
+
+      var filter = {
+        BranchCode: LoginModel.BranchCode,
+        StartDate: sStartDate,
+        EndDate: sEndDate
+      };
+      await this.ajaxReadWithJQuery("ReturnSlots", filter).then((oData) => {
+
+        var aData = Array.isArray(oData.data) ? oData.data : [oData.data];
+
+        var model = new sap.ui.model.json.JSONModel(aData);
+
+        this.closeBusyDialog();
+        this.getOwnerComponent().setModel(model, "ReturnModel");
+      });
+      if (!this.SS_Dialog) {
+        this.SS_Dialog = sap.ui.xmlfragment(
+          "sap.kt.com.minihrsolution.fragment.EmployeeReturn",
+          this
+        );
+        this.getView().addDependent(this.SS_Dialog);
+      }
+      this._FragmentDatePickersReadOnly(["RS_id_ReturnDate"]);
+
+      this.SS_Dialog.open();
+      if (oRowData.Status === "Return request") {
+
+
+        var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+          pattern: "dd/MM/yyyy"
+        });
+
+        var sReturnRequestDate = oDateFormat.format(
+          new Date(oRowData.ReturnRequestDate)
+        );
+
+
+
+
+        // Set existing values
+        this.getView().getModel("SlotModel").setProperty(
+          "/ReturnDate",
+          sReturnRequestDate
+        );
+
+        this.getView().getModel("SlotModel").setProperty(
+          "/Comments",
+          oRowData.ReturnRequestComments
+        );
+
+        sap.ui.getCore().byId("RS_id_ReturnDate").setMinDate(new Date())
+
+        var sReturnDate = oRowData.ReturnRequestDate;
+        var sReturnSlot = oRowData.ReturnSlot; // e.g. "9 AM - 11 AM"
+        this._oSelectedSlot = oRowData.ReturnSlot; // e.g. "9 AM - 11 AM"
+
+
+        // Get all slots
+        var aAllSlots = this.getOwnerComponent()
+          .getModel("ReturnModel")
+          .getData();
+
+        // Filter slots for selected date
+        var aFilteredSlots = aAllSlots.filter(function (oSlot) {
+
+          var oSelectedDate = new Date(sReturnDate);
+          var oStartDate = new Date(oSlot.StartDate);
+          var oEndDate = new Date(oSlot.EndDate);
+
+          oSelectedDate.setHours(0, 0, 0, 0);
+          oStartDate.setHours(0, 0, 0, 0);
+          oEndDate.setHours(0, 0, 0, 0);
+
+          return oSelectedDate >= oStartDate &&
+            oSelectedDate <= oEndDate;
+        });
+
+        // Remove duplicate slots
+        var oUniqueSlots = {};
+        var aSlots = [];
+
+        aFilteredSlots.forEach(function (oItem) {
+
+          var sKey = oItem.StartTime + "_" + oItem.EndTime;
+
+          if (!oUniqueSlots[sKey]) {
+
+            oUniqueSlots[sKey] = true;
+
+            aSlots.push({
+              StartTime: oItem.StartTime,
+              EndTime: oItem.EndTime,
+              EmployeeID: oItem.EmployeeID,
+              EmployeeName: oItem.EmployeeName
+            });
+          }
+        });
+
+
+
+        this.EmployeereturnID = [...new Set(
+          aSlots.map(function (oManager) {
+            return oManager.EmployeeID;
+          })
+        )].join(",");
+        this.EmployeereturnName = [...new Set(
+          aSlots.map(function (oManager) {
+            return oManager.EmployeeName;
+          })
+        )].join(",");
+
+
+
+        // Bind slots model
+        this.getView().setModel(
+          new sap.ui.model.json.JSONModel(aSlots),
+          "slotdata"
+        );
+
+        // Show slot group
+        var oSlotGroup = sap.ui.getCore().byId("RS_id_SlotGroup");
+        oSlotGroup.setVisible(true);
+
+        // Wait until RadioButtons are created, then select saved slot
+        setTimeout(function () {
+
+          var aButtons = oSlotGroup.getButtons();
+
+          for (var i = 0; i < aButtons.length; i++) {
+
+            if (aButtons[i].getText().trim() === sReturnSlot.trim()) {
+
+              oSlotGroup.setSelectedIndex(i);
+              break;
+            }
+          }
+
+        }, 100);
+      } else {
+        sap.ui.getCore().byId("RS_id_ReturnDate").setValue("").setMinDate(new Date()).setValueState("None")
+        sap.ui.getCore().byId("RS_id_Comments").setValue("").setValueState("None")
+        sap.ui.getCore().byId("RS_id_SlotGroup").setSelectedIndex(-1).setVisible(false)
+        sap.ui.getCore().byId("idNoSlotsAvailableText").setVisible(false)
+
+      }
+      sap.ui.getCore().byId("RS_ID_Type").setText(oRowData.Type)
+
+
+
+      sap.ui.getCore().byId("RS_ID_AssetModel").setText(oRowData.Model)
+    },
+    SS_onDateLiveChange: function (oEvent) {
+      utils._LCvalidateMandatoryField(oEvent);
+      var dSelectedDate = oEvent.getSource().getDateValue();
+
+      if (!dSelectedDate) {
+        return;
+      }
+
+      dSelectedDate.setHours(0, 0, 0, 0);
+
+      var aReturnData = this.getView().getModel("ReturnModel").getData();
+
+      var aFilteredData = aReturnData.filter(function (oItem) {
+
+        var dStartDate = new Date(oItem.StartDate);
+        var dEndDate = new Date(oItem.EndDate);
+
+        dStartDate.setHours(0, 0, 0, 0);
+        dEndDate.setHours(0, 0, 0, 0);
+
+        return dSelectedDate >= dStartDate &&
+          dSelectedDate <= dEndDate;
+      });
+
+      // Remove duplicate slots
+      var oUniqueSlots = {};
+      var aSlots = [];
+
+      aFilteredData.forEach(function (oItem) {
+
+        var sKey = oItem.StartTime + "_" + oItem.EndTime;
+
+        if (!oUniqueSlots[sKey]) {
+          oUniqueSlots[sKey] = true;
+
+          aSlots.push({
+            StartTime: oItem.StartTime,
+            EndTime: oItem.EndTime
+          });
+        }
+      });
+      sap.ui.getCore().byId("RS_id_SlotGroup").setSelectedIndex(-1).setVisible(true)
+
+
+
+      this.getView().setModel(
+        new sap.ui.model.json.JSONModel(aSlots),
+        "slotdata"
+      );
+    },
+    SS_validatecomments: function (oEvent) {
+      utils._LCvalidateMandatoryField(oEvent);
+
+    },
+    RS_onCancelSlot: function () {
+      this.SS_Dialog.close();
+      this.byId("SS_id_myAssetTable").removeSelections()
+    },
+    RS_onSelectSlot: function (oEvent) {
+
+      var iSelectedIndex = oEvent.getSource().getSelectedIndex();
+      var aSlots = this.getView().getModel("slotdata").getData();
+      var oSelectedSlot = aSlots[iSelectedIndex];
+
+      var sStartTime = oSelectedSlot.StartTime;
+      var sEndTime = oSelectedSlot.EndTime;
+
+      var aReturnData = this.getView().getModel("ReturnModel").getData();
+
+      var aAvailableManagers = aReturnData.filter(function (oItem) {
+        return oItem.StartTime === sStartTime &&
+          oItem.EndTime === sEndTime;
+      });
+
+      if (aAvailableManagers.length > 0) {
+
+        this._oSelectedSlot = sStartTime + " - " + sEndTime;
+
+        // Get all Employee IDs separated by comma
+
+        this.EmployeereturnID = [...new Set(
+          aSlots.map(function (oManager) {
+            return oManager.EmployeeID;
+          })
+        )].join(",");
+
+        this.EmployeereturnName = [...new Set(
+          aSlots.map(function (oManager) {
+            return oManager.EmployeeName;
+          })
+        )].join(",");
+
+
+      } else {
+        MessageToast.show(this.i18nModel.getText("Nomanageravailableforthisslot"));
+      }
+    },
+    RS_onSaveSlot: async function () {
+
+      // 1. Return Date first
+      if (!utils._LCvalidateMandatoryField(sap.ui.getCore().byId("RS_id_ReturnDate"), "ID")) {
+        MessageToast.show(
+          this.i18nModel.getText(
+            "pleaseFillallRequiredFieldsCorrectlybeforeSaving"
+          )
+        );
+        return;
+      }
+
+      // 2. Slot second (only after Return Date is valid)
+      if (sap.ui.getCore().byId("RS_id_SlotGroup").getSelectedIndex() === -1) {
+        MessageToast.show(this.i18nModel.getText("Pleaseselectaslot"));
+        return;
+      }
+
+      // 3. Comments last
+      if (!utils._LCvalidateMandatoryField(sap.ui.getCore().byId("RS_id_Comments"), "ID")) {
+        MessageToast.show(
+          this.i18nModel.getText(
+            "pleaseFillallRequiredFieldsCorrectlybeforeSaving"
+          )
+        );
+        return;
+      }
+
+      var oSlotData = this.getView().getModel("SlotModel").getData();
+
+      var oPayload = {
+        Status: "Return request",
+        ReturnRequestDate: oSlotData.ReturnDate.split("/").reverse().join("-"),
+        ReturnSlot: this._oSelectedSlot,
+        ReturnRequestComments: oSlotData.Comments,
+        ReturnrequestEmpID: this.EmployeereturnID,
+        ReturnrequestEmpName: this.EmployeereturnName,
+        Type: this.AssetData.Type,
+        Model: this.AssetData.Model,
+        AssignEmployeeName: this.AssetData.AssignEmployeeName,
+        AssignEmployeeID: this.AssetData.AssignEmployeeID
+      };
+
+
+      this.getBusyDialog();
+      await this.ajaxUpdateWithJQuery("IncomeAsset", {
+        filters: {
+          ID: this.ID
+        },
+        data: oPayload
+      });
+      this.SS_Dialog.close();
+      this.getMyAssetsdata(this.EmployeeID)
+      MessageToast.show(this.i18nModel.getText("Assetreturnrequestsubmittedsuccessfully"));
+
+
+    },
+    RS_onViewAvailability: function () {
+      if (!this.RA_Dialog) {
+        this.RA_Dialog = sap.ui.xmlfragment(
+          "sap.kt.com.minihrsolution.fragment.ReturnAvailable",
+          this
+        );
+        this.getView().addDependent(this.RA_Dialog);
+      }
+      this.RA_Dialog.open();
+
+    },
+    FDP_onVHDClose: function () {
+      this.RA_Dialog.close();
+
+    },
+    onLocationPress: function (oEvent) {
+      var oContext = oEvent.getSource().getBindingContext("MyAssets");
+      var oData = oContext.getObject();
+
+      sap.m.MessageBox.information(
+        "Location: " + oData.ReturnLocation
+      );
     }
+
   });
 });

@@ -79,19 +79,21 @@
                   maxLength="200" width="100%" />
 			</f:content>
 		</f:SimpleForm>
-		<beginButton>
+	<VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
 			<Button
 				text="{i18n>save}"
 				press="FTIA_onsavepress"
 				type="Transparent"
 			/>
-		</beginButton>
-		<endButton>
+		
 			<Button
 				text="{i18n>btnCancel}"
 				press="FTIA_onCancelPress"
 				type="Transparent"
+				class="closeBtnMargin"
 			/>
-		</endButton>
+		</HBox>
+       </VBox>
 	</Dialog>
 </c:FragmentDefinition>

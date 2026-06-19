@@ -1,5 +1,5 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-    <HBox class="sapUiTinyMarginTop">
+    <HBox class="sapUiTinyMarginTop profile-footer-marquee">
         <Image
             src="../image/KPVL_logo.jpeg"
             width="30px"

@@ -16,7 +16,24 @@
         navButtonPress="QF_onNavBack"
         navButtonTooltip="{i18n>back}"
         showNavButton="true"
+        class="classheader glassHeader ObjectcustomHeaderToolbar" 
     >
+     <m:headerContent>
+        	<m:Button press="Tile_NotifictionBTN" class="sapUiTinyMarginBeginEnd LogNot logoutBtn" tooltip="{i18n>TilenotificationfragName}" icon="sap-icon://bell" type="Transparent" visible="{= ${LoginModel>/Role} !== 'Contractor' }">
+			<m:customData >
+            	<m:BadgeCustomData class="badgeClass" key="badge" value="{EndingSoonModel>/notificationCount}"/>
+            </m:customData>
+		</m:Button>
+		<m:Button
+            press="TP_onraisebugpress"
+            icon="sap-icon://incident"
+            tooltip="{i18n>raisebug}"
+            type="Transparent"
+            class="LogNot logoutBtn"
+        />
+			<m:Button press="onLogout" icon="sap-icon://log" tooltip="{i18n>logoutTooltip}" type="Transparent" class="LogNot logoutBtn"/>
+            
+        </m:headerContent>
         <ObjectPageLayout
             id="QF_id_OPL"
             busyIndicatorDelay="0"
@@ -42,7 +59,7 @@
                             <m:Avatar
                                 displayShape="Circle"
                                 displaySize="M"
-                                src="../image/KPVL_logo.jpeg"
+                                src="../image/logo.jpg"
                                 class="sapUiTinyMarginEnd"
                             />
                             <m:Title
@@ -53,16 +70,17 @@
                     </snappedHeading>
 
                     <expandedContent>
-                        <m:Text text="{i18n>afutureoftomorrow}"/>
+                        <m:Text text="{i18n>afutureoftomorrow}" class="whiteLabel"/>
                     </expandedContent>
 
                     <snappedContent>
                         <layout:VerticalLayout>
-                            <m:Text text="{i18n>afutureoftomorrow}"/>
+                            <m:Text text="{i18n>afutureoftomorrow}" class="whiteLabel"/>
                             <layout:HorizontalLayout class="sapUiTinyMarginTop">
                                 <m:Label
                                     text="{i18n>qIssuedBy} "
                                     showColon="true"
+                                    class="whiteLabel"
                                 />
                                 <m:Text
                                     class="sapUiTinyMarginBegin"
@@ -85,7 +103,7 @@
                         class="sapUiLargeMarginEnd"
                         displayShape="Circle"
                         displaySize="XL"
-                        src="../image/KPVL_logo.jpeg"
+                        src="../image/logo.jpg"
                     />
 
                     <layout:VerticalLayout

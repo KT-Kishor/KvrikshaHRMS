@@ -89,7 +89,10 @@ sap.ui.define([
             getModelData: function () {
                 this.getOwnerComponent().getModel("EmpModel");
             },
+            AA_onPressslot:function(){
+                this.getRouter().navTo("RouteReturnslots");
 
+            },
             onPressback: function () {
                 if (this._fromRoute === "IncomeAsset") {
                     this.getOwnerComponent().getRouter().navTo("RouteIncomeAsset", {
@@ -118,7 +121,7 @@ sap.ui.define([
                 this.ajaxReadWithJQuery("IncomeAsset", filter, ["AA_id_AssestTable"]).then((oData) => {
                     var offerData = Array.isArray(oData.data) ? oData.data : [oData.data];
                     var filteredData = offerData.filter(item => {
-                        var statusCondition = (item.Status === "Assigned" || item.Status === "Returned") && item.IsCurrent === "1";
+                        var statusCondition = (item.Status === "Assigned" || item.Status === "Returned" || item.Status === "Return request" || item.Status === "Accepted") && item.IsCurrent === "1";
                         var roleCondition = true;
                         if (role === "IT Consultant") {
                             roleCondition = item.AssignBranch === cityFromBranch;
@@ -950,6 +953,80 @@ sap.ui.define([
                     sap.ui.getCore().byId("RepairPriceLabel").setVisible(flag)
                     oModel.setProperty("/formData/data/AssetCondition", sSelectedText);
                 }
-            }
+            },
+           AA_acceptrequest: async function () {
+
+             var LoginModel=this.getView().getModel("LoginModel").getData()
+
+    var oTable = this.byId("AA_id_AssestTable");
+    var oSelectedItem = oTable.getSelectedItem();
+
+    if (!oSelectedItem) {
+        MessageToast.show(this.i18nModel.getText("Pleaseselectarecord"));
+        return;
+    }
+
+    var oData = oSelectedItem.getBindingContext("assetModel").getObject();
+
+  if (oData.Status !== "Return request") {
+    MessageToast.show(
+        this.i18nModel.getText("PleaseselectaReturnrequestasset")
+    );
+    return;
+             }
+    
+            this.getBusyDialog()
+         var oFCIAerData = await this.ajaxReadWithJQuery(
+    "ReturnSlots",
+    { EmployeeID: LoginModel.EmployeeID }
+);
+            this.closeBusyDialog()
+
+      MessageBox.confirm(
+        this.i18nModel.getText("Areyousureyoutoacceptthisrequest"),
+        {
+            title: "Confirmation",
+            actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+            onClose: async function (sAction) {
+
+                if (sAction === sap.m.MessageBox.Action.YES) {
+
+                    var oPayload = {
+                        Status: "Accepted",
+                        ReturnLocation:oFCIAerData.data[0].Location,
+                        Type:oData.Type,
+                        Model:oData.Model,
+                        AssignEmployeeID:oData.AssignEmployeeID,
+                        AssignEmployeeName:oData.AssignEmployeeName,
+                        AcceptReqEmpID:this.getView().getModel("LoginModel").getProperty("/EmployeeID"),
+                        AcceptrequestEmpName:this.getView().getModel("LoginModel").getProperty("/EmployeeName"),
+                        ReturnRequestDate:oData.ReturnRequestDate,
+                        ReturnSlot:oData.ReturnSlot
+                    };
+                 
+                    try {
+                       
+                          await this.ajaxUpdateWithJQuery("IncomeAsset", {
+                                data: oPayload,
+                                filters: {
+                                    ID:  oData.ID,
+                                }
+                            })
+                           this.AA_onSearch();
+                           this.getCount()
+
+                        MessageToast.show(this.i18nModel.getText("Requestacceptedsuccessfully"));
+
+                        // Refresh table data if required
+                        // this._loadAssets();
+
+                    } catch (oError) {
+                        MessageBox.error(this.i18nModel.getText("Requestacceptedsuccessfully"));
+                    }
+                }
+            }.bind(this)
+        }
+    );
+}
         })
     });

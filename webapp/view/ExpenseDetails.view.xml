@@ -392,7 +392,7 @@
                                         </m:OverflowToolbar>
                                     </m:headerToolbar>
                                     <m:columns>
-                                        <m:Column demandPopin="true">
+                                        <m:Column width="5rem" demandPopin="true">
                                             <m:Label text="{i18n>itemID}" />
                                         </m:Column>
                                         <m:Column demandPopin="true">

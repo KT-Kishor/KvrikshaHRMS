@@ -74,7 +74,8 @@
                                 <ux:ObjectPageSection
                                     id="id_Sectiontile"
                                     titleUppercase="false"
-                                    title="Home" class="roomHeaderTitle1"
+                                    title="Home"
+                                    class="roomHeaderTitle1"
                                     visible="{= ${TileAccessModel>/Home} === '1' ? true : false}"
                                 >
                                     <ux:subSections>
@@ -86,7 +87,6 @@
                                                     allowWrapping="true"
                                                     class="sapUiTinyMargin"
                                                 >
-                                                   
                                                     <GenericTile
                                                         visible="{= ${AppVisibilityModel>/SelfService} === '1' ? true : false}"
                                                         class="sapUiSmallMargin glassTile blue"
@@ -204,21 +204,36 @@
                                                             />
                                                         </TileContent>
                                                     </GenericTile>
-                                                   <GenericTile
+                                                    <GenericTile
                                                         id="TV_id_PolicyTile"
                                                         class="sapUiSmallMargin glassTile blue"
                                                         visible="{= ${AppVisibilityModel>/Policy} !== '0' }"
                                                         header="{i18n>policyTitle}"
-                                                        press="TileV_onpressPolicy">
-
-                                                        <TileContent unit="{i18n>policyUnit}">
-
+                                                        press="TileV_onpressPolicy"
+                                                    >
+                                                        <TileContent
+                                                            unit="{i18n>policyUnit}"
+                                                        >
                                                             <ImageContent
-                                                                src="sap-icon://insurance-house" />
-
+                                                                src="sap-icon://insurance-house"
+                                                            />
                                                         </TileContent>
-
                                                     </GenericTile>
+                                                    <!-- <GenericTile
+                                                        id="HD_id_HiringDashboardTile"
+                                                        class="sapUiSmallMargin glassTile blue"
+                                                        visible="{= ${AppVisibilityModel>/HiringDashboard} !== '0' }"
+                                                        header="{i18n>hiringDashboardTitle}"
+                                                        press="TileV_onpressHiringDashboard"
+                                                    >
+                                                        <TileContent
+                                                            unit="{i18n>hiringDashboardUnit}"
+                                                        >
+                                                            <ImageContent
+                                                                src="sap-icon://employee"
+                                                            />
+                                                        </TileContent>
+                                                    </GenericTile> -->
                                                     <GenericTile
                                                         class="sapUiSmallMargin glassTile blue"
                                                         visible="{= ${AppVisibilityModel>/GoalQuestions} !== '0' ? true : false }"
@@ -249,7 +264,7 @@
                                                             />
                                                         </TileContent>
                                                     </GenericTile>
-                                                    
+
                                                     <GenericTile
                                                         class="sapUiSmallMargin glassTile blue"
                                                         visible="{= ${AppVisibilityModel>/ManageEvent} !== '0' ? true : false }"
@@ -315,7 +330,6 @@
                                                             />
                                                         </TileContent>
                                                     </GenericTile>
-                                                    
                                                 </layout:HorizontalLayout>
                                             </ux:blocks>
                                         </ux:ObjectPageSubSection>
@@ -336,7 +350,7 @@
                                                     allowWrapping="true"
                                                     class="sapUiTinyMargin"
                                                 >
-                                                 <GenericTile
+                                        <GenericTile
                                                         visible="{= ${AppVisibilityModel>/MyInbox} === '1' }"
                                                         class="sapUiSmallMargin glassTile blue"
                                                         header="{i18n>headerInbox}"
@@ -393,7 +407,6 @@
                                                             />
                                                         </TileContent>
                                                     </GenericTile>
-                                                    
                                                 </layout:HorizontalLayout>
                                             </ux:blocks>
                                         </ux:ObjectPageSubSection>
@@ -795,6 +808,21 @@
                                                             />
                                                         </TileContent>
                                                     </GenericTile>
+                                                    <GenericTile
+                                                        visible="{= ${AppVisibilityModel>/InvoiceApp} === '1' ? true : false}"
+                                                        class="sapUiSmallMargin glassTile blue"
+                                                        header="{i18n>expensedashboard}"
+                                                        press="TileV_onpressExpenseDashboard"
+                                                        subheader="{i18n>}"
+                                                    >
+                                                        <TileContent
+                                                            unit="{i18n>expensedetails}"
+                                                        >
+                                                            <ImageContent
+                                                                src="sap-icon://bbyd-dashboard"
+                                                            />
+                                                        </TileContent>
+                                                    </GenericTile>
                                                 </layout:HorizontalLayout>
                                             </ux:blocks>
                                         </ux:ObjectPageSubSection>
@@ -933,7 +961,7 @@
                     </l:SplitPane>
                 </l:PaneContainer>
             </l:ResponsiveSplitter>
-<!-- 
+            <!-- 
             <Image
         src="../image/chatbot.png"
         class="floatingButton"

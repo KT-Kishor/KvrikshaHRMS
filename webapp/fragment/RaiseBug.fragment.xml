@@ -7,8 +7,6 @@
 >
 	<Dialog
 		id="RG_id_Dialog"
-		type="Message"
-		class="sapUiContentPadding"
 		contentWidth="28rem"
 		resizable="true"
 		draggable="true"
@@ -171,7 +169,7 @@
 				/>
 				<MessageStrip
 					visible="{VisibleModel>/Visible}"
-					text=" Image files larger than 2 MB are not allowed."
+					text="Image files larger than 3 MB are not allowed."
 					type="Warning"
 					showIcon="true"
 					enableFormattedText="true"
@@ -189,10 +187,8 @@
 					<HBox width="100%">
 						<u:FileUploader
 							id="RB_id_FileUploader1"
-							fileSizeExceed="onFileSizeExceed"
-							maximumFileSize="2"
 							typeMissmatch="onFileTypeMissmatch"
-							fileType="jpg,jpeg,png,pdf,doc,docx"
+							fileType="jpg,jpeg,png"
 							change="onSupportrequestChange"
 							buttonOnly="true"
 							sameFilenameAllowed="true"
@@ -218,24 +214,27 @@
 				</VBox>
 			</f:content>
 		</f:SimpleForm>
-		<footer>
-			<Toolbar>
-				<ToolbarSpacer />
+		<VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
 				<Button
 					visible="{RaiseBugModel>/Submit}"
 					text="{i18n>submit}"
 					press="onBugSubmit"
+					type="Transparent"
 				/>
 				<Button
 					visible="{RaiseBugModel>/Save}"
 					text="{i18n>save}"
 					press="onPressBugSave"
+					type="Transparent"
 				/>
 				<Button
 					text="{i18n>CancelButton}"
 					press="RB_onCancelButtonPress"
+					type="Transparent"
+					class="closeBtnMargin"
 				/>
-			</Toolbar>
-		</footer>
+			</HBox>
+			</VBox>
 	</Dialog>
 </c:FragmentDefinition>

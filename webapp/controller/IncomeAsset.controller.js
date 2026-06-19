@@ -876,8 +876,8 @@ sap.ui.define([
                         sap.ui.getCore().byId("FCIA_id_transferBy").setVisible(false)
                         sap.ui.getCore().byId("FCIA_id_pickbranch").setSelectedKey(oRowData.TransferBranch)
 
-                        sap.ui.getCore().byId("FCIA_id_warranty").setVisible("false");
-                        sap.ui.getCore().byId("FCIA_id_warrantyDate").setVisible("false");
+                        sap.ui.getCore().byId("FCIA_id_warranty").setVisible(false);
+                        sap.ui.getCore().byId("FCIA_id_warrantyDate").setVisible(false);
                         sap.ui.getCore().byId("FCIA_id_type").setVisible(false)
                         sap.ui.getCore().byId("FCIA_id_model").setVisible(false)
                         sap.ui.getCore().byId("FCIA_ID_DescriptionTextArea").setVisible(false)

@@ -12,27 +12,32 @@
             id="dynamicForm"
             class="sapUiSmallMargin"
         />
-        <Bar
-            design="Auto"
-            titleAlignment="None"
-        >
-            <contentRight>
+        
+       
+           	<VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
                 <Button
                     id="MD_id_submitButoon"
                     text="{i18n>submit}"
+                    type="Transparent"
                     press="MD_onSubmitButtonPress"
                 />
                 <Button
                     id="MD_id_saveButoon"
                     text="{i18n>save}"
+                    type="Transparent"
                     press="MD_onUpdateButtonPress"
                 />
 
                 <Button
                     text="{i18n>CancelButton}"
                     press="MD_onCancelButtonPress"
+                    type="Transparent"
+                    class="closeBtnMargin"
                 />
-            </contentRight>
-        </Bar>
+</HBox>
+</VBox>
+            
+       
     </Dialog>
 </c:FragmentDefinition>

@@ -25,12 +25,13 @@
 			<Input value="{oTraineeDetailsModel>/CompanyEmailID}" id="OTF_id_TraineeMail" maxLength="100" liveChange="T_validateEmail" placeholder="{i18n>entercomMailid}" valueStateText="{i18n>emailValueState}"/>	
 			</f:content>
 		</f:SimpleForm>
-		<beginButton>
+		 <VBox width="100%" class="sapUiSmallMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
 			<Button text="{i18n>onboard}" type="Transparent" press="OTF_onPressOnboard"  />
-		</beginButton>
-		<endButton>
-			<Button text="{i18n>close}" press="OTF_onPressClose" type="Transparent"/>
-		</endButton>
+	
+			<Button text="{i18n>close}" press="OTF_onPressClose" type="Transparent" class="closeBtnMargin"/>
+		 </HBox>
+       </VBox>
 
 	</Dialog>
 </core:FragmentDefinition>

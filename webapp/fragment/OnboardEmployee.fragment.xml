@@ -79,11 +79,12 @@
 				</ComboBox>
 			</f:content>
 		</f:SimpleForm>
-		<beginButton>
+		  <VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
 			<Button text="{i18n>onboardEmp}" type="Transparent" press="OEF_onPressOnBoard"  />
-		</beginButton>
-		<endButton>
-			<Button text="{i18n>close}" press="OEF_onPressClose" type="Transparent"/>
-		</endButton>
+		
+			<Button text="{i18n>close}" press="OEF_onPressClose" type="Transparent" class="closeBtnMargin"/>
+		 </HBox>
+       </VBox>
 	</Dialog>
 </core:FragmentDefinition>

@@ -162,6 +162,7 @@
     value="{CreateIncomeAssetModel>/Warranty}"
     liveChange="FCIA_onInputLiveChange"
     valueStateText="{i18n>enterWarranty}"
+    placeholder="{i18n>enterWarranty}"
     maxLength="20"
 />
 
@@ -174,6 +175,7 @@
     valueFormat="dd/MM/yyyy"
     displayFormat="dd/MM/yyyy"
     valueStateText="{i18n>selectValidWarrantyDate}"
+    placeholder="{i18n>selectValidWarrantyDate}"
     change="onWarrantyDateChange"
 />
 
@@ -235,9 +237,9 @@
         </f:SimpleForm>
 
 
-            <footer>
-			<Toolbar>
-				<ToolbarSpacer />
+
+           <VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
 
             <Button text="Save" 
              press="FCIA_onsavebuttonpress"
@@ -256,8 +258,6 @@
                 press="FCIA_onTransferbuttonpress"
                 type="Transparent"
                 id="FCIA_id_transferButton"
-
-
             />
 
          <Button
@@ -272,11 +272,13 @@
                 press="FCIA_onCancelButtonPress"
                 type="Transparent"
                 id="FCIA_id_CancelButton"
-             class="marginRight"
+             class="marginRight closeBtnMargin"
 
             />
             
-			</Toolbar>
-</footer>
+			</HBox>
+       </VBox>
+
+         	
     </Dialog>
 </core:FragmentDefinition>

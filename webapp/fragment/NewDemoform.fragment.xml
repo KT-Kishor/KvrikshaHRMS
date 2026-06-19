@@ -104,18 +104,22 @@
                 />
 			</m:VBox>
 		</m:VBox>
-		<m:beginButton>
+	<m:VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
+    <m:HBox width="100%" justifyContent="End">
 			<m:Button
                 text="Submit"
                 class="FOOTER"
                 press="onDemoformSave"
+                type="Transparent"
             />
-		</m:beginButton>
-		<m:endButton>
+		
 			<m:Button
+            type="Transparent"
                 text="Cancel"
+                class="closeBtnMargin"
                 press="onCloseDemoForm"
             />
-		</m:endButton>
+		</m:HBox>
+       </m:VBox>
 	</m:Dialog>
 </core:FragmentDefinition>

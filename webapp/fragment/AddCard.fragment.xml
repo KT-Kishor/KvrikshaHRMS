@@ -54,10 +54,8 @@
 							uploadUrl="upload/"
 							tooltip="{i18n>fileUploadId}"
 							change="IC_onHandleUploadPress"
-							maximumFileSize="5MB"
 							fileType="jpg,jpeg,png"
 							buttonOnly="true"
-							fileSizeExceed="onFileSizeExceeds"
 							valueStateText="{i18n>fileUploaderValueState}"
 							uploadComplete="handleUploadComplete"/>
 					</VBox>

@@ -9,7 +9,7 @@
     <!-- ================= PAGE ================= -->
     <m:Page
         id="PL_id_PolicyPage"
-        enableScrolling="false"
+        enableScrolling="true"
     >
         <!-- ================= HEADER ================= -->
         <m:customHeader>
@@ -82,7 +82,7 @@
                     visibleInFilterBar="{visibilityModel>/showAdminControls}"
                 >
                     <fb:control>
-                        <m:ComboBox
+                        <m:MultiComboBox
                             id="PL_id_RoleFilter"
                             placeholder="{i18n>selectRole}"
                             showClearIcon="true"
@@ -95,7 +95,7 @@
                                 key="{FilteredRoleModel>designationName}"
                                 text="{FilteredRoleModel>designationName}"
                             />
-                        </m:ComboBox>
+                        </m:MultiComboBox>
                     </fb:control>
                 </fb:FilterGroupItem>
             </fb:filterGroupItems>
@@ -219,16 +219,26 @@
             </sections>
         </ObjectPageLayout>
         <!-- ================= FOOTER ================= -->
-        <m:footer>
-            <m:OverflowToolbar>
-                <m:ToolbarSpacer />
-                <m:Button
-                    id="PL_id_AddButton"
-                    text="{i18n>create}"
-                    press="PL_onCreatePress"
-                    visible="{visibilityModel>/showAdminControls}"
-                />
-            </m:OverflowToolbar>
-        </m:footer>
+    <m:footer>
+    <m:Bar>
+
+        <m:contentLeft>
+            <core:Fragment
+                fragmentName="sap.kt.com.minihrsolution.fragment.Footer"
+                type="XML"
+            />
+        </m:contentLeft>
+
+        <m:contentRight>
+            <m:Button
+                id="PL_id_AddButton"
+                text="{i18n>create}"
+                press="PL_onCreatePress"
+                visible="{visibilityModel>/showAdminControls}"
+            />
+        </m:contentRight>
+
+    </m:Bar>
+</m:footer>
     </m:Page>
 </mvc:View>

@@ -1,6 +1,6 @@
 sap.ui.define(
     ["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/Fragment", "sap/m/MessageBox", "sap/m/MessageToast", "../utils/validation", "../model/formatter",],
-    function (BaseController, JSONModel, Fragment, MessageBox, MessageToast, Validation, formatter,) {
+    function (BaseController, JSONModel, Fragment, MessageBox, MessageToast, Validation, formatter) {
         "use strict";
         return BaseController.extend("sap.kt.com.minihrsolution.controller.Policy", {
             Formatter: formatter,
@@ -9,9 +9,12 @@ sap.ui.define(
                 this._employeeCache = null;
                 this._employeePromise = null;
                 this.getView().setModel(new JSONModel([]), "FilteredRoleModel");
-                // TODAY MODEL FOR DATE PICKER MIN DATE
+                //  MODEL FOR DATE PICKER MIN DATE
+                const oFY = this._getFinancialYearRange();
                 this.getView().setModel(new JSONModel({
-                    today: new Date()
+                    today: new Date(),
+                    minDate: oFY.startDate,
+                    maxDate: oFY.endDate
                 }), "todayModel");
                 // SAFE LOGIN MODEL CHECK
                 var oLoginModel = this.getView().getModel("LoginModel");
@@ -28,7 +31,7 @@ sap.ui.define(
                 const oView = this.getView();
                 if (!oView) return;
                 const oModel = oView.getModel("VisibleModel");
-                if (!oModel) return; // 🔴 IMPORTANT FIX
+                if (!oModel) return;
                 const bEdit = oModel.getProperty("/EditBtn");
                 const oLabel = this.byId("PL_id_StartDateLabel");
                 const oText = this.byId("PL_id_StartDateText");
@@ -50,6 +53,7 @@ sap.ui.define(
                 }
                 const oLoginModel = this.getView().getModel("LoginModel");
                 const sEmployeeID = oLoginModel.getProperty("/EmployeeID");
+
                 this._employeePromise = this.ajaxReadWithJQuery("EmployeeDetails", {
                     EmployeeID: sEmployeeID
                 }).then((oResponse) => {
@@ -137,25 +141,25 @@ sap.ui.define(
                 const sEmployeeRole = (oEmp.role || "").toLowerCase().trim();
                 const aFilteredPolicies = aPolicies.filter(function (oPolicy, iIndex) {
                     const sPolicyDepartment = (oPolicy.Department || oPolicy.department || "").toLowerCase().trim();
-                    const sPolicyRole = (oPolicy.Role || oPolicy.role || "").toLowerCase().trim();
+                    const aPolicyRoles = (oPolicy.Role || oPolicy.role || "").toLowerCase().split(",").map(r => r.trim());
                     // ADMIN / HR MANAGER
                     if (sEmployeeRole === "admin" || sEmployeeRole === "hr manager") {
                         return true;
                     }
                     // ALL / ALL
-                    if (sPolicyDepartment === "all" && sPolicyRole === "all") {
+                    if (sPolicyDepartment === "all" && aPolicyRoles.includes("all")) {
                         return true;
                     }
                     // ALL DEPARTMENT + ROLE MATCH
-                    if (sPolicyDepartment === "all" && sPolicyRole === sEmployeeRole) {
+                    if (sPolicyDepartment === "all" && aPolicyRoles.includes(sEmployeeRole)) {
                         return true;
                     }
                     // DEPARTMENT MATCH + ALL ROLE
-                    if (sPolicyDepartment === sEmployeeDepartment && sPolicyRole === "all") {
+                    if (sPolicyDepartment === sEmployeeDepartment && aPolicyRoles.includes("all")) {
                         return true;
                     }
-                    // EXACT MATCH
-                    if (sPolicyDepartment === sEmployeeDepartment && sPolicyRole === sEmployeeRole) {
+                    // DEPARTMENT MATCH + MULTIPLE ROLE MATCH
+                    if (sPolicyDepartment === sEmployeeDepartment && aPolicyRoles.includes(sEmployeeRole)) {
                         return true;
                     }
                     return false;
@@ -180,6 +184,7 @@ sap.ui.define(
                     await this._getEmployeeDetails();
                     // Load Role Department
                     await this.PL_loadRoleDepartment();
+                    this.byId("PL_id_PolicyPage").setEnableScrolling(sap.ui.Device.system.phone);
                     this.byId("PL_id_SearchPolicy").setValue("");
                     this.byId("PL_id_DepartmentFilter").setValue("");
                     this.byId("PL_id_RoleFilter").setValue("");
@@ -300,7 +305,7 @@ sap.ui.define(
                                 File_Type: oLatest.File_Type || "",
                                 UploadDate: oItem.UploadDate ? new Date(oItem.UploadDate).toLocaleDateString("en-GB") : "",
                                 department: oItem.Department || "",
-                                role: oItem.Role || "",
+                                role: (oItem.Role || "").split(",").join(" , "),
                                 employeeIds: (oItem.EmployeeID || "").toString().trim(),
                                 imageUrl: sImageUrl,
                                 selected: false
@@ -308,7 +313,7 @@ sap.ui.define(
                         }.bind(this));
                         aPolicies = await this.PL_filterPoliciesByAccess(aPolicies);
                     }
-                    this.getView().setModel(new sap.ui.model.json.JSONModel({
+                    this.getView().setModel(new JSONModel({
                         policies: aPolicies
                     }), "policyModel");
                     this.getView().getModel("policyModel").refresh(true);
@@ -355,62 +360,49 @@ sap.ui.define(
                 return oActive || {};
             },
             // FILTER ROLE BASED ON DEPARTMENT
-          PL_onDepartmentChange: function (oEvent) {
-    this.PL_onSelectionChangeValidation(oEvent);
-
-    var oDepartmentCombo = oEvent.getSource();
-    var sDepartment = (oDepartmentCombo.getSelectedKey() || "").trim();
-
-    // ROLE CONTROLS
-    var oRoleCreate = this.byId("PL_id_Role");
-    var oRoleFilter = this.byId("PL_id_RoleFilter");
-    var oRoleView = this.byId("PL_id_ViewRole");
-
-    // CLEAR ROLE ALWAYS
-    [oRoleCreate, oRoleFilter, oRoleView].forEach(function (oRole) {
-        if (oRole) {
-            oRole.setSelectedKey("");
-            oRole.setValue("");
-        }
-    });
-
-    // DEPARTMENT NOT SELECTED
-    if (!sDepartment) {
-        this.getView().setModel(new JSONModel([]), "FilteredRoleModel");
-        return;
-    }
-
-    // GET ALL ROLES
-    var aData = this.getView().getModel("DesignationModel").getData() || [];
-
-    // FILTER ROLE BY DEPARTMENT
-    var aFilteredRoles = aData.filter(function (oItem) {
-        var sItemDepartment = (oItem.department || "").trim().toLowerCase();
-        return sItemDepartment === sDepartment.toLowerCase();
-    });
-
-    // REMOVE DUPLICATES
-    var oUnique = {};
-    var aUniqueRoles = [];
-
-    aFilteredRoles.forEach(function (oItem) {
-        var sRole = (oItem.designationName || "").trim();
-
-        if (sRole && !oUnique[sRole]) {
-            oUnique[sRole] = true;
-
-            aUniqueRoles.push({
-                designationName: sRole
-            });
-        }
-    });
-
-    // SET ROLE MODEL ONLY AFTER DEPARTMENT SELECTED
-    this.getView().setModel(
-        new JSONModel(aUniqueRoles),
-        "FilteredRoleModel"
-    );
-},
+            PL_onDepartmentChange: function (oEvent) {
+                var oCombo = oEvent.getSource();
+                var sDepartment = oCombo.getSelectedKey();
+                if (sDepartment) {
+                    oCombo.setValueState("None");
+                    oCombo.setValueStateText("");
+                }
+                var oDesignationModel = this.getView().getModel("DesignationModel");
+                if (!oDesignationModel) {
+                    console.error("DesignationModel NOT FOUND");
+                    return;
+                }
+                var aData = oDesignationModel.getData();
+                // CLEAR OLD ROLES
+                this.getView().setModel(new JSONModel([]), "FilteredRoleModel");
+                // VALIDATE DATA
+                if (!aData || aData.length === 0) {
+                    console.error("DesignationModel is EMPTY");
+                    return;
+                }
+                // FILTER ROLES
+                var aFilteredRoles = aData.filter(function (oItem) {
+                    return (oItem.department || "").trim().toLowerCase() === (sDepartment || "").trim().toLowerCase();
+                });
+                var oUnique = {};
+                var aUniqueRoles = [];
+                aFilteredRoles.forEach(function (oItem) {
+                    var sRole = (oItem.designationName || "").trim();
+                    if (sRole && !oUnique[sRole]) {
+                        oUnique[sRole] = true;
+                        aUniqueRoles.push({
+                            designationName: sRole
+                        });
+                    }
+                });
+                var oRoleModel = new JSONModel(aUniqueRoles);
+                this.getView().setModel(oRoleModel, "FilteredRoleModel");
+                // RESET MULTISELECT
+                var oRole = this.byId("PL_id_Role");
+                if (oRole) {
+                    oRole.setSelectedKeys([]);
+                }
+            },
             PL_onRemovePdf: function () {
                 const oModel = this.getView().getModel("policyDialogModel");
                 oModel.setProperty("/File_Content", "");
@@ -433,6 +425,12 @@ sap.ui.define(
                 if (!oFile) {
                     return; // User clicked Cancel -> keep existing file
                 }
+                 // BLOCK OVERSIZED FILES
+                  if (oFile.size > 5 * 1024 * 1024) {
+        MessageBox.error(this.i18nModel.getText("fileSizeExceeded") || "File size exceeds the limit of 5MB. Please upload a smaller file.");
+        oEvent.getSource().clear();
+        return;
+    }
                 // BLOCK NON-PDF
                 if (oFile.type !== "application/pdf") {
                     MessageBox.error(this.i18nModel.getText("onlyPdfAllowed"));
@@ -447,25 +445,61 @@ sap.ui.define(
                 const oReader = new FileReader();
                 oReader.onload = function (e) {
                     const base64 = e.target.result.split(",")[1];
+                    const compressedBase64 = this.compressBase64(base64);
                     const oModel = this.getView().getModel("policyDialogModel");
-                    oModel.setProperty("/File_Content", base64);
+                    oModel.setProperty("/File_Content", compressedBase64);
                     oModel.setProperty("/File_Name", oFile.name);
                     oModel.setProperty("/File_Type", oFile.type);
                 }.bind(this);
                 oReader.readAsDataURL(oFile);
             },
-            _openVersionDialog: function (oData) {
+            __openVersionDialog: async function (oData) {
+                let sNextVersion = "1.0";
+
+                try {
+                    const oResponse = await this.ajaxReadWithJQuery("PolicyImage", {
+                        ID: oData.ID
+                    });
+
+                    let aVersions = [];
+                    if (oResponse?.data?.Items && Array.isArray(oResponse.data.Items)) {
+                        aVersions = oResponse.data.Items;
+                    } else if (Array.isArray(oResponse?.data)) {
+                        aVersions = oResponse.data;
+                    } else if (oResponse?.data) {
+                        aVersions = [oResponse.data];
+                    }
+
+                    console.log("Versions Found:", aVersions);
+
+                    if (aVersions.length > 0) {
+                        let fMaxVersion = 0;
+                        aVersions.forEach(function (oItem) {
+                            const fVersion = parseFloat(oItem.Version);
+                            if (!isNaN(fVersion) && fVersion > fMaxVersion) {
+                                fMaxVersion = fVersion;
+                            }
+                        });
+                        sNextVersion = (Math.round((fMaxVersion + 0.1) * 10) / 10).toFixed(1);
+                    }
+
+                } catch (e) {
+                    console.error("Version Error:", e);
+                }
+
                 const oModel = this.getView().getModel("policyDialogModel");
                 oModel.setData({
                     policyId: oData.ID,
-                    version: "",
+                    Version: sNextVersion,
                     UploadDate: new Date(),
-                    File_Content: "",
-                    File_Name: "",
-                    File_Type: "",
+                    Version_File_Content: "",
+                    Version_File_Name: "",
+                    Version_File_Type: "",
                     isEdit: true,
                     isVersionMode: true
                 });
+
+                oModel.refresh(true);
                 this._oVersionDialog.open();
             },
             // version
@@ -473,58 +507,110 @@ sap.ui.define(
                 this.getBusyDialog();
                 const oContext = oEvent.getSource().getBindingContext("policyModel");
                 const oData = oContext.getObject();
-                let sLatestVersion = "1.0";
+
+                let sNextVersion = "1.0";
+                this._latestStartDate = null;
+
                 try {
                     const oResponse = await this.ajaxReadWithJQuery("PolicyImage", {
                         ID: oData.ID
                     });
-                    let aVersions = oResponse.data?.Items || [];
-                    if (!Array.isArray(aVersions)) {
-                        aVersions = [aVersions];
+
+                    // ── safely extract versions array ──
+                    let aVersions = [];
+                    if (oResponse?.data?.Items && Array.isArray(oResponse.data.Items)) {
+                        aVersions = oResponse.data.Items;
+                    } else if (Array.isArray(oResponse?.data)) {
+                        aVersions = oResponse.data;
+                    } else if (oResponse?.data) {
+                        aVersions = [oResponse.data];
                     }
+
+                    console.log("Versions Found:", aVersions);
+
                     if (aVersions.length > 0) {
-                        const oLatest = aVersions.reduce(function (max, item) {
-                            return parseFloat(item.Version || 0) > parseFloat(max.Version || 0) ? item : max;
+                        // find highest version number
+                        let fMaxVersion = 0;
+                        let oLatestItem = null;
+
+                        aVersions.forEach(function (oItem) {
+                            const fVersion = parseFloat(oItem.Version);
+                            if (!isNaN(fVersion) && fVersion > fMaxVersion) {
+                                fMaxVersion = fVersion;
+                                oLatestItem = oItem;
+                            }
                         });
-                        sLatestVersion = oLatest.Version || "1.0";
-                        this._latestStartDate = oLatest.Start_Date ? new Date(oLatest.Start_Date) : null;
-                        if (this._latestStartDate) {
-                            this._latestStartDate.setHours(0, 0, 0, 0);
+
+                        // add 0.1 and keep 1 decimal place
+                        sNextVersion = (Math.round((fMaxVersion + 0.1) * 10) / 10).toFixed(1);
+
+                        // store latest start date for date picker min
+                        if (oLatestItem && oLatestItem.Start_Date) {
+                            this._latestStartDate = new Date(oLatestItem.Start_Date);
                         }
                     }
+
                 } catch (e) {
-                    sLatestVersion = "1.0";
+                    console.error("Version fetch error:", e);
+                    sNextVersion = "1.0";
                 }
+
+                // ── load fragment if not loaded ──
                 if (!this._oVersionDialog) {
-                    this._oVersionDialog = sap.ui.xmlfragment("sap.kt.com.minihrsolution.fragment.PolicyVersionDialog", this);
+                    this._oVersionDialog = sap.ui.xmlfragment(
+                        "sap.kt.com.minihrsolution.fragment.PolicyVersionDialog",
+                        this
+                    );
                     this.getView().addDependent(this._oVersionDialog);
                 }
-                this.getView().setModel(new JSONModel({
-                    Parent_Policy_ID: oData.ID,
-                    PolicyName: oData.name,
-                    PolicyDesc: oData.desc,
-                    // latest version from DB + 0.1
-                    Version: this._getNextVersion(sLatestVersion),
-                    Start_Date: sap.ui.core.format.DateFormat.getDateInstance({
-                        pattern: "dd/MM/yyyy"
-                    }).format(new Date()),
-                    File_Content: "",
-                    File_Name: "",
-                    File_Type: ""
-                }), "policyDialogModel");
+
+                // ── set model data with computed next version ──
+                this.getView().setModel(
+                    new JSONModel({
+                        Parent_Policy_ID: oData.ID,
+                        PolicyName: oData.name,
+                        PolicyDesc: oData.desc,
+                        Version: sNextVersion,          // ← computed correctly
+                        Start_Date: sap.ui.core.format.DateFormat
+                            .getDateInstance({ pattern: "dd/MM/yyyy" })
+                            .format(new Date()),
+                        Version_File_Content: "",
+                        Version_File_Name: "",
+                        Version_File_Type: ""
+                    }),
+                    "policyDialogModel"
+                );
+
+                this.getView().getModel("policyDialogModel").refresh(true);
+
+                // ── clear file uploader ──
                 const oUploader = sap.ui.getCore().byId("PL_id_NewVersionFile");
                 if (oUploader) {
                     oUploader.clear();
+                    oUploader.setValueState("None");
                 }
-                this._oVersionDialog.open();
+
                 this.closeBusyDialog();
+                this._oVersionDialog.open();
+
+                // ── apply min date on date picker after dialog renders ──
                 setTimeout(() => {
                     const oDatePicker = sap.ui.getCore().byId("PLV_id_StartDate");
-                    if (oDatePicker && this._latestStartDate) {
-                        oDatePicker.setMinDate(this._latestStartDate);
+                    if (oDatePicker) {
+                        if (this._latestStartDate) {
+                            oDatePicker.setMinDate(this._latestStartDate);
+                        }
+                        oDatePicker.setValueState("None");
+                        oDatePicker.setValueStateText("");
                     }
-                }, 0);
-                this._FragmentDatePickersReadOnly(["PLV_id_StartDate"]);
+
+                    // ── clear version field errors ──
+                    const oVersionInput = sap.ui.getCore().byId("PL_id_Version");
+                    if (oVersionInput) {
+                        oVersionInput.setValueState("None");
+                        oVersionInput.setValueStateText("");
+                    }
+                }, 100);
             },
             _getNextVersion: function (sVersion) {
                 if (!sVersion) {
@@ -533,6 +619,9 @@ sap.ui.define(
                 const fVersion = parseFloat(sVersion);
                 return (Math.round((fVersion + 0.1) * 10) / 10).toFixed(1);
             },
+           FileSizeExceeds: function () {
+    MessageBox.error(this.i18nModel.getText("fileSizeExceeded") || "File size exceeds the limit of 5MB. Please upload a smaller file.");
+},
             PL_onVersionFileUpload: function (oEvent) {
                 const oFile = oEvent.getParameter("files")[0];
                 const oModel = this.getView().getModel("policyDialogModel");
@@ -550,7 +639,8 @@ sap.ui.define(
                 const oReader = new FileReader();
                 oReader.onload = function (e) {
                     const base64 = e.target.result.split(",")[1];
-                    oModel.setProperty("/Version_File_Content", base64);
+                    const compressedBase64 = this.compressBase64(base64);
+                    oModel.setProperty("/Version_File_Content", compressedBase64);
                     oModel.setProperty("/Version_File_Name", oFile.name);
                     oModel.setProperty("/Version_File_Type", oFile.type);
                 }.bind(this);
@@ -632,14 +722,11 @@ sap.ui.define(
                     End_Date: null,
                     Version: oData.Version || "1.0"
                 };
-                console.log("UploadDate Sent:", oPayload.UploadDate);
-console.log("Payload:", oPayload);
                 try {
                     this.getBusyDialog();
                     const oResponse = await this.ajaxCreateWithJQuery("PolicyItems", {
                         data: oPayload
                     });
-                    console.log("Save Success Response:", oResponse);
                     MessageToast.show(this.i18nModel.getText("versionCreatedSuccess"));
                     this._oVersionDialog.close();
                     await this.PL_loadPolicies();
@@ -682,7 +769,7 @@ console.log("Payload:", oPayload);
                     }));
                     // Sort latest first
                     aVersions.sort((a, b) => parseFloat(b.Version || 0) - parseFloat(a.Version || 0));
-                    const oVersionModel = new sap.ui.model.json.JSONModel({
+                    const oVersionModel = new JSONModel({
                         PolicyTitle: oPolicy.name,
                         versions: aVersions
                     });
@@ -699,11 +786,6 @@ console.log("Payload:", oPayload);
                     MessageBox.error(this.i18nModel.getText("versionLoadFailed"));
                 } finally {
                     this.closeBusyDialog();
-                }
-            },
-            onCloseVersionHistory: function () {
-                if (this._oVersionHistoryDialog) {
-                    this._oVersionHistoryDialog.close();
                 }
             },
             onCloseVersionHistory: function () {
@@ -754,7 +836,7 @@ console.log("Payload:", oPayload);
                     title: "",
                     description: "",
                     department: "",
-                    role: "",
+                    role: [],
                     Start_Date: oToday,
                     UploadDate: oToday,
                     // LOGO (FIXED SAFE RESET)
@@ -770,10 +852,7 @@ console.log("Payload:", oPayload);
                 this.getView().setModel(oDialogModel, "policyDialogModel");
                 //  IMPORTANT FIX (forces UI5 binding refresh clean)
                 this.getView().getModel("policyDialogModel").refresh(true);
-                this.getView().setModel(
-    new JSONModel([]),
-    "FilteredRoleModel"
-);
+                this.getView().setModel(new JSONModel([]), "FilteredRoleModel");
                 this.PL_openDialog();
             },
             // OPEN DIALOG
@@ -793,6 +872,14 @@ console.log("Payload:", oPayload);
                     this.getView().addDependent(oDialog);
                     this._bPolicyDialogLoading = false;
                     oDialog.open();
+                    // 🔥 ADD THIS FIX
+                    const oDept = this.byId("PL_id_Department");
+                    if (oDept) {
+                        const sDept = oDept.getSelectedKey();
+                        if (sDept) {
+                            this._updateRoleModel(sDept);
+                        }
+                    }
                     this._FragmentDatePickersReadOnly([
                         this.getView().createId("PL_id_StartDate"),
                         this.getView().createId("PL_id_UploadDate")
@@ -814,286 +901,303 @@ console.log("Payload:", oPayload);
             // REMOVE ERROR FOR SELECT
             PL_onSelectionChangeValidation: function (oEvent) {
                 var oField = oEvent.getSource();
-                var sKey = oField.getSelectedKey();
-                if (sKey) {
+                var sValue;
+                if (oField.isA("sap.m.MultiComboBox")) {
+                    sValue = oField.getSelectedKeys();
+                } else if (oField.isA("sap.m.ComboBox")) {
+                    sValue = oField.getSelectedKey() || oField.getValue();
+                }
+                var bValid = Array.isArray(sValue) ? sValue.length > 0 : !!sValue && sValue.trim() !== "";
+                //  IMPORTANT: ALWAYS RESET WHEN USER CHANGES SELECTION
+                if (bValid) {
                     oField.setValueState("None");
                     oField.setValueStateText("");
                 }
+            },
+            _getFinancialYearRange: function () {
+                const today = new Date();
+                const year = today.getMonth() >= 3 ? today.getFullYear() : today.getFullYear() - 1;
+                const startDate = new Date(year, 3, 1); // April 1
+                const endDate = new Date(year + 1, 2, 31); // March 31
+                return {
+                    startDate,
+                    endDate
+                };
             },
             // REMOVE ERROR FOR DATE
             PL_onDateValidation: function (oEvent) {
                 var oField = oEvent.getSource();
                 var sValue = oField.getValue().trim();
-                if (this._latestStartDate) {
-                    const oDate = oEvent.getSource().getDateValue();
-                    if (oDate && oDate < this._latestStartDate) {
-                        oEvent.getSource().setValueState("Error");
-                        oEvent.getSource().setValueStateText("Start date cannot be before latest version start date");
-                        return;
-                    }
+                const oDate = oEvent.getSource().getDateValue();
+                // -----------------------------
+                // 1. FINANCIAL YEAR VALIDATION
+                // -----------------------------
+                const oModel = this.getView().getModel("todayModel");
+                const dMin = oModel.getProperty("/minDate");
+                const dMax = oModel.getProperty("/maxDate");
+                if (oDate && (oDate < dMin || oDate > dMax)) {
+                    oField.setValueState("Error");
+                    oField.setValueStateText("Date must be within financial year only");
+                    return;
                 }
-                // EMPTY VALUE
+                // -----------------------------
+                // 3. EMPTY VALUE CHECK
+                // -----------------------------
                 if (!sValue) {
                     oField.setValueState("None");
                     oField.setValueStateText("");
                     return;
                 }
-                // VALID DATE
+                // -----------------------------
+                // 4. FORMAT VALIDATION
+                // -----------------------------
                 if (Validation._LCvalidateDate(oField, "ID")) {
-                    // REMOVE RED ERROR
                     oField.setValueState("None");
                     oField.setValueStateText("");
                 } else {
-                    // INVALID DATE
                     oField.setValueState("Error");
+                    oField.setValueStateText("Invalid date format");
                 }
             },
             // SAVE
-          PL_onSavePolicy: async function () {
-    try {
-        // TITLE VALIDATION
-        if (!Validation._LCvalidateMandatoryField(this.byId("PL_id_Title"), "ID",)) {
-            this.byId("PL_id_Title").setValueState("Error");
-            this.byId("PL_id_Title").setValueStateText("Policy title is required");
-            return;
-        }
-
-        // DESCRIPTION VALIDATION
-        if (!Validation._LCvalidateMandatoryField(this.byId("PL_id_Description"), "ID",)) {
-            this.byId("PL_id_Description").setValueState("Error");
-            this.byId("PL_id_Description").setValueStateText("Please enter policy description");
-            return;
-        }
-
-        // DEPARTMENT VALIDATION
-        if (!Validation._LCstrictValidationComboBox(this.byId("PL_id_Department"), "ID")) {
-            this.byId("PL_id_Department").setValueState("Error");
-            this.byId("PL_id_Department").setValueStateText("Please select a valid department");
-            return;
-        }
-
-        // ROLE VALIDATION
-        if (!Validation._LCstrictValidationComboBox(this.byId("PL_id_Role"), "ID")) {
-            this.byId("PL_id_Role").setValueState("Error");
-            this.byId("PL_id_Role").setValueStateText("Please select a valid role");
-            return;
-        }
-
-        // MODEL DATA
-        const oData = this.getView().getModel("policyDialogModel").getData();
-
-        // PDF VALIDATION
-        if (!oData.File_Content) {
-            MessageBox.error(this.i18nModel.getText("policyPdfRequired"));
-            return;
-        }
-
-        // START DATE VALIDATION
-        if (!Validation._LCvalidateDate(this.byId("PL_id_StartDate"), "ID")) {
-            this.byId("PL_id_StartDate").setValueState("Error");
-            this.byId("PL_id_StartDate").setValueStateText("Please enter a valid start date");
-            return;
-        }
-
-        // CREATE DATE VALIDATION
-        if (!Validation._LCvalidateDate(this.byId("PL_id_UploadDate"), "ID")) {
-            this.byId("PL_id_UploadDate").setValueState("Error");
-            this.byId("PL_id_UploadDate").setValueStateText("Please enter a valid date");
-            return;
-        }
-
-        const sStartDate = oData.Start_Date;
-        const dStartDate = new Date(sStartDate.split("/").reverse().join("-"));
-        const dToday = new Date();
-        dToday.setHours(0, 0, 0, 0);
-        dStartDate.setHours(0, 0, 0, 0);
-
-        if (dStartDate < dToday) {
-            this.byId("PL_id_StartDate").setValueState("Error");
-            this.byId("PL_id_StartDate").setValueStateText(this.i18nModel.getText("startDatePastNotAllowed"));
-            MessageBox.error(this.i18nModel.getText("startDatePastNotAllowed"));
-            return;
-        }
-
-        // PAYLOAD
-        const oPayloadData = {
-            EmployeeID: "",
-            PolicyName: oData.title,
-            PolicyDesc: oData.description,
-            Department: oData.department || "",
-            Role: oData.role || "",
-            Start_Date: oData.Start_Date.split('/').reverse().join('-'),
-            UploadDate: oData.UploadDate.split('/').reverse().join('-'),
-            File_Content: oData.File_Content,
-            File_Name: oData.File_Name,
-            File_Type: oData.File_Type,
-            Logo: oData.logoBase64 || "",
-        };
-
-        // BUSY DIALOG
-        this.getBusyDialog();
-
-        // CLEAR FILE UPLOADERS
-        var aUploaders = this.getView().findAggregatedObjects(true, function (oControl) {
-            return oControl.isA("sap.ui.unified.FileUploader");
-        });
-
-        aUploaders.forEach(function (oUploader) {
-            oUploader.clear();
-        });
-
-        // UPDATE / CREATE
-        if (oData.isEdit) {
-            const oUpdatePayload = {
-                filters: {
-                    ID: oData.ID,
-                },
-                data: oPayloadData,
-            };
-            await this.ajaxUpdateWithJQuery("Policy", oUpdatePayload);
-        } else {
-            await this.ajaxCreateWithJQuery("Policy", {
-                data: oPayloadData,
-            });
-        }
-
-        // SUCCESS MESSAGE
-        MessageToast.show(this.i18nModel.getText("policyCreateSuccess"));
-
-        // CLOSE DIALOG
-        if (this.FPL_oDialog) {
-            this.FPL_oDialog.close();
-        }
-
-        // ===================== 🔥 FIX ADDED HERE =====================
-        // RESET ROLE + DEPENDENCY STATE AFTER SAVE
-
-        this.getView().setModel(new JSONModel({
-            ID: "",
-            title: "",
-            description: "",
-            department: "",
-            role: "",
-            logoBase64: "",
-            logoType: "",
-            logo: "",
-            File_Content: "",
-            File_Name: "",
-            File_Type: "",
-            isEdit: false
-        }), "policyDialogModel");
-
-        this.getView().setModel(new JSONModel([]), "FilteredRoleModel");
-
-        var oDept = this.byId("PL_id_Department");
-        var oRole = this.byId("PL_id_Role");
-
-        if (oDept) {
-            oDept.setSelectedKey("");
-            oDept.setValue("");
-        }
-
-        if (oRole) {
-            oRole.setSelectedKey("");
-            oRole.setValue("");
-        }
-
-        var oRoleFilter = this.byId("PL_id_RoleFilter");
-        if (oRoleFilter) {
-            oRoleFilter.setSelectedKey("");
-            oRoleFilter.setValue("");
-        }
-
-        // ===========================================================
-
-        // REFRESH POLICIES BASED ON CURRENT FILTERS
-        const sSearch = this.byId("PL_id_SearchPolicy")?.getValue()?.trim() || "";
-        const sDepartment = this.byId("PL_id_DepartmentFilter")?.getSelectedKey()?.trim() || "";
-        const sRole = this.byId("PL_id_RoleFilter")?.getSelectedKey()?.trim() || "";
-
-        try {
-            if (sSearch || sDepartment || sRole) {
-                await this.PL_onSearchPolicy();
-            } else {
-                await this.PL_loadPolicies();
-            }
-
-            const oPolicyModel = this.getView().getModel("policyModel");
-            if (oPolicyModel) {
-                oPolicyModel.refresh(true);
-            }
-        } catch (oRefreshError) { }
-
-        // CLOSE BUSY
-        this.closeBusyDialog();
-
-    } catch (oError) {
-        this.closeBusyDialog();
-        MessageBox.error(oError.message || "Save failed");
-    }
-},
+            PL_onSavePolicy: async function () {
+                try {
+                    // TITLE VALIDATION
+                    if (!Validation._LCvalidateMandatoryField(this.byId("PL_id_Title"), "ID",)) {
+                        this.byId("PL_id_Title").setValueState("Error");
+                        this.byId("PL_id_Title").setValueStateText("Policy title is required");
+                        return;
+                    }
+                    // DESCRIPTION VALIDATION
+                    if (!Validation._LCvalidateMandatoryField(this.byId("PL_id_Description"), "ID",)) {
+                        this.byId("PL_id_Description").setValueState("Error");
+                        this.byId("PL_id_Description").setValueStateText("Please enter policy description");
+                        return;
+                    }
+                    // DEPARTMENT VALIDATION
+                    if (!Validation._LCstrictValidationComboBox(this.byId("PL_id_Department"), "ID")) {
+                        this.byId("PL_id_Department").setValueState("Error");
+                        this.byId("PL_id_Department").setValueStateText("Please select a valid department");
+                        return;
+                    }
+                    // ROLE VALIDATION
+                    const oRoleControl = this.byId("PL_id_Role");
+                    const aSelectedRoles = oRoleControl.getSelectedKeys();
+                    if (!aSelectedRoles || aSelectedRoles.length === 0) {
+                        oRoleControl.setValueState("Error");
+                        oRoleControl.setValueStateText("Please select at least one role");
+                        oRoleControl.focus(); // IMPORTANT (forces message display)
+                        return;
+                    } else {
+                        oRoleControl.setValueState("None");
+                        oRoleControl.setValueStateText("");
+                    }
+                    // MODEL DATA
+                    const oData = this.getView().getModel("policyDialogModel").getData();
+                    // PDF VALIDATION
+                    if (!oData.File_Content) {
+                        MessageBox.error(this.i18nModel.getText("policyPdfRequired"));
+                        return;
+                    }
+                    // START DATE VALIDATION
+                    if (!Validation._LCvalidateDate(this.byId("PL_id_StartDate"), "ID")) {
+                        this.byId("PL_id_StartDate").setValueState("Error");
+                        this.byId("PL_id_StartDate").setValueStateText("Please enter a valid start date");
+                        return;
+                    }
+                    // CREATE DATE VALIDATION
+                    if (!Validation._LCvalidateDate(this.byId("PL_id_UploadDate"), "ID")) {
+                        this.byId("PL_id_UploadDate").setValueState("Error");
+                        this.byId("PL_id_UploadDate").setValueStateText("Please enter a valid date");
+                        return;
+                    }
+                    const sStartDate = oData.Start_Date;
+                    const dStartDate = new Date(sStartDate.split("/").reverse().join("-"));
+                    const dToday = new Date();
+                    dToday.setHours(0, 0, 0, 0);
+                    dStartDate.setHours(0, 0, 0, 0);
+                    if (dStartDate < dToday) {
+                        this.byId("PL_id_StartDate").setValueState("Error");
+                        this.byId("PL_id_StartDate").setValueStateText(this.i18nModel.getText("startDatePastNotAllowed"));
+                        MessageBox.error(this.i18nModel.getText("startDatePastNotAllowed"));
+                        return;
+                    }
+                    // PAYLOAD
+                    const sEmployeeId = String(
+                        this.getView().getModel("LoginModel").getProperty("/EmployeeID") || ""
+                    ).trim();
+                    const oPayloadData = {
+                        EmployeeID: sEmployeeId || "",
+                        PolicyName: oData.title,
+                        PolicyDesc: oData.description,
+                        Department: oData.department || "",
+                        Role: Array.isArray(oData.role) ? oData.role.join(",") : (this.byId("PL_id_Role").getSelectedKeys().join(",") || ""),
+                        Start_Date: oData.Start_Date.split('/').reverse().join('-'),
+                        UploadDate: oData.UploadDate.split('/').reverse().join('-'),
+                        File_Content: oData.File_Content,
+                        File_Name: oData.File_Name,
+                        File_Type: oData.File_Type,
+                        Logo: oData.logoBase64 || "",
+                    };
+                    // BUSY DIALOG
+                    this.getBusyDialog();
+                    // CLEAR FILE UPLOADERS
+                    var aUploaders = this.getView().findAggregatedObjects(true, function (oControl) {
+                        return oControl.isA("sap.ui.unified.FileUploader");
+                    });
+                    aUploaders.forEach(function (oUploader) {
+                        oUploader.clear();
+                    });
+                    // UPDATE / CREATE
+                    if (oData.isEdit) {
+                        const oUpdatePayload = {
+                            filters: {
+                                ID: oData.ID,
+                            },
+                            data: oPayloadData,
+                        };
+                        await this.ajaxUpdateWithJQuery("Policy", oUpdatePayload);
+                    } else {
+                        const oResponse = await this.ajaxCreateWithJQuery("Policy", {
+                            data: oPayloadData,
+                        });
+                        // GET CURRENT MODEL
+                        const oPolicyModel = this.getView().getModel("policyModel");
+                        const aPolicies = oPolicyModel.getProperty("/policies") || [];
+                        // CREATE NEW UI OBJECT (same format as search)
+                        const oNewPolicy = {
+                            ID: oResponse?.data?.ID || oPayloadData.ID || Date.now(),
+                            name: oPayloadData.PolicyName,
+                            desc: oPayloadData.PolicyDesc,
+                            UploadDate: new Date(oPayloadData.UploadDate).toLocaleDateString("en-GB"),
+                            Start_Date: new Date(oPayloadData.Start_Date).toLocaleDateString("en-GB"),
+                            department: oPayloadData.Department,
+                            role: oPayloadData.Role,
+                            currentVersion: "1.0",
+                            employeeIds: "",
+                            imageUrl: "sap-icon://person-placeholder",
+                            File_Content: oPayloadData.File_Content,
+                            File_Name: oPayloadData.File_Name,
+                            File_Type: oPayloadData.File_Type,
+                            selected: false
+                        };
+                        // ADD NEW POLICY ON TOP (LATEST FIRST)
+                        aPolicies.unshift(oNewPolicy);
+                        // UPDATE MODEL
+                        oPolicyModel.setProperty("/policies", aPolicies);
+                        oPolicyModel.refresh(true);
+                    }
+                    // SUCCESS MESSAGE
+                    MessageToast.show(this.i18nModel.getText("policyCreateSuccess"));
+                    // CLOSE DIALOG
+                    if (this.FPL_oDialog) {
+                        this.FPL_oDialog.close();
+                    }
+                    // RESET ROLE + DEPENDENCY STATE AFTER SAVE
+                    this.getView().setModel(new JSONModel({
+                        ID: "",
+                        title: "",
+                        description: "",
+                        department: "",
+                        role: [],
+                        logoBase64: "",
+                        logoType: "",
+                        logo: "",
+                        File_Content: "",
+                        File_Name: "",
+                        File_Type: "",
+                        isEdit: false
+                    }), "policyDialogModel");
+                    this.getView().setModel(new JSONModel([]), "FilteredRoleModel");
+                    var oDept = this.byId("PL_id_Department");
+                    var oRole = this.byId("PL_id_Role");
+                    if (oDept) {
+                        oDept.setSelectedKey("");
+                        oDept.setValue("");
+                    }
+                    if (oRole) {
+                        oRole.setSelectedKeys([]);
+                        oRole.setValue("");
+                    }
+                    var oRoleFilter = this.byId("PL_id_RoleFilter");
+                    if (oRoleFilter) {
+                        oRoleFilter.setSelectedKeys([]);
+                        oRoleFilter.setValue("");
+                    }
+                    try {
+                        const sSearch = this.byId("PL_id_SearchPolicy")?.getValue()?.trim() || "";
+                        const sDepartment = this.byId("PL_id_DepartmentFilter")?.getSelectedKey()?.trim() || "";
+                        const sRole = (this.byId("PL_id_RoleFilter")?.getSelectedKeys() || []).join(",");
+                        if (sSearch || sDepartment || sRole) {
+                            await this.PL_onSearchPolicy();
+                        } else {
+                            await this.PL_loadPolicies();
+                        }
+                        const aPolicies = oPolicyModel.getProperty("/policies") || [];
+                        oPolicyModel.setProperty("/policies", aPolicies);
+                        oPolicyModel.refresh(true);
+                        //  FIX: update master copy ONLY ONCE HERE
+                        this._aAllPolicies = aPolicies;
+                    } catch (oRefreshError) {
+                        console.error(oRefreshError);
+                    }
+                    // CLOSE BUSY
+                    this.closeBusyDialog();
+                } catch (oError) {
+                    this.closeBusyDialog();
+                    MessageBox.error(oError.message || "Save failed");
+                }
+            },
             // CANCEL
-           PL_onCancelPolicy: function () {
-
-    // RESET MODEL
-    this.getView().setModel(new JSONModel({
-        ID: "",
-        title: "",
-        description: "",
-        department: "",
-        role: "",
-        logoBase64: "",
-        logoType: "",
-        logo: "",
-        File_Content: "",
-        File_Name: "",
-        File_Type: "",
-        isEdit: false,
-       
-    }), "policyDialogModel");
-
-    // ❌ RESET VALIDATION STATES
-    this.byId("PL_id_Title").setValueState("None");
-    this.byId("PL_id_Description").setValueState("None");
-    this.byId("PL_id_Department").setValueState("None");
-    this.byId("PL_id_Role").setValueState("None");
-
-    // 🔥 IMPORTANT: CLEAR DEPENDENCY (ROLE LIST)
-    this.getView().setModel(new JSONModel([]), "FilteredRoleModel");
-
-    // 🔥 RESET COMBOBOX VALUES (CRITICAL)
-    var oDept = this.byId("PL_id_Department");
-    var oRole = this.byId("PL_id_Role");
-
-    if (oDept) {
-        oDept.setSelectedKey("");
-        oDept.setValue("");
-    }
-
-    if (oRole) {
-        oRole.setSelectedKey("");
-        oRole.setValue("");
-    }
-
-    // CLEAR FILE UPLOADERS
-    var aUploaders = this.getView().findAggregatedObjects(true, function (oControl) {
-        return oControl.isA("sap.ui.unified.FileUploader");
-    });
-
-    aUploaders.forEach(function (oUploader) {
-        oUploader.clear();
-    });
-
-    var oLogoUploader = this.byId("PL_id_LogoUploader");
-    if (oLogoUploader) {
-        oLogoUploader.clear();
-    }
-
-    // CLOSE DIALOG
-    if (this.FPL_oDialog) {
-        this.FPL_oDialog.close();
-    }
-},
+            PL_onCancelPolicy: function () {
+                // RESET MODEL
+                this.getView().setModel(new JSONModel({
+                    ID: "",
+                    title: "",
+                    description: "",
+                    role: [],
+                    logoBase64: "",
+                    logoType: "",
+                    logo: "",
+                    File_Content: "",
+                    File_Name: "",
+                    File_Type: "",
+                    isEdit: false,
+                }), "policyDialogModel");
+                // RESET VALIDATION STATES
+                this.byId("PL_id_Title").setValueState("None");
+                this.byId("PL_id_Description").setValueState("None");
+                this.byId("PL_id_Department").setValueState("None");
+                this.byId("PL_id_Role").setValueState("None");
+                // IMPORTANT: CLEAR DEPENDENCY (ROLE LIST)
+                this.getView().setModel(new JSONModel([]), "FilteredRoleModel");
+                //  RESET COMBOBOX VALUES (CRITICAL)
+                var oDept = this.byId("PL_id_Department");
+                var oRole = this.byId("PL_id_Role");
+                if (oDept) {
+                    oDept.setSelectedKey("");
+                    oDept.setValue("");
+                }
+                if (oRole) {
+                    oRole.setSelectedKeys([]);
+                    oRole.setValue("");
+                }
+                // CLEAR FILE UPLOADERS
+                var aUploaders = this.getView().findAggregatedObjects(true, function (oControl) {
+                    return oControl.isA("sap.ui.unified.FileUploader");
+                });
+                aUploaders.forEach(function (oUploader) {
+                    oUploader.clear();
+                });
+                var oLogoUploader = this.byId("PL_id_LogoUploader");
+                if (oLogoUploader) {
+                    oLogoUploader.clear();
+                }
+                // CLOSE DIALOG
+                if (this.FPL_oDialog) {
+                    this.FPL_oDialog.close();
+                }
+            },
             // LOGO UPLOAD
             PL_onLogoUpload: function (oEvent) {
                 const oModel = this.getView().getModel("policyDialogModel");
@@ -1218,10 +1322,20 @@ console.log("Payload:", oPayload);
                     }
                     if (!sBase64) {
                         this.closeBusyDialog();
-                        MessageBox.error(this.i18nModel.getTest("pdfEmpty"));
+                        MessageBox.error(this.i18nModel.getText("pdfEmpty"));
                         return;
                     }
-                    sBase64 = String(sBase64).replace(/^data:.*;base64,/, "").replace(/\s/g, "");
+
+                    sBase64 = String(sBase64)
+                        .replace(/^data:.*;base64,/, "")
+                        .replace(/\s/g, "");
+
+                    // Decompress if stored using compressBase64()
+                    if (this.isCompressedBase64(sBase64)) {
+                        sBase64 = this.decompressBase64(sBase64);
+                    }
+
+                    // Validate PDF after decompression
                     if (!sBase64.startsWith("JVBER")) {
                         this.closeBusyDialog();
                         MessageBox.error(this.i18nModel.getText("invalidPdf"));
@@ -1239,12 +1353,12 @@ console.log("Payload:", oPayload);
                     const aAckIds = String(sAckIds).split(",").map(id => id.trim()).filter(Boolean);
                     const bAlreadyAcknowledged = aAckIds.includes(sEmployeeId);
                     //  MODEL
-                    const oViewModel = new sap.ui.model.json.JSONModel({
+                    const oViewModel = new JSONModel({
                         title: oObject.name,
                         description: oObject.desc,
                         UploadDate: oObject.UploadDate || "",
                         department: oObject.department || oObject.Department || "",
-                        role: oObject.role || oObject.Role || "",
+                        role: oObject.role ? oObject.role.split(",").map(r => r.trim()) : (oObject.Role ? oObject.Role.split(",").map(r => r.trim()) : []),
                         Version: oSelectedVersion.Version || "",
                         Start_Date: oSelectedVersion.Start_Date ? new Date(oSelectedVersion.Start_Date).toLocaleDateString("en-GB") : "",
                         File_Name: oSelectedVersion.File_Name || "Policy.pdf",
@@ -1449,108 +1563,104 @@ console.log("Payload:", oPayload);
                 return aItems[0];
             },
             // go button 
-          PL_onSearchPolicy: async function () {
-    try {
-        this.getBusyDialog();
-
-        const sSearch = this.byId("PL_id_SearchPolicy")?.getValue()?.trim() || "";
-        const sDepartment = this.byId("PL_id_DepartmentFilter")?.getSelectedKey()?.trim() || "";
-        const sRole = this.byId("PL_id_RoleFilter")?.getSelectedKey()?.trim() || "";
-
-        const oResponse = await this.ajaxReadWithJQuery("Policy", {
-            PolicyName: sSearch,
-            Department: sDepartment,
-            Role: sRole,
-        });
-
-        let aPolicies = [];
-
-        if (oResponse && oResponse.success && oResponse.data) {
-
-            aPolicies = oResponse.data.map((oItem) => {
-
-                let sImageUrl = "sap-icon://person-placeholder";
-
-                if (oItem.Logo) {
-                    if (typeof oItem.Logo === "string") {
-                        sImageUrl = "data:image/png;base64," + oItem.Logo;
-                    } else if (oItem.Logo.data) {
-                        const sBase64 = new TextDecoder().decode(
-                            new Uint8Array(oItem.Logo.data)
-                        );
-                        sImageUrl = "data:image/png;base64," + sBase64;
+            PL_onSearchPolicy: async function () {
+                this.getBusyDialog();
+                try {
+                    // ✅ READ FILTERS ONLY ONCE
+                    const sSearch = this.byId("PL_id_SearchPolicy")?.getValue()?.trim() || "";
+                    const sDepartment = this.byId("PL_id_DepartmentFilter")?.getSelectedKey()?.trim() || "";
+                    const sRole = (this.byId("PL_id_RoleFilter")?.getSelectedKeys() || []).join(",");
+                    const bHasFilter = !!(sSearch || sDepartment || sRole);
+                    // ✅ API CALL
+                    const oResponse = await this.ajaxReadWithJQuery("Policy", {
+                        PolicyName: sSearch,
+                        Department: sDepartment,
+                        Role: sRole
+                    });
+                    let aPolicies = [];
+                    if (oResponse && oResponse.success && Array.isArray(oResponse.data)) {
+                        aPolicies = oResponse.data.map((oItem) => {
+                            let sImageUrl = "sap-icon://person-placeholder";
+                            if (oItem.Logo) {
+                                if (typeof oItem.Logo === "string") {
+                                    sImageUrl = "data:image/png;base64," + oItem.Logo;
+                                } else if (oItem.Logo.data) {
+                                    const sBase64 = new TextDecoder().decode(new Uint8Array(oItem.Logo.data));
+                                    sImageUrl = "data:image/png;base64," + sBase64;
+                                }
+                            }
+                            const oActiveItem = this._getActivePolicyItem(oItem.Items || []);
+                            return {
+                                ID: oItem.ID,
+                                name: oItem.PolicyName,
+                                desc: oItem.PolicyDesc,
+                                UploadDate: oItem.UploadDate ? new Date(oItem.UploadDate).toLocaleDateString("en-GB") : "",
+                                Start_Date: oItem.Start_Date ? new Date(oItem.Start_Date).toLocaleDateString("en-GB") : "",
+                                department: oItem.Department || "",
+                                role: oItem.Role || "",
+                                currentVersion: oActiveItem?.Version || "1.0",
+                                employeeIds: (oItem.EmployeeID || "").toString().trim(),
+                                imageUrl: sImageUrl,
+                                File_Content: oItem.File_Content || "",
+                                File_Name: oItem.File_Name,
+                                File_Type: oItem.File_Type,
+                                selected: false
+                            };
+                        });
+                        // APPLY ACCESS FILTER ONCE
+                        aPolicies = await this.PL_filterPoliciesByAccess(aPolicies);
                     }
+                    // UPDATE MODEL
+                    const oModel = this.getView().getModel("policyModel");
+                    if (oModel) {
+                        oModel.setProperty("/policies", aPolicies);
+                    }
+                    // MASTER COPY FIX (VERY IMPORTANT)
+                    if (bHasFilter) {
+                        // keep original backup unchanged
+                    } else {
+                        this._aAllPolicies = aPolicies;
+                    }
+                } catch (oError) {
+                    console.error("PL_onSearchPolicy Error:", oError);
+                    MessageBox.error(this.i18nModel.getText("loadPoliciesFailed"));
+                } finally {
+                    this.closeBusyDialog();
                 }
-
-                const oActiveItem = this._getActivePolicyItem(oItem.Items || []);
-
-                return {
-                    ID: oItem.ID,
-                    name: oItem.PolicyName,
-                    desc: oItem.PolicyDesc,
-                    UploadDate: oItem.UploadDate
-                        ? new Date(oItem.UploadDate).toLocaleDateString("en-GB")
-                        : "",
-                    Start_Date: oItem.Start_Date
-                        ? new Date(oItem.Start_Date).toLocaleDateString("en-GB")
-                        : "",
-                    department: oItem.Department || "",
-                    role: oItem.Role || "",
-                    currentVersion: oActiveItem?.Version || "1.0",
-                    employeeIds: (oItem.EmployeeID || "").toString().trim(),
-                    imageUrl: sImageUrl,
-                    File_Content: oItem.File_Content || "",
-                    File_Name: oItem.File_Name,
-                    File_Type: oItem.File_Type,
-                    selected: false,
-                };
-            });
-
-            aPolicies = await this.PL_filterPoliciesByAccess(aPolicies);
-        }
-
-        this.getView().getModel("policyModel").setProperty("/policies", aPolicies);
-
-    } catch (oError) {
-        console.error("PL_onSearchPolicy Error:", oError);
-        MessageBox.error(this.i18nModel.getText("loadPoliciesFailed"));
-    } finally {
-        this.closeBusyDialog();
-    }
-},
+            },
             PL_onClearPolicy: function () {
                 // SEARCH
                 this.byId("PL_id_SearchPolicy").setValue("");
                 // DEPARTMENT
                 this.byId("PL_id_DepartmentFilter").setSelectedKey("");
                 // ROLE
-                this.byId("PL_id_RoleFilter").setSelectedKey("");
+                this.byId("PL_id_RoleFilter").setSelectedKeys([]);
             },
-         PL_onLiveSearchPolicy: function (oEvent) {
-    const sValue = (oEvent.getParameter("newValue") || "").toLowerCase().trim();
-    const oModel = this.getView().getModel("policyModel");
-
-    // safety fallback
-    if (!this._aAllPolicies) {
-        this._aAllPolicies = oModel.getProperty("/policies") || [];
-    }
-
-    let aFilteredPolicies = [];
-
-    // ✅ IMPORTANT: EMPTY SEARCH = RESTORE FULL DATA
-    if (!sValue) {
-        aFilteredPolicies = this._aAllPolicies;
-    } else {
-        aFilteredPolicies = this._aAllPolicies.filter(function (oPolicy) {
-            return (
-                (oPolicy.name && oPolicy.name.toLowerCase().includes(sValue)) ||
-                (oPolicy.desc && oPolicy.desc.toLowerCase().includes(sValue))
-            );
-        });
-    }
-
-    oModel.setProperty("/policies", aFilteredPolicies);
-},
+            PL_onLiveSearchPolicy: function (oEvent) {
+                const sValue = (oEvent.getParameter("newValue") || "").toLowerCase().trim();
+                const oModel = this.getView().getModel("policyModel");
+                //  always cache original data BEFORE modifying model
+                if (!this._aAllPolicies) {
+                    this._aAllPolicies = oModel.getProperty("/policies") || [];
+                }
+                let aFilteredPolicies = [];
+                // remove undefined variable (aPolicies) issue safely
+                const aPolicies = this._aAllPolicies;
+                // (keeping your original structure, just making it safe)
+                oModel.setProperty("/policies", []);
+                oModel.setProperty("/policies", aPolicies);
+                oModel.refresh(true);
+                // EMPTY SEARCH = RESTORE FULL DATA
+                if (!sValue) {
+                    aFilteredPolicies = this._aAllPolicies;
+                } else {
+                    aFilteredPolicies = this._aAllPolicies.filter(function (oPolicy) {
+                        return (
+                            (oPolicy.name && oPolicy.name.toLowerCase().includes(sValue)) || (oPolicy.desc && oPolicy.desc.toLowerCase().includes(sValue)));
+                    });
+                }
+                oModel.setProperty("/policies", aFilteredPolicies);
+            },
             PL_onPressEditAndSave: function (oEvent) {
                 debugger;
                 if (oEvent.getSource().getText() === "Edit") {
@@ -1575,7 +1685,9 @@ console.log("Payload:", oPayload);
                         });
                     }
                 });
-                this.getView().setModel(new JSONModel(aUniqueRoles), "FilteredRoleModel");
+                var oModel = new JSONModel(aUniqueRoles);
+                this.getView().setModel(oModel, "FilteredRoleModel");
+                this.getView().getModel("FilteredRoleModel").refresh(true);
             },
             onPressEdit: function () {
                 // SWITCH TO EDIT MODE
@@ -1615,14 +1727,25 @@ console.log("Payload:", oPayload);
                     return;
                 }
                 // ROLE VALIDATION
-                if (!Validation._LCstrictValidationComboBox(this.byId("PL_id_ViewRole"), "ID")) {
-                    this.byId("PL_id_ViewRole").setValueState("Error");
-                    this.byId("PL_id_ViewRole").setValueStateText("Please select a valid role");
+                // ROLE VALIDATION (FINAL FIX WITH MESSAGE)
+                const oRoleControl = this.byId("PL_id_ViewRole");
+                const aSelectedRoles = oRoleControl.getSelectedKeys();
+                if (!aSelectedRoles || aSelectedRoles.length === 0) {
+                    oRoleControl.setValueState("Error");
+                    // THIS IS REQUIRED FOR MESSAGE POPUP BELOW FIELD
+                    oRoleControl.setValueStateText("Please select at least one role");
+                    oRoleControl.setShowValueStateMessage(true);
+                    // force focus so message appears immediately
+                    oRoleControl.focus();
                     return;
+                } else {
+                    oRoleControl.setValueState("None");
+                    oRoleControl.setValueStateText("");
                 }
                 // MODEL DATA
                 const oModel = this.getView().getModel("policyViewModel");
                 const oData = oModel.getData();
+                const sRole = Array.isArray(oData.role) ? oData.role.join(",") : (oData.role || "").toString();
                 // UPDATE PAYLOAD
                 const oPayload = {
                     filters: {
@@ -1632,7 +1755,7 @@ console.log("Payload:", oPayload);
                         PolicyName: oData.title,
                         PolicyDesc: oData.description,
                         Department: oData.department,
-                        Role: oData.role,
+                        Role: sRole,
                     },
                 };
                 try {

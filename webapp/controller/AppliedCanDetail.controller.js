@@ -3,9 +3,10 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel",
     "../model/formatter",
     "sap/ui/core/Fragment",
-    "sap/m/MessageToast"
+    "sap/m/MessageToast",
+     "sap/m/MessageBox", //Import MessageBox for alerts/confirmations
 ], function (BaseController,
-    JSONModel, formatter, Fragment, MessageToast) {
+    JSONModel, formatter, Fragment, MessageToast,MessageBox) {
     "use strict";
     return BaseController.extend("sap.kt.com.minihrsolution.controller.AppliedCanDetail", {
         formatter: formatter,
@@ -292,11 +293,7 @@ sap.ui.define([
         },
 
         openResumePreview: async function () {
-
-            const oUploadData = this.getView()
-                .getModel("UploadModel")
-                .getData();
-
+            const oUploadData = this.getView().getModel("UploadModel").getData();
             let sBase64 = oUploadData.File;
             const sMimeType = oUploadData.FileType || "application/pdf";
             const sFileName = oUploadData.FileName || "Resume.pdf";
@@ -304,6 +301,11 @@ sap.ui.define([
             if (!sBase64) {
                 MessageToast.show("No resume found.");
                 return;
+            }
+
+            // Decompress PDF/DOC/DOCX if stored compressed
+            if (this.isCompressedBase64(sBase64)) {
+                sBase64 = this.decompressBase64(sBase64);
             }
 
             if (sBase64.startsWith("data:")) {
@@ -466,7 +468,7 @@ sap.ui.define([
         },
 
         onFileSizeExceeds: function () {
-            MessageToast.show(this.i18nModel.getText("fileSizeExceeds"));
+            MessageToast.show(this.i18na.getText("fileSizeExceeds"));
         },
 
         onBeforeUploadStarts: function (oEvent) {
@@ -480,30 +482,94 @@ sap.ui.define([
             let aTokens = oModel.getProperty("/tokens") || [];
 
             if (aTokens.length >= 1) {
-                sap.m.MessageBox.error("Only one file can be uploaded at a time.");
+                MessageBox.error("Only one file can be uploaded at a time.");
                 return;
             }
 
-            const reader = new FileReader();
             const that = this;
 
-            reader.onload = function (e) {
-                const base64 = e.target.result.split(',')[1];
+            let oUploadModel = that.getView().getModel("UploadModel");
+            if (!oUploadModel) {
+                oUploadModel = new sap.ui.model.json.JSONModel();
+                that.getView().setModel(oUploadModel, "UploadModel");
+            }
 
-                that.getView().getModel("UploadModel").setData({
-                    File: base64,
-                    FileName: oFile.name,
-                    FileType: oFile.type
-                });
+            // PDF / DOC / DOCX
+            if (
+                oFile.type === "application/pdf" ||
+                oFile.type === "application/msword" ||
+                oFile.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            ) {
 
-                aTokens.push({
-                    key: oFile.name,
-                    text: oFile.name
-                });
-                oModel.setProperty("/tokens", aTokens);
-                sap.m.MessageToast.show("File uploaded successfully: " + oFile.name);
-            };
-            reader.readAsDataURL(oFile);
+                const MAX_SIZE_MB = 5;
+
+                if (oFile.size > MAX_SIZE_MB * 1024 * 1024) {
+                    MessageBox.error(
+                        "File size should not exceed " +
+                        MAX_SIZE_MB +
+                        " MB."
+                    );
+                    return;
+                }
+
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const base64 = e.target.result.split(",")[1];
+                    const compressedBase64 = that.compressBase64(base64);
+
+                    oUploadModel.setData({
+                        File: compressedBase64,
+                        FileName: oFile.name,
+                        FileType: oFile.type
+                    });
+
+                    aTokens.push({
+                        key: oFile.name,
+                        text: oFile.name
+                    });
+
+                    oModel.setProperty("/tokens", aTokens);
+                    MessageToast.show("File uploaded successfully: " + oFile.name);
+                };
+
+                reader.readAsDataURL(oFile);
+                return;
+            }
+
+            // IMAGE
+            if (oFile.type.startsWith("image/")) {
+
+                that.compressAndConvertFile(oFile)
+                    .then(function (oFileData) {
+
+                        oUploadModel.setData({
+                            File: oFileData.File,
+                            FileName: oFileData.FileName,
+                            FileType: oFileData.FileType
+                        });
+
+                        aTokens.push({
+                            key: oFileData.FileName,
+                            text: oFileData.FileName
+                        });
+
+                        oModel.setProperty("/tokens", aTokens);
+
+                        MessageToast.show(
+                            "File uploaded successfully: " +
+                            oFileData.FileName
+                        );
+                    }).catch(function (err) {
+                        MessageBox.error(
+                            err || "File upload failed"
+                        );
+                    });
+
+                return;
+            }
+
+            MessageBox.error("Only Image, PDF, DOC and DOCX files are allowed.");
         },
 
         onTokenDelete: function (oEvent) {

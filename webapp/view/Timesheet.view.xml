@@ -113,8 +113,12 @@
                     <core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Footer" type="XML" />
                 </contentLeft>
                 <contentRight>
+                <FlexBox class="TraineeButtons"  wrap="Wrap"
+    justifyContent="End"
+    alignItems="Center">
                     <Button text="{i18n>submit}" press="TS_onSubmitTimesheet" type="Transparent"  id="TS_id_Submited" enabled="{viewModel>/canSubmit}"/>
                     <Button text="{i18n>delete}" press="TS_onDeleteTimesheet" type="Transparent"  id="TS_id_Delete" enabled="{viewModel>/canDelete}"/>
+                    </FlexBox>
                 </contentRight>
             </Bar>
         </footer>

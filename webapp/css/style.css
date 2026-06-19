@@ -4430,3 +4430,232 @@ color: #fff !important;
         min-height: 4rem;
     }
 }
+/* Expense dashboard */
+
+.dashboardTile {
+    width: 23%;
+    min-width: 250px;
+    border-radius: 16px !important;
+    overflow: hidden;
+    background: #fff;
+    
+}
+
+/* Top color bars */
+.blueTile {
+    border-top: 4px solid #1976d2 !important;
+}
+
+.orangeTile {
+    border-top: 4px solid #ef6c00 !important;
+}
+
+.greenTile {
+    border-top: 4px solid #2e7d32 !important;
+}
+
+.redTile {
+    border-top: 4px solid #c62828 !important;
+}
+
+/* Make header text smaller */
+.dashboardTile .sapMGTHeaderText {
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+}
+
+/* Reduce tile height */
+.dashboardTile .sapMGT {
+    height: 120px !important;
+}
+
+.dashboardTile .sapMGT {
+    height: 110px !important;
+}
+
+.dashboardTile .sapMTileCnt {
+    padding-top: 0.25rem !important;
+}
+
+.dashboardTile .sapMNC {
+    padding-top: 0.25rem !important;
+}
+
+.categoryIcon{
+    background:#f3f4f6;
+    padding:12px;
+    border-radius:8px;
+}
+
+
+
+.sapMPIBar{
+    border-radius:8px;
+}
+
+.dashboardCard {
+    height: 430px !important;
+}
+
+.dashboardCard .sapFCardContent {
+    height: 350px !important;
+}
+
+.categoryAmount{
+    font-weight:bold;
+    font-size:1.1rem;
+     min-width: 250px;
+    text-align: right;
+}
+/* footer */
+.defaultBGBlur > footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 5;
+}
+
+.profile-footer-scroll-text {
+  display: flex;
+  overflow: hidden;
+  flex: 1 1 auto;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+}
+
+/* .profile-footer-marquee {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+} */
+
+@media (max-width: 768px) {
+  .defaultBGBlur > footer .sapMBarLeft {
+    overflow: hidden;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .profile-footer-scroll-text {
+    overflow: hidden;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .profile-footer-marquee {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    animation: profile-footer-marquee-scroll 10s linear infinite;
+  }
+
+  @keyframes profile-footer-marquee-scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+}
+.customFooterBar .sapMBarLeft {
+    width: 30% !important;
+}
+
+.customFooterBar .sapMBarRight {
+    width: 70% !important;
+    text-align: right;
+}
+.Buttons{
+  padding: 0px;
+}
+.TimesheetButtons{
+  padding: 0px;
+}
+.EmpButtons{
+   padding: 0px;
+}
+.TraineeButtons{
+    gap: 4px;
+}
+
+.TraineeButtons .sapMBtn{
+    margin: 2px;
+}
+.GreetingButtons{
+  padding: 0px;
+}
+.contractButtons{
+  padding: 0px;
+}
+@media(max-width:500px){
+.Buttons{
+  width:40% !important;
+  margin-right:95px !important;
+}
+.TimesheetButtons{
+  width:40% !important;
+   margin-right:50px !important;
+}
+
+.contractButtons{
+  width:20% !important;
+   margin-right:20px !important;
+  
+}
+.GreetingButtons{
+ width:30% !important;
+   margin-right:80px !important;
+}
+
+}
+.fotterbtns{
+  border-top: 1px solid rgb(103, 99, 99);
+}
+.closeBtnMargin {
+    margin-right: 1rem !important;
+}
+
+.slot {
+    font-size: 15px !important;
+    font-weight: bold;
+}
+.cqQuestionContainer {
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 10px;
+}
+
+.cqQuestionContainer .sapMInputBaseInner {
+    border-radius: 8px;
+}
+
+.cqQuestionContainer .sapMTextAreaInner {
+    border-radius: 8px;
+}
+
+.cqQuestionContainer .sapMBtn {
+    border-radius: 8px;
+}
+
+#optionsTable {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+}
+.questionDtext{
+  /* border: solid 1px #7a7777; */
+  border-radius: 8px !important;
+}
+.fotterbtns{
+  border-top: 1px solid rgb(103, 99, 99);
+}
+.closeBtnMargin {
+    margin-right: 1rem !important;
+}
+
+.customConfirmationDialog .sapMTB {
+    border-top: 1px solid #d9d9d9 !important;
+    background: #fff !important;
+    min-height: 2rem;
+}

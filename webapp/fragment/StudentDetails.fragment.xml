@@ -1,0 +1,241 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+     xmlns:form="sap.ui.layout.form"
+    xmlns:f="sap.f">
+
+    <Dialog
+        title="Candidate Assessment Report"
+        contentWidth="900px"
+        contentHeight="700px"
+        draggable="true"
+        resizable="true">
+
+        <content>
+
+            <VBox class="sapUiMediumMargin">
+
+                <!-- ================= HEADER ================= -->
+
+                <HBox
+                    alignItems="Center"
+                    class="sapUiMediumMarginBottom">
+
+                    <Avatar
+                        src="{studentModel>/photo}"
+                        initials="{= ${studentModel>/candidate_Name} ? ${studentModel>/candidate_Name}.substring(0,2).toUpperCase() : 'NA'}"
+                        displayShape="Circle"
+                        displaySize="XL"
+                        backgroundColor="Accent6"
+                        class="sapUiLargeMarginEnd"/>
+
+                    <VBox>
+
+                        <Title
+                            level="H2"
+                            text="{studentModel>/candidate_Name}" />
+
+                        <Text
+                            text="{studentModel>/candidate_Email}"
+                            class="sapUiTinyMarginTop sapUiTinyMarginBottom"/>
+
+                        <HBox
+                            wrap="Wrap"
+                            class="sapUiSmallMarginTop">
+
+                            <ObjectStatus
+                                text="{studentModel>/student_Id}"
+                                icon="sap-icon://person-placeholder"
+                                state="Information"
+                                class="sapUiTinyMarginEnd"/>
+
+                            <ObjectStatus
+                                text="{studentModel>/skill_level}"
+                                state="Warning"
+                                class="sapUiTinyMarginEnd"/>
+
+                            <ObjectStatus
+                                text="{studentModel>/preferred_language}"
+                                icon="sap-icon://source-code"
+                                state="Information"
+                                class="sapUiTinyMarginEnd"/>
+
+                            <ObjectStatus
+                                text="{studentModel>/overallResult}"
+                                state="{=
+                                    ${studentModel>/overallResult} === 'Pass'
+                                    ? 'Success'
+                                    : ${studentModel>/overallResult} === 'Fail'
+                                    ? 'Error'
+                                    : 'Warning'
+                                }"/>
+                        </HBox>
+
+                    </VBox>
+
+                </HBox>
+
+                <!-- ================= MCQ SECTION ================= -->
+
+                <Title
+                    level="H4"
+                    text="MCQ TEST"
+                    class="sapUiMediumMarginTop sapUiSmallMarginBottom"/>
+
+                <HBox
+                    wrap="Wrap"
+                    justifyContent="SpaceBetween">
+
+                    <GenericTile
+                        frameType="OneByHalf"
+                        class="sapUiTinyMargin">
+                        <TileContent>
+                            <NumericContent
+                                value="{studentModel>/mcq}"
+                                valueColor="Good"/>
+                        </TileContent>
+                        <tileContent>
+                        </tileContent>
+                    </GenericTile>
+
+                    <GenericTile
+                        frameType="OneByHalf"
+                        class="sapUiTinyMargin">
+                        <TileContent>
+                            <NumericContent
+                                value="{studentModel>/coding}"
+                                valueColor="Good"/>
+                        </TileContent>
+                    </GenericTile>
+
+                    <GenericTile
+                        frameType="OneByHalf"
+                        class="sapUiTinyMargin">
+                        <TileContent>
+                            <NumericContent
+                                value="{studentModel>/overallScore}"
+                                valueColor="Good"/>
+                        </TileContent>
+                    </GenericTile>
+
+                </HBox>
+
+                <HBox
+                    wrap="Wrap"
+                    class="sapUiMediumMarginTop">
+
+                    <ObjectStatus
+                        text="{studentModel>/overallResult}"
+                        state="{=
+                            ${studentModel>/overallResult} === 'Pass'
+                            ? 'Success'
+                            : ${studentModel>/overallResult} === 'Fail'
+                            ? 'Error'
+                            : 'Warning'
+                        }"
+                        class="sapUiMediumMarginEnd"/>
+
+                    <ObjectStatus
+                        text="Submitted"
+                        state="Information"/>
+
+                </HBox>
+
+                <!-- ================= CODING SECTION ================= -->
+
+                <Title
+                    level="H4"
+                    text="CODING TEST"
+                    class="sapUiMediumMarginTop sapUiSmallMarginBottom"/>
+
+               <form:SimpleForm
+    editable="false"
+    layout="ResponsiveGridLayout">
+
+    <Label text="Language"/>
+    <Text text="{studentModel>/preferred_language}"/>
+
+    <Label text="Coding Score"/>
+    <ObjectStatus
+        text="{= ${studentModel>/coding} + '%'}"
+        state="Success"/>
+
+    <Label text="Overall Score"/>
+    <ObjectStatus
+        text="{= ${studentModel>/overallScore} + '%'}"
+        state="Success"/>
+
+    <Label text="Result"/>
+    <ObjectStatus
+        text="{studentModel>/overallResult}"
+        state="{=
+            ${studentModel>/overallResult} === 'Pass'
+            ? 'Success'
+            : ${studentModel>/overallResult} === 'Fail'
+            ? 'Error'
+            : 'Warning'
+        }"/>
+
+    <Label text="Submitted Date"/>
+    <Text text="{studentModel>/submittedDate}"/>
+
+    <Label text="Created Date"/>
+    <Text text="{studentModel>/created_at}"/>
+
+</form:SimpleForm>
+
+            </VBox>
+
+        </content>
+
+<!-- ================= SUBMITTED CODE ================= -->
+
+<Panel
+    headerText="Submitted Solution"
+    expandable="true"
+    expanded="true"
+    class="sapUiMediumMarginTop">
+
+    <content>
+
+        <VBox>
+
+            <Toolbar>
+                <Title
+                    text="Candidate Submitted Code"
+                    level="H5"/>
+
+                <ToolbarSpacer/>
+
+                <ObjectStatus
+                    text="{studentModel>/preferred_language}"
+                    state="Information"/>
+
+                <ObjectStatus
+                    text="{studentModel>/overallResult}"
+                    state="Success"/>
+            </Toolbar>
+
+            <TextArea
+                value="{studentModel>/submittedCode}"
+                editable="false"
+                growing="true"
+                growingMaxLines="25"
+                width="100%"
+                rows="15"/>
+
+        </VBox>
+
+    </content>
+
+</Panel>
+        <beginButton>
+            <Button
+                text="Close"
+                type="Emphasized"
+                press="onCloseStudentDialog"/>
+        </beginButton>
+
+    </Dialog>
+
+</core:FragmentDefinition>

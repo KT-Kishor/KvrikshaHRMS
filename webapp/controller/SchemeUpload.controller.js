@@ -27,6 +27,7 @@ sap.ui.define(
           if (!LoginFunction) return;
           this.i18nModel = this.getView().getModel("i18n").getResourceBundle();
           this.getView().setModel(new JSONModel({ isFileValid: false })); //for createfragmentsubmit button
+          // this.getView().getModel("LoginModel").setProperty("/HeaderName", this.i18nModel.getText("schemeupload"));
           this.getView().getModel("LoginModel").setProperty("/HeaderName", this.i18nModel.getText("schemeupload"));
           this.MainModel = new JSONModel({ items: [] }); // Store table data
           this.oValue = oEvent.getParameter("arguments").value;

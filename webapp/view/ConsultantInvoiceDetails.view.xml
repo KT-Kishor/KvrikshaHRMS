@@ -420,11 +420,15 @@
 					<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Footer" type="XML" />
 				</m:contentLeft>
 				<m:contentRight>
+				<m:FlexBox class="TraineeButtons"  wrap="Wrap"
+    justifyContent="End"
+    alignItems="Center">
 					<m:Button visible="{visiablityPlay>/createVisi}" text="{i18n>submit}" type="Transparent" press="CI_onPressSubmit" class="sendMail" />
 				<m:Button text="{i18n>tileFooter}"  id="CI_id_ContractMail" press="CI_onSendEmail" visible="{visiablityPlay>/merge}"
 				type="Transparent"/>
 				<m:Button visible="{visiablityPlay>/editVisi}" text="{= ${visiablityPlay>/editable} === true?'Save':'Edit'}"  press="CI_onPressEdit" class="sendMail" type="{= ${visiablityPlay>/editable} ? 'Transparent' : 'Transparent' }"/>
 				<m:Button text="{i18n>GeneratePDF}" press="CI_onPressGeneratePdf"  visible="{visiablityPlay>/merge}" type="Transparent"/>
+				</m:FlexBox>
 				</m:contentRight>
 			</m:Bar>
 			</m:footer>

@@ -1319,8 +1319,6 @@
                                                 <m:ToolbarSeparator />
                                                 <u:FileUploader
                                                     visible="{parts: [{ path: 'viewModel>/SelfServiceBtn' },{ path: 'LoginModel>/Role' },{ path: 'sEmployeeModel>/0/Type' } ],formatter: '.Formatter.visibilityFormatter' }"
-                                                    fileSizeExceed="onFileSizeExceeds"
-                                                    maximumFileSize="3MB"
                                                     typeMissmatch="onFileTypeMissmatch"
                                                     fileType="pdf,jpg,jpeg,png"
                                                     buttonText="{i18n>upload}"
@@ -1374,6 +1372,15 @@
                                                     text="{i18n>qCreateDate}"
                                                 />
                                             </m:Column>
+                                             <m:Column
+                                                demandPopin="true"
+                                                minScreenWidth="Tablet"
+                                            >
+												<m:Text
+                                                    text="{i18n>fileSize}"
+                                                    tooltip="{i18n>fileSize}"
+                                                />
+											</m:Column>
                                         </m:columns>
                                         <m:items>
                                             <m:ColumnListItem>
@@ -1390,6 +1397,9 @@
                                                     />
                                                     <m:Text
                                                         text="{path:'DocumentModel>CreatedOn', formatter:'.Formatter.formatDate'}"
+                                                    />
+                                                   <m:Text
+                                                        text="{path:'DocumentModel>FileSize', formatter:'.Formatter.formatFileSize'}"
                                                     />
                                                 </m:cells>
                                             </m:ColumnListItem>
@@ -1522,12 +1532,30 @@
                                 sticky="ColumnHeaders"
                                 id="SS_id_myAssetTable"
                                 busyIndicatorDelay="0"
+                                mode="SingleSelectLeft"
                                 growing="true"
                                 growingThreshold="50"
                                 growingScrollToLoad="true"
                                 items="{path: 'MyAssets>/MyAssetsTable', sorter: { path: 'FinancialYear', descending: false, group: true}                                }"
                                 class="sapUiTinyMargin CommonRoundedTable SelfAttachment"
                             >
+
+                            <m:headerToolbar>
+        <m:OverflowToolbar>
+            <m:Title text="Asset Details" />
+            <m:ToolbarSpacer />
+                 <m:Button
+                            text="{i18n>returnrequest}"
+                            tooltip="{i18n>returnrequest}"
+                            press="SS_returnrequest"
+                        />
+            <m:Button
+                text="PDF"
+                type="Transparent"
+                press="onPDFDownloadForEmployee" />
+                
+        </m:OverflowToolbar>
+    </m:headerToolbar>
                                 <m:columns>
                                     <m:Column>
                                         <m:Text text="Type" />
@@ -1567,10 +1595,15 @@
                                         minScreenWidth="Tablet">
                                         <m:Text text="Asset Value" />
                                     </m:Column>
+                                      <m:Column  demandPopin="true"
+                                        minScreenWidth="Tablet">
+                                        <m:Text text="Status" />
+                                    </m:Column>
                                     <!-- <m:Column  demandPopin="true"
                                         minScreenWidth="Tablet">
                                         <m:Text text="Status" />
                                     </m:Column> -->
+                                     
                                     
                                 </m:columns>
                                 <m:items>
@@ -1617,6 +1650,25 @@
                                             />
                                            
                                         </m:cells>
+
+                               <m:cells>
+    <m:HBox alignItems="Center">
+            <m:ObjectStatus
+                            inverted="false"
+                            state="{= ${MyAssets>Status} === 'Assigned' ? 'Indication05' : ${MyAssets>Status} === 'Return request' ? 'Warning': 'Success' }"
+                            text="{MyAssets>Status}"
+                        />
+
+        <core:Icon
+            src="sap-icon://map"
+            press=".onLocationPress"
+            visible="{= ${MyAssets>Status} === 'Accepted' }"
+            tooltip="View Location"
+            class="sapUiSmallMarginBegin"
+            color="#0a6ed1" />
+    </m:HBox>
+</m:cells>
+
                                          <!-- <m:cells>
                                             <m:ObjectStatus
                             inverted="false"

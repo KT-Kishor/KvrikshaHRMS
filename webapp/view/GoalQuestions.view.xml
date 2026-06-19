@@ -15,12 +15,11 @@
 	    <core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Header" type="XML" />
 		</customHeader>
         <content>
+        
 
                 <Dialog
                     id="QD_id_UploadDialog"
                     title="{i18n>UploadTitle}"
-                    draggable="true"
-                    resizable="true"
                     contentWidth="400px"
                     contentHeight="auto"
                     class="sapUiResponsivePadding"
@@ -42,19 +41,22 @@
                         </VBox>
                     </content>
 
-                    <beginButton>
+                     	<VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
                         <Button
                             text="{i18n>upload}"
+                            type="Transparent"
                             press="QD_handleUploadPress"
                         />
-                    </beginButton>
-
-                    <endButton>
+                   
                         <Button
                             text="{i18n>cancel}"
+                            class="closeBtnMargin"
+                            type="Transparent"
                             press="QD_onCloseUploadDialog"
                         />
-                    </endButton>
+                   </HBox>
+                   </VBox>
                 </Dialog>
 
                 <fb:FilterBar
@@ -201,5 +203,13 @@
                     </items>
                 </Table>
         </content>
+        <footer>
+			<Bar>
+				<contentLeft>
+					<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Footer" type="XML" />
+				</contentLeft>
+				
+			</Bar>
+		</footer>
     </Page>
 </mvc:View>

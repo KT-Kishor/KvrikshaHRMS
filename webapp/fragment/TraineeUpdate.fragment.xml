@@ -175,17 +175,19 @@
 			</sections>
 		</ObjectPageLayout>
 		<m:footer>
-			<m:Bar>
+			<m:Bar class="customFooterBar">
 				<m:contentLeft>
 					<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Footer" type="XML" />
 				</m:contentLeft>
 				<m:contentRight>
+				<m:FlexBox  wrap="Wrap" justifyContent="End" alignItems="Center" class="TraineeButtons">
 					<m:Button text="{i18n>tileFooter}" press="TU_onSendEmail"  id="TU_id_Traineemail" visible="{= ${viewModel>/isVisiable} }" enabled="{viewModel>/isEditMode}" type="Transparent"/>
 					<m:Button text="{= ${viewModel>/editable} ? ${i18n>save} : ${i18n>edit} }"
                      press="TU_onEditOrSavePress"  id="TD_id_Savebtn" visible="{= ${viewModel>/editBut} }" type="{= ${viewModel>/isEditMode} ? 'Transparent' : 'Transparent' }" />
 					<m:Button id="TU_id_Jspdf" text="{i18n>GeneratePDF}" press="TD_onPressMerge" visible="{= ${viewModel>/isVisiable} }" enabled="{viewModel>/isEditMode}" type="Transparent"/>
+					</m:FlexBox>
 				</m:contentRight>
 			</m:Bar>
 		</m:footer>
-	</m:Page>undefined
+	</m:Page>
 </core:FragmentDefinition>

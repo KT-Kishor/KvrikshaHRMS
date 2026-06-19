@@ -26,11 +26,8 @@ sap.ui.define(["./BaseController", "../utils/validation", "sap/m/MessageToast", 
         this.byId("EO_id_RejectBtn").setEnabled(false);
         this.byId("emp_id_ResendEmail").setEnabled(false);
 
-        this.getView().getModel("LoginModel").setProperty(
-            "/HeaderName",
-            this.i18nModel.getText("pageTitleemployee")
-        );
-
+        this.getView().getModel("LoginModel").setProperty("/HeaderName",this.i18nModel.getText("pageTitleemployee"));
+      //  if(!this.getView().getModel("InactiveEmployeeModel")) await this._fetchCommonData("InactiveEmployee", "InactiveEmployeeModel");
         this.oValue = oEvent.getParameter("arguments").valueEmp;
         const from = oEvent.getParameter("arguments").from;
         this.Filter = true;

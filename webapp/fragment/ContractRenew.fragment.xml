@@ -68,12 +68,11 @@
 
 			</f:content>
 		</f:SimpleForm>
-		<footer>
-			<Toolbar>
-				<ToolbarSpacer />
+		 <VBox width="100%" class="fotterbtns">
+    <HBox width="100%" justifyContent="End">
 				<Button text="{i18n>submit}" type="Transparent" press="CR_onPressSubmit" class="submit" />
-				<Button text="{i18n>close}" press="CR_onPressClose" class="sendMail" type="Transparent" />
-			</Toolbar>
-		</footer>
+				<Button text="{i18n>close}" press="CR_onPressClose" class="sendMail closeBtnMargin" type="Transparent" />
+			 </HBox>
+       </VBox>
 	</Dialog>
 </core:FragmentDefinition>

@@ -521,6 +521,9 @@
                     />
                 </m:contentLeft>
                 <m:contentRight>
+                <m:FlexBox class="TraineeButtons"  wrap="Wrap"
+    justifyContent="End"
+    alignItems="Center">
                     <m:Button
                         class="salUploadBtn"
                         press="APD_onPressViewSalary"
@@ -549,6 +552,7 @@
                         press="APD_onPressGeneratePdf"
                         visible="{= !${PaySlip>/isCreate} }"
                     />
+                    </m:FlexBox>
                 </m:contentRight>
             </m:Bar>
         </m:footer>

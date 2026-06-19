@@ -1,0 +1,110 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<Dialog
+        id="expenseDialog"
+        contentWidth="1000px"
+        contentHeight="500px"
+        resizable="true"
+        draggable="true">
+		<customHeader>
+			<Bar>
+				<contentMiddle>
+					<Title text="{detailModel>/dialogTitle}" />
+				</contentMiddle>
+				<contentRight>
+					<Button
+                        icon="sap-icon://decline"
+                        type="Transparent"
+                        press="onCloseDialog" />
+				</contentRight>
+			</Bar>
+		</customHeader>
+		<content>
+			<ScrollContainer
+                width="100%"
+                height="100%"
+                vertical="true"
+                horizontal="true">
+				<Table
+                    id="EE_id_DetailTable"
+                    items="{detailModel>/items}"
+                    sticky="ColumnHeaders"
+                    noDataText="No Data"
+                    growing="true">
+					<columns>
+						<Column
+                            demandPopin="true"
+                            minScreenWidth="Tablet">
+							<Text text="Employee ID" />
+						</Column>
+						<Column
+                            demandPopin="true"
+                            minScreenWidth="Tablet">
+							<Text text="Employee Name" />
+						</Column>
+						<Column
+                            width="250px"
+                            demandPopin="true"
+                            minScreenWidth="Tablet">
+							<Text text="Expense Name" />
+						</Column>
+						<Column
+                            demandPopin="true"
+                            minScreenWidth="Tablet">
+							<Text text="Trip Type" />
+						</Column>
+						<Column
+                            demandPopin="true"
+                            minScreenWidth="Tablet">
+							<Text text="Status" />
+						</Column>
+						<Column
+                            hAlign="End"
+                            demandPopin="true"
+                            minScreenWidth="Tablet">
+							<Text text="Total Amount" />
+						</Column>
+					</columns>
+					<items>
+						<ColumnListItem
+                            type="Navigation"
+                            press="EDF_onExpenseTableRowPress">
+							<cells>
+								<Text text="{detailModel>EmployeeID}" />
+								<Text text="{detailModel>EmployeeName}" />
+								<Text text="{detailModel>ExpenseName}" />
+								<Text text="{detailModel>TripType}" />
+								<ObjectStatus
+                                    text="{detailModel>Status}" />
+								<Text
+                                    text="{
+                                        parts:[
+                                            {path:'detailModel>TotalAmount'},
+                                            {value:'INR'}
+                                        ],
+                                        formatter:'.formatter.formatAmountWithCurrency'
+                                    }" />
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+			</ScrollContainer>
+		</content>
+		<footer>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Text
+                    text=" Total Amount :"
+                    class="sapUiTinyMarginEnd" />
+				<ObjectNumber
+    emphasized="true"
+    state="Success"
+    number="{
+        path: 'detailModel>/GrandTotal',
+        formatter: '.formatter.formatAmountWithCurrency'
+    }" />
+			</Toolbar>
+		</footer>
+	</Dialog>
+</core:FragmentDefinition>

@@ -809,7 +809,7 @@
                 </ObjectPageSection>
             </sections>
         </ObjectPageLayout>
-        <m:footer>
+         <m:footer>
             <m:Bar>
                 <m:contentLeft>
                     <core:Fragment
@@ -818,6 +818,9 @@
                     />
                 </m:contentLeft>
                 <m:contentRight>
+                <m:FlexBox class="TraineeButtons"  wrap="Wrap"
+    justifyContent="End"
+    alignItems="Center">
                     <m:Button
                         visible="{visiablityPlay>/createVisi}"
                         text="{i18n>submit}"
@@ -846,6 +849,7 @@
                         visible="{visiablityPlay>/merge}"
                         type="Transparent"
                     />
+                    </m:FlexBox>
                 </m:contentRight>
             </m:Bar>
         </m:footer>

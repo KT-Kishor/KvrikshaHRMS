@@ -291,11 +291,15 @@
 					<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Footer" type="XML" />
 				</m:contentLeft>
 				<m:contentRight>
+				<m:FlexBox class="TraineeButtons"  wrap="Wrap"
+    justifyContent="End"
+    alignItems="Center">
 					<m:Button visible="{visiablityPlay>/createVisi}" text="{i18n>submit}" type="Transparent" press="CID_onPressSubmit" class="sendMail" />
 				<m:Button text="{i18n>companyInvoiceSendEmail}" type="Transparent" press="CID_onPressSendEmail" visible="{visiablityPlay>/payByDate}" />
 				<m:Button visible="{visiablityPlay>/Edit}" type="{= ${visiablityPlay>/editable} ? 'Transparent' : 'Transparent' }" text="{= ${visiablityPlay>/editable} === true?'Save':'Edit'}" press="CID_onPressEdit" class="sendMail" />
 				<m:Button text="{i18n>sendInvoiceText}" type="Transparent" press="CID_onPressSendMultipalEmail" visible="{visiablityPlay>/MultiEmail}" />
 				<m:Button text="{i18n>GeneratePDF}" press="CID_onPressGeneratePdf" visible="{visiablityPlay>/merge}" type="Transparent" />
+				</m:FlexBox>
 				</m:contentRight>
 			</m:Bar>
 			</m:footer>

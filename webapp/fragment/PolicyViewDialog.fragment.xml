@@ -61,20 +61,21 @@
                         id="PL_id_FirstRowFlexBox"
                         width="100%"
                         defaultSpan="XL2 L2 M4 S12"
-                        hSpacing="1"
+                        hSpacing="0"
                         vSpacing="0"
                         class="sapUiMediumMarginTop"
                     >
                         <!-- ================= TITLE ================= -->
                         <HBox
                             width="100%"
-                            alignItems="Center"
+                            alignItems="Start"
                             justifyContent="Start"
                         >
                             <Label
                                 id="PL_id_TitleLabel"
                                 text="{i18n>title}:"
                                 design="Bold"
+                                 vAlign="Bottom"
                                 required="{= ${VisibleModel>/EditBtn} !== true }"
                             />
                             <ToolbarSpacer width="0.5rem" />
@@ -84,12 +85,12 @@
                                 visible="{= ${VisibleModel>/EditBtn} === true}"
                                 wrapping="false"
                                 maxLines="1"
-                                width="10rem"
+                                width="7rem"
                                 class="policyTitleText"
                             />
                             <Input
                                 id="PL_id_ViewTitle"
-                                width="9rem"
+                                width="7rem"
                                 value="{policyViewModel>/title}"
                                 visible="{= ${VisibleModel>/EditBtn} !== true}"
                                 liveChange="PL_onLiveChangeValidation"
@@ -100,7 +101,7 @@
                         <!-- ================= DEPARTMENT ================= -->
                         <HBox
                             width="100%"
-                            alignItems="Center"
+                            alignItems="Start"
                             justifyContent="Start"
                         >
                             <layoutData>
@@ -110,6 +111,7 @@
                                 id="PL_id_DepartmentLabel"
                                 text="{i18n>department}:"
                                 design="Bold"
+                                 vAlign="Bottom"
                                 required="{= ${VisibleModel>/EditBtn} !== true }"
                             />
                             <ToolbarSpacer width="0.5rem" />
@@ -141,7 +143,7 @@
                         <!-- ================= ROLE ================= -->
                         <HBox
                             width="100%"
-                            alignItems="Center"
+                            alignItems="Start"
                             justifyContent="Start"
                         >
                             <layoutData>
@@ -151,6 +153,7 @@
                                 id="PL_id_RoleLabel"
                                 text="{i18n>role}:"
                                 design="Bold"
+                                 vAlign="Bottom"
                                 required="{= ${VisibleModel>/EditBtn} !== true }"
                             />
                             <ToolbarSpacer width="0.5rem" />
@@ -159,29 +162,32 @@
                                 text="{policyViewModel>/role}"
                                 visible="{= ${VisibleModel>/EditBtn} === true}"
                                 wrapping="false"
-                                width="100%"
+                                maxLines="1"
+                                width="7rem"
+                                tooltip="{= typeof ${policyViewModel>/role} === 'string' ? ${policyViewModel>/role} : ${policyViewModel>/role}.join(', ') }"
                             />
-                            <ComboBox
+                            <MultiComboBox
                                 id="PL_id_ViewRole"
-                                width="100%"
-                                selectedKey="{policyViewModel>/role}"
-                                visible="{= ${VisibleModel>/EditBtn} !== true}"
+                               width="7rem"
+                                selectedKeys="{policyViewModel>/role}"
+                                visible="{= ${VisibleModel>/EditBtn} !== true }"
                                 selectionChange="PL_onSelectionChangeValidation"
                                 items="{
-                                path: 'FilteredRoleModel>/'
-                                }"
+                                         path: 'FilteredRoleModel>/'
+                                        }"
                                 placeholder="{i18n>selectRole}"
                             >
                                 <core:Item
                                     key="{FilteredRoleModel>designationName}"
                                     text="{FilteredRoleModel>designationName}"
                                 />
-                            </ComboBox>
+                            </MultiComboBox>
                         </HBox>
+                        
                         <!-- ================= DATE ================= -->
                         <HBox
                             width="100%"
-                            alignItems="Center"
+                            alignItems="Start"
                             justifyContent="Start"
                         >
                             <layoutData>
@@ -191,6 +197,7 @@
                                 id="PL_id_StartDateLabel"
                                 text="{i18n>StartedDate}:"
                                 design="Bold"
+                                vAlign="Bottom"
                             />
                             <ToolbarSpacer width="0.5rem" />
                             <Text
@@ -204,17 +211,18 @@
                     <VBox
                         id="PL_id_DescriptionVBox"
                         width="100%"
-                        class="sapUiSmallMarginTop sapUiTinyMarginBegin"
+                        class="sapUiSmallMarginTop"
                     >
                         <HBox
                             width="100%"
-                            alignItems="Center"
-                            justifyContent="Center"
+                            alignItems="Start"
+                            justifyContent="Start"
                         >
                             <Label
                                 id="PL_id_DescriptionLabel"
                                 text="{i18n>description}:"
                                 design="Bold"
+                                 vAlign="Bottom"
                                 required="{= ${VisibleModel>/EditBtn} !== true }"
                             />
                             <ToolbarSpacer width="0.5rem" />

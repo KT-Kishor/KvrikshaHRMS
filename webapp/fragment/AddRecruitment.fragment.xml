@@ -50,13 +50,12 @@
 				<TextArea value="{stuDataModel>/Remark}" rows="3" id="FM_Id_Remark" valueState="{modelValuStateError>/RemarkState}" editable="{EditableModeltruefalse>/Editable}" maxLength="200" placeholder="{i18n>expValStaEmployeeRemark}" />
 			</layout:content>
 		</layout:SimpleForm>
-		<footer>
-			<OverflowToolbar id="otbFooter">
-				<ToolbarSpacer />
+		<VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
 				<Button id="FM_Id_SubmitBTN" text="{i18n>submit}" type="Transparent" press="onSaveNewCandidate" />
 				<Button id="FM_Id_EditBTN" text="{i18n>edit}" type="Transparent" press="onDialogEditToggle" />
-				<Button text="{i18n>close}" press="_closeDialog" type="Transparent" />
-			</OverflowToolbar>
-		</footer>
+				<Button text="{i18n>close}" press="_closeDialog" type="Transparent" class="closeBtnMargin"/>
+			</HBox>
+       </VBox>
 	</Dialog>
 </core:FragmentDefinition> 

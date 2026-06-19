@@ -1,0 +1,575 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:mc="sap.suite.ui.microchart" xmlns:card="sap.f.cards" xmlns:f="sap.f" controllerName="sap.kt.com.minihrsolution.controller.ExpenseDashBoard" xmlns:core="sap.ui.core" displayBlock="true" xmlns:layout="sap.ui.layout" xmlns:com="sap.suite.ui.commons" xmlns:viz="sap.viz.ui5.controls"
+	xmlns:vizFeeds="sap.viz.ui5.controls.common.feeds"
+	xmlns:vizData="sap.viz.ui5.data" xmlns:fb="sap.ui.comp.filterbar">
+
+<Page id="dashboardPage" class="glassHeader classheader" >
+<customHeader>
+<Bar>
+<contentLeft>
+ <Button      icon="sap-icon://home"
+                type="Transparent"
+                press="onPressback"/>
+
+            <Title text="Expense Dashboard" level="H2"/>
+</contentLeft>
+<contentRight>
+  
+          <Button
+            press="Tile_NotifictionBTN"
+            class="sapUiTinyMarginBeginEnd logoutBtn"
+            tooltip="{i18n>TilenotificationfragName}"
+            icon="sap-icon://bell"
+            type="Transparent"
+            visible="{= ${LoginModel>/Role} !== 'Contractor' }"
+        >
+            <customData>
+                <BadgeCustomData
+                    class="badgeClass"
+                    key="badge"
+                    value="{EndingSoonModel>/notificationCount}"
+                />
+            </customData>
+        </Button>
+
+       <Button
+            press="TP_onraisebugpress"
+            icon="sap-icon://incident"
+            tooltip="{i18n>raisebug}"
+            type="Transparent"
+            class="Bug"
+        />
+
+        <Button
+            press="onLogout"
+            icon="sap-icon://log"
+            tooltip="{i18n>logoutTooltip}"
+            type="Transparent"
+            class="logoutBtn"
+        />
+   
+
+</contentRight>
+</Bar>
+</customHeader>
+
+
+<content>
+<!--  KPI Tiles  -->
+<VBox class="sapUiSmallMargin">
+
+    <fb:FilterBar id="Expdashboardfilter"  useToolbar="false" clear="onClearFilters" showClearOnFB="true" search="onSearchDashboard" class="CommonRoundedTable" showFilterConfiguration="false">
+					<fb:filterGroupItems>
+						<fb:FilterGroupItem name="daterange" label="Date Range" groupName="Group1" visibleInFilterBar="true">
+							<fb:control>
+								 <DateRangeSelection
+            id="idFinancialYear"
+            width="18rem"
+            displayFormat="dd/MM/yyyy"
+             class="sapUiMediumMarginEnd"/>
+							</fb:control>
+						</fb:FilterGroupItem>
+						
+					</fb:filterGroupItems>
+				</fb:FilterBar>
+
+</VBox>
+
+ <FlexBox
+                    wrap="Wrap"
+                    justifyContent="SpaceAround"
+                    alignItems="Start"
+                    class="invoiceTileContainer sapUiSmallMarginTop">
+
+        <!-- Total Spend -->
+        <GenericTile
+            class="tileLayout tileTotal blueTile"
+            header="{i18n>totalexpense}"
+            subheader="{= ${DashboardModel>/TotalExpenseCount} + ' Open Claims' }"
+            press="onTotalExpenseTilePress">
+
+            <tileContent>
+                <TileContent unit="INR" >
+                    <content>
+                        <NumericContent
+                        class="sapUiSmallMarginTop "
+                           value="{path:'DashboardModel>/First4Card/TotalAmount',
+                            formatter:'.formatter.fromatNumber'}"
+                            scale="K"
+                            icon="sap-icon://money-bills"
+                            indicator="Up"
+                            valueColor="Good"/>
+                    </content>
+                </TileContent>
+            </tileContent>
+        </GenericTile>
+
+        <!-- Company Paid -->
+        <GenericTile
+            class="tileLayout tileTotal orangeTile"
+            header="{i18n>companypaiddata}"
+            subheader="{= ${DashboardModel>/CompanyCount} + ' Open Claims' }"
+            press="onCompanyPaidTilePress">
+
+            <tileContent>
+                <TileContent unit="INR" >
+                    <content>
+                        <NumericContent
+                        class="sapUiSmallMarginTop"
+                               value="{path:'DashboardModel>/First4Card/CompanyAmount',
+                            formatter:'.formatter.fromatNumber'}"
+                            scale="K"
+                             indicator="Down"
+                            icon="sap-icon://paid-leave"
+                            valueColor="Critical"/>
+                    </content>
+                </TileContent>
+            </tileContent>
+        </GenericTile>
+
+        <!-- Reimbursement -->
+        <GenericTile
+            class="tileLayout tileTotal greenTile"
+            header="{i18n>reimbursement}"
+            subheader="{= ${DashboardModel>/ReimbursementCount} + ' Open Claims' }"
+            press="onReimbursementTilePress">
+
+            <tileContent>
+                <TileContent unit="INR" >
+                    <content>
+                        <NumericContent
+                        icon="sap-icon://payment-approval"
+                            value="{path:'DashboardModel>/First4Card/ReimbursementAmount',
+                            formatter:'.formatter.fromatNumber'}"
+                            class="sapUiSmallMarginTop"
+                            indicator="Up"
+                            valueColor="Good"
+                            scale="K"/>
+                    </content>
+                </TileContent>
+            </tileContent>
+        </GenericTile>
+
+        <!-- Pending -->
+        <GenericTile
+            class="tileLayout tileTotal redTile"
+            header="{i18n>pending}"
+            subheader="{= ${DashboardModel>/PendingCount} + ' Open Claims' }"
+            press="onPendingTilePress">
+
+            <tileContent>
+                <TileContent unit="INR">
+                    <content>
+                        <NumericContent
+                        class="sapUiSmallMarginTop" 
+                           value="{path:'DashboardModel>/First4Card/PendingAmount',
+                            formatter:'.formatter.fromatNumber'}"
+                            valueColor="Error"
+                            indicator="Down"
+                            icon="sap-icon://pending"
+                            scale="K"/>
+                    </content>
+                </TileContent>
+            </tileContent>
+        </GenericTile>
+
+    </FlexBox>
+
+<layout:Grid defaultSpan="XL6 L6 M12 S12"  class="sapUiSmallMargin">
+					<layout:content>
+						<!-- 1. category Distribution Chart -->
+						<f:Card class="sapUiTinyMargin">
+    <f:header>
+        <card:Header
+            title="{i18n>spendbyucategory}"
+            subtitle="{i18n>expensetypedistribution}"/>
+    </f:header>
+
+    <f:content>
+     <ScrollContainer
+            height="350px"
+            width="100%"
+            vertical="true"
+            horizontal="false">
+        <List
+            items="{DashboardModel>/ByExpenseType}"
+            showSeparators="None">
+
+            <CustomListItem>
+                <HBox
+                    width="100%"
+                    alignItems="Center"
+                    class="sapUiSmallMargin">
+
+                    <!-- Icon -->
+                    <core:Icon
+    src="{
+        path: 'DashboardModel>ItemType',
+        formatter: '.formatter.getItemTypeIcon'
+    }"
+    size="1.5rem"
+    class="categoryIcon sapUiTinyMarginEnd"/>
+
+                    <!-- Category + Progress -->
+                    <VBox width="70%" class="sapUiSmallMarginBottom">
+                        <Title
+                            text="{DashboardModel>ItemType}"
+                            level="H5"/>
+
+                        <ProgressIndicator
+                            percentValue="{DashboardModel>Percentage}"
+                            displayValue="{DashboardModel>Percentage}%"
+                            showValue="false"
+                            width="100%"
+                            state="Success"/>
+                    </VBox>
+
+                    <!-- Amount -->
+                    <Text
+                        text="{path: 'DashboardModel>Amount', formatter: '.formatter.fromatNumber'}"
+                        class="sapUiMediumMarginBegin categoryAmount"/>
+
+                </HBox>
+            </CustomListItem>
+
+        </List>
+        </ScrollContainer>
+    </f:content>
+</f:Card>
+
+<!-- second chart  -->
+
+<f:Card class="sapUiTinyMargin">
+
+<f:header>
+        <card:Header
+            title="{i18n>paymentbreakdown}"
+            subtitle="{path: 'PaymentChartModel>/Total', formatter: '.formatter.fromatNumber'} Total Amount"/>
+    </f:header>
+
+    <f:content>
+        <viz:VizFrame
+            id="paymentDonutChart"
+            vizType="donut"
+            width="100%"
+            selectData="onPaymentChartSelect"
+            height="350px"
+            vizProperties="{
+                title: { visible: false },
+                legend: { visible: true },
+                plotArea: {
+                    dataLabel: {
+                        visible: true,
+                        type: 'value'
+                    }
+                }
+            }">
+
+            <viz:dataset>
+                <vizData:FlattenedDataset
+                    data="{PaymentChartModel>/PaymentData}">
+
+                    <vizData:dimensions>
+                        <vizData:DimensionDefinition
+                            name="Payment Type"
+                            value="{PaymentChartModel>Type}" />
+                    </vizData:dimensions>
+
+                    <vizData:measures>
+                        <vizData:MeasureDefinition
+                            name="Amount"
+                            value="{PaymentChartModel>Amount}" />
+                    </vizData:measures>
+
+                </vizData:FlattenedDataset>
+            </viz:dataset>
+
+            <viz:feeds>
+                <vizFeeds:FeedItem
+                    uid="size"
+                    type="Measure"
+                    values="Amount" />
+
+                <vizFeeds:FeedItem
+                    uid="color"
+                    type="Dimension"
+                    values="Payment Type" />
+            </viz:feeds>
+
+        </viz:VizFrame>
+        
+
+    </f:content>
+</f:Card>
+
+<!-- third chart -->
+
+
+<f:Card class="sapUiTinyMargin">
+
+    <f:header>
+        <card:Header
+            title="{i18n>monthlyexpensetrend}"
+            subtitle="{i18n>financialyearoverview}"/>
+    </f:header>
+
+    <f:content>
+
+        <viz:VizFrame
+            id="monthlyExpenseChart"
+            vizType="line"
+            width="100%"
+            height="350px"
+            selectData="onMonthlyExpenseChartSelect"
+            uiConfig="{applicationSet:'fiori'}">
+
+            <viz:dataset>
+                <vizData:FlattenedDataset
+                    data="{DashboardModel>/MonthlyTrend}">
+
+                    <vizData:dimensions>
+                        <vizData:DimensionDefinition
+                            name="Month"
+                            value="{DashboardModel>Month}" />
+                    </vizData:dimensions>
+
+                    <vizData:measures>
+                        <vizData:MeasureDefinition
+                            name="Expense Amount"
+                            value="{DashboardModel>TotalAmount}" />
+                    </vizData:measures>
+
+                </vizData:FlattenedDataset>
+            </viz:dataset>
+
+            <viz:feeds>
+                <vizFeeds:FeedItem
+                    uid="valueAxis"
+                    type="Measure"
+                    values="Expense Amount"/>
+
+                <vizFeeds:FeedItem
+                    uid="categoryAxis"
+                    type="Dimension"
+                    values="Month"/>
+            </viz:feeds>
+
+        </viz:VizFrame>
+
+    </f:content>
+
+</f:Card>
+<!-- forth chart -->
+
+
+<f:Card class="sapUiTinyMargin" >
+
+    <f:header>
+        <card:Header
+            title="{i18n>triptypeanalysis}"
+            subtitle="{i18n>expensebytriptype}"/>
+    </f:header>
+
+    <f:content>
+
+        <viz:VizFrame
+            id="tripTypeBarChart"
+            vizType="column"
+            width="100%"
+            height="350px"
+             selectData="onTripTypeBarChartSelect"
+            uiConfig="{applicationSet:'fiori'}">
+
+            <viz:dataset>
+                <vizData:FlattenedDataset
+                    data="{DashboardModel>/TripTypeData}">
+
+                    <vizData:dimensions>
+                        <vizData:DimensionDefinition
+                            name="Trip Type"
+                            value="{DashboardModel>TripType}" />
+                    </vizData:dimensions>
+
+                    <vizData:measures>
+                        <vizData:MeasureDefinition
+                            name="Amount"
+                            value="{DashboardModel>Amount}" />
+                    </vizData:measures>
+
+                </vizData:FlattenedDataset>
+            </viz:dataset>
+
+            <viz:feeds>
+                <vizFeeds:FeedItem
+                    uid="valueAxis"
+                    type="Measure"
+                    values="Amount"/>
+
+                <vizFeeds:FeedItem
+                    uid="categoryAxis"
+                    type="Dimension"
+                    values="Trip Type"/>
+            </viz:feeds>
+
+        </viz:VizFrame>
+
+    </f:content>
+
+</f:Card>
+
+					</layout:content>
+				</layout:Grid>
+
+                
+              <f:Card class="sapUiMediumMarginBeginEnd sapUiTinyMarginBottom" width="auto"  >
+
+
+    <f:content>
+                        <ScrollContainer
+                           
+                            vertical="true"
+                            horizontal="true">
+
+                            <Table
+                            id="idTop10ExpensesTable"
+                                width="100%"
+                                items="{DashboardModel>/Top10Expenses}"
+                                sticky="HeaderToolbar,ColumnHeaders" >
+                                <headerToolbar>
+    <Toolbar height="auto">
+        <FlexBox
+            width="100%"
+            wrap="Wrap"
+            justifyContent="SpaceBetween"
+            alignItems="Center">
+
+            <Title
+                text="{i18n>top10expense}"
+                level="H4" />
+
+            <SearchField
+                width="20rem"
+                liveChange="onGlobalSearch"
+                placeholder="{i18n>search}" />
+
+        </FlexBox>
+    </Toolbar>
+</headerToolbar>
+
+                               <columns>
+
+                <Column minScreenWidth="Tablet"
+                       demandPopin="true">
+                    <Text text="{i18n>employee}"/>
+                </Column>
+
+                <Column minScreenWidth="Tablet" width="15rem"
+                                                                demandPopin="true">
+                    <Text text="{i18n>expExpenseName}"/>
+                </Column>
+
+                <Column minScreenWidth="Tablet"
+                                                                demandPopin="true">
+                    <Text text="{i18n>triptype}"/>
+                </Column>
+
+                <Column minScreenWidth="Tablet"
+                                                                demandPopin="true">
+                    <Text text="{i18n>expSource}"/>
+                </Column>
+
+                <Column minScreenWidth="Tablet"
+                                                                demandPopin="true">
+                    <Text text="{i18n>expDestination}"/>
+                </Column>
+
+                <Column minScreenWidth="Tablet"
+                                                                demandPopin="true">
+                    <Text text="{i18n>amount}"/>
+                </Column>
+                <Column minScreenWidth="Tablet"
+                                                                demandPopin="true">
+                    <Text text="{i18n>expReimbursementAmountExp}"/>
+                </Column>
+
+              
+            </columns>
+
+            <items>
+                <ColumnListItem  type="Navigation" press="onPressTop10Item">
+
+                    <cells>
+
+                        <!-- Employee -->
+                        <HBox alignItems="Center">
+
+                            <Avatar
+                                displayShape="Circle"
+                                initials="{= ${DashboardModel>EmployeeName}.substring(0,2).toUpperCase() }"
+                                class="sapUiTinyMarginEnd"/>
+
+                            <VBox>
+                                <Text
+                                    text="{DashboardModel>EmployeeName}"
+                                    wrapping="false"/>
+                                <ObjectIdentifier
+                                    title="{DashboardModel>EmployeeID}"/>
+                            </VBox>
+
+                        </HBox>
+
+                        <!-- Expense -->
+                        <Text text="{DashboardModel>ExpenseName}"/>
+
+                        <!-- Trip Type -->
+                        <Text
+                            text="{DashboardModel>TripType}"
+                            />
+
+                        <!-- Source -->
+                        <Text text="{DashboardModel>Source}"/>
+
+                        <!-- Destination -->
+                        <Text text="{DashboardModel>Destination}"/>
+
+                        <!-- Amount -->
+                        <Text
+                            text="{path: 'DashboardModel>TotalAmount', formatter: '.formatter.fromatNumber'}"
+                            />
+                        <Text
+                            text="{path: 'DashboardModel>ReimbursementAmount', formatter: '.formatter.fromatNumber'}"
+                            />
+
+                       
+
+                    </cells>
+
+                </ColumnListItem>
+            </items>
+
+                            </Table>
+                            
+
+                        </ScrollContainer>
+
+                    
+
+    </f:content>
+
+</f:Card>
+
+
+</content>
+<footer>
+			<Bar>
+			<contentLeft>
+                    <core:Fragment
+                        fragmentName="sap.kt.com.minihrsolution.fragment.Footer"
+                        type="XML"
+                    />
+                </contentLeft>
+					   
+				
+			</Bar>
+		</footer>
+</Page>
+</mvc:View>

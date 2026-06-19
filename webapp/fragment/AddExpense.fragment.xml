@@ -91,10 +91,10 @@
 			</f:content>
 		</f:SimpleForm>
 		<!-- Buttons for Submit and Close actions -->
-		<VBox width="100%" class="sapUiTinyMarginTop">
+		<VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
     <HBox width="100%" justifyContent="End">
 			<Button text="{i18n>expCreateBtn}" type="Transparent" press="Exp_Frg_onPressSubmit" class="sendMail" />
-			<Button text="{i18n>close}" type="Transparent" class="sendMail" press="Exp_Frg_onPressClose" />
+			<Button text="{i18n>close}" type="Transparent" class="sendMail closeBtnMargin" press="Exp_Frg_onPressClose" />
 			</HBox>
        </VBox>
 	</Dialog>

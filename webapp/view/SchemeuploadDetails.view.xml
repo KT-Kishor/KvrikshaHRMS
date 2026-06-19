@@ -6,9 +6,22 @@
     xmlns="sap.m"
     xmlns:core="sap.ui.core"
 >
-    <Page id="SUD_id_QuotationschemeDetails">
+    <Page id="SUD_id_QuotationschemeDetails" class="classheader glassHeader ObjectcustomHeaderToolbar" navButtonPress="SUD_onhandleBackPress" showNavButton="true">
         <headerContent>
-            <Button
+        	<Button press="Tile_NotifictionBTN" class="sapUiTinyMarginBeginEnd LogNot logoutBtn" tooltip="{i18n>TilenotificationfragName}" icon="sap-icon://bell" type="Transparent" visible="{= ${LoginModel>/Role} !== 'Contractor' }">
+			<customData >
+            	<BadgeCustomData class="badgeClass" key="badge" value="{EndingSoonModel>/notificationCount}"/>
+            </customData>
+		</Button>
+		<Button
+            press="TP_onraisebugpress"
+            icon="sap-icon://incident"
+            tooltip="{i18n>raisebug}"
+            type="Transparent"
+            class="LogNot logoutBtn"
+        />
+			<Button press="onLogout" icon="sap-icon://log" tooltip="{i18n>logoutTooltip}" type="Transparent" class="LogNot logoutBtn"/>
+            <!-- <Button
                 id="SUD_id_Back"
                 press="SUD_onhandleBackPress"
                 type="Transparent"
@@ -19,7 +32,7 @@
                 text="{i18n>schtitle}"
                 class="boldBlackText"
             />
-            <ToolbarSpacer />
+            <ToolbarSpacer /> -->
         </headerContent>
 
         <VBox class="sapUiSmallMargin">

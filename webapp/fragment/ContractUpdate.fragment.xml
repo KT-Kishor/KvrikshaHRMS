@@ -210,11 +210,16 @@
 		</ObjectPageLayout>
 		<m:footer>
 			<!-- button with expression binding for visibility -->
-			<m:Bar>
+			<m:Bar class="customFooterBar">
+			 <m:contentLeft>
+                    <core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Footer" type="XML" />
+                </m:contentLeft>
 				<m:contentRight>
+				 <m:HBox class="TraineeButtons">
 					<m:Button text="{i18n>tileFooter}" id="CU_id_Mail" press="CUD_onSendEmail" visible="{ContractStatus>/sendMail}" type="Transparent"/>
 					<m:Button text="{= ${viewModel>/isEditMode} ? ${i18n>save} : ${i18n>edit} }" press=".onEditOrSavePress" visible="{ContractStatus>/status}" type="{= ${viewModel>/isEditMode} ? 'Transparent' : 'Transparent' }"/>
 					<m:Button text="{i18n>GeneratePDF}" id="CU_id_Merge" press="onPressMerge" visible="{ContractStatus>/sendMail}" type="Transparent"/>
+					</m:HBox>
 				</m:contentRight>
 			</m:Bar>
 		</m:footer>

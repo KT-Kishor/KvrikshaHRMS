@@ -188,11 +188,17 @@
 		</content>
 		<footer>
 			<Bar>
-					    <contentLeft>
-                    <core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Footer" type="XML" />
+			<contentLeft>
+                    <core:Fragment
+                        fragmentName="sap.kt.com.minihrsolution.fragment.Footer"
+                        type="XML"
+                    />
                 </contentLeft>
+					   
 				<contentRight>
+				
 					<Button text="{i18n>submit}" press="CD_onSubmit" id="CD_id_Submit" type="Transparent"  enabled="false"/>
+				
 				</contentRight>
 			</Bar>
 		</footer>

@@ -92,7 +92,6 @@
 								<!-- <Text text="{JobApplicationModel>Experience}" /> -->
 								 <Text text="{= ${JobApplicationModel>Experience} === '0' || ${JobApplicationModel>Experience} === 0 ? 'Fresher' : ${JobApplicationModel>Experience} + ' Years' }" />
 								<Button text="{i18n>v1_s_ViewJob}"
-                                        icon="sap-icon://opportunities"
                                         press="v1_onViewItem"
                                         type="Transparent" />
 							</cells>

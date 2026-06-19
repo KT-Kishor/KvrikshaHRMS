@@ -99,14 +99,13 @@
        
 
     </form:SimpleForm>
-    <footer>
-			<Toolbar>
-				<ToolbarSpacer/>
-				 <Button text="Create" press="onCreateAllowance"  visible="{modeModel>/isCreate}" />
-				 <Button text="Save" press="onUpdateAllowance" visible="{modeModel>/isUpdate}" />
-                 <Button text="Cancel" press="onCancelAllowance" />
-			</Toolbar>
-		</footer>
+    <VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
+    <HBox width="100%" justifyContent="End">
+				 <Button type="Transparent" text="Create" press="onCreateAllowance"  visible="{modeModel>/isCreate}" />
+				 <Button text="Save" type="Transparent" press="onUpdateAllowance" visible="{modeModel>/isUpdate}" />
+                 <Button text="Cancel" type="Transparent" press="onCancelAllowance" class="closeBtnMargin"/>
+			</HBox>
+       </VBox>
     </Dialog>
 
 </core:FragmentDefinition>

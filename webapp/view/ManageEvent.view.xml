@@ -101,7 +101,6 @@
                             <Text text="{i18n>startdatetime}" />
                         </Column>
                         <Column
-                       
                             minScreenWidth="Phone"
                             demandPopin="true"
                         >
@@ -123,7 +122,7 @@
                         </Column>
                         <Column
                        
-                            minScreenWidth="Phone"
+                            minScreenWidth="Desktop"
                             demandPopin="true"
                         >
                             <Text text="{i18n>image}" />
@@ -145,5 +144,13 @@
                     </items>
                 </Table>
         </content>
+        <footer>
+			<Bar>
+				<contentLeft>
+					<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Footer" type="XML" />
+				</contentLeft>
+				
+			</Bar>
+		</footer>
     </Page>
 </mvc:View>
