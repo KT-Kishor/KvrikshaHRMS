@@ -75,12 +75,11 @@
 		</f:SimpleForm>
 
 		<!-- Footer Buttons -->
-		<footer>
-			<Toolbar>
-				<ToolbarSpacer/>
+		<VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
+			<HBox width="100%" justifyContent="End">
 				<Button text="{i18n>submit}" type="Transparent" press="CC_onPressSubmit" class="sendMail" visible="{IdCardModel>/Submit}"/>
-				<Button text="{i18n>close}" class="sendMail" press="CC_onPressClose" type="Transparent" />
-			</Toolbar>
-		</footer>
+				<Button text="{i18n>close}" class="sendMail closeBtnMargin" press="CC_onPressClose" type="Transparent" />
+			</HBox>
+		</VBox>
 	</Dialog>
 </core:FragmentDefinition>
