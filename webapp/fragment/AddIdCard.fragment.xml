@@ -57,8 +57,12 @@
 		</f:SimpleForm>
 		
        
-<VBox width="100%" class="sapUiSmallMarginTop fotterbtns">
-    <HBox width="100%" justifyContent="End">
+<footer>
+    <Toolbar>
+        <HBox
+            width="100%"
+            justifyContent="End"
+            alignItems="Center">
         <Button
             text="{i18n>save}"
             press="IC_onPressSave"
@@ -69,9 +73,10 @@
         <Button
             text="{i18n>close}"
             type="Transparent"
-            press="IC_onPressClose" class="sapUiTinyMarginEnd closeBtnMargin" />
+            press="IC_onPressClose" class="sapUiTinyMarginEnd" />
     </HBox>
-</VBox>
+    </Toolbar>
+</footer>
 		<!-- <FlexBox justifyContent="End">			
 		</FlexBox> -->
 	</Dialog>

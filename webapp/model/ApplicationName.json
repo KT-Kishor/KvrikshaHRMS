@@ -193,6 +193,10 @@
     },
      {
         "ID": 47,
+        "AppName": "Campus Hiring Dashboard"
+    },
+     { 
+        "ID": 48,
         "AppName": "Others"
     }
 ]

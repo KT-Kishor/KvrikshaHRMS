@@ -74,27 +74,28 @@
 
 </VBox>
 
+
  <FlexBox
                     wrap="Wrap"
-                    justifyContent="SpaceAround"
+                    justifyContent="Center"
                     alignItems="Start"
                     class="invoiceTileContainer sapUiSmallMarginTop">
 
         <!-- Total Spend -->
         <GenericTile
-            class="tileLayout tileTotal blueTile"
+            class="tileLayout customTileWidth blueTile "
             header="{i18n>totalexpense}"
             subheader="{= ${DashboardModel>/TotalExpenseCount} + ' Open Claims' }"
             press="onTotalExpenseTilePress">
 
             <tileContent>
-                <TileContent unit="INR" >
+                <TileContent >
                     <content>
                         <NumericContent
                         class="sapUiSmallMarginTop "
                            value="{path:'DashboardModel>/First4Card/TotalAmount',
-                            formatter:'.formatter.fromatNumber'}"
-                            scale="K"
+                            formatter:'.formatter.fromatNumberinvoice'}"
+                            scale="K" 
                             icon="sap-icon://money-bills"
                             indicator="Up"
                             valueColor="Good"/>
@@ -105,19 +106,19 @@
 
         <!-- Company Paid -->
         <GenericTile
-            class="tileLayout tileTotal orangeTile"
+            class="tileLayout customTileWidth orangeTile "
             header="{i18n>companypaiddata}"
             subheader="{= ${DashboardModel>/CompanyCount} + ' Open Claims' }"
             press="onCompanyPaidTilePress">
 
             <tileContent>
-                <TileContent unit="INR" >
+                <TileContent  >
                     <content>
                         <NumericContent
                         class="sapUiSmallMarginTop"
                                value="{path:'DashboardModel>/First4Card/CompanyAmount',
-                            formatter:'.formatter.fromatNumber'}"
-                            scale="K"
+                            formatter:'.formatter.fromatNumberinvoice'}"
+                            scale="K" 
                              indicator="Down"
                             icon="sap-icon://paid-leave"
                             valueColor="Critical"/>
@@ -128,22 +129,22 @@
 
         <!-- Reimbursement -->
         <GenericTile
-            class="tileLayout tileTotal greenTile"
+            class="tileLayout customTileWidth greenTile "
             header="{i18n>reimbursement}"
             subheader="{= ${DashboardModel>/ReimbursementCount} + ' Open Claims' }"
             press="onReimbursementTilePress">
 
             <tileContent>
-                <TileContent unit="INR" >
+                <TileContent  >
                     <content>
                         <NumericContent
                         icon="sap-icon://payment-approval"
                             value="{path:'DashboardModel>/First4Card/ReimbursementAmount',
-                            formatter:'.formatter.fromatNumber'}"
+                            formatter:'.formatter.fromatNumberinvoice'}"
                             class="sapUiSmallMarginTop"
                             indicator="Up"
                             valueColor="Good"
-                            scale="K"/>
+                            scale="K" />
                     </content>
                 </TileContent>
             </tileContent>
@@ -151,28 +152,29 @@
 
         <!-- Pending -->
         <GenericTile
-            class="tileLayout tileTotal redTile"
+            class="tileLayout customTileWidth redTile"
             header="{i18n>pending}"
             subheader="{= ${DashboardModel>/PendingCount} + ' Open Claims' }"
             press="onPendingTilePress">
 
             <tileContent>
-                <TileContent unit="INR">
+                <TileContent >
                     <content>
                         <NumericContent
                         class="sapUiSmallMarginTop" 
                            value="{path:'DashboardModel>/First4Card/PendingAmount',
-                            formatter:'.formatter.fromatNumber'}"
+                            formatter:'.formatter.fromatNumberinvoice'}"
                             valueColor="Error"
                             indicator="Down"
                             icon="sap-icon://pending"
-                            scale="K"/>
+                            scale="K" />
                     </content>
                 </TileContent>
             </tileContent>
         </GenericTile>
 
     </FlexBox>
+    
 
 <layout:Grid defaultSpan="XL6 L6 M12 S12"  class="sapUiSmallMargin">
 					<layout:content>

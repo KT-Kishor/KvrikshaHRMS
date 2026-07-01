@@ -19,22 +19,28 @@
             value="{PDFData>/RTEText}"
 			visible="true"
         />
-        <beginButton>
+     <footer>
+    <Toolbar>
+        <HBox
+            width="100%"
+            justifyContent="End"
+            alignItems="Center">
             <Button
                 text="{i18n>GeneratePDF}"
                 type="Transparent"
                 press=".FCR_onDownloadPDF"
                 class="submit"
             />
-        </beginButton>
-        <endButton>
+        
             <Button
                 text="{i18n>close}"
                 type="Transparent"
                 press=".FCR_onCloseDialog"
                 class="sendMail"
             />
-        </endButton>
+      </HBox>
+    </Toolbar>
+</footer>
     </Dialog>
 
 </core:FragmentDefinition>

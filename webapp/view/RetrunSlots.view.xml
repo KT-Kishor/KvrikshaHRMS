@@ -1,209 +1,102 @@
-<mvc:View
-	controllerName="sap.kt.com.minihrsolution.controller.RetrunSlots"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.m"
-	xmlns:c="sap.ui.core"
-	displayBlock="true"
-	height="100%"
-	busyIndicatorDelay="0"
+<mvc:View controllerName="sap.kt.com.minihrsolution.controller.RetrunSlots"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:c="sap.ui.core" displayBlock="true" height="100%" busyIndicatorDelay="0"
     xmlns:core="sap.ui.core"
-    xmlns:fb="sap.ui.comp.filterbar"
+    xmlns:fb="sap.ui.comp.filterbar">
+    <Page id="RS_id_ReturnSlotsPage">
+        <customHeader>
+            <core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Header" type="XML" />
+        </customHeader>
+        <content>
 
->
-<Page id="RS_id_ReturnSlotsPage">
-		<customHeader>
-	    <core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Header" type="XML" />
-		</customHeader>
-		<content>
-
-         <fb:FilterBar
-            id="RS_id_FilterBarAsset"
-            persistencyKey="myPersKey"
-            useToolbar="false"
-            clear="RS_onPressClear"
-            showClearOnFB="true"
-            search="onSearchfilter"
-            showFilterConfiguration="false"
-            class="sapUiTinyMargin CommonRoundedTable"
-        >
-            <fb:filterGroupItems>
-                <fb:FilterGroupItem
-                    name="Employee Name"
-                    label="{i18n>employeeName}"
-                    groupName="Group1"
-                    visibleInFilterBar="true"
-                >
-                    <fb:control>
-                        <ComboBox
-                            name="AssignEmployeeName"
-                            showClearIcon="true"
-                            id="RS_id_EmployeeName"
-                            items="{AdminModel>/}"
-                            showSecondaryValues="true" filterSecondaryValues="true"
-                        >
-                            <items>
-                                <core:ListItem
-                                   key="{AdminModel>EmployeeID}"
-                                   text="{AdminModel>EmployeeName}"
-                                   additionalText="{AdminModel>EmployeeID}"
-                                />
-                            </items>
-                        </ComboBox>
-                    </fb:control>
-                </fb:FilterGroupItem>
-               
-                
-                <fb:FilterGroupItem
-                    name="Date"
-                    label="{i18n>Date}"
-                    groupName="Group1"
-                    visibleInFilterBar="true"
-                >
-                    <fb:control>
-                        <DateRangeSelection
-                            id="RS_id_Date"
-                            change="RS_handleChange"
-                            displayFormat="dd/MM/yyyy"
-                            valueFormat="dd/MM/yyyy"
-                        />
-                    </fb:control>
-                </fb:FilterGroupItem>
+            <fb:FilterBar id="RS_id_FilterBarAsset" persistencyKey="myPersKey" useToolbar="false" clear="RS_onPressClear" showClearOnFB="true" search="onSearchfilter" showFilterConfiguration="false" class="sapUiTinyMargin CommonRoundedTable">
+                <fb:filterGroupItems>
+                    <fb:FilterGroupItem name="Employee Name" label="{i18n>employeeName}" groupName="Group1" visibleInFilterBar="true">
+                        <fb:control>
+                            <ComboBox name="AssignEmployeeName" showClearIcon="true" id="RS_id_EmployeeName" items="{AdminModel>/}" showSecondaryValues="true" filterSecondaryValues="true">
+                                <items>
+                                    <core:ListItem key="{AdminModel>EmployeeID}" text="{AdminModel>EmployeeName}" additionalText="{AdminModel>EmployeeID}" />
+                                </items>
+                            </ComboBox>
+                        </fb:control>
+                    </fb:FilterGroupItem>
 
 
-              
-            </fb:filterGroupItems>
-        </fb:FilterBar>
+                    <fb:FilterGroupItem name="Date" label="{i18n>Date}" groupName="Group1" visibleInFilterBar="true">
+                        <fb:control>
+                            <DateRangeSelection id="RS_id_Date" change="RS_handleChange" displayFormat="dd/MM/yyyy" valueFormat="dd/MM/yyyy" />
+                        </fb:control>
+                    </fb:FilterGroupItem>
 
-<Table
-                id="id_RS_Table"
-                mode="SingleSelectLeft"
-                width="auto"
-                busyIndicatorDelay="0"
-                items="{path: 'ReturnModel>/'}"
-            >
-				<headerToolbar>
-					<OverflowToolbar>
-						 <Title
-                        text="{i18n>Returnslots} ({= ${ReturnModel>/}.length})"
-                        level="H1"
-                    />
-						<ToolbarSpacer />
-						<Button
-                            text="{i18n>create}"
-                            tooltip="{i18n>create}"
-                            press="RS_CreateSlot"
-                        />
-						<Button
-                            text="{i18n>edit}"
-                            tooltip="{i18n>edit}"
-                            press="RS_EditSlot"
-                        />
-						<Button
-                            text="{i18n>delete}"
-                            tooltip="{i18n>delete}"
-                            press="RS_DeleteSlot"
-                        />
-					</OverflowToolbar>
-				</headerToolbar>
-				<columns>
-					<Column demandPopin="true">
-						<Text
-                            text="{i18n>employee}"
-                            tooltip="{i18n>employee}"
-                        />
-					</Column>
-					<Column
-                        demandPopin="true"
-                        minScreenWidth="Tablet"
-                    >
-						<Text
-                            text="{i18n>Available}"
-                            tooltip="{i18n>Available}"
-                        />
-					</Column>
-					<Column
-                        demandPopin="true"
-                        minScreenWidth="Tablet"
-                    >
-						<Text
-                            text="{i18n>startDate}"
-                            tooltip="{i18n>startDate}"
-                        />
-					</Column>
-					<Column
-                        demandPopin="true"
-                        minScreenWidth="Tablet"
-                    >
-						<Text
-                            text="{i18n>endDate}"
-                            tooltip="{i18n>endDate}"
-                        />
-					</Column>
-					<Column
-                        demandPopin="true"
-                        minScreenWidth="Tablet"
-                    >
-						<Text
-                            text="{i18n>StartTime}"
-                            tooltip="{i18n>StartTime}"
-                        />
-					</Column>
-					<Column
-                        demandPopin="true"
-                        minScreenWidth="Tablet"
-                    >
-						<Text
-                            text="{i18n>EndTime}"
-                            tooltip="{i18n>EndTime}"
-                        />
-					</Column>
-					<Column
-                        demandPopin="true"
-                        minScreenWidth="Tablet"
-                    >
-						<Text
-                            text="{i18n>Location}"
-                            tooltip="{i18n>Location}"
-                        />
-					</Column>
-				
-				</columns>
-				<items>
-					<ColumnListItem
-                    >
-						<cells>
-                        <VBox>
-							<Text text="{ReturnModel>EmployeeID}" />  
-							<Text text="{ReturnModel>EmployeeName}" />
-                        </VBox>
-							<Text text="{ReturnModel>Available}" />
-							<Text
-                                text="{path:'ReturnModel>StartDate',formatter: '.Formatter.formatDate'}"
-                            />
-                            <Text
-                                text="{path:'ReturnModel>EndDate',formatter: '.Formatter.formatDate'}"
-                            />
-							<Text text="{ReturnModel>StartTime}" />
-							<Text text="{ReturnModel>EndTime}" />
-							<Text text="{ReturnModel>Location}" />
 
-						
-						</cells>
-					</ColumnListItem>
-				</items>
-			</Table>
-            		</content>
-                    <footer>
-			<Bar>
-			<contentLeft>
-                    <core:Fragment
-                        fragmentName="sap.kt.com.minihrsolution.fragment.Footer"
-                        type="XML"
-                    />
+
+                </fb:filterGroupItems>
+            </fb:FilterBar>
+
+            <Table id="id_RS_Table" mode="SingleSelectLeft" width="auto" busyIndicatorDelay="0" items="{path: 'ReturnModel>/'}" class="sapUiTinyMargin myRoundedTable">
+                <headerToolbar>
+                    <OverflowToolbar>
+                        <Title text="{i18n>Returnslots} ({= ${ReturnModel>/}.length})" level="H1" />
+                        <ToolbarSpacer />
+                        <Button text="{i18n>create}" tooltip="{i18n>create}" press="RS_CreateSlot" />
+                        <Button text="{i18n>edit}" tooltip="{i18n>edit}" press="RS_EditSlot" />
+                        <Button text="{i18n>delete}" tooltip="{i18n>delete}" press="RS_DeleteSlot" />
+                    </OverflowToolbar>
+                </headerToolbar>
+                <columns>
+                    <Column demandPopin="true">
+                        <Text text="{i18n>employee}" tooltip="{i18n>employee}" />
+                    </Column>
+                    <Column demandPopin="true" minScreenWidth="Tablet">
+                        <Text text="{i18n>Available}" tooltip="{i18n>Available}" />
+                    </Column>
+                    <Column demandPopin="true" minScreenWidth="Tablet">
+                        <Text text="{i18n>startDate}" tooltip="{i18n>startDate}" />
+                    </Column>
+                    <Column demandPopin="true" minScreenWidth="Tablet">
+                        <Text text="{i18n>endDate}" tooltip="{i18n>endDate}" />
+                    </Column>
+                    <Column demandPopin="true" minScreenWidth="Tablet">
+                        <Text text="{i18n>StartTime}" tooltip="{i18n>StartTime}" />
+                    </Column>
+                    <Column demandPopin="true" minScreenWidth="Tablet">
+                        <Text text="{i18n>EndTime}" tooltip="{i18n>EndTime}" />
+                    </Column>
+                    <Column demandPopin="true" minScreenWidth="Tablet">
+                        <Text text="{i18n>Location}" tooltip="{i18n>Location}" />
+                    </Column>
+
+                </columns>
+                <items>
+                    <ColumnListItem
+                    >
+                        <cells>
+                            <VBox>
+                                <Text text="{ReturnModel>EmployeeID}" />
+                                <Text text="{ReturnModel>EmployeeName}" />
+                            </VBox>
+                            <Text text="{ReturnModel>Available}" />
+                            <Text text="{path:'ReturnModel>StartDate',formatter: '.Formatter.formatDate'}" />
+                            <Text text="{path:'ReturnModel>EndDate',formatter: '.Formatter.formatDate'}" />
+                            <Text text="{ReturnModel>StartTime}" />
+                            <Text text="{ReturnModel>EndTime}" />
+                            <Text text="{ReturnModel>Location}" />
+
+
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+        <footer>
+            <Bar>
+                <contentLeft>
+                    <core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Footer" type="XML" />
                 </contentLeft>
-					   
-				
-			</Bar>
-		</footer>
-            </Page>
+
+
+            </Bar>
+        </footer>
+    </Page>
 </mvc:View>

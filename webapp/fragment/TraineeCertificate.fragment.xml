@@ -100,8 +100,12 @@
             value="{PDFData>/RTEText}"
 			visible="true"
         />
-        <VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
-    <HBox width="100%" justifyContent="End">
+       <footer>
+    <Toolbar>
+        <HBox
+            width="100%"
+            justifyContent="End"
+            alignItems="Center">
             <Button
                 text="{= ${PDFData>/PreviewFlag} ? ${i18n>downloadcCertificate} : ${i18n>preview} }"
                 type="{= ${PDFData>/PreviewFlag} ? 'Transparent' : 'Transparent' }"
@@ -109,12 +113,12 @@
             />
      
             <Button
-            class="closeBtnMargin"
                 text="{i18n>close}"
                 press="TCF_onPressCloseDialog"
                 type="Transparent"
             />
-       </HBox>
-       </VBox>
+      </HBox>
+    </Toolbar>
+</footer>
     </Dialog>
 </core:FragmentDefinition>

@@ -106,14 +106,19 @@
 </Table> 
 
         </VBox>
-       <VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
-    <HBox width="100%" justifyContent="End">
+       <footer>
+    <Toolbar>
+        <HBox
+            width="100%"
+            justifyContent="End"
+            alignItems="Center">
 	    <Button text="{i18n>submit}" type="Transparent" press="SOW_onSaveFrag" class="sendMail" visible="{simpleForm>/save}"/>
         <Button text="{i18n>save}" type="Transparent" press="SOW_onSubmitFrag" class="sendMail" visible="{simpleForm>/submitBtn}"/>
         <Button text="{i18n>ExpendBtn}" type="Transparent" press="SOW_onExpendFrag" class="sendMail" visible="{simpleForm>/ExpendBtn}"/>
         <Button text="{i18n>ReleaseBtn}" type="Transparent" press="SOW_onReleaseFrag" class="sendMail" visible="{simpleForm>/RelesedBtn}"/>
-        <Button text="{i18n>close}" press="SOW_onCloseFrag" class="sendMail closeBtnMargin" type="Transparent"/>
-			</HBox>
-       </VBox>
+        <Button text="{i18n>close}" press="SOW_onCloseFrag" class="sendMail" type="Transparent"/>
+		</HBox>
+    </Toolbar>
+</footer>
     </Dialog>
 </core:FragmentDefinition>

@@ -54,12 +54,17 @@
 
 		</f:SimpleForm>
 
-	<VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
-    <HBox width="100%" justifyContent="End">
+	<footer>
+    <Toolbar>
+        <HBox
+            width="100%"
+            justifyContent="End"
+            alignItems="Center">
       <Button text="{i18n>submit}" id="ALH_id_SubmitButton" type="Transparent" press="LOH_onPressSubmit" enabled="{/isFileValid}"/>
    
-      <Button text="{i18n>btnCancel}" type="Transparent" press="LOH_onPressClose" class="closeBtnMargin"/>
-   </HBox>
-       </VBox>
+      <Button text="{i18n>btnCancel}" type="Transparent" press="LOH_onPressClose" />
+  </HBox>
+    </Toolbar>
+</footer>
 	</Dialog>
 </core:FragmentDefinition>

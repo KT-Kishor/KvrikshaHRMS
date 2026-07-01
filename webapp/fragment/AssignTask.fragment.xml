@@ -59,12 +59,17 @@
     
             </f:content>
              </f:SimpleForm>
-             <VBox width="100%" class="sapUiSmallMarginTop fotterbtns">
-    <HBox width="100%" justifyContent="End">
+             <footer>
+    <Toolbar>
+        <HBox
+            width="100%"
+            justifyContent="End"
+            alignItems="Center">
 	            <Button text="{i18n>save}" type="Transparent" press="MA_onPressSave" class="submit" visible="{visiblePlay>/save}"/>
                 <Button text="{i18n>submit}" type="Transparent" press="FAT_onSubmitTask" class="submit" visible="{visiblePlay>/submit}"/>
-                <Button text="{i18n>close}" press="FAT_onTaskClose" class="sendMail closeBtnMargin" type="Transparent"/>
+                <Button text="{i18n>close}" press="FAT_onTaskClose" class="sendMail" type="Transparent"/>
 			 </HBox>
-       </VBox>
+    </Toolbar>
+</footer>
     </Dialog>
 </core:FragmentDefinition>

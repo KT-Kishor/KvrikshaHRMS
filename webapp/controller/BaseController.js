@@ -220,7 +220,9 @@ sap.ui.define([
                         "ManageEvent": "/ManageEvent",
                         "GoalReview": "/GoalReview",
                         "Policy": "/Policy",
-                        "HiringDashboard": "/HiringDashboard"
+                        "HiringDashboard": "/HiringDashboard",
+                        "CandidateQuestion": "/CandidateQuestion"
+
                     };
 
                     const modelPath = tileMap[value];
@@ -337,7 +339,8 @@ sap.ui.define([
                 "Manage Quotation": "Quotation App",
                 "Policy Management": "Policy Management",
                 "Expense Dashboard": "Expense Dashboard",
-                "Candidate Question": "Candidate Question"
+                "Candidate Question": "Candidate Question",
+                "Campus Hiring Dashboard": "Campus Hiring Dashboard"
             };
 
             this.getView().getModel("RaiseBugModel").setProperty(

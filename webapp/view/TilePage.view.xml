@@ -87,6 +87,8 @@
                                                     allowWrapping="true"
                                                     class="sapUiTinyMargin"
                                                 >
+                                                   
+
                                                     <GenericTile
                                                         visible="{= ${AppVisibilityModel>/SelfService} === '1' ? true : false}"
                                                         class="sapUiSmallMargin glassTile blue"
@@ -219,21 +221,7 @@
                                                             />
                                                         </TileContent>
                                                     </GenericTile>
-                                                    <!-- <GenericTile
-                                                        id="HD_id_HiringDashboardTile"
-                                                        class="sapUiSmallMargin glassTile blue"
-                                                        visible="{= ${AppVisibilityModel>/HiringDashboard} !== '0' }"
-                                                        header="{i18n>hiringDashboardTitle}"
-                                                        press="TileV_onpressHiringDashboard"
-                                                    >
-                                                        <TileContent
-                                                            unit="{i18n>hiringDashboardUnit}"
-                                                        >
-                                                            <ImageContent
-                                                                src="sap-icon://employee"
-                                                            />
-                                                        </TileContent>
-                                                    </GenericTile> -->
+                                                   
                                                     <GenericTile
                                                         class="sapUiSmallMargin glassTile blue"
                                                         visible="{= ${AppVisibilityModel>/GoalQuestions} !== '0' ? true : false }"
@@ -350,7 +338,7 @@
                                                     allowWrapping="true"
                                                     class="sapUiTinyMargin"
                                                 >
-                                        <GenericTile
+                                                    <GenericTile
                                                         visible="{= ${AppVisibilityModel>/MyInbox} === '1' }"
                                                         class="sapUiSmallMargin glassTile blue"
                                                         header="{i18n>headerInbox}"
@@ -951,6 +939,62 @@
                                                             />
                                                         </TileContent>
                                                     </GenericTile>
+                                                </layout:HorizontalLayout>
+                                            </ux:blocks>
+                                        </ux:ObjectPageSubSection>
+                                    </ux:subSections>
+                                </ux:ObjectPageSection>
+
+
+                                 <ux:ObjectPageSection
+                                    titleUppercase="false"
+                                    title="{i18n>hiring}"
+                                    class="roomHeaderTitle1"
+                                    visible="{= ${TileAccessModel>/Hiring} === '1' ? true : false}"
+                                >
+                                    <ux:subSections>
+                                        <ux:ObjectPageSubSection
+                                            titleUppercase="false"
+                                        >
+                                            <ux:blocks>
+                                                <layout:HorizontalLayout
+                                                    allowWrapping="true"
+                                                    class="sapUiTinyMargin"
+                                                >
+
+                                                 <GenericTile
+                                                        visible="{= ${AppVisibilityModel>/CandidateQuestion} === '1' ? true : false}"
+                                                        class="sapUiSmallMargin glassTile blue"
+                                                        header="{i18n>candidatequestion}"
+                                                        press="TileV_onpressCandidateQuestion"
+                                                        subheader="{i18n>subhead}"
+                                                    >
+                                                        <TileContent
+                                                            unit="{i18n>managequestion}"
+                                                        >
+                                                            <ImageContent
+                                                                src="sap-icon://incident"
+                                                            />
+                                                        </TileContent>
+                                                    </GenericTile>
+                                                   <GenericTile
+                                                        id="HD_id_HiringDashboardTile"
+                                                        class="sapUiSmallMargin glassTile blue"
+                                                        visible="{= ${AppVisibilityModel>/HiringDashboard} !== '0' }"
+                                                        header="{i18n>hiringDashboardTitle}"
+                                                        press="TileV_onpressHiringDashboard"
+                                                    >
+                                                        <TileContent
+                                                            unit="{i18n>hiringDashboardUnit}"
+                                                        >
+                                                            <ImageContent
+                                                                src="sap-icon://employee"
+                                                            />
+                                                        </TileContent>
+                                                    </GenericTile>
+                                                   
+                                                    
+                                                   
                                                 </layout:HorizontalLayout>
                                             </ux:blocks>
                                         </ux:ObjectPageSubSection>

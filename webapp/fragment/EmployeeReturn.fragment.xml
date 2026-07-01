@@ -43,9 +43,10 @@
                 />
 
                 <Button
-                    text="Check Available Slots"
+                    text="Available Slots"
                     type="Transparent"
                     press="RS_onViewAvailability"
+                    tooltip="Available Slots"
                 />
 
                 <Label
@@ -110,8 +111,12 @@
         </f:SimpleForm>
       
 
-       	<VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
-    <HBox width="100%" justifyContent="End">
+       <footer>
+    <Toolbar>
+        <HBox
+            width="100%"
+            justifyContent="End"
+            alignItems="Center">
     
 			   <Button
                 text="{i18n>save}"
@@ -122,10 +127,10 @@
                 text="{i18n>assestAssignCancel}"
                 type="Transparent"
                 press="RS_onCancelSlot"
-                class="closeBtnMargin"
             />
 			
 			</HBox>
-			</VBox>
+    </Toolbar>
+</footer>
     </Dialog>
 </core:FragmentDefinition>

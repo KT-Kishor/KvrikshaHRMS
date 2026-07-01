@@ -1,0 +1,719 @@
+<mvc:View
+    controllerName="sap.kt.com.minihrsolution.controller.HiringDashboardOverview"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
+    xmlns:card="sap.f.cards"
+    xmlns:layout="sap.ui.layout"
+    xmlns:fb="sap.ui.comp.filterbar"
+    xmlns:viz="sap.viz.ui5.controls"
+    xmlns:vizData="sap.viz.ui5.data"
+    xmlns:vizFeeds="sap.viz.ui5.controls.common.feeds"
+    displayBlock="true"
+>
+    <Page
+        id="HDO_id_Page"
+        title="{i18n>StudentDashboard}"
+        showNavButton="true"
+        navButtonPress="HDO_onPress"
+        class="classheader glassHeader ObjectcustomHeaderToolbar"
+    >
+        <headerContent>
+            <ToolbarSpacer />
+            <!-- Notification Button -->
+            <Button
+                press="Tile_NotifictionBTN"
+                class="sapUiTinyMarginBeginEnd LogNot logoutBtn"
+                tooltip="{i18n>TilenotificationfragName}"
+                icon="sap-icon://bell"
+                type="Transparent"
+            >
+                <customData>
+                    <core:CustomData
+                        key="badge"
+                        value="{EndingSoonModel>/notificationCount}"
+                    />
+                </customData>
+            </Button>
+            <!-- Bug Button -->
+            <Button
+                press="TP_onraisebugpress"
+                icon="sap-icon://incident"
+                tooltip="{i18n>raisebug}"
+                type="Transparent"
+                class="LogNot logoutBtn"
+            />
+            <!-- Logout Button -->
+            <Button
+                press="onLogout"
+                icon="sap-icon://log"
+                tooltip="{i18n>logoutTooltip}"
+                type="Transparent"
+                class="LogNot logoutBtn"
+            />
+        </headerContent>
+        <content>
+            <!-- SEARCH + FILTERS -->
+            <!-- <VBox>
+                <fb:FilterBar
+                    id="HDO_id_FilterBar"
+                    visible="false"
+                    useToolbar="false"
+                    search="HDO_onSearch"
+                    clear="HDO_onClear"
+                    showClearOnFB="true"
+                >
+                    <fb:filterGroupItems>
+                        <fb:FilterGroupItem
+                            name="CandidateName"
+                            label="{i18n>candidateName}"
+                            groupName="General"
+                            visibleInFilterBar="true"
+                        >
+                            <fb:control>
+                                <SearchField
+                                    id="HDO_id_Search2"
+                                    liveChange="HDO_onLiveSearch"
+                                />
+                            </fb:control>
+                        </fb:FilterGroupItem>
+                        <fb:FilterGroupItem
+                            name="Skill"
+                            label="{i18n>skillLevel}"
+                            groupName="General"
+                            visibleInFilterBar="true"
+                        >
+                            <fb:control>
+                                <ComboBox id="HDO_id_Skill" />
+                            </fb:control>
+                        </fb:FilterGroupItem>
+                        <fb:FilterGroupItem
+                            name="Language"
+                            label="{i18n>language}"
+                            groupName="General"
+                            visibleInFilterBar="true"
+                        >
+                            <fb:control>
+                                <ComboBox id="HDO_id_Language"/>
+                            </fb:control>
+                        </fb:FilterGroupItem>
+                    </fb:filterGroupItems>
+                </fb:FilterBar>
+            </VBox> -->
+            <!-- KPI SECTION -->
+            <FlexBox
+                wrap="Wrap"
+                justifyContent="Start"
+                alignItems="Start"
+                class="sapUiSmallMarginTop"
+            >
+                <!-- Total Candidates - Blue -->
+                <GenericTile
+                    class="tileLayout tileTotal blueTile sapUiSmallMargin"
+                    header="{i18n>totalCandidates}"
+                    subheader="{i18n>totalRegisteredSubheader}"
+                >
+                    <tileContent>
+                        <TileContent>
+                            <content>
+                                <NumericContent
+                                    class="sapUiSmallMarginTop"
+                                    value="{DashboardModel>/totalCandidates}"
+                                    icon="sap-icon://group"
+                                    indicator="Up"
+                                    valueColor="Good"
+                                    withMargin="false"
+                                />
+                            </content>
+                        </TileContent>
+                    </tileContent>
+                </GenericTile>
+                <!-- MCQ Assignments - Orange -->
+                <GenericTile
+                    class="tileLayout tileTotal orangeTile sapUiSmallMargin"
+                    header="{i18n>mcqAssignments}"
+                    subheader="{i18n>assignedTestsSubheader}"
+                >
+                    <tileContent>
+                        <TileContent>
+                            <content>
+                                <NumericContent
+                                    class="sapUiSmallMarginTop"
+                                    value="{DashboardModel>/totalMcqAssignments}"
+                                    icon="sap-icon://education"
+                                    indicator="Up"
+                                    valueColor="Critical"
+                                    withMargin="false"
+                                />
+                            </content>
+                        </TileContent>
+                    </tileContent>
+                </GenericTile>
+                <!-- Coding Assignments - Orange -->
+                <GenericTile
+                    class="tileLayout tileTotal orangeTile sapUiSmallMargin"
+                    header="{i18n>codingAssignments}"
+                    subheader="{i18n>assignedTestsSubheader}"
+                >
+                    <tileContent>
+                        <TileContent>
+                            <content>
+                                <NumericContent
+                                    class="sapUiSmallMarginTop"
+                                    value="{DashboardModel>/totalCodingAssignments}"
+                                    icon="sap-icon://source-code"
+                                    indicator="Up"
+                                    valueColor="Critical"
+                                    withMargin="false"
+                                />
+                            </content>
+                        </TileContent>
+                    </tileContent>
+                </GenericTile>
+                <!-- MCQ Passed - Green -->
+                <GenericTile
+                    class="tileLayout tileTotal greenTile sapUiSmallMargin"
+                    header="{i18n>mcqPassed}"
+                    subheader="{i18n>mcqClearedSubheader}"
+                >
+                    <tileContent>
+                        <TileContent>
+                            <content>
+                                <NumericContent
+                                    class="sapUiSmallMarginTop"
+                                    value="{DashboardModel>/mcqPassed}"
+                                    icon="sap-icon://accept"
+                                    indicator="Up"
+                                    valueColor="Good"
+                                    withMargin="false"
+                                />
+                            </content>
+                        </TileContent>
+                    </tileContent>
+                </GenericTile>
+                <!-- Coding Passed - Green -->
+                <GenericTile
+                    class="tileLayout tileTotal greenTile sapUiSmallMargin"
+                    header="{i18n>codingPassed}"
+                    subheader="{i18n>codingClearedSubheader}"
+                >
+                    <tileContent>
+                        <TileContent>
+                            <content>
+                                <NumericContent
+                                    class="sapUiSmallMarginTop"
+                                    value="{DashboardModel>/codingPassed}"
+                                    icon="sap-icon://sys-enter-2"
+                                    indicator="Up"
+                                    valueColor="Good"
+                                    withMargin="false"
+                                />
+                            </content>
+                        </TileContent>
+                    </tileContent>
+                </GenericTile>
+                <!-- Failed - Red -->
+                <GenericTile
+                    class="tileLayout tileTotal redTile sapUiSmallMargin"
+                    header="{i18n>failed}"
+                    subheader="{i18n>didNotClearSubheader}"
+                >
+                    <tileContent>
+                        <TileContent>
+                            <content>
+                                <NumericContent
+                                    class="sapUiSmallMarginTop"
+                                    value="{DashboardModel>/failedCandidates}"
+                                    icon="sap-icon://decline"
+                                    indicator="Down"
+                                    valueColor="Error"
+                                    withMargin="false"
+                                />
+                            </content>
+                        </TileContent>
+                    </tileContent>
+                </GenericTile>
+                <!-- In Progress - Orange -->
+                <GenericTile
+                    class="tileLayout tileTotal orangeTile sapUiSmallMargin"
+                    header="{i18n>inProgress}"
+                    subheader="{i18n>currentlyOngoingSubheader}"
+                >
+                    <tileContent>
+                        <TileContent>
+                            <content>
+                                <NumericContent
+                                    class="sapUiSmallMarginTop"
+                                    value="{DashboardModel>/testsInProgress}"
+                                    icon="sap-icon://in-progress"
+                                    indicator="Up"
+                                    valueColor="Critical"
+                                    withMargin="false"
+                                />
+                            </content>
+                        </TileContent>
+                    </tileContent>
+                </GenericTile>
+                <!-- Average Score - Blue -->
+                <GenericTile
+                    class="tileLayout tileTotal blueTile sapUiSmallMargin"
+                    header="{i18n>averageScore}"
+                    subheader="{i18n>allCandidatesSubheader}"
+                >
+                    <tileContent>
+                        <TileContent unit="%">
+                            <content>
+                                <NumericContent
+                                    class="sapUiSmallMarginTop"
+                                    value="{DashboardModel>/averageScore}"
+                                    icon="sap-icon://bar-chart"
+                                    indicator="Up"
+                                    valueColor="Good"
+                                    withMargin="false"
+                                />
+                            </content>
+                        </TileContent>
+                    </tileContent>
+                </GenericTile>
+                <!-- Pass Rate - Green -->
+                <GenericTile
+                    class="tileLayout tileTotal greenTile sapUiSmallMargin"
+                    header="{i18n>passRate}"
+                    subheader="{i18n>overallPassSubheader}"
+                >
+                    <tileContent>
+                        <TileContent unit="%">
+                            <content>
+                                <NumericContent
+                                    class="sapUiSmallMarginTop"
+                                    value="{DashboardModel>/passRate}"
+                                    scale="%"
+                                    icon="sap-icon://trend-up"
+                                    indicator="Up"
+                                    valueColor="Good"
+                                    withMargin="false"
+                                />
+                            </content>
+                        </TileContent>
+                    </tileContent>
+                </GenericTile>
+                <!-- Fail Rate - Red -->
+                <GenericTile
+                    class="tileLayout tileTotal redTile sapUiSmallMargin"
+                    header="{i18n>failRate}"
+                    subheader="{i18n>overallFailSubheader}"
+                >
+                    <tileContent>
+                        <TileContent unit="%">
+                            <content>
+                                <NumericContent
+                                    class="sapUiSmallMarginTop"
+                                    value="{DashboardModel>/failRate}"
+                                    scale="%"
+                                    icon="sap-icon://trend-down"
+                                    indicator="Down"
+                                    valueColor="Error"
+                                    withMargin="false"
+                                />
+                            </content>
+                        </TileContent>
+                    </tileContent>
+                </GenericTile>
+            </FlexBox>
+            <!-- CHARTS -->
+            <layout:Grid
+                defaultSpan="XL6 L6 M12 S12"
+                class="sapUiMediumMarginTop"
+            >
+                <layout:content>
+
+                    <!-- 1. Pass vs Fail Chart -->
+                    <f:Card>
+                        <f:header>
+                            <Toolbar class="customdashboard">
+                                <Title text="{i18n>passVsFail}" level="H5" wrapping="true" class="Dashboardtitle"/>
+                                <ToolbarSpacer/>
+                                <Button icon="sap-icon://pie-chart" press="HD_onPressPassFailPie" tooltip="Pie"/>
+                                <Button icon="sap-icon://donut-chart" press="HD_onPressPassFailDonut" tooltip="Donut"/>
+                            </Toolbar>
+                        </f:header>
+                        <f:content>
+                            <viz:VizFrame
+                                id="HDO_id_PieChart"
+                                vizType="{ChartTypeModel>/passFailType}"
+                                height="350px"
+                                vizProperties="{
+        'title': {
+            'visible': false
+        }
+    }"
+                            >
+                                <viz:dataset>
+                                    <vizData:FlattenedDataset
+                                        data="{ChartModel>/PassFail}"
+                                    >
+                                        <vizData:dimensions>
+                                            <vizData:DimensionDefinition
+                                                name="Result"
+                                                value="{ChartModel>Result}"
+                                            />
+                                        </vizData:dimensions>
+                                        <vizData:measures>
+                                            <vizData:MeasureDefinition
+                                                name="Count"
+                                                value="{ChartModel>Count}"
+                                            />
+                                        </vizData:measures>
+                                    </vizData:FlattenedDataset>
+                                </viz:dataset>
+                                <viz:feeds>
+                                    <vizFeeds:FeedItem
+                                        uid="size"
+                                        type="Measure"
+                                        values="Count"
+                                    />
+                                    <vizFeeds:FeedItem
+                                        uid="color"
+                                        type="Dimension"
+                                        values="Result"
+                                    />
+                                </viz:feeds>
+                            </viz:VizFrame>
+                        </f:content>
+                    </f:Card>
+
+                    <!-- 2. Candidate Skill Level Chart -->
+                    <f:Card>
+                        <f:header>
+                            <Toolbar class="customdashboard">
+                                <Title text="{i18n>candidateSkillLevel}" level="H5" wrapping="true" class="Dashboardtitle"/>
+                                <ToolbarSpacer/>
+                                <Button icon="sap-icon://vertical-bar-chart" press="HD_onPressSkillColumn" tooltip="Column"/>
+                                <Button icon="sap-icon://horizontal-bar-chart" press="HD_onPressSkillBar" tooltip="Bar"/>
+                            </Toolbar>
+                        </f:header>
+                        <f:content>
+                            <viz:VizFrame
+                                id="HDO_id_SkillChart"
+                                vizType="{ChartTypeModel>/skillLevelType}"
+                                height="350px"
+                                vizProperties="{
+        'title': {
+            'visible': false
+        }
+    }"
+                            >
+                                <viz:dataset>
+                                    <vizData:FlattenedDataset
+                                        data="{ChartModel>/SkillLevel}"
+                                    >
+                                        <vizData:dimensions>
+                                            <vizData:DimensionDefinition
+                                                name="Skill"
+                                                value="{ChartModel>Skill}"
+                                            />
+                                        </vizData:dimensions>
+                                        <vizData:measures>
+                                            <vizData:MeasureDefinition
+                                                name="Count"
+                                                value="{ChartModel>Count}"
+                                            />
+                                        </vizData:measures>
+                                    </vizData:FlattenedDataset>
+                                </viz:dataset>
+                                <viz:feeds>
+                                    <vizFeeds:FeedItem
+                                        uid="valueAxis"
+                                        type="Measure"
+                                        values="Count"
+                                    />
+                                    <vizFeeds:FeedItem
+                                        uid="categoryAxis"
+                                        type="Dimension"
+                                        values="Skill"
+                                    />
+                                </viz:feeds>
+                            </viz:VizFrame>
+                        </f:content>
+                    </f:Card>
+
+                    <!-- 3. Test Completed Chart -->
+                    <f:Card>
+                        <f:header>
+                            <Toolbar class="customdashboard">
+                                <Title text="{i18n>testCompleted}" level="H5" wrapping="true" class="Dashboardtitle"/>
+                                <ToolbarSpacer/>
+                                <Button icon="sap-icon://line-chart" press="HD_onPressTestLine" tooltip="Line"/>
+                                <Button icon="sap-icon://vertical-bar-chart" press="HD_onPressTestColumn" tooltip="Column"/>
+                            </Toolbar>
+                        </f:header>
+                        <f:content>
+                            <viz:VizFrame
+                                id="HDO_id_LineChart"
+                                vizType="{ChartTypeModel>/testCompletedType}"
+                                height="350px"
+                                vizProperties="{
+        'title': {
+            'visible': false
+        }
+    }"
+                            >
+                                <viz:dataset>
+                                    <vizData:FlattenedDataset
+                                        data="{ChartModel>/TestCompleted}"
+                                    >
+                                        <vizData:dimensions>
+                                            <vizData:DimensionDefinition
+                                                name="Day"
+                                                value="{ChartModel>Day}"
+                                            />
+                                        </vizData:dimensions>
+                                        <vizData:measures>
+                                            <vizData:MeasureDefinition
+                                                name="Count"
+                                                value="{ChartModel>Count}"
+                                            />
+                                        </vizData:measures>
+                                    </vizData:FlattenedDataset>
+                                </viz:dataset>
+                                <viz:feeds>
+                                    <vizFeeds:FeedItem
+                                        uid="valueAxis"
+                                        type="Measure"
+                                        values="Count"
+                                    />
+                                    <vizFeeds:FeedItem
+                                        uid="categoryAxis"
+                                        type="Dimension"
+                                        values="Day"
+                                    />
+                                </viz:feeds>
+                            </viz:VizFrame>
+                        </f:content>
+                    </f:Card>
+
+                    <!-- 4. MCQ vs Coding Chart -->
+                    <f:Card>
+                        <f:header>
+                            <Toolbar class="customdashboard">
+                                <Title text="{i18n>mcqVsCoding}" level="H5" wrapping="true" class="Dashboardtitle"/>
+                                <ToolbarSpacer/>
+                                <Button icon="sap-icon://donut-chart" press="HD_onPressMcqCodingDonut" tooltip="Donut"/>
+                                <Button icon="sap-icon://pie-chart" press="HD_onPressMcqCodingPie" tooltip="Pie"/>
+                            </Toolbar>
+                        </f:header>
+                        <f:content>
+                            <viz:VizFrame
+                                id="HDO_id_DonutChart"
+                                vizType="{ChartTypeModel>/mcqCodingType}"
+                                height="350px"
+                                vizProperties="{
+        'title': {
+            'visible': false
+        }
+    }"
+                            >
+                                <viz:dataset>
+                                    <vizData:FlattenedDataset
+                                        data="{ChartModel>/McqCoding}"
+                                    >
+                                        <vizData:dimensions>
+                                            <vizData:DimensionDefinition
+                                                name="Type"
+                                                value="{ChartModel>Type}"
+                                            />
+                                        </vizData:dimensions>
+                                        <vizData:measures>
+                                            <vizData:MeasureDefinition
+                                                name="Count"
+                                                value="{ChartModel>Count}"
+                                            />
+                                        </vizData:measures>
+                                    </vizData:FlattenedDataset>
+                                </viz:dataset>
+                                <viz:feeds>
+                                    <vizFeeds:FeedItem
+                                        uid="size"
+                                        type="Measure"
+                                        values="Count"
+                                    />
+                                    <vizFeeds:FeedItem
+                                        uid="color"
+                                        type="Dimension"
+                                        values="Type"
+                                    />
+                                </viz:feeds>
+                            </viz:VizFrame>
+                        </f:content>
+                    </f:Card>
+
+                </layout:content>
+            </layout:Grid>
+
+          <f:Card class="sapUiSmallMarginBeginEnd sapUiTinyMarginBottom" width="auto">
+  <f:content>
+ 
+      <Table
+        id="HDO_id_CandidateTable"
+        width="100%"
+        growing="true"
+        growingThreshold="10"
+        growingScrollToLoad="true"
+        updateFinished="onTableUpdateFinished"
+        items="{CandidateModel>/Candidates}"
+        busyIndicatorDelay="0"
+        alternateRowColors="true"
+        >
+
+        <!-- HEADER TOOLBAR -->
+        <headerToolbar>
+          <OverflowToolbar>
+
+           <Title
+  text="{= ${i18n>candidatesTitlePrefix} + ' (' + (${CandidateModel>/FilteredCount} || 0) + ')' }"
+  level="H3"/>
+
+            <ToolbarSpacer />
+
+            <!-- SEARCH FIELD (RIGHT SIDE) -->
+          <SearchField
+    id="HD_id_GlobalSearch"
+     width="15%"
+    placeholder="{i18n>searchPlaceholder}"
+    showSearchButton="true"
+    liveChange="onCandidateLiveSearch"
+    search="onCandidateLiveSearch">
+
+    <layoutData>
+        <OverflowToolbarLayoutData
+            priority="NeverOverflow"
+            shrinkable="true"/>
+    </layoutData>
+
+</SearchField>
+          </OverflowToolbar>
+        </headerToolbar>
+
+        <columns>
+          <Column width="6rem" vAlign="Middle">
+            <Text text="{i18n>colPhoto}" />
+          </Column>
+          <Column minScreenWidth="Tablet" demandPopin="true">
+            <Text text="{i18n>colStudentId}" />
+          </Column>
+          <Column minScreenWidth="Tablet" demandPopin="true">
+            <Text text="{i18n>colName}" />
+          </Column>
+          <Column minScreenWidth="Desktop" demandPopin="true" width="15rem">
+            <Text text="{i18n>colEmail}" />
+          </Column>
+          <Column minScreenWidth="Tablet" demandPopin="true">
+            <Text text="{i18n>colMcqScore}" />
+          </Column>
+          <Column minScreenWidth="Tablet" demandPopin="true">
+            <Text text="{i18n>colCodingScore}" />
+          </Column>
+          <Column minScreenWidth="Tablet" demandPopin="true">
+            <Text text="{i18n>colOverall}" />
+          </Column>
+          <Column minScreenWidth="Tablet" demandPopin="true">
+            <Text text="{i18n>colResult}" />
+          </Column>
+          <Column minScreenWidth="Tablet" demandPopin="true">
+            <Text text="{i18n>colAction}" />
+          </Column>
+        </columns>
+
+        <items>
+          <ColumnListItem>
+            <cells>
+              <!-- PHOTO -->
+              <Avatar
+                displayShape="Circle"
+                src="{= ${CandidateModel>photo} ? 'data:image/jpeg;base64,' + ${CandidateModel>photo} : '' }"
+                initials="{= ${CandidateModel>candidate_Name} ? ${CandidateModel>candidate_Name}.substring(0,1) : 'U' }"
+                backgroundColor="Accent6"
+                displaySize="S"
+              />
+              <!-- STUDENT ID -->
+              <ObjectIdentifier
+                title="{CandidateModel>student_Id}"
+                text="{CandidateModel>id}"
+              />
+              <!-- NAME -->
+              <Text
+                text="{CandidateModel>candidate_Name}"
+                wrapping="false"
+              />
+              <!-- EMAIL -->
+              <Link
+                text="{CandidateModel>candidate_Email}"
+                href="{= 'mailto:' + ${CandidateModel>candidate_Email} }"
+              />
+              <!-- MCQ SCORE -->
+              <ObjectStatus
+                text="{= ${CandidateModel>mcq/score} !== null ? ${CandidateModel>mcq/score} + '%' : 'N/A' }"
+                state="{=
+                  ${CandidateModel>mcq/score} >= 80 ? 'Success' :
+                  ${CandidateModel>mcq/score} >= 50 ? 'Warning' :
+                  'Error'
+                }"
+              />
+              <!-- CODING SCORE -->
+              <ObjectStatus
+                text="{= ${CandidateModel>coding/score} !== null ? ${CandidateModel>coding/score} + '%' : 'N/A' }"
+                state="{=
+                  ${CandidateModel>coding/score} >= 80 ? 'Success' :
+                  ${CandidateModel>coding/score} >= 50 ? 'Warning' :
+                  'Error'
+                }"
+              />
+              <!-- OVERALL SCORE -->
+              <ObjectStatus
+                text="{= ${CandidateModel>overallScore} ? ${CandidateModel>overallScore} + '%' : 'N/A' }"
+                state="{=
+                  ${CandidateModel>overallScore} >= 80
+                  ? 'Success'
+                  : ${CandidateModel>overallScore} >= 50
+                  ? 'Warning'
+                  : 'Error'
+                }"
+              />
+              <!-- RESULT -->
+              <ObjectStatus
+                text="{CandidateModel>overallResult}"
+                state="{=
+                  ${CandidateModel>overallResult} === 'Pass'
+                  ? 'Success'
+                  : ${CandidateModel>overallResult} === 'Fail'
+                  ? 'Error'
+                  : 'Warning'
+                }"
+              />
+              <!-- ACTION -->
+              <Button
+                text="{i18n>viewBtn}"
+                press="onViewCandidate"
+              />
+            </cells>
+          </ColumnListItem>
+        </items>
+
+      </Table>
+   
+  </f:content>
+</f:Card>
+        </content>
+        <footer>
+            <Bar>
+                <contentLeft>
+                    <core:Fragment
+                        fragmentName="sap.kt.com.minihrsolution.fragment.Footer"
+                        type="XML"
+                    />
+                </contentLeft>
+            </Bar>
+        </footer>
+    </Page>
+</mvc:View>

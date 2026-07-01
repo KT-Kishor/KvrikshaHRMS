@@ -82,11 +82,16 @@
 			</f:content>
 		</f:SimpleForm>
 		<!-- Buttons for Submit and Close actions -->
-		<VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
-    <HBox width="100%" justifyContent="End">
+		<footer>
+    <Toolbar>
+        <HBox
+            width="100%"
+            justifyContent="End"
+            alignItems="Center">
 			<Button text="{i18n>save}" type="Transparent" press="MSA_Frg_Update" class="sendMail" />
-			<Button text="{i18n>close}" type="Transparent" class="sendMail closeBtnMargin" press="MSA_Frg_Close" />
+			<Button text="{i18n>close}" type="Transparent" class="sendMail" press="MSA_Frg_Close" />
 			</HBox>
-       </VBox>
+    </Toolbar>
+</footer>
 	</Dialog>
 </core:FragmentDefinition>

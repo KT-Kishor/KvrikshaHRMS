@@ -25,13 +25,18 @@
 				<TextArea value="" liveChange="MIF_liveChangeForMangerComments"  rows="4" id="MIF_id_remark" placeholder="{i18n>remarks}" maxLength="2000"/>
 			</f:content>
 		</f:SimpleForm>
-	 <VBox width="100%" class="sapUiSmallMarginTop fotterbtns">
-    <HBox width="100%" justifyContent="End">
+	 <footer>
+    <Toolbar>
+        <HBox
+            width="100%"
+            justifyContent="End"
+            alignItems="Center">
 			<Button type="Transparent" id="MIF_id_OkBtn" press="MTF_onPressOk" text=""/>
 		
 		
-			<Button text="{i18n>close}" type="Transparent" press="MIF_onPressClose" class="closeBtnMargin"/>
-		 </HBox>
-       </VBox>
+			<Button text="{i18n>close}" type="Transparent" press="MIF_onPressClose" />
+		</HBox>
+    </Toolbar>
+</footer>
 	</Dialog>
 </core:FragmentDefinition>

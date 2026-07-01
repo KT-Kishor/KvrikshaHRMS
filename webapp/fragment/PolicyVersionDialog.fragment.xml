@@ -84,8 +84,12 @@
             </ScrollContainer>
         </content>
         <!--  FIXED FOOTER — always visible on all devices, never hides behind ...  -->
-      <VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
-    <HBox width="100%" justifyContent="End">
+      <footer>
+    <Toolbar>
+        <HBox
+            width="100%"
+            justifyContent="End"
+            alignItems="Center">
             <Button
                 text="{i18n>save}"
                 press="PL_onSaveNewVersion"
@@ -97,11 +101,12 @@
                 press="PL_onCancelNewVersion"
                 type="Transparent"
                 id="PL_id_versionCancelButton"
-                class="marginRight closeBtnMargin"
+                class="marginRight"
 
             />
-     </HBox>
-     </VBox>
+    </HBox>
+    </Toolbar>
+</footer>
         
     </Dialog>
 </core:FragmentDefinition>

@@ -1,0 +1,230 @@
+
+<mvc:View
+    controllerName="sap.kt.com.minihrsolution.controller.CandidateQuestion"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:u="sap.ui.unified"
+    xmlns:fb="sap.ui.comp.filterbar"
+>
+
+    <Page
+        id="CQ_id_Page"
+    >
+
+    <customHeader>
+	    <core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Header" type="XML" />
+		</customHeader>
+        <content>
+
+                <Dialog
+                    id="CQ_id_UploadDialog"
+                    title="{i18n>UploadQuestionTitle}"
+                    draggable="true"
+                    contentWidth="400px"
+                    contentHeight="auto"
+                    class="sapUiResponsivePadding"
+                >
+                    <content>
+                        <VBox class="sapUiSmallMargin">
+                            <u:FileUploader
+                                id="CQ_id_FileUploader"
+                                name="myFileUpload"
+                                uploadUrl="upload/"
+                                width="100%"
+                                tooltip="{i18n>UploadTooltip}"
+                                uploadComplete="CQ_handleUploadComplete"
+                                change="CQ_handleValueChange"
+                                typeMissmatch="CQ_handleTypeMissmatch"
+                                fileType="xlsx,xls"
+                                placeholder="{i18n>chooseFile}"
+                            />
+                        </VBox>
+                    </content>
+
+                    <footer>
+    <Toolbar>
+        <HBox
+            width="100%"
+            justifyContent="End"
+            alignItems="Center">
+                        <Button
+                            text="{i18n>upload}"
+                            type="Transparent"
+                            press="CQ_handleUploadPress"
+                        />
+
+                        <Button
+                            type="Transparent"
+                            text="{i18n>cancel}"
+                            class="closeBtnMargin"
+                            press="CQ_onCloseUploadDialog"
+                        />
+                  </HBox>
+    </Toolbar>
+</footer>
+                </Dialog>
+
+                <fb:FilterBar
+                    id="CQ_id_FilterBar1"
+                    search="CQ_onGoPress"
+                    clear="CQ_onClearPress"
+                    showRestoreButton="false"
+                    showClearOnFB="true"
+                    showGoOnFB="true"
+                    showFilterConfiguration="false"
+                    useToolbar="false"
+                    class="sapUiTinyMargin CommonRoundedTable"
+                >
+                    <fb:filterGroupItems>
+
+
+                     <fb:FilterGroupItem
+                            groupName="Basic"
+                            name="search"
+                            label="Search"
+                            visibleInFilterBar="true"
+                        >
+                            <fb:control>
+                               <SearchField
+                width="20rem"
+                id="searchid"
+                liveChange="onGlobalSearch"
+                placeholder="{i18n>search}" />
+                               
+                            </fb:control>
+                        </fb:FilterGroupItem>
+                        <fb:FilterGroupItem
+                            groupName="Basic"
+                            name="section"
+                            label="{i18n>type}"
+                            visibleInFilterBar="true"
+                        >
+                            <fb:control>
+                                <ComboBox
+                                    id="CQ_id_Department"
+                                    width="100%"
+                                    placeholder="{i18n>selecttype}"
+                                    selectedKey=""
+                                    items="{FilterModel>/AllType}"
+                                    showClearIcon="true"
+                                    selectionChange="CQ_onDepartmentFilterChange"
+                                    change="CQ_onDepartmentFilterChange"
+                                >
+                                    <core:Item
+                                        key="{FilterModel>type}"
+                                        text="{FilterModel>type}"
+                                    />
+                                </ComboBox>
+                            </fb:control>
+                        </fb:FilterGroupItem>
+                       
+                    </fb:filterGroupItems>
+                </fb:FilterBar>
+
+                <Table
+                    id="CQ_id_Table"
+                    inset="false"
+                    width="auto"
+                    growing="true"
+                    growingThreshold="20"
+                    growingScrollToLoad="true"
+                     updateFinished="onTableUpdateFinished"
+                    mode="SingleSelectLeft"
+                   items="{
+    path:'Questionmodel>/Questions'
+}"
+     class="sapUiTinyMargin CommonRoundedTable"
+                >
+                    <headerToolbar>
+                        <OverflowToolbar>
+                            <Title
+                                id="CQ_id_Title"
+                                text="{i18n>QuestionsList}"
+                                level="H2"
+                            />
+                            <ToolbarSpacer />
+                            <Button
+                                text="{i18n>DownloadTemplate}"
+                              tooltip="{i18n>DownloadTemplate}"
+                                press="CQ_onDownloadExcelPress"
+                            />
+                            <Button
+                                text="{i18n>downloadexcel}"
+                              tooltip="{i18n>downloadexcel}"
+                                press="CQ_onExcelPress"
+                            />
+
+                            <Button
+                               
+                                text="{i18n>upload}"
+                                tooltip="{i18n>upload}"
+                                press="CQ_onUploadPress"
+
+                            />
+
+                            <Button
+                                text="{i18n>add}"
+                             tooltip="{i18n>add}"
+                                press="CQ_onCreatePress"
+                            />
+
+                            <Button
+                                text="{i18n>delete}"
+                             tooltip="{i18n>delete}"
+                                press="CQ_onDeletePress"
+                            />
+
+                        </OverflowToolbar>
+                    </headerToolbar>
+
+                    <columns>
+                        <Column
+                        width="25%"
+                            minScreenWidth="Tablet"
+                            demandPopin="true"
+                        >
+                            <Text text="{i18n>testid}" />
+                        </Column>
+                        <Column
+                        width="25%"
+                            minScreenWidth="Tablet"
+                            demandPopin="true"
+                        >
+                            <Text text="{i18n>Question}" />
+                        </Column>
+                        <Column
+                        width="25%"
+                            minScreenWidth="Tablet"
+                            demandPopin="true"
+                        >
+                            <Text text="{i18n>mark}" />
+                        </Column>
+                       
+                    </columns>
+
+                    <items>
+                        <ColumnListItem type="Navigation" press="onpressquestion">
+                            <cells>
+                                <Text
+                                    text="{Questionmodel>test_id}"
+                                />
+                                <Text
+                                    text="{Questionmodel>question_text}"
+                                />
+                                <Text text="{Questionmodel>marks}"/>   
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+        </content>
+        <footer>
+			<Bar>
+				<contentLeft>
+					<core:Fragment
+                        fragmentName="sap.kt.com.minihrsolution.fragment.Footer" type="XML" />
+				</contentLeft>
+			</Bar>
+		</footer>
+    </Page>
+</mvc:View>

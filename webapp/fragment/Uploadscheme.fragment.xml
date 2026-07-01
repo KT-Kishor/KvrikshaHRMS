@@ -45,12 +45,17 @@
             </f:content>
         </f:SimpleForm>
      </VBox>
-     <VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
-    <HBox width="100%" justifyContent="End">
+     <footer>
+    <Toolbar>
+        <HBox
+            width="100%"
+            justifyContent="End"
+            alignItems="Center">
             <Button text="{i18n>submit}" type="Transparent" press="FUS_onCreateDialogSubmit" enabled="{/isFileValid}"/>
        
-            <Button text="{i18n>btnCancel}" type="Transparent" press="FUS_onCreateDialogCancel" class="closeBtnMargin"/>
-        </HBox>
-       </VBox>
+            <Button text="{i18n>btnCancel}" type="Transparent" press="FUS_onCreateDialogCancel" />
+       </HBox>
+    </Toolbar>
+</footer>
     </Dialog>
 </core:FragmentDefinition>

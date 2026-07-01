@@ -66,13 +66,17 @@
 				</f:content>
 			</f:SimpleForm>
 		<footer>
-			<Toolbar>
-				<ToolbarSpacer />
+    <Toolbar>
+        <HBox
+            width="100%"
+            justifyContent="End"
+            alignItems="Center">
 				<!-- This pushes the buttons to the right -->
 				<Button text="{i18n>submit}" type="Transparent" press="Exp_Det_onPressSubmit" visible="{viewModel>/SubmitBtn}" />
 				<Button text="{i18n>save}" type="Transparent" press="Exp_Det_onPressSaveExpense" visible="{viewModel>/SaveBtn}" />
-				<Button text="{i18n>close}" type="Transparent" class="spaceBetween sendMail" press="Exp_Det_onPressClose" />
-			</Toolbar>
-		</footer>
+				<Button text="{i18n>close}" type="Transparent" class="sendMail" press="Exp_Det_onPressClose" />
+			</HBox>
+    </Toolbar>
+</footer>
 	</Dialog>
 </core:FragmentDefinition>

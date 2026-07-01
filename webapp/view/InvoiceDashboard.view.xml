@@ -44,56 +44,54 @@
 
                 <FlexBox
                     wrap="Wrap"
-                    justifyContent="SpaceAround"
+                    justifyContent="Center"
                     alignItems="Start"
-                    class="invoiceTileContainer sapUiSmallMarginTop">
+                    class="invoiceTileContainer sapUiSmallMarginTop sapUiTinyMargin">
 
                     <GenericTile
-                        class="tileLayout tileTotal"
+                        class="tileLayout tileTotal "
                         header="{i18n>totalAmount}"
                         subheader="{i18n>All_Invoices}"
-                        sizeBehavior="Small"
-                        state="Loaded"
-                        frameType="Stretch">
+                       >
                         <TileContent footer="{= 'Total Invoices : ' + ${InvoiceDashboardModel>/TileData/TotalCount}}">
                             <NumericContent
-                                value="{InvoiceDashboardModel>/TileData/TotalAmount}"
+                                 value="{path:'InvoiceDashboardModel>/TileData/TotalAmount',
+                            formatter:'.Formatter.fromatNumberinvoice'}"
                                 icon="sap-icon://money-bills"
                                 indicator="Up"
                                 valueColor="Good"
                                 withMargin="false"
-                                scale="K"/>
+                                scale="K" 
+                               />
                         </TileContent>
                     </GenericTile>
 
                     <GenericTile
-                        class="tileLayout tileReceived"
+                        class="tileLayout tileReceived "
                         header="{i18n>invoiceReceivedAmount}"
                         subheader="{i18n>Payments_Received}"
-                        sizeBehavior="Small"
-                        state="Loaded"
-                        frameType="Stretch">
+                       >
                         <TileContent footer="{= 'Paid Invoices : ' + ${InvoiceDashboardModel>/TileData/ReceivedCount}}">
                             <NumericContent
-                                value="{InvoiceDashboardModel>/TileData/ReceivedAmount}"
+                                value="{path:'InvoiceDashboardModel>/TileData/ReceivedAmount',
+                            formatter:'.Formatter.fromatNumberinvoice'}"
                                 icon="sap-icon://payment-approval"
                                 indicator="Up"
                                 valueColor="Good"
                                 withMargin="false"
-                                scale="K"/>
+                                scale="K" />
                         </TileContent>
                     </GenericTile>
 
                     <GenericTile
-                        class="tileLayout tilePending"
+                        class="tileLayout tilePending "
                         header="{i18n>Pending_Amount}"
                         subheader="{i18n>Outstanding}"
-                        sizeBehavior="Small"
-                        state="Loaded"
-                        frameType="Stretch">
+                        >
                         <TileContent footer="{= 'Pending Invoices : ' + ${InvoiceDashboardModel>/TileData/PendingCount}}">
                             <NumericContent
-                                value="{InvoiceDashboardModel>/TileData/PendingAmount}"
+                                value="{path:'InvoiceDashboardModel>/TileData/PendingAmount',
+                            formatter:'.Formatter.fromatNumberinvoice'}"
                                 icon="sap-icon://pending"
                                 indicator="Down"
                                 valueColor="Critical"
@@ -103,19 +101,17 @@
                     </GenericTile>
 
                     <GenericTile
-                        class="tileLayout tileOverdue"
+                        class="tileLayout tileOverdue "
                         header="{i18n>Overdue_Amount}"
                         subheader="{i18n>Past_Due}"
-                        sizeBehavior="Small"
-                        state="Loaded"
-                        frameType="Stretch">
+                       >
                         <TileContent footer="{= 'Overdue Invoices : ' + ${InvoiceDashboardModel>/TileData/OverdueCount}}">
                             <NumericContent
-                                value="{InvoiceDashboardModel>/TileData/OverdueAmount}"
+                                 value="{path:'InvoiceDashboardModel>/TileData/OverdueAmount',
+                            formatter:'.Formatter.fromatNumberinvoice'}"
                                 icon="sap-icon://alert"
                                 indicator="Down"
                                 valueColor="Error"
-                                withMargin="false"
                                 scale="K"/>
                         </TileContent>
                     </GenericTile>
@@ -124,12 +120,11 @@
                         class="tileLayout tileReceived"
                         header="Total Credit Notes"
                         subheader="All Credit Notes"
-                        sizeBehavior="Small"
-                        state="Loaded"
-                        frameType="Stretch">
+                        >
                         <TileContent footer="{= 'Credit Notes : ' + ${InvoiceDashboardModel>/CreditNoteCount}}">
                             <NumericContent
-                                value="{InvoiceDashboardModel>/CreditNoteTotalAmount}"
+                                value="{path:'InvoiceDashboardModel>/CreditNoteTotalAmount',
+                            formatter:'.Formatter.fromatNumberinvoice'}"
                                 icon="sap-icon://payment-approval"
                                 indicator="Up"
                                 valueColor="Good"
@@ -138,6 +133,7 @@
                         </TileContent>
                     </GenericTile>
                 </FlexBox>
+               
 				<layout:Grid defaultSpan="XL6 L6 M12 S12" class="sapUiTinyMargin">
 					<layout:content>
 						<!-- 1. Status Distribution Chart -->

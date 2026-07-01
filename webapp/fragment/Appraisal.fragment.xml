@@ -80,11 +80,15 @@
 			</l:BlockLayout>
 		</ScrollContainer>
 		<footer>
-			<Toolbar>
-				<ToolbarSpacer/>
+    <Toolbar>
+        <HBox
+            width="100%"
+            justifyContent="End"
+            alignItems="Center">
 				<Button text="{i18n>save}" id="idSaveBtn" press="onPressAppraisalSave" class="sendMail" type="Transparent"/>
 				<Button text="{i18n>close}" id="idCloseBtn" press="onPressAppraisalClose" type="Transparent" class="sendMail" />
-			</Toolbar>
-		</footer>
+			</HBox>
+    </Toolbar>
+</footer>
 	</Dialog>
 </core:FragmentDefinition>

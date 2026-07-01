@@ -14,8 +14,12 @@
         />
         
        
-           	<VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
-    <HBox width="100%" justifyContent="End">
+           <footer>
+    <Toolbar>
+        <HBox
+            width="100%"
+            justifyContent="End"
+            alignItems="Center">
                 <Button
                     id="MD_id_submitButoon"
                     text="{i18n>submit}"
@@ -33,10 +37,11 @@
                     text="{i18n>CancelButton}"
                     press="MD_onCancelButtonPress"
                     type="Transparent"
-                    class="closeBtnMargin"
+                   
                 />
 </HBox>
-</VBox>
+    </Toolbar>
+</footer>
             
        
     </Dialog>

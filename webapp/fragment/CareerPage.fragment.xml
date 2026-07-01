@@ -127,14 +127,6 @@
     </HBox>
 			</l:VerticalLayout>
 		</ScrollContainer>
-		<!-- <Image
-		text="{i18n>requestDemo}"
-        class="floatingButton"
-        press="onOpenForm"
-      /> -->
-	  <!-- <Button 
-	  text="View job"
-	   class="demoBtn"
-        press="onOpenjob"/> -->
+		
 	</FlexBox>
 </core:FragmentDefinition>

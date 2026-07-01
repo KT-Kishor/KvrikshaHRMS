@@ -326,13 +326,15 @@ sap.ui.define(
                                 } else {
                                     filter = { companyCode: loginData.CompanyCode }; 
                                 }
-
+                                 this.getBusyDialog()
                                 this.ajaxReadWithJQuery("CompanyCodeDetails", filter).then(function(oCompanyDetailsModel) {
                                     oInvoiceModel.setProperty("/CompanyCode", oCompanyDetailsModel.data[0].companyCode);
                                     oInvoiceModel.setProperty("/InvoiceTo", oCompanyDetailsModel.data[0].companyName);
                                     oInvoiceModel.setProperty("/InvoiceAddress", oCompanyDetailsModel.data[0].longAddress); 
                                     oInvoiceModel.setProperty("/CompanyGSTNO", oCompanyDetailsModel.data[0].gstin);
+                                     this.closeBusyDialog();
                                 }.bind(this)).catch(function(error) {
+                                     this.closeBusyDialog();
                                     sap.m.MessageToast.show(error.message || error.responseText);
                                 });
                             }

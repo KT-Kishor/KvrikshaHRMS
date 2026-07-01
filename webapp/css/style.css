@@ -3978,9 +3978,8 @@ color: #fff !important;
   right: 100px;
   cursor: pointer;
   z-index: 1000;
-
-  height: 100px;
-  width: 100px;
+  height: 120px;
+  width: 200px;
   padding: 0;
 }
 /* GRID */
@@ -4341,15 +4340,15 @@ color: #fff !important;
 
 /* ── Base Tile ── */
 .tileLayout {
-    flex: 1 1 calc(25% - 0.75rem);
-    min-width: 270px;
-    /* remove max-width completely */
+    flex: 0 0 240px;   /* Fixed width */
+    width: 220px;
+    min-width: 220px;
+    max-width: 220px;
     min-height: 5rem;
     box-sizing: border-box;
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .tileLayout:hover {
@@ -4363,7 +4362,10 @@ color: #fff !important;
     border-top: 4px solid #185fa5;
     background-color: #eef4ff;
 }
-
+.customTileWidth{
+   width: 17rem !important;   /* Increase as needed */
+    min-width: 17rem !important;
+}
 .tileReceived {
     border-top: 4px solid #3b6d11;
     background-color: #eaf3de;
@@ -4658,4 +4660,11 @@ color: #fff !important;
     border-top: 1px solid #d9d9d9 !important;
     background: #fff !important;
     min-height: 2rem;
+}
+.noWrapStatus {
+    white-space: nowrap !important;
+}
+
+.noWrapStatus .sapMObjStatusText {
+    white-space: nowrap !important;
 }

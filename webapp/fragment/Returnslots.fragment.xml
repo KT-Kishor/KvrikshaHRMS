@@ -21,14 +21,12 @@
             columnsL="2"
             columnsM="2">
 			<f:content>
-				<Label text="{i18n>employeeName}" required="true"/>
+				<Label text="{i18n>employeeName}"/>
 				<ComboBox
                     id="RS_id_Employeename"
                     items="{AdminModel>/}"
                     change="RS_onChangeemployeename"
-                    showSecondaryValues="true" filterSecondaryValues="true"
                     value="{Returnslotmodel>/EmpName}"
-                    valueStateText="{i18n>commonNameValueState}"
                     placeholder="{i18n>selectemployeename}"
                     editable="false"
                     
@@ -87,23 +85,27 @@
                     change="RS_onTimeLiveChange"
                     valueStateText="{i18n>selectTime}"
                     value="{path:'Returnslotmodel>/EndTime'}"/>
-                <Label text="Location" required="true"/>
+                <Label text="Location" />
                 <Input
+                    editable="false"
                     id="RS_id_Location"
                     value="{Returnslotmodel>/Location}"
                     maxLength="150"
                     valueStateText="{i18n>invalidLocation}"
                     placeholder="{i18n>invalidLocation}"
                     liveChange="LocationChange"
-
                     />
 
                          
 			
 			</f:content>
 		</f:SimpleForm>
-       	<VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
-    <HBox width="100%" justifyContent="End">
+       	<footer>
+    <Toolbar>
+        <HBox
+            width="100%"
+            justifyContent="End"
+            alignItems="Center">
     
 			 	<Button
                 text="{i18n>save}"
@@ -114,10 +116,10 @@
                 text="{i18n>assestAssignCancel}"
                 type="Transparent"
                 press="RS_onCancelReturnSlot"
-                class="closeBtnMargin"
             />
 			
 			</HBox>
-			</VBox>
+    </Toolbar>
+</footer>
 	</Dialog>
 </core:FragmentDefinition>

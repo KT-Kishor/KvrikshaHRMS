@@ -177,12 +177,17 @@
 		<!-- Attachment Upload -->
 		
 		
-		<VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
-    <HBox width="100%" justifyContent="End">
+		<footer>
+    <Toolbar>
+        <HBox
+            width="100%"
+            justifyContent="End"
+            alignItems="Center">
 			<Button text="Submit" type="Transparent" press=".onSubmit"/>
 		
-			<Button text="Close" type="Transparent" press="onClose" class="closeBtnMargin"/>
+			<Button text="Close" type="Transparent" press="onClose"/>
 	</HBox>
-       </VBox>
+    </Toolbar>
+</footer>
 	</Dialog>
 </core:FragmentDefinition>

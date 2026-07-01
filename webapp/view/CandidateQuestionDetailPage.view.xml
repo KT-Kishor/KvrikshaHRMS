@@ -1,0 +1,275 @@
+
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:f="sap.ui.layout.form" xmlns:core="sap.ui.core" xmlns:codeeditor="sap.ui.codeeditor" controllerName="sap.kt.com.minihrsolution.controller.CandidateQuestionDetailPage">
+<Page id="questionDetailPage" showNavButton="true" navButtonPress="onNavBack" class="classheader glassHeader ObjectcustomHeaderToolbar" title="{= ${ui>/editMode} === true ? 'Create Question' : 'Update Question Detail' }">
+<headerContent>
+			<Button press="Tile_NotifictionBTN" class="sapUiTinyMarginBeginEnd LogNot logoutBtn" tooltip="{i18n>TilenotificationfragName}" icon="sap-icon://bell" type="Transparent" visible="{= ${LoginModel>/Role} !== 'Contractor' }" >
+				<customData >
+					<BadgeCustomData class="badgeClass" key="badge" value="{EndingSoonModel>/notificationCount}"/>
+				</customData>   
+			</Button>
+			 <Button
+            press="TP_onraisebugpress"
+            icon="sap-icon://incident"
+            tooltip="{i18n>raisebug}"
+            type="Transparent"
+            class="LogNot logoutBtn"
+        />
+			<Button press="onLogout" icon="sap-icon://log" tooltip="{i18n>logoutTooltip}"
+                type="Transparent" class="LogNot logoutBtn"/>
+		</headerContent>
+
+<content>
+<VBox class="sapUiMediumMargin cqQuestionContainer">
+        <!-- Question Text -->
+      <layout:Grid
+    defaultSpan="L6 M6 S12"
+    width="100%"
+    xmlns:layout="sap.ui.layout">
+
+        <VBox width="100%" class="sapUiSmallMarginEnd">
+
+            <Label
+                text="Question"
+                required="true"/>
+
+            <TextArea
+                id="idQuestion"
+                valueStateText="{i18n>enterquestion}"
+                placeholder="{i18n>enterquestion}"
+                value="{detail>/question_text}"
+                rows="4"
+                width="100%"
+                liveChange="onQuestionchange"
+                editable="{ui>/editMode}"/>
+
+        </VBox>
+
+        <VBox visible="{= ${detail>/type} === 'coding'}" width="100%">
+
+            <Label
+                text="Constraints"
+                required="true"/>
+
+            <TextArea
+            id="idconstraints"
+            valueStateText="{i18n>enterconstraints}"
+                placeholder="{i18n>enterconstraints}"
+                value="{detail>/constraints}"
+                rows="4"
+                width="100%"
+                liveChange="onconstraintslivechnage"
+                editable="{ui>/editMode}"/>
+
+        </VBox>
+
+  </layout:Grid>
+
+        <!-- Row 1 -->
+       <layout:Grid
+    defaultSpan="L3 M6 S12"
+    xmlns:layout="sap.ui.layout"  width="100%">
+
+    <VBox>
+        <Label text="Test ID" required="true"/>
+       <Input width="100%" id="idtestid" valueStateText="{i18n>entertestid}" value="{detail>/test_id}" placeholder="{i18n>entertestid}" liveChange="ontestidlivechnage" editable="{ui>/editMode}" />
+    </VBox>
+
+    <VBox>
+        <Label text="Type" required="true"/>
+         <ComboBox
+    id="iddetailtype"
+    placeholder="{i18n>selecttype}"
+    width="100%"
+    valueStateText="{i18n>selecttype}"
+    selectedKey="{detail>/type}"
+    editable="{ui>/editMode}" change="ontypechange" >
+    
+    <core:Item key="coding" text="Coding"/>
+    <core:Item key="Testing" text="Testing"/>
+    <core:Item key="MCQ" text="MCQ"/>
+</ComboBox>
+    </VBox>
+
+    <VBox>
+        <Label text="Mark" required="true"/>
+        <Input width="100%" id="idmark" valueStateText="{i18n>entermark}" liveChange="onmarklivechnage" value="{detail>/marks}" placeholder="{i18n>entermark}" editable="{ui>/editMode}" />
+    </VBox>
+
+    <VBox visible="{= ${detail>/type} === 'coding'}" >
+        <Label text="Difficulty" />
+        <Select width="100%" selectedKey="{detail>/difficulty}" editable="{ui>/editMode}">
+            <core:Item key="easy" text="Easy"/>
+            <core:Item key="medium" text="Medium"/>
+            <core:Item key="hard" text="Hard"/>
+        </Select>
+    </VBox>
+    <VBox   visible="{= ${detail>/type} === 'coding'}">
+        <Label text="Allowed Languages" required="true"/>
+ 
+        <MultiComboBox editable="{ui>/editMode}"
+							id="idAllowedlanguages"
+                            placeholder="{i18n>selectlanguage}"
+							selectionChange="MI_onSelectionChangeType"
+							selectedKeys="{detail>/selectedLanguages}">
+			 <core:Item key="Java" text="Java"/>
+            <core:Item key="JavaScript" text="JavaScript"/>
+            <core:Item key="Python" text="Python"/>
+							</MultiComboBox>
+    </VBox>
+    <VBox   visible="{= ${detail>/type} === 'coding'}">
+        <Label text="Skill Level" required="true"/>
+       <MultiComboBox editable="{ui>/editMode}"
+							id="idskilllevel"
+                            placeholder="{i18n>selectskill}"
+							selectionChange="MI_onSelectskill"
+							selectedKeys="{detail>/selectedSkillLevels}">
+            <core:Item key="beginner" text="Beginner"/>
+            <core:Item key="intermediate" text="Intermediate"/>
+            <core:Item key="senior" text="Senior"/>
+       </MultiComboBox>
+    </VBox>
+
+</layout:Grid>
+
+        <!-- MCQ Section -->
+        <layout:Grid
+    defaultSpan="L12 M12 S12"
+    width="100%"
+    xmlns:layout="sap.ui.layout">
+        <VBox
+            class="sapUiMediumMarginTop" width="100%">
+
+            <!-- Header -->
+            <HBox
+                justifyContent="SpaceBetween"
+                alignItems="Center">
+
+                <Title
+                    text="Answer options"
+                    level="H4"/>
+
+                <Button
+                    text="Add option"
+                    icon="sap-icon://add"
+                    press="onAddOption" visible="{ui>/editMode}"/>
+            </HBox>
+
+            <!-- Table -->
+            <Table
+                id="optionsTable"
+                items="{detail>/options}"
+                inset="false"
+                class="sapUiMediumMarginTop">
+
+                <columns>
+
+                    <Column minScreenWidth="Desktop"
+                            demandPopin="true">
+                        <Text text="Option text"/>
+                    </Column>
+                    <Column visible="{= ${detail>/type} === 'coding'}" minScreenWidth="Desktop"
+                            demandPopin="true">
+                        <Text text="Input"/>
+                    </Column>
+                    <Column visible="{= ${detail>/type} === 'coding'}" minScreenWidth="Desktop"
+                            demandPopin="true">
+                        <Text text="Output" />
+                    </Column >
+                    <Column visible="{= ${detail>/type} === 'coding'}" demandPopin="true">
+                        <Text text="Desription"/>
+                    </Column>
+
+                    <Column visible="{= ${detail>/type} !== 'coding'}"
+                        width="7rem"
+                        hAlign="Center" demandPopin="true">
+                        <Text text="Correct"/>
+                    </Column>
+
+                    <Column
+                        width="5rem"
+                        hAlign="Center" demandPopin="true">
+                        <Text text=""/>
+                    </Column>
+
+                </columns>
+
+                <items>
+
+                    <ColumnListItem>
+
+                        <cells>
+
+                            <TextArea
+                            rows="2"
+                            width="100%"
+                                 value="{detail>option_text}"
+                                editable="{ui>/editMode}" placeholder = "{i18n>enteroption}"/>
+                            <TextArea
+                            rows="2"
+                            width="100%"
+                            visible="{= ${detail>/type} === 'coding'}"
+                                 value="{detail>input}"
+                                editable="{ui>/editMode}" placeholder="{i18n>enterinput}"/>
+                            <TextArea
+                            rows="2"
+                            width="100%"
+                            visible="{= ${detail>/type} === 'coding'}"
+                                 value="{detail>output}"
+                               editable="{ui>/editMode}" placeholder="{i18n>enteroutput}"/>
+                            <TextArea
+                            width="100%"
+                            rows="2"
+                            visible="{= ${detail>/type} === 'coding'}"
+                                 value="{detail>description}"
+                               editable="{ui>/editMode}" placeholder="{i18n>enterDescription}"/>
+                               <RadioButton
+                           selected="{= ${detail>is_correct} === 1 }"
+                            select="onCorrectAnswerSelect"
+                             enabled="{ui>/editMode}" visible="{= ${detail>/type} !== 'coding'}"  />
+
+
+                            <Button
+                            visible="{ui>/editMode}"
+                                icon="sap-icon://delete"
+                                type="Transparent"
+                                press="onDeleteOption"/>
+
+                        </cells>
+
+                    </ColumnListItem>
+
+                </items>
+
+            </Table>
+
+        </VBox>
+        </layout:Grid>
+</VBox>
+</content>
+<footer>
+<Bar>
+<contentLeft>
+					<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Footer" type="XML" />
+				</contentLeft>
+<contentRight>
+<FlexBox class="TraineeButtons"  wrap="Wrap"
+    justifyContent="End"
+    alignItems="Center">
+<!-- <Button text="{i18n>btnCancel}" type="Transparent" press="onCancel"/> -->
+<Button
+    text="{= ${ui>/editMode} ? 'Save' : 'Edit' }"
+    type="Transparent"
+    press="onEditSavePress"
+    visible="{= !${ui>/createMode} }" />
+
+<Button
+    text="Create"
+    type="Transparent"
+    press="onCreateQuestion"
+    visible="{ui>/createMode}" />
+    </FlexBox>
+</contentRight>
+</Bar>
+</footer>
+</Page>
+</mvc:View>

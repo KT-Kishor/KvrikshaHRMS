@@ -510,8 +510,7 @@ sap.ui.define([
                     const finalAmount = baseAmount - discountAmount;
                     item.Total = finalAmount.toFixed(2);
 
-                    const isGSTApplicable = item.GSTCalculation === "YES" && currency === "INR";
-
+                    const isGSTApplicable = (item.GSTCalculation || "").toUpperCase() === "YES" && currency === "INR";
                     const isCredit = item.Status === "Used" || (item.Particulars && item.Particulars.toLowerCase().includes("credit"));
 
                     if (isCredit) {
@@ -1122,7 +1121,7 @@ sap.ui.define([
                 }
             },
 
-            onChangePaymentConvertionRate:async function (oEvent) {
+            onChangePaymentConvertionRate: async function (oEvent) {
                 if (oEvent) utils._LCvalidateAmount(oEvent);
                 var oModelData = this.getView().getModel("PaymentModel");
                 if (!oEvent) {

@@ -117,7 +117,7 @@ sap.ui.define(
                     const firstEntry = Array.isArray(oData.data) ? oData.data[0] : oData.data;
                     this.getOwnerComponent().setModel(new JSONModel(firstEntry), "AppVisibilityModel");
 
-                    const tileNames = ["Home", "Timesheet", "Payslip", "OfferGeneration", "Invoice", "Quotation", "Expense", "ManageAsset", "Recruitment", "Approvals"];
+                    const tileNames = ["Home", "Timesheet", "Payslip", "OfferGeneration", "Invoice", "Quotation", "Expense", "ManageAsset", "Recruitment", "Approvals","Hiring"];
 
                     const tileKeys = firstEntry.TileKey?.split(",") || [];
                     const tileMapping = tileNames.reduce((map, name, i) => {
@@ -937,7 +937,7 @@ sap.ui.define(
         {
             title: "Confirmation",
             actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
-            emphasizedAction: sap.m.MessageBox.Action.YES,
+            // emphasizedAction: sap.m.MessageBox.Action.YES,
 
             onClose: async function (sAction) {
 

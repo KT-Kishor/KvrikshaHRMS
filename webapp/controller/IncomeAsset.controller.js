@@ -464,9 +464,8 @@ sap.ui.define([
 
                         utils._LCvalidateDate(sap.ui.getCore().byId("FCIA_id_Date"), "ID") &&
                         utils._LCvalidateAmount(sap.ui.getCore().byId("FCIA_id_assetvalue"), "ID") &&
-                        utils._LCstrictValidationComboBox(sap.ui.getCore().byId("FCIA_id_currency"), "ID") &&
-                        utils._LCvalidateMandatoryField(sap.ui.getCore().byId("FCIA_id_warranty"), "ID") &&
-                        utils._LCvalidateDate(sap.ui.getCore().byId("FCIA_id_warrantyDate"), "ID")
+                        utils._LCstrictValidationComboBox(sap.ui.getCore().byId("FCIA_id_currency"), "ID")
+
 
                     ) {
                         var selectedBranch = sap.ui.getCore().byId("FCIA_id_branch").getSelectedItem();
@@ -475,7 +474,10 @@ sap.ui.define([
                             MessageToast.show(this.i18nModel.getText("branchmessage"));
                             return;
                         }
+                        // Warranty date validation
+
                         this.getBusyDialog();
+
                         var oPayLoad = {
                             "Type": type,
                             "Model": oModel.Model,
@@ -488,7 +490,7 @@ sap.ui.define([
                             "AssetValue": oModel.AssetValue,
                             "Currency": oModel.Currency,
                             "Warranty": oModel.Warranty,
-                            "WarrantyDate": oModel.WarrantyDate.split("/").reverse().join("-"),
+                            "WarrantyDate": oModel.WarrantyDate ? oModel.WarrantyDate.split("/").reverse().join("-") : "",
                             "TransferBranch": "",
                             "TransferDate": "",
                             "IsCurrent": "1",
@@ -524,18 +526,29 @@ sap.ui.define([
                 }
             },
 
+            // AFTER:
             onWarrantyDateChange: function (oEvent) {
                 var oDatePicker = oEvent.getSource();
                 var oDate = oDatePicker.getDateValue();
-
                 if (oDate) {
                     oDatePicker.setValueState("None");
                     oDatePicker.setValueStateText("");
-                } else {
-                    oDatePicker.setValueState("Error");
-                    oDatePicker.setValueStateText("Select Valid Warranty date");
                 }
             },
+
+            // onWarrantyDateChange: function (oEvent) {
+            //     var oDatePicker = oEvent.getSource();
+            //     var oDate = oDatePicker.getDateValue();
+
+            //     if (oDate) {
+            //         oDatePicker.setValueState("None");
+            //         oDatePicker.setValueStateText("");
+            //     }
+            // else {
+            //     oDatePicker.setValueState("Error");
+            //     oDatePicker.setValueStateText("Select Valid Warranty date");
+            // }
+
             FCIA_onpickButtonPress: async function (oEvent) {
 
                 // var oButton = oEvent.getSource();
@@ -572,7 +585,7 @@ sap.ui.define([
                         "AssetValue": data.AssetValue,
                         "Currency": data.Currency,
                         "Warranty": oModel.Warranty,
-                        "WarrantyDate": oModel.WarrantyDate.split("/").reverse().join("-"),
+                        "WarrantyDate": oModel.WarrantyDate ? oModel.WarrantyDate.split("/").reverse().join("-") : "",
                         "Status": "Available",
                         "TrashDate": null,
                         "PickedEmployeeID": sap.ui.getCore().byId("FCIA_id_pickedby").getSelectedItem().getAdditionalText(),
@@ -618,7 +631,7 @@ sap.ui.define([
                         "AssetValue": oModel.AssetValue,
                         "Currency": oModel.Currency,
                         "Warranty": oModel.Warranty,
-                        "WarrantyDate": oModel.WarrantyDate.split("/").reverse().join("-"),
+                        "WarrantyDate": oModel.WarrantyDate ? oModel.WarrantyDate.split("/").reverse().join("-") : "",
                         "PickedBranch": oModel.PickedBranch,
                         "PickedEmployeeName": oModel.PickedEmployeeName,
                         "AssetCreationDate": oModel.AssetCreationDate.split("/").reverse().join("-"),
@@ -711,7 +724,7 @@ sap.ui.define([
                             oDatePicker.setMinDate(oToday);
                             oDatePicker.setMaxDate(maxdate)
                         }
-                        this._FragmentDatePickersReadOnly(["FCIA_id_Date"])
+                        this._FragmentDatePickersReadOnly(["FCIA_id_Date", "FCIA_id_warrantyDate"])
                         sap.ui.getCore().byId("FCIA_id_pickButton").setVisible(false)
                         sap.ui.getCore().byId("FCIA_id_transferButton").setVisible(false)
                         sap.ui.getCore().byId("FCIA_id_saveButton").setVisible(true)
@@ -816,15 +829,14 @@ sap.ui.define([
                         sap.ui.getCore().byId("FCIA_id_branch").setEditable(true).setSelectedKey(data.CompanyCode);
                         sap.ui.getCore().byId("FCIA_id_pickedby").setEditable(true).setSelectedKey(data.PickedEmployeeName);
                     }
-                    if (data.WarrantyDate) {
-                        oCore.byId("FCIA_id_warrantyDate")
-                            .setDateValue(new Date(data.WarrantyDate));
-                    } else {
-                        oCore.byId("FCIA_id_warrantyDate")
-                            .setDateValue(null);
-                    }
+                    var isNullWarrantyDate = !data.WarrantyDate ||
+                        data.WarrantyDate === "1899-11-30T00:00:00.000Z";
+                    oCore.byId("FCIA_id_warrantyDate")
+                        .setDateValue(isNullWarrantyDate ? null : new Date(data.WarrantyDate))
+                        .setValue(isNullWarrantyDate ? "" : oCore.byId("FCIA_id_warrantyDate").getValue())
+                        .setValueState("None");
 
-                    this._FragmentDatePickersReadOnly(["FCIA_id_Date"])
+                    this._FragmentDatePickersReadOnly(["FCIA_id_Date", "FCIA_id_warrantyDate"])
 
                 }
             },
@@ -955,7 +967,7 @@ sap.ui.define([
                     this.getView().getModel("CreateIncomeAssetModel").setProperty("/PickedBranch", oRowData.TransferBranch);
 
 
-                    this._FragmentDatePickersReadOnly(["FCIA_id_Date"])
+                    this._FragmentDatePickersReadOnly(["FCIA_id_Date", "FCIA_id_warrantyDate"])
                 }
             },
 
@@ -1134,8 +1146,12 @@ sap.ui.define([
                     sap.ui.getCore().byId("FCIA_id_type").setSelectedKey(data.Type)
                     sap.ui.getCore().byId("FCIA_id_model").setValue(data.Model).setEditable(false).setVisible(true)
                     sap.ui.getCore().byId("FCIA_id_warranty").setValue(data.Warranty || "");
+                    var sWD1 = data.WarrantyDate;
+                    var isNullWD1 = !sWD1 || sWD1 === "1899-11-30T00:00:00.000Z";
                     sap.ui.getCore().byId("FCIA_id_warrantyDate")
-                        .setDateValue(data.WarrantyDate ? new Date(data.WarrantyDate) : null);
+                        .setDateValue(isNullWD1 ? null : new Date(sWD1))
+                        .setValue(isNullWD1 ? "" : sap.ui.getCore().byId("FCIA_id_warrantyDate").getValue())
+                        .setValueState("None");
                     sap.ui.getCore().byId("FCIA_ID_DescriptionTextArea").setValue(data.Description).setEditable(false).setVisible(true)
                     sap.ui.getCore().byId("FCIA_id_eqno").setValue(data.EquipmentNumber).setEditable(false).setVisible(true)
                     sap.ui.getCore().byId("FCIA_id_slno").setValue(data.SerialNumber).setEditable(false).setVisible(true)
@@ -1206,8 +1222,12 @@ sap.ui.define([
                     sap.ui.getCore().byId("FCIA_id_type").setSelectedKey(data.Type)
                     sap.ui.getCore().byId("FCIA_id_model").setValue(data.Model).setEditable(false).setVisible(true)
                     sap.ui.getCore().byId("FCIA_id_warranty").setValue(data.Warranty || "");
+                    var sWD1 = data.WarrantyDate;
+                    var isNullWD1 = !sWD1 || sWD1 === "1899-11-30T00:00:00.000Z";
                     sap.ui.getCore().byId("FCIA_id_warrantyDate")
-                        .setDateValue(data.WarrantyDate ? new Date(data.WarrantyDate) : null);
+                        .setDateValue(isNullWD1 ? null : new Date(sWD1))
+                        .setValue(isNullWD1 ? "" : sap.ui.getCore().byId("FCIA_id_warrantyDate").getValue())
+                        .setValueState("None");
                     sap.ui.getCore().byId("FCIA_ID_DescriptionTextArea").setValue(data.Description).setEditable(false).setVisible(true)
                     sap.ui.getCore().byId("FCIA_id_eqno").setValue(data.EquipmentNumber).setEditable(false).setVisible(true)
                     sap.ui.getCore().byId("FCIA_id_slno").setValue(data.SerialNumber).setEditable(false).setVisible(true)

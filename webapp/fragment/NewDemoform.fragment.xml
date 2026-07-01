@@ -104,8 +104,12 @@
                 />
 			</m:VBox>
 		</m:VBox>
-	<m:VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
-    <m:HBox width="100%" justifyContent="End">
+	<m:footer>
+    <m:Toolbar>
+        <m:HBox
+            width="100%"
+            justifyContent="End"
+            alignItems="Center">
 			<m:Button
                 text="Submit"
                 class="FOOTER"
@@ -116,10 +120,10 @@
 			<m:Button
             type="Transparent"
                 text="Cancel"
-                class="closeBtnMargin"
                 press="onCloseDemoForm"
             />
 		</m:HBox>
-       </m:VBox>
+    </m:Toolbar>
+</m:footer>
 	</m:Dialog>
 </core:FragmentDefinition>

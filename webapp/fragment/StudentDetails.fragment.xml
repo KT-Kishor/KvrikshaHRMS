@@ -1,241 +1,650 @@
 <core:FragmentDefinition
     xmlns="sap.m"
     xmlns:core="sap.ui.core"
-     xmlns:form="sap.ui.layout.form"
-    xmlns:f="sap.f">
-
-    <Dialog
-        title="Candidate Assessment Report"
-        contentWidth="900px"
-        contentHeight="700px"
-        draggable="true"
-        resizable="true">
-
+    xmlns:form="sap.ui.layout.form"
+    xmlns:f="sap.f"
+    xmlns:cards="sap.f.cards"
+    xmlns:layout="sap.ui.layout"
+>
+   <Dialog
+    title="{i18n>candidateAssessmentReportTitle}"
+    contentWidth="80%"
+    draggable="true"
+    resizable="true"
+    verticalScrolling="true"
+    horizontalScrolling="false">
+        <customHeader>
+            <Bar>
+                <contentLeft>
+                    <Title text="{i18n>candidateAssessmentReportTitle}" level="H3" />
+                </contentLeft>
+            </Bar>
+        </customHeader>
         <content>
+            <VBox class="sapUiSmallMarginBeginEnd sapUiSmallMarginTopBottom" width="100%">
 
-            <VBox class="sapUiMediumMargin">
-
-                <!-- ================= HEADER ================= -->
-
-                <HBox
-                    alignItems="Center"
-                    class="sapUiMediumMarginBottom">
-
-                    <Avatar
-                        src="{studentModel>/photo}"
+                <!-- ===== PROFILE HEADER ===== -->
+            
+                    <!-- <Avatar
+                        src="{= ${studentModel>/photo} ? 'data:image/jpeg;base64,' + ${studentModel>/photo} : '' }"
                         initials="{= ${studentModel>/candidate_Name} ? ${studentModel>/candidate_Name}.substring(0,2).toUpperCase() : 'NA'}"
                         displayShape="Circle"
                         displaySize="XL"
                         backgroundColor="Accent6"
-                        class="sapUiLargeMarginEnd"/>
-
-                    <VBox>
-
+                        class="sapUiLargeMarginEnd sapUiSmallMarginBottom"
+                    />
+                    <VBox justifyContent="Center">
                         <Title
                             level="H2"
-                            text="{studentModel>/candidate_Name}" />
-
+                            text="{studentModel>/candidate_Name}"
+                            class="sapUiTinyMarginBottom"
+                        />
                         <Text
                             text="{studentModel>/candidate_Email}"
-                            class="sapUiTinyMarginTop sapUiTinyMarginBottom"/>
-
-                        <HBox
+                            class="sapUiTinyMarginBottom"
+                        />
+                        <FlexBox
                             wrap="Wrap"
-                            class="sapUiSmallMarginTop">
+                            class="sapUiTinyMarginTop"
+                            alignItems="Center"
+                        >
+                            <HBox class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                                <core:Icon
+                                    src="sap-icon://person-placeholder"
+                                    color="#0070f2"
+                                    size="0.875rem"
+                                    class="sapUiTinyMarginEnd"
+                                />
+                                <Text text="{studentModel>/student_Id}" />
+                            </HBox>
+                            <HBox class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                                <Text text="{studentModel>/skill_level}" />
+                            </HBox>
+                            <HBox class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                                <core:Icon
+                                    src="sap-icon://source-code"
+                                    color="#0070f2"
+                                    size="0.875rem"
+                                    class="sapUiTinyMarginEnd"
+                                />
+                                <Text text="{studentModel>/preferred_language}" />
+                            </HBox>
+                            <HBox class="sapUiTinyMarginBottom">
+                                <core:Icon
+                                    src="{= ${studentModel>/overallResult} === 'Pass' ? 'sap-icon://accept' : 'sap-icon://decline'}"
+                                    color="{= ${studentModel>/overallResult} === 'Pass' ? '#107e3e' : '#bb0000'}"
+                                    size="0.875rem"
+                                    class="sapUiTinyMarginEnd"
+                                />
+                                <Text text="{studentModel>/overallResult}" />
+                            </HBox>
+                        </FlexBox>
+                    </VBox> -->
+                    <layout:Grid
+    defaultSpan="L6 M6 S12"
+    width="100%"
+    class="sapUiMediumMarginBottom">
 
-                            <ObjectStatus
-                                text="{studentModel>/student_Id}"
-                                icon="sap-icon://person-placeholder"
-                                state="Information"
-                                class="sapUiTinyMarginEnd"/>
+    <layout:content>
 
-                            <ObjectStatus
-                                text="{studentModel>/skill_level}"
-                                state="Warning"
-                                class="sapUiTinyMarginEnd"/>
-
-                            <ObjectStatus
-                                text="{studentModel>/preferred_language}"
-                                icon="sap-icon://source-code"
-                                state="Information"
-                                class="sapUiTinyMarginEnd"/>
-
-                            <ObjectStatus
-                                text="{studentModel>/overallResult}"
-                                state="{=
-                                    ${studentModel>/overallResult} === 'Pass'
-                                    ? 'Success'
-                                    : ${studentModel>/overallResult} === 'Fail'
-                                    ? 'Error'
-                                    : 'Warning'
-                                }"/>
-                        </HBox>
-
-                    </VBox>
-
-                </HBox>
-
-                <!-- ================= MCQ SECTION ================= -->
-
-                <Title
-                    level="H4"
-                    text="MCQ TEST"
-                    class="sapUiMediumMarginTop sapUiSmallMarginBottom"/>
-
-                <HBox
-                    wrap="Wrap"
-                    justifyContent="SpaceBetween">
-
-                    <GenericTile
-                        frameType="OneByHalf"
-                        class="sapUiTinyMargin">
-                        <TileContent>
-                            <NumericContent
-                                value="{studentModel>/mcq}"
-                                valueColor="Good"/>
-                        </TileContent>
-                        <tileContent>
-                        </tileContent>
-                    </GenericTile>
-
-                    <GenericTile
-                        frameType="OneByHalf"
-                        class="sapUiTinyMargin">
-                        <TileContent>
-                            <NumericContent
-                                value="{studentModel>/coding}"
-                                valueColor="Good"/>
-                        </TileContent>
-                    </GenericTile>
-
-                    <GenericTile
-                        frameType="OneByHalf"
-                        class="sapUiTinyMargin">
-                        <TileContent>
-                            <NumericContent
-                                value="{studentModel>/overallScore}"
-                                valueColor="Good"/>
-                        </TileContent>
-                    </GenericTile>
-
-                </HBox>
-
-                <HBox
-                    wrap="Wrap"
-                    class="sapUiMediumMarginTop">
-
-                    <ObjectStatus
-                        text="{studentModel>/overallResult}"
-                        state="{=
-                            ${studentModel>/overallResult} === 'Pass'
-                            ? 'Success'
-                            : ${studentModel>/overallResult} === 'Fail'
-                            ? 'Error'
-                            : 'Warning'
-                        }"
-                        class="sapUiMediumMarginEnd"/>
-
-                    <ObjectStatus
-                        text="Submitted"
-                        state="Information"/>
-
-                </HBox>
-
-                <!-- ================= CODING SECTION ================= -->
-
-                <Title
-                    level="H4"
-                    text="CODING TEST"
-                    class="sapUiMediumMarginTop sapUiSmallMarginBottom"/>
-
-               <form:SimpleForm
-    editable="false"
-    layout="ResponsiveGridLayout">
-
-    <Label text="Language"/>
-    <Text text="{studentModel>/preferred_language}"/>
-
-    <Label text="Coding Score"/>
-    <ObjectStatus
-        text="{= ${studentModel>/coding} + '%'}"
-        state="Success"/>
-
-    <Label text="Overall Score"/>
-    <ObjectStatus
-        text="{= ${studentModel>/overallScore} + '%'}"
-        state="Success"/>
-
-    <Label text="Result"/>
-    <ObjectStatus
-        text="{studentModel>/overallResult}"
-        state="{=
-            ${studentModel>/overallResult} === 'Pass'
-            ? 'Success'
-            : ${studentModel>/overallResult} === 'Fail'
-            ? 'Error'
-            : 'Warning'
-        }"/>
-
-    <Label text="Submitted Date"/>
-    <Text text="{studentModel>/submittedDate}"/>
-
-    <Label text="Created Date"/>
-    <Text text="{studentModel>/created_at}"/>
-
-</form:SimpleForm>
-
-            </VBox>
-
-        </content>
-
-<!-- ================= SUBMITTED CODE ================= -->
-
-<Panel
-    headerText="Submitted Solution"
-    expandable="true"
-    expanded="true"
-    class="sapUiMediumMarginTop">
-
-    <content>
+        <!-- Profile -->
 
         <VBox>
 
-            <Toolbar>
-                <Title
-                    text="Candidate Submitted Code"
-                    level="H5"/>
+            <Title
+                text="Candidate Profile"
+                level="H5"
+                class="sapUiSmallMarginBottom"/>
 
-                <ToolbarSpacer/>
+            <FlexBox
+                wrap="Wrap"
+                alignItems="Start">
 
-                <ObjectStatus
-                    text="{studentModel>/preferred_language}"
-                    state="Information"/>
+                <Avatar
+                    src="{= ${studentModel>/photo} ? 'data:image/jpeg;base64,' + ${studentModel>/photo} : '' }"
+                    initials="{= ${studentModel>/candidate_Name}.substring(0,2).toUpperCase()}"
+                    displayShape="Circle"
+                    displaySize="L"
+                    backgroundColor="Accent6"
+                    class="sapUiLargeMarginEnd"/>
+                <VBox>
+                    <Title
+                        class="sapUiTinyMarginTop"
+                        text="{studentModel>/candidate_Name}"
+                        level="H2"/>
 
-                <ObjectStatus
-                    text="{studentModel>/overallResult}"
-                    state="Success"/>
-            </Toolbar>
+                    <Text class="sapUiTinyMarginTop" text="{studentModel>/candidate_Email}"/>
 
-            <TextArea
-                value="{studentModel>/submittedCode}"
-                editable="false"
-                growing="true"
-                growingMaxLines="25"
-                width="100%"
-                rows="15"/>
+                    <Text class="sapUiTinyMarginTop" text="{studentModel>/student_Id}"/>
+
+                    <Text  class="sapUiTinyMarginTop" text="{studentModel>/skill_level}"/>
+ 
+                    <Text class="sapUiTinyMarginTop" text="{studentModel>/preferred_language}"/>
+
+                    <ObjectStatus
+                    class="sapUiTinyMarginTop"
+                        text="{studentModel>/overallResult}"
+                        state="{= ${studentModel>/overallResult} === 'Pass' ? 'Success' : 'Error'}"/>
+
+                </VBox>
+
+            </FlexBox>
 
         </VBox>
 
-    </content>
+        <!-- Timeline -->
 
-</Panel>
+      <VBox width="100%">
+    <Title
+        text="{i18n>timelineTitle}"
+        level="H5"
+        class="sapUiSmallMarginBottom"/>
+
+    <FlexBox
+        wrap="Wrap"
+        justifyContent="Start"
+        alignItems="Start"
+        class="sapUiTinyMarginBottom">
+
+        <Label
+        vAlign="Middle"
+            text="{i18n>profileCreatedLabel}"
+            width="8rem"/>
+
+        <Text text="{studentModel>/created_at}"/>
+
+    </FlexBox>
+
+    <FlexBox
+        wrap="Wrap"
+        justifyContent="Start"
+        alignItems="Start"
+        class="sapUiTinyMarginBottom">
+
+        <Label
+        vAlign="Middle"
+            text="{i18n>mcqStartedLabel}"
+            width="8rem"/>
+
+        <Text text="{studentModel>/mcqStartedAt}"/>
+
+    </FlexBox>
+
+    <FlexBox
+        wrap="Wrap"
+        justifyContent="Start"
+        alignItems="Start"
+        class="sapUiTinyMarginBottom">
+
+        <Label
+        vAlign="Middle"
+            text="{i18n>mcqSubmittedLabel}"
+            width="8rem"/>
+
+        <Text text="{studentModel>/mcqSubmittedAt}"/>
+
+    </FlexBox>
+
+    <FlexBox
+        wrap="Wrap"
+        justifyContent="Start"
+        alignItems="Start"
+        class="sapUiTinyMarginBottom">
+
+        <Label
+        vAlign="Middle"
+            text="{i18n>codeSubmittedLabel}"
+            width="8rem"/>
+
+        <Text text="{studentModel>/codingSubmittedAt}"/>
+
+    </FlexBox>
+
+</VBox>
+
+    </layout:content>
+
+</layout:Grid>
+
+                
+
+                <!-- ===== SCORE SUMMARY TILES (styled like HiringDashboardOverview) ===== -->
+                <Title level="H5" text="{i18n>scoreSummaryTitle}" class="sapUiTinyMarginBottom sapUiSmallMarginBegin"  />
+                <layout:Grid
+                    defaultSpan="L3 M6 S12"
+                    width="100%"
+                    class="sapUiTinyMarginBottom sapUiTinyMarginBeginEnd"
+                >
+                    <layout:content>
+                        <!-- MCQ Score - Blue -->
+                        <GenericTile
+                            class="tileLayout tileTotal blueTile sapUiTinyMarginBottom"
+                            header="{i18n>mcqScoreHeader}"
+                            subheader="{i18n>mcqScoreSubheader}"
+                            width="90%"
+                        >
+                            <tileContent>
+                                <TileContent unit="%">
+                                    <content>
+                                        <NumericContent
+                                            class="sapUiTinyMarginTop"
+                                            value="{studentModel>/mcqScore}"
+                                            icon="sap-icon://education"
+                                            valueColor="Good"
+                                            withMargin="false"
+                                        />
+                                    </content>
+                                </TileContent>
+                            </tileContent>
+                        </GenericTile>
+
+                        <!-- Coding Score - Orange -->
+                        <GenericTile
+                            class="tileLayout tileTotal orangeTile sapUiTinyMarginBottom"
+                            header="{i18n>codingScoreHeader}"
+                            subheader="{i18n>codingScoreSubheader}"
+                            width="90%"
+                        >
+                            <tileContent>
+                                <TileContent unit="%">
+                                    <content>
+                                        <NumericContent
+                                            class="sapUiTinyMarginTop"
+                                            value="{studentModel>/codingScore}"
+                                            icon="sap-icon://source-code"
+                                            valueColor="Critical"
+                                            withMargin="false"
+                                        />
+                                    </content>
+                                </TileContent>
+                            </tileContent>
+                        </GenericTile>
+
+                        <!-- Overall Score - Green -->
+                        <GenericTile
+                            class="tileLayout tileTotal greenTile sapUiTinyMarginBottom"
+                            header="{i18n>overallScoreHeader}"
+                            subheader="{i18n>overallScoreSubheader}"
+                            width="90%"
+                        >
+                            <tileContent>
+                                <TileContent unit="%">
+                                    <content>
+                                        <NumericContent
+                                            class="sapUiTinyMarginTop"
+                                            value="{studentModel>/overallScore}"
+                                            icon="sap-icon://bar-chart"
+                                            valueColor="Good"
+                                            withMargin="false"
+                                        />
+                                    </content>
+                                </TileContent>
+                            </tileContent>
+                        </GenericTile>
+
+                        <!-- Total Marks - Red -->
+                        <GenericTile
+                            class="tileLayout tileTotal redTile sapUiTinyMarginBottom"
+                            header="{i18n>totalMarksHeader}"
+                            subheader="{i18n>totalMarksSubheader}"
+                            width="90%"
+                        >
+                            <tileContent>
+                                <TileContent>
+                                    <content>
+                                        <NumericContent
+                                            class="sapUiTinyMarginTop"
+                                            value="{studentModel>/totalMarks}"
+                                            icon="sap-icon://list"
+                                            valueColor="Error"
+                                            withMargin="false"
+                                        />
+                                    </content>
+                                </TileContent>
+                            </tileContent>
+                        </GenericTile>
+                    </layout:content>
+                </layout:Grid>
+
+                <!-- ===== TEST DETAILS HEADING ===== -->
+                <Title
+                    level="H5"
+                    text="{i18n>testDetailsTitle}"
+                    class="sapUiSmallMarginTop sapUiTinyMarginBottom  sapUiSmallMarginBegin"
+                />
+
+                <!-- ===== MCQ + CODING DETAIL CARDS (responsive 50/50, common class) ===== -->
+                <layout:Grid
+                    defaultSpan="L6 M6 S12"
+                    width="100%"
+                    
+                    class="sapUiSmallMarginBottom sapUiTinyMarginBeginEnd"
+                >
+                    <layout:content>
+                        <!-- MCQ Card -->
+                        <f:Card class="CommonRoundedTable sapUiTinyMarginBottom" width="98%">
+                            <f:header>
+                                <cards:Header
+            title="{i18n>mcqTestTitle}"
+        />
+                            </f:header>
+                            <f:content>
+                                <VBox class="sapUiSmallMarginBeginEnd sapUiSmallMarginBottom" width="100%">
+                                    <!-- Status -->
+                                    <FlexBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginTop sapUiTinyMarginBottom" width="100%">
+                                        <Text text="{i18n>statusLabel}" class="sapUiSmallMarginEnd" />
+                                        <ObjectStatus
+                                            text="{studentModel>/mcqStatus}"
+                                            state="{= ${studentModel>/mcqStatus} === 'Completed' ? 'Success' : ${studentModel>/mcqStatus} === 'In Progress' ? 'Warning' : 'None'}"
+                                            inverted="true"
+                                        />
+                                    </FlexBox>
+                                    <core:HTML content="&lt;hr style='border:none;border-top:1px solid #e5e5e5;margin:2px 0'/&gt;" />
+
+                                    <!-- Result -->
+                                    <FlexBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginTop sapUiTinyMarginBottom" width="100%">
+                                        <Text text="{i18n>resultLabel}" class="sapUiSmallMarginEnd" />
+                                        <ObjectStatus
+                                            text="{studentModel>/mcqResult}"
+                                            state="{= ${studentModel>/mcqResult} === 'Pass' ? 'Success' : ${studentModel>/mcqResult} === 'Fail' ? 'Error' : 'Warning'}"
+                                            inverted="true"
+                                        />
+                                    </FlexBox>
+                                    <core:HTML content="&lt;hr style='border:none;border-top:1px solid #e5e5e5;margin:2px 0'/&gt;" />
+
+                                    <!-- Score -->
+                                    <FlexBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginTop sapUiTinyMarginBottom" width="100%">
+                                        <Text text="{i18n>scoreLabel}" class="sapUiSmallMarginEnd" />
+                                        <Text
+                                            text="{= ${studentModel>/mcqScore} + '% (' + ${studentModel>/mcqTotalMarks} + ' ' + ${i18n>marksUnit} + ')'}"
+                                            class="sapThemeHighlight-asColor"
+                                        />
+                                    </FlexBox>
+                                    <core:HTML content="&lt;hr style='border:none;border-top:1px solid #e5e5e5;margin:2px 0'/&gt;" />
+
+                                    <!-- Questions -->
+                                    <FlexBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginTop sapUiTinyMarginBottom" width="100%">
+                                        <Text text="{i18n>questionsLabel}" class="sapUiSmallMarginEnd" />
+                                        <Text text="{= ${studentModel>/totalQuestions} + ' ' + ${i18n>totalUnit}}" />
+                                    </FlexBox>
+                                    <core:HTML content="&lt;hr style='border:none;border-top:1px solid #e5e5e5;margin:2px 0'/&gt;" />
+
+                                    <!-- Correct / Wrong -->
+                                    <FlexBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginTop sapUiTinyMarginBottom" width="100%">
+                                        <Text text="{i18n>correctWrongLabel}" class="sapUiSmallMarginEnd" />
+                                        <Text text="{= ${studentModel>/correctAnswers} + ' ' + ${i18n>correctUnit} + ', ' + ${studentModel>/wrongAnswers} + ' ' + ${i18n>wrongUnit}}" />
+                                    </FlexBox>
+                                    <core:HTML content="&lt;hr style='border:none;border-top:1px solid #e5e5e5;margin:2px 0'/&gt;" />
+
+                                    <!-- Time Taken -->
+                                    <FlexBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginTop sapUiTinyMarginBottom" width="100%">
+                                        <Text text="{i18n>timeTakenLabel}" class="sapUiSmallMarginEnd" />
+                                        <Text text="{= ${studentModel>/mcqTimeTaken} + ' ' + ${i18n>minUnit}}" />
+                                    </FlexBox>
+                                </VBox>
+                            </f:content>
+                        </f:Card>
+
+                        <!-- Coding Card -->
+                        <f:Card class="CommonRoundedTable sapUiTinyMarginBottom" width="98%">
+                            <f:header>
+                             <cards:Header
+                             
+            title="{i18n>codingTestTitle}"
+        />
+                            </f:header>
+                            <f:content>
+                                <VBox class="sapUiSmallMarginBeginEnd sapUiSmallMarginBottom" width="100%">
+                                    <!-- Status -->
+                                    <FlexBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginTop sapUiTinyMarginBottom" width="100%">
+                                        <Text text="{i18n>statusLabel}" class="sapUiSmallMarginEnd" />
+                                        <ObjectStatus
+                                            text="{studentModel>/codingStatus}"
+                                            state="{= ${studentModel>/codingStatus} === 'Completed' ? 'Success' : ${studentModel>/codingStatus} === 'In Progress' ? 'Warning' : 'None'}"
+                                            inverted="true"
+                                        />
+                                    </FlexBox>
+                                    <core:HTML content="&lt;hr style='border:none;border-top:1px solid #e5e5e5;margin:2px 0'/&gt;" />
+
+                                    <!-- Result -->
+                                    <FlexBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginTop sapUiTinyMarginBottom" width="100%">
+                                        <Text text="{i18n>resultLabel}" class="sapUiSmallMarginEnd" />
+                                        <ObjectStatus
+                                            text="{studentModel>/codingResult}"
+                                            state="{= ${studentModel>/codingResult} === 'Pass' ? 'Success' : ${studentModel>/codingResult} === 'Fail' ? 'Error' : 'Warning'}"
+                                            inverted="true"
+                                        />
+                                    </FlexBox>
+                                    <core:HTML content="&lt;hr style='border:none;border-top:1px solid #e5e5e5;margin:2px 0'/&gt;" />
+
+                                    <!-- Score -->
+                                    <FlexBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginTop sapUiTinyMarginBottom" width="100%">
+                                        <Text text="{i18n>scoreLabel}" class="sapUiSmallMarginEnd" />
+                                        <Text
+                                            text="{= ${studentModel>/codingScore} + '% (' + ${studentModel>/codingTotalMarks} + ' ' + ${i18n>marksUnit} + ')'}"
+                                            class="sapThemeHighlight-asColor"
+                                        />
+                                    </FlexBox>
+                                    <core:HTML content="&lt;hr style='border:none;border-top:1px solid #e5e5e5;margin:2px 0'/&gt;" />
+
+                                    <!-- AI Score -->
+                                    <FlexBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginTop sapUiTinyMarginBottom" width="100%">
+                                        <Text text="{i18n>aiScoreLabel}" class="sapUiSmallMarginEnd" />
+                                        <Text text="{= ${studentModel>/aiScore} + ' / ' + ${studentModel>/codingTotalMarks}}" />
+                                    </FlexBox>
+                                    <core:HTML content="&lt;hr style='border:none;border-top:1px solid #e5e5e5;margin:2px 0'/&gt;" />
+
+                                    <!-- Language -->
+                                    <FlexBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginTop sapUiTinyMarginBottom" width="100%">
+                                        <Text text="{i18n>languageLabel}" class="sapUiSmallMarginEnd" />
+                                        <Text text="{studentModel>/submittedLanguage}" />
+                                    </FlexBox>
+                                    <core:HTML content="&lt;hr style='border:none;border-top:1px solid #e5e5e5;margin:2px 0'/&gt;" />
+
+                                    <!-- Time Taken -->
+                                    <FlexBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiTinyMarginTop sapUiTinyMarginBottom" width="100%">
+                                        <Text text="{i18n>timeTakenLabel}" class="sapUiSmallMarginEnd" />
+                                        <Text text="{= ${studentModel>/codingTimeTaken} + ' ' + ${i18n>minUnit}}" />
+                                    </FlexBox>
+                                </VBox>
+                            </f:content>
+                        </f:Card>
+                    </layout:content>
+                </layout:Grid>
+
+                <!-- ===== MCQ QUESTION BREAKDOWN TABLE ===== -->
+                <Title
+                    level="H5"
+                    text="{i18n>mcqBreakdownTitle}"
+                    class="sapUiTinyMarginTop sapUiTinyMarginBottom sapUiSmallMarginBegin"
+                />
+
+                <!-- Filter Bar -->
+                <FlexBox
+                    wrap="Wrap"
+                    justifyContent="SpaceBetween"
+                    alignItems="Center"
+                    width="96%"
+                    class="sapUiTinyMarginBottom"
+                >
+                    <SegmentedButton
+                        id="mcqFilterBtn"
+                        selectedKey="All"
+                        selectionChange="onMcqFilterChange"
+                        class="sapUiSmallMarginBegin sapUiTinyMarginEnd sapUiTinyMarginBottom"
+                        width="15rem"
+                    >
+                        <items>
+                            <SegmentedButtonItem key="All" text="{i18n>filterAll}" />
+                            <SegmentedButtonItem key="Correct" text="{i18n>filterCorrect}" />
+                            <SegmentedButtonItem key="Incorrect" text="{i18n>filterIncorrect}" />
+                            <SegmentedButtonItem key="Skipped" text="{i18n>filterSkipped}" />
+                        </items>
+                    </SegmentedButton>
+                    <Text
+                        id="mcqFilterCount"
+                        text="{= ${studentModel>/totalQuestions} + ' ' + ${i18n>questionsUnit}}"
+                        class="sapUiTinyMarginBottom"
+                    />
+                </FlexBox>
+
+                <Table
+                    id="mcqBreakdownTable"
+                    items="{
+                        path: 'studentModel>/questionBreakdown',
+                        sorter: { path: 'order_no', descending: false }
+                    }"
+                    mode="None"
+                    fixedLayout="false"
+                    width="96%"
+                    noDataText="{i18n>noQuestionsAvailable}"
+                    sticky="ColumnHeaders"
+                    growing="true"
+                    growingThreshold="10"
+                    growingScrollToLoad="false"
+                    class="CommonRoundedTable sapUiSmallMarginBeginEnd"
+                >
+                    <headerToolbar >
+                        <Toolbar >
+                            <Title level="H6" text="{i18n>questionsTitle}"  />
+                        </Toolbar >
+                    </headerToolbar>
+
+                    <columns >
+                        <Column width="4rem" hAlign="Center">
+                            <Text text="{i18n>colNumber}" />
+                        </Column>
+                        <Column minScreenWidth="Tablet" demandPopin="true">
+                            <Text text="{i18n>colQuestion}" />
+                        </Column>
+                        <Column width="10rem" minScreenWidth="Desktop" demandPopin="true">
+                            <Text text="{i18n>colYourAnswer}" />
+                        </Column>
+                        <Column width="10rem" minScreenWidth="Desktop" demandPopin="true">
+                            <Text text="{i18n>colCorrectAnswer}" />
+                        </Column>
+                        <Column width="7rem" hAlign="Center">
+                            <Text text="{i18n>colStatus}" />
+                        </Column>
+                        <Column width="5rem" hAlign="Center">
+                            <Text text="{i18n>colMarks}" />
+                        </Column>
+                    </columns>
+
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <!-- # -->
+                                <Text text="{studentModel>order_no}" />
+
+                                <!-- Question text -->
+                                <Text
+                                    text="{studentModel>question_text}"
+                                    wrapping="true"
+                                    maxLines="2"
+                                />
+
+                                <!-- Your answer -->
+                                <Text
+                                    text="{= ${studentModel>selected_option_text} ? ${studentModel>selected_option_text} : '—'}"
+                                    wrapping="false"
+                                />
+
+                                <!-- Correct answer -->
+                                <Text
+                                    text="{studentModel>correct_option_text}"
+                                    wrapping="false"
+                                />
+
+                                <!-- Status badge -->
+                                <ObjectStatus
+                                    text="{studentModel>status}"
+                                    state="{= ${studentModel>status} === 'Correct' ? 'Success' : ${studentModel>status} === 'Incorrect' ? 'Error' : 'Warning'}"
+                                    icon="{= ${studentModel>status} === 'Correct' ? 'sap-icon://accept' : ${studentModel>status} === 'Incorrect' ? 'sap-icon://decline' : 'sap-icon://question-mark'}"
+                                />
+
+                                <!-- Marks awarded -->
+                                <ObjectStatus
+                                    text="{= ${studentModel>marks_awarded} + ' / ' + ${studentModel>marks}}"
+                                    state="{= ${studentModel>marks_awarded} > 0 ? 'Success' : 'None'}"
+                                />
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+
+                <!-- ===== TIMELINE ===== -->
+                <!-- <Title
+                    level="H5"
+                    text="{i18n>timelineTitle}"
+                    class="sapUiMediumMarginTop sapUiSmallMarginBottom"
+                />
+                <form:SimpleForm
+                    editable="false"
+                    layout="ResponsiveGridLayout"
+                    labelSpanM="4"
+                    emptySpanM="0"
+                >
+                    <Label text="{i18n>profileCreatedLabel}" />
+                    <Text text="{studentModel>/created_at}" />
+                    <Label text="{i18n>mcqStartedLabel}" />
+                    <Text text="{studentModel>/mcqStartedAt}" />
+                    <Label text="{i18n>mcqSubmittedLabel}" />
+                    <Text text="{studentModel>/mcqSubmittedAt}" />
+                    <Label text="{i18n>codeSubmittedLabel}" />
+                    <Text text="{studentModel>/codingSubmittedAt}" />
+                </form:SimpleForm> -->
+
+                <!-- ===== SUBMITTED CODE(S) ===== -->
+                <Title
+                    level="H5"
+                    text="{i18n>submittedSolutionsTitle}"
+                    class="sapUiMediumMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin "
+                />
+                <List
+                    items="{studentModel>/codingSubmissions}"
+                    noDataText="{i18n>noCodeSubmitted}"
+                    width="100%"
+                >
+                    <CustomListItem>
+                        <Panel
+                            expandable="true"
+                            expanded="true"
+                            class="sapUiNoContentPadding sapUiSmallMarginBottom sapUiSmallMarginBegin sapUiSmallMarginEnd"
+                            width="96%"
+                        >
+                            <headerToolbar>
+                                <Toolbar>
+                                    <Title
+                                        text="{= ${i18n>questionLabel} + ' ' + ${studentModel>question_id} }"
+                                        level="H6"
+                                    />
+                                    <ToolbarSpacer />
+                                    <ObjectStatus
+                                        text="{studentModel>submittedLanguage}"
+                                        state="Warning"
+                                    />
+                                </Toolbar>
+                            </headerToolbar>
+                            <content>
+                                <TextArea
+                                    value="{studentModel>submittedCode}"
+                                    editable="false"
+                                    growing="true"
+                                    growingMaxLines="20"
+                                    width="100%"
+                                    rows="12"
+                                    class="sapUiNoMargin"
+                                />
+                            </content>
+                        </Panel>
+                    </CustomListItem>
+                </List>
+            </VBox>
+        </content>
+        <!-- ===== FOOTER ===== -->
         <beginButton>
-            <Button
-                text="Close"
-                type="Emphasized"
-                press="onCloseStudentDialog"/>
+            <Button text="{i18n>closeBtn}" press="onCloseStudentDialog" />
         </beginButton>
-
     </Dialog>
-
 </core:FragmentDefinition>

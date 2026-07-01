@@ -214,8 +214,12 @@
 				</VBox>
 			</f:content>
 		</f:SimpleForm>
-		<VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
-    <HBox width="100%" justifyContent="End">
+		<footer>
+    <Toolbar>
+        <HBox
+            width="100%"
+            justifyContent="End"
+            alignItems="Center">
 				<Button
 					visible="{RaiseBugModel>/Submit}"
 					text="{i18n>submit}"
@@ -232,9 +236,10 @@
 					text="{i18n>CancelButton}"
 					press="RB_onCancelButtonPress"
 					type="Transparent"
-					class="closeBtnMargin"
+					
 				/>
 			</HBox>
-			</VBox>
+    </Toolbar>
+</footer>
 	</Dialog>
 </c:FragmentDefinition>

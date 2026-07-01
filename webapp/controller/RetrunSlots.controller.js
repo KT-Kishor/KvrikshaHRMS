@@ -3,7 +3,7 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel",
     "../utils/validation",
     "sap/m/MessageBox",
-     "sap/m/MessageToast",
+    "sap/m/MessageToast",
 
 ], function (
     BaseController,
@@ -22,17 +22,20 @@ sap.ui.define([
 
         },
         _onRouteMatched: async function () {
-this.time=false
+            this.time = false
 
-              var LoginFunction = await this.commonLoginFunction("ReturnSlots");
-                if (!LoginFunction) return;
+            var LoginFunction = await this.commonLoginFunction("ReturnSlots");
+            if (!LoginFunction) return;
             this.byId("idHomeBtn").setIcon("sap-icon://nav-back")
 
             await this._fetchCommonData("EmployeeDetailsData", "empModel");
 
             var empData = this.getOwnerComponent().getModel("EmpModel").getData();
 
-            var filteredEmp = empData.filter(emp => (emp.Role.includes("Admin") ||
+            await this._fetchCommonData("EmployeeDetails", "sEmployeeDetails");
+            const allData = this.getView().getModel("sEmployeeDetails").getData();
+
+            var filteredEmp = allData.filter(emp => (emp.Role.includes("Admin") ||
                 emp.Role.includes("IT Manager") || emp.Role.includes("IT Consultant")));
 
             var oModel = new JSONModel(filteredEmp);
@@ -59,7 +62,7 @@ this.time=false
             this.byId("RS_id_EmployeeName").setSelectedKey("")
             this.byId("RS_id_Date").setValue("")
         },
-        onSearchfilter:function(){
+        onSearchfilter: function () {
             this.getBusyDialog()
             this.onSearch()
         },
@@ -93,7 +96,7 @@ this.time=false
             })
         },
         RS_CreateSlot: function () {
-            this.edit=false
+            this.edit = false
             if (!this.RS_Dialog) {
                 this.RS_Dialog = sap.ui.xmlfragment(
                     "sap.kt.com.minihrsolution.fragment.Returnslots",
@@ -124,19 +127,27 @@ this.time=false
             sap.ui.getCore().byId("RS_id_Available").setSelectedIndex(0);
             sap.ui.getCore().byId("RS_id_EndDate").setEditable(true)
 
+            var oLoginData = this.getView().getModel("LoginModel").getData();
+            var aEmployees = this.getView().getModel("sEmployeeDetails").getData();
+            var oModel = this.getView().getModel("Returnslotmodel")
+           
 
+            // Find the logged-in employee
+            var oEmployee = aEmployees.find(function (oEmp) {
+                // return oEmp.EmployeeName === oLoginData.EmployeeName;
+                return oEmp.EmployeeID === oLoginData.EmployeeID;
+            });
 
+            if (oEmployee) {
+                sap.ui.getCore().byId("RS_id_Location").setValue(oEmployee.Branch || "");
+                sap.ui.getCore().byId("RS_id_Employeename").setValue(oEmployee.EmployeeName || "");
+                 oModel.setProperty("/Location",oEmployee.Branch)
+            }
 
-            var LoginModel = this.getView().getModel("LoginModel").getData()
-            sap.ui.getCore().byId("RS_id_Employeename").setValue(LoginModel.EmployeeName)
         },
         RS_onCancelReturnSlot: function () {
             this.RS_Dialog.close();
             this.byId("id_RS_Table").removeSelections()
-        },
-        RS_onChangeemployeename: function (oEvent) {
-            utils._LCstrictValidationComboBox(oEvent)
-
         },
         RS_onDateLiveChange: function (oEvent) {
 
@@ -212,8 +223,8 @@ this.time=false
                 sap.ui.getCore().byId("RS_id_EndDate").setEditable(false)
             }
         },
-        LocationChange:function(oEvent){
-            utils._LCvalidateMandatoryField(oEvent);     
+        LocationChange: function (oEvent) {
+            utils._LCvalidateMandatoryField(oEvent);
         },
         convertTimeToMinutes: function (sTime) {
 
@@ -236,39 +247,38 @@ this.time=false
             var oModel = this.getView().getModel("Returnslotmodel").getData();
 
             // Check duplicate slot
-          
+
 
             // Existing validation code
             if (
                 !utils._LCvalidateMandatoryField(sap.ui.getCore().byId("RS_id_Employeename"), "ID") ||
                 !utils._LCvalidateMandatoryField(sap.ui.getCore().byId("RS_id_StartDate"), "ID") ||
                 !utils._LCvalidateMandatoryField(sap.ui.getCore().byId("RS_id_EndDate"), "ID") ||
-                !utils._LCvalidateMandatoryField(sap.ui.getCore().byId("RS_id_StartTime"), "ID") 
-              
+                !utils._LCvalidateMandatoryField(sap.ui.getCore().byId("RS_id_StartTime"), "ID")
+
             ) {
                 MessageToast.show(
                     this.i18nModel.getText("mandatoryFieldsError")
                 );
                 return;
             }
-             if(!utils._LCvalidateMandatoryField(sap.ui.getCore().byId("RS_id_EndTime"), "ID")){
-                  MessageToast.show(
+            if (!utils._LCvalidateMandatoryField(sap.ui.getCore().byId("RS_id_EndTime"), "ID")) {
+                MessageToast.show(
                     this.i18nModel.getText("mandatoryFieldsError")
                 );
                 return;
             }
 
-            if(this.time===false)
-          {
-            sap.ui.getCore().byId("RS_id_EndTime").setValueState("Error")
-             MessageToast.show(
+            if (this.time === false) {
+                sap.ui.getCore().byId("RS_id_EndTime").setValueState("Error")
+                MessageToast.show(
                     this.i18nModel.getText("mandatoryFieldsError")
                 );
                 return;
-          }
-             if (
+            }
+            if (
                 !utils._LCvalidateMandatoryField(sap.ui.getCore().byId("RS_id_Location"), "ID")
-              
+
             ) {
                 MessageToast.show(
                     this.i18nModel.getText("mandatoryFieldsError")
@@ -276,105 +286,105 @@ this.time=false
                 return;
             }
 
-              var sStartDate = oModel.StartDate.split("/").reverse().join("-");
+            var sStartDate = oModel.StartDate.split("/").reverse().join("-");
             var sEndDate = oModel.EndDate.split("/").reverse().join("-");
-            var sEmployeeID =this.getView().getModel("LoginModel").getProperty("/EmployeeID");
-       if (this.edit === true) {
+            var sEmployeeID = this.getView().getModel("LoginModel").getProperty("/EmployeeID");
+            if (this.edit === true) {
 
-    var bChanged =
-        this._originalData.StartDate !== sStartDate ||
-        this._originalData.EndDate !== sEndDate ||
-        this._originalData.StartTime !== oModel.StartTime ||
-        this._originalData.EndTime !== oModel.EndTime;
+                var bChanged =
+                    this._originalData.StartDate !== sStartDate ||
+                    this._originalData.EndDate !== sEndDate ||
+                    this._originalData.StartTime !== oModel.StartTime ||
+                    this._originalData.EndTime !== oModel.EndTime;
 
-    if (bChanged) {
+                if (bChanged) {
 
-        var bExists = aReturnData.some((oItem) => {
+                    var bExists = aReturnData.some((oItem) => {
 
-            // Skip current record
-            if (String(oItem.SlotID) === String(oModel.SlotID)) {
-                return false;
+                        // Skip current record
+                        if (String(oItem.SlotID) === String(oModel.SlotID)) {
+                            return false;
+                        }
+
+                        if (oItem.EmployeeID !== sEmployeeID) {
+                            return false;
+                        }
+
+                        // Date overlap check
+                        var existingStartDate = new Date(oItem.StartDate.split("T")[0]);
+                        var existingEndDate = new Date(oItem.EndDate.split("T")[0]);
+
+                        var newStartDate = new Date(sStartDate);
+                        var newEndDate = new Date(sEndDate);
+
+                        var bDateOverlap =
+                            newStartDate <= existingEndDate &&
+                            newEndDate >= existingStartDate;
+
+                        if (!bDateOverlap) {
+                            return false;
+                        }
+
+                        // Time overlap check
+                        var existingStart = this.convertTimeToMinutes(oItem.StartTime);
+                        var existingEnd = this.convertTimeToMinutes(oItem.EndTime);
+
+                        var newStart = this.convertTimeToMinutes(oModel.StartTime);
+                        var newEnd = this.convertTimeToMinutes(oModel.EndTime);
+
+                        var bTimeOverlap =
+                            newStart < existingEnd &&
+                            newEnd > existingStart;
+
+                        return bTimeOverlap;
+
+                    });
+
+                    if (bExists) {
+                        MessageToast.show(this.i18nModel.getText("Aslotalreadyexistsfortheselected"));
+                        return;
+                    }
+                }
+            } else {
+
+                var bExists = aReturnData.some((oItem) => {
+
+                    if (oItem.EmployeeID === sEmployeeID) {
+
+                        var existingStartDate = new Date(oItem.StartDate.split("T")[0]);
+                        var existingEndDate = new Date(oItem.EndDate.split("T")[0]);
+
+                        var newStartDate = new Date(sStartDate);
+                        var newEndDate = new Date(sEndDate);
+
+                        // Date range overlap
+                        var bDateOverlap =
+                            newStartDate <= existingEndDate &&
+                            newEndDate >= existingStartDate;
+
+                        if (bDateOverlap) {
+
+                            var existingStart = this.convertTimeToMinutes(oItem.StartTime);
+                            var existingEnd = this.convertTimeToMinutes(oItem.EndTime);
+
+                            var newStart = this.convertTimeToMinutes(oModel.StartTime);
+                            var newEnd = this.convertTimeToMinutes(oModel.EndTime);
+
+                            // Time overlap
+                            return newStart < existingEnd && newEnd > existingStart;
+                        }
+                    }
+
+                    return false;
+                });
+
+                if (bExists) {
+                    MessageToast.show(this.i18nModel.getText("Aslotalreadyexistsfortheselected"));
+                    return;
+                }
+
+
             }
-
-            if (oItem.EmployeeID !== sEmployeeID) {
-                return false;
-            }
-
-            // Date overlap check
-            var existingStartDate = new Date(oItem.StartDate.split("T")[0]);
-            var existingEndDate = new Date(oItem.EndDate.split("T")[0]);
-
-            var newStartDate = new Date(sStartDate);
-            var newEndDate = new Date(sEndDate);
-
-            var bDateOverlap =
-                newStartDate <= existingEndDate &&
-                newEndDate >= existingStartDate;
-
-            if (!bDateOverlap) {
-                return false;
-            }
-
-            // Time overlap check
-            var existingStart = this.convertTimeToMinutes(oItem.StartTime);
-            var existingEnd = this.convertTimeToMinutes(oItem.EndTime);
-
-            var newStart = this.convertTimeToMinutes(oModel.StartTime);
-            var newEnd = this.convertTimeToMinutes(oModel.EndTime);
-
-            var bTimeOverlap =
-                newStart < existingEnd &&
-                newEnd > existingStart;
-
-            return bTimeOverlap;
-
-        });
-
-        if (bExists) {
-            MessageToast.show(this.i18nModel.getText("Aslotalreadyexistsfortheselected"));
-            return;
-        }
-    }
-}else{
-
-           var bExists = aReturnData.some((oItem) => {
-
-    if (oItem.EmployeeID === sEmployeeID) {
-
-        var existingStartDate = new Date(oItem.StartDate.split("T")[0]);
-        var existingEndDate = new Date(oItem.EndDate.split("T")[0]);
-
-        var newStartDate = new Date(sStartDate);
-        var newEndDate = new Date(sEndDate);
-
-        // Date range overlap
-        var bDateOverlap =
-            newStartDate <= existingEndDate &&
-            newEndDate >= existingStartDate;
-
-        if (bDateOverlap) {
-
-            var existingStart = this.convertTimeToMinutes(oItem.StartTime);
-            var existingEnd = this.convertTimeToMinutes(oItem.EndTime);
-
-            var newStart = this.convertTimeToMinutes(oModel.StartTime);
-            var newEnd = this.convertTimeToMinutes(oModel.EndTime);
-
-            // Time overlap
-            return newStart < existingEnd && newEnd > existingStart;
-        }
-    }
-
-    return false;
-});
-
-            if (bExists) {
-                MessageToast.show(this.i18nModel.getText("Aslotalreadyexistsfortheselected"));
-                return;
-            }
-
-
-}
 
             var oModel = this.getView().getModel("Returnslotmodel").getData();
             var EmployeeID = sap.ui.getCore().byId("RS_id_Employeename").getSelectedKey();
@@ -394,7 +404,7 @@ this.time=false
             try {
 
                 if (oModel.SlotID) {
-                     this.getBusyDialog()
+                    this.getBusyDialog()
                     await this.ajaxUpdateWithJQuery("ReturnSlots", {
                         filters: {
                             SlotID: oModel.SlotID
@@ -405,7 +415,7 @@ this.time=false
                     MessageToast.show(this.i18nModel.getText("Slotupdatedsuccessfully"));
 
                 } else {
-                     this.getBusyDialog()
+                    this.getBusyDialog()
                     await this.ajaxCreateWithJQuery("ReturnSlots", {
                         data: Payload
                     });
@@ -443,9 +453,9 @@ this.time=false
 
             }
         },
-   
+
         RS_EditSlot: function (oEvent) {
-            this.edit=true
+            this.edit = true
 
             var oTable = this.byId("id_RS_Table");
             var oItem = oTable.getSelectedItem();
@@ -457,7 +467,7 @@ this.time=false
 
             var oData = oItem.getBindingContext("ReturnModel").getObject();
 
-            if(oData.EmployeeID!==this.getView().getModel("LoginModel").getProperty("/EmployeeID")){
+            if (oData.EmployeeID !== this.getView().getModel("LoginModel").getProperty("/EmployeeID")) {
                 MessageToast.show(this.i18nModel.getText("Pleaseselectyourslot"));
                 return;
             }
@@ -472,7 +482,7 @@ this.time=false
 
 
 
-            var oModel = new sap.ui.model.json.JSONModel({
+            var oModel = new JSONModel({
                 SlotID: oData.SlotID,
                 EmployeeID: EmployeeID,
                 EmpName: oData.EmployeeName,
@@ -554,13 +564,13 @@ this.time=false
                 if (dEndTime <= dStartTime) {
                     oEndTimePicker.setValueState("Error");
                     oEndTimePicker.setValueStateText("Invalid Time");
-                    this.time=false
-                }else{
+                    this.time = false
+                } else {
                     oEndTimePicker.setValueState("None");
-                    this.time=true
+                    this.time = true
                 }
-            }else{
-                    this.time=true
+            } else {
+                this.time = true
             }
         },
         RS_DeleteSlot: async function () {
@@ -575,10 +585,10 @@ this.time=false
 
             var oData = oItem.getBindingContext("ReturnModel").getObject();
 
-            if(oData.EmployeeID!==this.getView().getModel("LoginModel").getProperty("/EmployeeID")){
-                 MessageToast.show(this.i18nModel.getText("Pleaseselectyourslotdelete"));
-                 return;
-                  }
+            if (oData.EmployeeID !== this.getView().getModel("LoginModel").getProperty("/EmployeeID")) {
+                MessageToast.show(this.i18nModel.getText("Pleaseselectyourslotdelete"));
+                return;
+            }
 
             sap.m.MessageBox.confirm(
                 "Are you sure you want to delete this slot?",

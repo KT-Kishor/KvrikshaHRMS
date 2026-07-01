@@ -135,8 +135,12 @@
                 />
 			</f:content>
 		</f:SimpleForm>
-	<VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
-    <HBox width="100%" justifyContent="End">
+	<footer>
+    <Toolbar>
+        <HBox
+            width="100%"
+            justifyContent="End"
+            alignItems="Center">
 			<Button
                 text="{i18n>assetAssignmentSave}"
                 press="FAA_onPressSave"
@@ -147,9 +151,10 @@
                 text="{i18n>close}"
                 press="FAA_onPressClose"
                 type="Transparent"
-                class="closeBtnMargin"
+                
             />
 		</HBox>
-       </VBox>
+    </Toolbar>
+</footer>
 	</Dialog>
 </core:FragmentDefinition>

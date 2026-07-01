@@ -79,12 +79,17 @@
 				</ComboBox>
 			</f:content>
 		</f:SimpleForm>
-		  <VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
-    <HBox width="100%" justifyContent="End">
+		  <footer>
+    <Toolbar>
+        <HBox
+            width="100%"
+            justifyContent="End"
+            alignItems="Center">
 			<Button text="{i18n>onboardEmp}" type="Transparent" press="OEF_onPressOnBoard"  />
 		
-			<Button text="{i18n>close}" press="OEF_onPressClose" type="Transparent" class="closeBtnMargin"/>
-		 </HBox>
-       </VBox>
+			<Button text="{i18n>close}" press="OEF_onPressClose" type="Transparent" />
+		</HBox>
+    </Toolbar>
+</footer>
 	</Dialog>
 </core:FragmentDefinition>

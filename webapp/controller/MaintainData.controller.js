@@ -107,7 +107,7 @@ sap.ui.define(
                                     new sap.m.Text({ text: `{dataModel>` + sField + "}" })
                                 );
                             });
-
+                            
                             var oTemplate = new sap.m.ColumnListItem({
                                 cells: aCells,
                             });
@@ -121,6 +121,9 @@ sap.ui.define(
 
                         //Add Table to Detail
                         oDetailContainer.addItem(this.oTable);
+                        if (sap.ui.Device.system.phone) {
+                          this.byId("SplitContDemo").toDetail(this.byId("detail"));
+                                        }
                     }
                 },
                 onPressback: function () {

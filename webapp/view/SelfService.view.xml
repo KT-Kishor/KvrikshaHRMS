@@ -1583,10 +1583,10 @@
                                             text="Serial Number"
                                         />
                                     </m:Column>
-                                    <m:Column  demandPopin="true"
+                                    <!-- <m:Column  demandPopin="true"
                                         minScreenWidth="Tablet">
                                         <m:Text text="Equipment Number" />
-                                    </m:Column>
+                                    </m:Column> -->
                                     <m:Column  demandPopin="true"
                                         minScreenWidth="Tablet">
                                         <m:Text text="Assigned Date" />
@@ -1598,12 +1598,7 @@
                                       <m:Column  demandPopin="true"
                                         minScreenWidth="Tablet">
                                         <m:Text text="Status" />
-                                    </m:Column>
-                                    <!-- <m:Column  demandPopin="true"
-                                        minScreenWidth="Tablet">
-                                        <m:Text text="Status" />
-                                    </m:Column> -->
-                                     
+                                    </m:Column>   
                                     
                                 </m:columns>
                                 <m:items>
@@ -1629,11 +1624,11 @@
                                                 text="{MyAssets>SerialNumber}"
                                             />
                                         </m:cells>
-                                        <m:cells>
+                                        <!-- <m:cells>
                                             <m:Text
                                                 text="{MyAssets>EquipmentNumber}"
                                             />
-                                        </m:cells>
+                                        </m:cells> -->
                                         <m:cells>
                                             <m:Text
                                                 text="{path: 'MyAssets>AssignedDate',
@@ -1656,7 +1651,7 @@
             <m:ObjectStatus
                             inverted="false"
                             state="{= ${MyAssets>Status} === 'Assigned' ? 'Indication05' : ${MyAssets>Status} === 'Return request' ? 'Warning': 'Success' }"
-                            text="{MyAssets>Status}"
+                           text="{= ${MyAssets>Status} === 'Accepted' ? 'Assigned (Return Accepted)' : ${MyAssets>Status} }"
                         />
 
         <core:Icon

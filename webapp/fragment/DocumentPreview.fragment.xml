@@ -24,18 +24,23 @@
                 visible="false"/>
         </content>
 
-     <beginButton>
+     <footer>
+    <Toolbar>
+        <HBox
+            width="100%"
+            justifyContent="End"
+            alignItems="Center">
             <Button
                 text="Download"
                 type="Transparent"
                 press=".onDownloadPreview"/>
-        </beginButton>
-
-        <endButton>
+       
             <Button
                 text="Close"
                 press=".onClosePreview"/>
-        </endButton>
+      </HBox>
+    </Toolbar>
+</footer>
 
     </Dialog>
 

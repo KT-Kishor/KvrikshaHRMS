@@ -60,8 +60,12 @@
         </content>
 
 
-<VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
-    <HBox width="100%" justifyContent="End">
+<footer>
+    <Toolbar>
+        <HBox
+            width="100%"
+            justifyContent="End"
+            alignItems="Center">
       
             <Button
                 type="Transparent"
@@ -72,9 +76,9 @@
             type="Transparent"
                 text="{i18n>cancel}"
                 press="FQD_onCloseDialogPress"
-                class="closeBtnMargin"
             />
-      </HBox>
-      </VBox>
+     </HBox>
+    </Toolbar>
+</footer>
     </Dialog>
 </core:FragmentDefinition>

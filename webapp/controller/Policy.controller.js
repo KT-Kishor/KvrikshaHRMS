@@ -362,45 +362,74 @@ sap.ui.define(
             // FILTER ROLE BASED ON DEPARTMENT
             PL_onDepartmentChange: function (oEvent) {
                 var oCombo = oEvent.getSource();
-                var sDepartment = oCombo.getSelectedKey();
+                var sDepartment = oCombo.getSelectedKey() || oCombo.getValue();
+
                 if (sDepartment) {
                     oCombo.setValueState("None");
                     oCombo.setValueStateText("");
                 }
+
                 var oDesignationModel = this.getView().getModel("DesignationModel");
                 if (!oDesignationModel) {
                     console.error("DesignationModel NOT FOUND");
                     return;
                 }
+
                 var aData = oDesignationModel.getData();
+
                 // CLEAR OLD ROLES
                 this.getView().setModel(new JSONModel([]), "FilteredRoleModel");
-                // VALIDATE DATA
+
                 if (!aData || aData.length === 0) {
                     console.error("DesignationModel is EMPTY");
                     return;
                 }
-                // FILTER ROLES
+
+                // FILTER ROLES FOR SELECTED DEPARTMENT
                 var aFilteredRoles = aData.filter(function (oItem) {
                     return (oItem.department || "").trim().toLowerCase() === (sDepartment || "").trim().toLowerCase();
                 });
+
                 var oUnique = {};
                 var aUniqueRoles = [];
                 aFilteredRoles.forEach(function (oItem) {
                     var sRole = (oItem.designationName || "").trim();
                     if (sRole && !oUnique[sRole]) {
                         oUnique[sRole] = true;
-                        aUniqueRoles.push({
-                            designationName: sRole
-                        });
+                        aUniqueRoles.push({ designationName: sRole });
                     }
                 });
-                var oRoleModel = new JSONModel(aUniqueRoles);
-                this.getView().setModel(oRoleModel, "FilteredRoleModel");
-                // RESET MULTISELECT
+
+                this.getView().setModel(new JSONModel(aUniqueRoles), "FilteredRoleModel");
+
+                // RESET: Create dialog role (PL_id_Role)
                 var oRole = this.byId("PL_id_Role");
                 if (oRole) {
                     oRole.setSelectedKeys([]);
+                }
+
+                // RESET: View dialog role (PL_id_ViewRole)
+                var oViewRole = this.byId("PL_id_ViewRole");
+                if (oViewRole) {
+                    oViewRole.setSelectedKeys([]);
+                }
+
+                // RESET: FilterBar role (PL_id_RoleFilter)
+                var oRoleFilter = this.byId("PL_id_RoleFilter");
+                if (oRoleFilter) {
+                    oRoleFilter.setSelectedKeys([]);
+                }
+
+                // RESET: policyViewModel role
+                var oPolicyViewModel = this.getView().getModel("policyViewModel");
+                if (oPolicyViewModel) {
+                    oPolicyViewModel.setProperty("/role", []);
+                }
+
+                // RESET: policyDialogModel role
+                var oDialogModel = this.getView().getModel("policyDialogModel");
+                if (oDialogModel) {
+                    oDialogModel.setProperty("/role", []);
                 }
             },
             PL_onRemovePdf: function () {
@@ -425,12 +454,12 @@ sap.ui.define(
                 if (!oFile) {
                     return; // User clicked Cancel -> keep existing file
                 }
-                 // BLOCK OVERSIZED FILES
-                  if (oFile.size > 5 * 1024 * 1024) {
-        MessageBox.error(this.i18nModel.getText("fileSizeExceeded") || "File size exceeds the limit of 5MB. Please upload a smaller file.");
-        oEvent.getSource().clear();
-        return;
-    }
+                // BLOCK OVERSIZED FILES
+                if (oFile.size > 5 * 1024 * 1024) {
+                    MessageBox.error(this.i18nModel.getText("fileSizeExceeded") || "File size exceeds the limit of 5MB. Please upload a smaller file.");
+                    oEvent.getSource().clear();
+                    return;
+                }
                 // BLOCK NON-PDF
                 if (oFile.type !== "application/pdf") {
                     MessageBox.error(this.i18nModel.getText("onlyPdfAllowed"));
@@ -619,9 +648,9 @@ sap.ui.define(
                 const fVersion = parseFloat(sVersion);
                 return (Math.round((fVersion + 0.1) * 10) / 10).toFixed(1);
             },
-           FileSizeExceeds: function () {
-    MessageBox.error(this.i18nModel.getText("fileSizeExceeded") || "File size exceeds the limit of 5MB. Please upload a smaller file.");
-},
+            FileSizeExceeds: function () {
+                MessageBox.error(this.i18nModel.getText("fileSizeExceeded") || "File size exceeds the limit of 5MB. Please upload a smaller file.");
+            },
             PL_onVersionFileUpload: function (oEvent) {
                 const oFile = oEvent.getParameter("files")[0];
                 const oModel = this.getView().getModel("policyDialogModel");
@@ -795,12 +824,79 @@ sap.ui.define(
             },
             onDownloadVersionPdf: function (oEvent) {
                 const oData = oEvent.getSource().getBindingContext("versionModel").getObject();
-                if (!oData.File_Content) return MessageBox.error(this.i18nModel.getText("noPdfFound"));
-                const sPdf = "data:application/pdf;base64," + oData.File_Content;
-                const link = document.createElement("a");
-                link.href = sPdf;
-                link.download = oData.File_Name || "version.pdf";
-                link.click();
+
+                if (!oData.File_Content) {
+                    MessageBox.error(this.i18nModel.getText("noPdfFound"));
+                    return;
+                }
+
+                try {
+                    // 1. Clean the base64 string
+                    let sBase64 = String(oData.File_Content)
+                        .replace(/^data:.*;base64,/, "")
+                        .replace(/\s/g, "");
+
+                    // 2. DECOMPRESS if stored compressed (CRITICAL - this was missing)
+                    if (this.isCompressedBase64 && this.isCompressedBase64(sBase64)) {
+                        sBase64 = this.decompressBase64(sBase64);
+                    }
+
+                    // 3. Validate it's actually a PDF
+                    if (!sBase64.startsWith("JVBER")) {
+                        MessageBox.error("Invalid PDF file. Cannot download.");
+                        return;
+                    }
+
+                    // 4. Decode base64 → binary → Blob
+                    const sBinary = atob(sBase64);
+                    const aBytes = new Uint8Array(sBinary.length);
+                    for (let i = 0; i < sBinary.length; i++) {
+                        aBytes[i] = sBinary.charCodeAt(i);
+                    }
+
+                    const oBlob = new Blob([aBytes], { type: "application/pdf" });
+
+                    // 5. Create Blob URL and trigger download
+                    const sBlobUrl = URL.createObjectURL(oBlob);
+                    const oLink = document.createElement("a");
+                    oLink.href = sBlobUrl;
+                    oLink.download = oData.File_Name || "policy.pdf";
+                    document.body.appendChild(oLink);
+                    oLink.click();
+                    document.body.removeChild(oLink);
+
+                    // 6. Release memory
+                    setTimeout(function () {
+                        URL.revokeObjectURL(sBlobUrl);
+                    }, 3000);
+
+                } catch (e) {
+                    console.error("PDF download error:", e);
+                    MessageBox.error("Failed to download PDF. The file may be corrupted.");
+                }
+            },
+            _createBlobUrlFromBase64: function (sBase64, sMimeType) {
+                try {
+                    sBase64 = sBase64
+                        .replace(/^data:.*;base64,/, "")
+                        .replace(/\s/g, "");
+
+                    // Decompress if needed
+                    if (this.isCompressedBase64 && this.isCompressedBase64(sBase64)) {
+                        sBase64 = this.decompressBase64(sBase64);
+                    }
+
+                    const sBinary = atob(sBase64);
+                    const aBytes = new Uint8Array(sBinary.length);
+                    for (let i = 0; i < sBinary.length; i++) {
+                        aBytes[i] = sBinary.charCodeAt(i);
+                    }
+                    const oBlob = new Blob([aBytes], { type: sMimeType || "application/pdf" });
+                    return URL.createObjectURL(oBlob);
+                } catch (e) {
+                    console.error("Blob URL creation failed:", e);
+                    return null;
+                }
             },
             PL_onCancelNewVersion: function () {
                 // CLEAR FILE UPLOADER
@@ -1438,10 +1534,33 @@ sap.ui.define(
                 });
             },
             _createPdfIframe: function () {
-                const sPdfUrl = this.getView().getModel("policyViewModel").getProperty("/fileUrl");
+                const oModel = this.getView().getModel("policyViewModel");
+                const sDataUrl = oModel.getProperty("/fileUrl"); // data:application/pdf;base64,...
+
+                // Revoke any previous blob URL to free memory
+                if (this._pdfBlobUrl) {
+                    URL.revokeObjectURL(this._pdfBlobUrl);
+                    this._pdfBlobUrl = null;
+                }
+
+                // Convert data URL → Blob URL (avoids browser block + UI freeze)
+                const sBlobUrl = this._createBlobUrlFromBase64(sDataUrl, "application/pdf");
+
+                if (!sBlobUrl) {
+                    sap.m.MessageBox.error("Failed to render PDF.");
+                    return;
+                }
+
+                this._pdfBlobUrl = sBlobUrl; // store for cleanup
+
                 const oHtml = this.byId("pdfFrame");
-                const sIframe = "<iframe " + "src='" + sPdfUrl + "#toolbar=0&navpanes=0&scrollbar=0' " + "width='100%' " + "height='100%' " + "style='" + "border:none;" + "width:100%;" + "height:100vh;" + "display:block;" + "' " + "allowfullscreen>" + "</iframe>";
-                oHtml.setContent(sIframe);
+                oHtml.setContent(
+                    "<iframe " +
+                    "src='" + sBlobUrl + "#toolbar=0&navpanes=0&scrollbar=0&view=FitH' " +
+                    "style='width:100%;height:100vh;border:none;display:block;margin:0;padding:0;' " +
+                    ">" +
+                    "</iframe>"
+                );
             },
             PL_openViewDialog: function () {
                 this.getView().getModel("VisibleModel").setProperty("/EditBtn", true);
@@ -1457,6 +1576,7 @@ sap.ui.define(
                             ID: this._selectedPolicyId,
                         });
                         const oData = Array.isArray(oPolicyResponse.data) ? oPolicyResponse.data[0] : oPolicyResponse.data || {};
+
                         // ACKNOWLEDGEMENT LOGIC
                         let sAckIds = oData.EmployeeID || "";
                         const aAckIds = String(sAckIds).split(",").map(id => id.trim()).filter(Boolean);
@@ -1466,15 +1586,27 @@ sap.ui.define(
                         oModel.setProperty("/employeeIds", sAckIds);
                         oModel.setProperty("/alreadyAcknowledged", bAlreadyAcknowledged);
                         oModel.refresh(true);
-                        //  ACTIVE VERSION (ONLY ONE SOURCE)
+
+                        // ACTIVE VERSION
                         const aItems = oData.Items || [];
                         const oActiveItem = this._getActivePolicyItem(aItems);
-                        //  PDF FROM ACTIVE VERSION ONLY
+
+                        // GET BASE64 AND DECOMPRESS (FIX IS HERE)
                         let sBase64 = oActiveItem?.File_Content || "";
                         sBase64 = String(sBase64).replace(/^data:.*;base64,/, "").replace(/\s/g, "");
+
+                        // DECOMPRESS IF NEEDED
+                        if (this.isCompressedBase64 && this.isCompressedBase64(sBase64)) {
+                            sBase64 = this.decompressBase64(sBase64);
+                        }
+
+                        // Store as data URL for _createPdfIframe to convert to Blob
                         this._policyPdfUrl = "data:application/pdf;base64," + sBase64;
                         oModel.setProperty("/fileUrl", this._policyPdfUrl);
-                    } catch (e) { }
+
+                    } catch (e) {
+                        console.error("fnRefreshPolicyData error:", e);
+                    }
                 }.bind(this);
                 if (this.FPL_oViewDialog) {
                     this.FPL_oViewDialog.open();
@@ -1809,6 +1941,11 @@ sap.ui.define(
             },
             // view dialog close
             PL_onCloseViewDialog: function () {
+                // REVOKE BLOB URL (MEMORY CLEANUP)
+                if (this._pdfBlobUrl) {
+                    URL.revokeObjectURL(this._pdfBlobUrl);
+                    this._pdfBlobUrl = null;
+                }
                 this.getView().getModel("VisibleModel").setProperty("/EditBtn", true);
                 // REMOVE VALUE STATE ERRORS
                 if (this.byId("PL_id_ViewTitle")) {

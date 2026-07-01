@@ -781,7 +781,7 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
 
           // Filter based on Employee ID
           const filteredData = aResults.filter(item =>
-            item.AssignEmployeeID === sEmployeeID && (item.Status === "Assigned" || item.Status === "Accepted" || item.Status === "Return request")
+            item.AssignEmployeeID === sEmployeeID && (item.Status === "Assigned" || item.Status === "Accepted" || item.Status === "Return request" || item.Status === "Returned")
           );
 
           // Set filtered data to model
@@ -4579,6 +4579,20 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
             "Branch: " + (oAsset.AssignBranch || "-")], oAsset.AssignBranch);
         }
 
+        if (oAsset.ReturnDate) {
+    addEvent(
+        "RETURNED",
+        oAsset.ReturnDate,
+        "Asset Returned",
+        [
+            "Returned By: " + (oAsset.ReturnEmpName || "-") + " (" + (oAsset.ReturnEmpID || "-") + ")",
+            "Branch: " + (oAsset.AssignBranch || "-"),
+            "Asset Condition: " + (oAsset.AssetCondition || "-")
+        ],
+        oAsset.AssignBranch
+    );
+}
+
         // ---- TRANSFER by employee ----
         if (oAsset.TransferDate && oAsset.TransferDate !== "1899-11-30T00:00:00.000Z" && oAsset.TransferByID === sEmpId) {
           addEvent("TRANSFER", oAsset.TransferDate, "You transferred asset",
@@ -4772,19 +4786,21 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
       }
       this.ID = oRowData.ID
       this.getBusyDialog()
-      var oToday = new Date();
+      var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+    pattern: "yyyy-MM-dd"
+});
 
-      // Today's date
-      var sStartDate = oToday.toISOString().split("T")[0];
+var oToday = new Date();
 
-      // Last date of current month
-      var oLastDate = new Date(
-        oToday.getFullYear(),
-        oToday.getMonth() + 1,
-        0
-      );
+var sStartDate = oDateFormat.format(oToday);
 
-      var sEndDate = oLastDate.toISOString().split("T")[0];
+var oLastDate = new Date(
+    oToday.getFullYear(),
+    oToday.getMonth() + 1,
+    0
+);
+
+var sEndDate = oDateFormat.format(oLastDate);
 
       var filter = {
         BranchCode: LoginModel.BranchCode,
@@ -4973,7 +4989,9 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
 
           aSlots.push({
             StartTime: oItem.StartTime,
-            EndTime: oItem.EndTime
+            EndTime: oItem.EndTime,
+            EmployeeID: oItem.EmployeeID,
+            EmployeeName: oItem.EmployeeName
           });
         }
       });

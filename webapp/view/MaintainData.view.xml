@@ -60,7 +60,7 @@
                 </Page>
             </detailPages>
             <masterPages>
-                <Page title="{i18n>TableNames}">
+                <Page title="{i18n>TableNames}" >
                     
                         <List
                             items="{ path: 'listNameData>/ListData'}"

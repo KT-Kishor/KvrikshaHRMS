@@ -19,26 +19,33 @@
             singleContainerFullSize="false"
         >
             <f:content>
-                <Label text="{i18n>type}" required="true" />
-                <ComboBox id="FCIA_id_type"
-                placeholder="Select Asset Type"
-                selectedKey="{CreateIncomeAssetModel>/Type}"
-                 items="{oAssetTypeModel>/}" 
-                 change="IA_validateType"
-                 valueStateText="{i18n>selecttype}"
-                 >
-                   <core:Item
+                <Label
+                    text="{i18n>type}"
+                    required="true"
+                />
+                <ComboBox
+                    id="FCIA_id_type"
+                    placeholder="Select Asset Type"
+                    selectedKey="{CreateIncomeAssetModel>/Type}"
+                    items="{oAssetTypeModel>/}"
+                    change="IA_validateType"
+                    valueStateText="{i18n>selecttype}"
+                >
+                    <core:Item
                         key="{oAssetTypeModel>Type}"
                         text="{oAssetTypeModel>Type}"
                     />
                 </ComboBox>
-                <Label text="{i18n>pickedBy}" required="true" />
+                <Label
+                    text="{i18n>pickedBy}"
+                    required="true"
+                />
                 <ComboBox
                     id="FCIA_id_pickedby"
                     placeholder="Select Employee"
-
                     selectedKey="{CreateIncomeAssetModel>/PickedEmployeeName}"
-                    showSecondaryValues="true" filterSecondaryValues="true"
+                    showSecondaryValues="true"
+                    filterSecondaryValues="true"
                     items="{AdminModel>/}"
                     change="IA_validatePickedBy"
                     valueStateText="{i18n>selectvaluefromdropdown}"
@@ -49,7 +56,10 @@
                         additionalText="{AdminModel>EmployeeID}"
                     />
                 </ComboBox>
-                <Label text="{i18n>branch}" required="true" />
+                <Label
+                    text="{i18n>branch}"
+                    required="true"
+                />
                 <ComboBox
                     id="FCIA_id_branch"
                     placeholder="Select Branch"
@@ -57,17 +67,20 @@
                     selectionChange="FCIA_onselectionchange"
                     valueStateText="Select Branch"
                     value="{CreateIncomeAssetModel>/PickedBranch}"
-                    
-                    showSecondaryValues="true" filterSecondaryValues="true"
+                    showSecondaryValues="true"
+                    filterSecondaryValues="true"
                     items="{CompanyCodeDetailsModel>/}"
                 >
                     <core:ListItem
-                        key="{CompanyCodeDetailsModel>companyCode}" 
+                        key="{CompanyCodeDetailsModel>companyCode}"
                         text="{CompanyCodeDetailsModel>companyCode}"
                         additionalText="{CompanyCodeDetailsModel>branch}"
                     />
                 </ComboBox>
-                <Label text="{i18n>vehicleModel}" required="true" />
+                <Label
+                    text="{i18n>vehicleModel}"
+                    required="true"
+                />
                 <Input
                     id="FCIA_id_model"
                     value="{CreateIncomeAssetModel>/Model}"
@@ -76,15 +89,24 @@
                     liveChange="FCIA_onInputLiveChange"
                     maxLength="30"
                 />
-               
-                 	<Label text="{i18n>description}" required="true" />
-		          <TextArea id="FCIA_ID_DescriptionTextArea" 
-                  valueStateText="Write A Model Description"
-                  liveChange="FCIA_onDescriptionTextAreaChange"
-                  value="{CreateIncomeAssetModel>/Description}"
-                  placeholder="Enter Description" 
-                  maxLength="250" width="100%" />
-                    <Label text="{i18n>slNo}" required="true" />
+
+                <Label
+                    text="{i18n>description}"
+                    required="true"
+                />
+                <TextArea
+                    id="FCIA_ID_DescriptionTextArea"
+                    valueStateText="Write A Model Description"
+                    liveChange="FCIA_onDescriptionTextAreaChange"
+                    value="{CreateIncomeAssetModel>/Description}"
+                    placeholder="Enter Description"
+                    maxLength="250"
+                    width="100%"
+                />
+                <Label
+                    text="{i18n>slNo}"
+                    required="true"
+                />
                 <Input
                     id="FCIA_id_slno"
                     value="{CreateIncomeAssetModel>/SerialNumber}"
@@ -92,9 +114,12 @@
                     placeholder="Enter Serial Number"
                     maxLength="25"
                     liveChange="FCIA_onslnoInputLiveChange"
-           />
+                />
 
-                <Label text="{i18n>eqNo}" required="true" />
+                <Label
+                    text="{i18n>eqNo}"
+                    required="true"
+                />
                 <Input
                     id="FCIA_id_eqno"
                     value="{CreateIncomeAssetModel>/EquipmentNumber}"
@@ -103,18 +128,24 @@
                     maxLength="25"
                     liveChange="FCIA_oneqnolivechange"
                 />
-                     <Label text="{i18n>AssetDate}" required="true" />
+                <Label
+                    text="{i18n>AssetDate}"
+                    required="true"
+                />
                 <DatePicker
-                    id="FCIA_id_Date" 
+                    id="FCIA_id_Date"
                     maxDate="{VisiableModel>/maxDate}"
                     minDate="{VisiableModel>/minDate}"
                     value="{CreateIncomeAssetModel>/AssetCreationDate}"
                     change="FCIA_ondatechange"
-                     valueStateText="Select date"
+                    valueStateText="Select date"
                     valueFormat="dd/MM/yyyy"
                     displayFormat="dd/MM/yyyy"
                 />
-                <Label text="{i18n>pickedbranch}" required="true" />
+                <Label
+                    text="{i18n>pickedbranch}"
+                    required="true"
+                />
                 <ComboBox
                     id="FCIA_id_pickbranch"
                     placeholder="Select branch"
@@ -122,17 +153,21 @@
                     selectionChange="FCIA_onselectionchange"
                     valueStateText="Select Branch"
                     selectedKey="{CreateIncomeAssetModel>/PickedBranch}"
-                    showSecondaryValues="true" filterSecondaryValues="true"
+                    showSecondaryValues="true"
+                    filterSecondaryValues="true"
                     items="{CompanyCodeDetailsModel>/}"
                 >
                     <core:ListItem
-                        key="{CompanyCodeDetailsModel>city}" 
+                        key="{CompanyCodeDetailsModel>city}"
                         text="{CompanyCodeDetailsModel>city}"
                         additionalText="{CompanyCodeDetailsModel>branchCode}"
                     />
                 </ComboBox>
 
-                <Label text="{i18n>assetvalue}" required="true"/>
+                <Label
+                    text="{i18n>assetvalue}"
+                    required="true"
+                />
                 <Input
                     id="FCIA_id_assetvalue"
                     value="{CreateIncomeAssetModel>/AssetValue}"
@@ -142,12 +177,16 @@
                     liveChange="FCIA_assetammountlivechange"
                 />
 
-                <Label text="{i18n>currency}" required="true" />
-               <ComboBox
+                <Label
+                    text="{i18n>currency}"
+                    required="true"
+                />
+                <ComboBox
                     id="FCIA_id_currency"
                     change="FCIA_onbranchchange"
                     selectedKey="{CreateIncomeAssetModel>/Currency}"
-                    items="{path:'CurrencyModel>/',length:1000}" valueStateText="{i18n>selectCurrency}"
+                    items="{path:'CurrencyModel>/',length:1000}"
+                    valueStateText="{i18n>selectCurrency}"
                 >
                     <core:Item
                         text="{CurrencyModel>currency}"
@@ -155,37 +194,34 @@
                     />
                 </ComboBox>
 
-       <Label text="{i18n>warranty}" required="true"/>
+                <Label text="{i18n>warranty}" />
 
-<Input
-    id="FCIA_id_warranty"
-    value="{CreateIncomeAssetModel>/Warranty}"
-    liveChange="FCIA_onInputLiveChange"
-    valueStateText="{i18n>enterWarranty}"
-    placeholder="{i18n>enterWarranty}"
-    maxLength="20"
-/>
+                <Input
+                    id="FCIA_id_warranty"
+                    value="{CreateIncomeAssetModel>/Warranty}"
+                    valueStateText="{i18n>enterWarranty}"
+                    placeholder="{i18n>enterWarranty}"
+                    maxLength="20"
+                />
 
-<Label text="{i18n>warrantyDate}" required="true"/>
+                <Label text="{i18n>warrantyDate}" />
 
-<DatePicker
-    id="FCIA_id_warrantyDate"
-    required="true"
-    value="{CreateIncomeAssetModel>/WarrantyDate}"
-    valueFormat="dd/MM/yyyy"
-    displayFormat="dd/MM/yyyy"
-    valueStateText="{i18n>selectValidWarrantyDate}"
-    placeholder="{i18n>selectValidWarrantyDate}"
-    change="onWarrantyDateChange"
-/>
+                <DatePicker
+                    id="FCIA_id_warrantyDate"
+                    value="{CreateIncomeAssetModel>/WarrantyDate}"
+                    valueFormat="dd/MM/yyyy"
+                    displayFormat="dd/MM/yyyy"
+                    valueStateText="{i18n>selectValidWarrantyDate}"
+                    placeholder="{i18n>selectValidWarrantyDate}"
+                    change="onWarrantyDateChange"
+                />
 
-
-                <Label text="{i18n>transferby}"/>
+                <Label text="{i18n>transferby}" />
                 <Select
                     id="FCIA_id_transferBy"
-					required="true"
+                    required="true"
                     selectedKey="{CreateIncomeAssetModel>/TransferByName}"
-                    showSecondaryValues="true" 
+                    showSecondaryValues="true"
                     items="{AdminModel>/}"
                 >
                     <core:ListItem
@@ -193,19 +229,19 @@
                         key="{AdminModel>EmployeeName}"
                         additionalText="{AdminModel>EmployeeID}"
                     />
-               </Select>
-                <Label text="{i18n>transferDate}"/>
+                </Select>
+                <Label text="{i18n>transferDate}" />
                 <DatePicker
-                id="FCIA_id_transferdate"
-                required="true"
-                value="{CreateIncomeAssetModel>/TransferDate}"
+                    id="FCIA_id_transferdate"
+                    required="true"
+                    value="{CreateIncomeAssetModel>/TransferDate}"
                     valueFormat="dd/MM/yyyy"
                     displayFormat="dd/MM/yyyy"
                     valueStateText="Select date"
                     change="FCIA_ondatechange"
                 />
-                 <Label text="{i18n>transferBranch}"/>
-             <ComboBox
+                <Label text="{i18n>transferBranch}" />
+                <ComboBox
                     id="FCIA_id_transferbranch"
                     required="true"
                     placeholder="Select Branch"
@@ -214,16 +250,20 @@
                     valueStateText="Select Branch"
                     value="{CreateIncomeAssetModel>/TransferBranch}"
                     selectedKey="{CreateIncomeAssetModel>/TransferBranch}"
-                    showSecondaryValues="true" filterSecondaryValues="true"
+                    showSecondaryValues="true"
+                    filterSecondaryValues="true"
                     items="{CompanyCodeDetailsModel>/}"
                 >
                     <core:ListItem
-                        key="{CompanyCodeDetailsModel>companyCode}" 
+                        key="{CompanyCodeDetailsModel>companyCode}"
                         text="{CompanyCodeDetailsModel>companyCode}"
                         additionalText="{CompanyCodeDetailsModel>branch}"
                     />
                 </ComboBox>
-                 <Label text="{i18n>refrenceNo}" required="true" />
+                <Label
+                    text="{i18n>refrenceNo}"
+                    required="true"
+                />
                 <Input
                     id="FCIA_id_refrenceNo"
                     value="{CreateIncomeAssetModel>/ReferenceNumber}"
@@ -232,53 +272,53 @@
                     liveChange="FCIA_onInputLiveChange"
                     maxLength="30"
                 />
-                
             </f:content>
         </f:SimpleForm>
 
+        <footer>
+            <Toolbar>
+                <HBox
+                    width="100%"
+                    justifyContent="End"
+                    alignItems="Center"
+                >
+                    <Button
+                        text="Save"
+                        press="FCIA_onsavebuttonpress"
+                        type="Transparent"
+                        id="FCIA_id_saveButton"
+                        class="marginRight"
+                    />
+                    <Button
+                        text="Submit"
+                        press="FCIA_onsavebuttonpress"
+                        type="Transparent"
+                        id="FCIA_id_submitButton"
+                        class="marginRight"
+                    />
+                    <Button
+                        text="{i18n>Transfer}"
+                        press="FCIA_onTransferbuttonpress"
+                        type="Transparent"
+                        id="FCIA_id_transferButton"
+                    />
 
-
-           <VBox width="100%" class="sapUiTinyMarginTop fotterbtns">
-    <HBox width="100%" justifyContent="End">
-
-            <Button text="Save" 
-             press="FCIA_onsavebuttonpress"
-             type="Transparent"
-             id="FCIA_id_saveButton"
-             class="marginRight"
-             />
-               <Button text="Submit" 
-             press="FCIA_onsavebuttonpress"
-             type="Transparent"
-             id="FCIA_id_submitButton"
-             class="marginRight"
-             />
-            <Button
-                text="{i18n>Transfer}"
-                press="FCIA_onTransferbuttonpress"
-                type="Transparent"
-                id="FCIA_id_transferButton"
-            />
-
-         <Button
-                text="Picked"
-                press="FCIA_onpickButtonPress"
-                type="Transparent"
-                id="FCIA_id_pickButton"
-                visible="false"
-            />
-            <Button
-                text="{i18n>btnCancel}"
-                press="FCIA_onCancelButtonPress"
-                type="Transparent"
-                id="FCIA_id_CancelButton"
-             class="marginRight closeBtnMargin"
-
-            />
-            
-			</HBox>
-       </VBox>
-
-         	
+                    <Button
+                        text="Picked"
+                        press="FCIA_onpickButtonPress"
+                        type="Transparent"
+                        id="FCIA_id_pickButton"
+                        visible="false"
+                    />
+                    <Button
+                        text="{i18n>btnCancel}"
+                        press="FCIA_onCancelButtonPress"
+                        type="Transparent"
+                        id="FCIA_id_CancelButton"
+                        class="marginRight"
+                    />
+                </HBox>
+            </Toolbar>
+        </footer>
     </Dialog>
 </core:FragmentDefinition>

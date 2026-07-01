@@ -48,8 +48,11 @@
         </f:SimpleForm>
 
         <footer>
-            <Toolbar>
-                <ToolbarSpacer />
+    <Toolbar>
+        <HBox
+            width="100%"
+            justifyContent="End"
+            alignItems="Center">
                 <Button
                     text="{i18n>submit}"
                     type="Transparent"
@@ -63,7 +66,8 @@
                     press="FSA_onPressClose"
                     type="Transparent"
                 />
-            </Toolbar>
-        </footer>
+           </HBox>
+    </Toolbar>
+</footer>
     </Dialog>
 </core:FragmentDefinition>
