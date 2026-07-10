@@ -787,7 +787,7 @@ sap.ui.define(["./BaseController", "../utils/validation", "sap/ui/model/json/JSO
                 .getModel("SowReadModel")
                 .getData()
                 .filter((item) => item.SowID === this.Selected.SowID);
-            var Status = oEvent.getSource().getText() === "Inactive" ? "Inactive" : "Active";
+            var Status = oEvent.getSource().getText() === "Inactive All" ? "Inactive" : "Active";
             var oData = {
                 data: FilterData.map((item) => {
                     return {
