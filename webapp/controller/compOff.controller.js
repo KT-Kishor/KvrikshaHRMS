@@ -133,10 +133,10 @@ sap.ui.define(
 
                     this.getBusyDialog();
 
-                    const oLoginModel = oOwnerComponent.getModel("LoginModel");
-                    this.userId = oLoginModel.getProperty("/EmployeeID");
-                    this.Type = oLoginModel.getProperty("/Role");
-                    this.branch = oLoginModel.getProperty("/BranchCode");
+                    this.oLoginModel = oOwnerComponent.getModel("LoginModel");
+                    this.userId = this.oLoginModel.getProperty("/EmployeeID");
+                    this.Type = this.oLoginModel.getProperty("/Role");
+                    this.branch = this.oLoginModel.getProperty("/BranchCode");
                     this.currentYear = new Date().getFullYear();
                     this.onClearAndSearch("AL_id_compofffilterbar");
 
@@ -171,7 +171,7 @@ sap.ui.define(
                     oDateRange.setMaxDate(oMaxDate);
 
                     const i18n = this.getView().getModel("i18n")?.getResourceBundle();
-                    oLoginModel.setProperty("/HeaderName", i18n.getText("compoffheader"));
+                    this.oLoginModel.setProperty("/HeaderName", i18n.getText("compoffheader"));
 
                     this.getView().setModel(new JSONModel({ selectedType: 1 }), "selectedModel");
                     this.getView().setModel(new JSONModel({
@@ -202,8 +202,7 @@ sap.ui.define(
 
             AL_onPressApplyLeave: function() {
                 const oView = this.getView();
-                const oLoginModel = this.getOwnerComponent().getModel("LoginModel");
-                const loginData = oLoginModel.getData();
+                const loginData = this.oLoginModel.getData();
 
                 const today = new Date();
                 const minDate = new Date();
@@ -221,6 +220,7 @@ sap.ui.define(
                     Submit: true,
                     Save: false,
                     halfDay: false,
+                    leaveSessionType: "",
                     MinToDate: minDate,
                     minDate: minDate,
                     maxDate: null,
@@ -246,7 +246,15 @@ sap.ui.define(
                 try {
                     if (utils._LCstrictValidationComboBox(sap.ui.getCore().byId("AL_id_compoff_Leavetype"), "ID") && utils._LCvalidateDate(sap.ui.getCore().byId("AL_id_CF_FromDate"), "ID") && utils._LCvalidateDate(sap.ui.getCore().byId("AL_id_CF_ToDate"), "ID") && utils._LCvalidateMandatoryField(sap.ui.getCore().byId("AL_id_CompoffComments"), "ID")) {
                         var oData = this.getView().getModel("LeaveTempModel").getData();
-
+                            var oRadioGroup = sap.ui.getCore().byId("AL_id_compoff_RadioGroup");
+                            if (JSON.parse(oData.halfDay) && (!oData.leaveSessionType || oData.leaveSessionType === "")) {
+                                oRadioGroup.setValueState("Error");
+                                sap.m.MessageToast.show("Please select Morning or Afternoon for Half Day leave.");
+                                return; // stop submit
+                            } else {
+                                oRadioGroup.setValueState("None");
+                            }
+                
                         // Parse dates
                         var fromDateParts = oData.fromDate.split("/").map(Number);
                         var startDate = new Date(fromDateParts[2], fromDateParts[1] - 1, fromDateParts[0]);
@@ -368,6 +376,7 @@ sap.ui.define(
                     Submit: false,
                     Save: true,
                     halfDay: oModelData.HalfDay === "false" ? false : true,
+                    leaveSessionType: oModelData.leaveSessionType || "",
                     managerRemark: oModelData.ManagerRemark,
                     maxDate: null,
                     minDate: null,
@@ -417,6 +426,15 @@ sap.ui.define(
                     const oData = this.getView().getModel("LeaveTempModel")?.getData();
                     if (!oData) return MessageToast.show("Leave data not found.");
 
+                     var oRadioGroup = sap.ui.getCore().byId("AL_id_compoff_RadioGroup");
+                            if (oData.halfDay && (!oData.leaveSessionType || oData.leaveSessionType === "")) {
+                                oRadioGroup.setValueState("Error");
+                                sap.m.MessageToast.show("Please select Morning or Afternoon for Half Day leave.");
+                                return; // stop save
+                            } else {
+                                oRadioGroup.setValueState("None");
+                            }
+
                     if (this.isLeaveAlreadyApplied(oData.fromDate, oData.toDate, this.previousLeaveDates)) {
                         return MessageBox.error(this.i18nModel.getText("OvertimeleaveAlreadyApplied"));
                     }
@@ -465,6 +483,7 @@ sap.ui.define(
                             typeOfLeave: oData.typeOfLeave,
                             Comments: oData.Comments || "",
                             halfDay: oData.halfDay.toString(),
+                            leaveSessionType: oData.leaveSessionType || "",
                             managerRemark: oData.managerRemark || "",
                             email: oData.email,
                         },
@@ -831,26 +850,49 @@ sap.ui.define(
                 return businessDays;
             },
 
-            onHalfDaySelect: function(oEvent) {
-                var bSelected = oEvent.getParameter("selected"); // Always reliable
+            onHalfDaySelect: function (oEvent) {
+                    var bSelected = oEvent.getParameter("selected");
+                    var oLeaveModel = this.getView().getModel("LeaveTempModel");
+                    oLeaveModel.setProperty("/halfDay", bSelected);
+
+                    if (!bSelected) {
+                        oLeaveModel.setProperty("/leaveSessionType", "");
+                    }
+                    this.onLiveChange(); // Recalculate No of Days
+                },
+
+            onChangeleasveSessionType: function (oEvent) {
+                var selectedIndex = oEvent.getParameter("selectedIndex");
                 var oLeaveModel = this.getView().getModel("LeaveTempModel");
-                oLeaveModel.setProperty("/halfDay", bSelected); // Set updated value explicitly
-                this.onLiveChange(); // Recalculate
+                var selectedSession = selectedIndex === 0 ? "Morning" : selectedIndex === 1 ? "Afternoon" : "";
+                oLeaveModel.setProperty("/leaveSessionType", selectedSession); // Set selected session in model
+                // Clear value state if a session is selected
+                var oRadioGroup = sap.ui.getCore().byId("AL_id_compoff_RadioGroup");
+                if (selectedSession !== "") {
+                    oRadioGroup.setValueState("None");
+                }
             },
 
             // Check if leave is already applied for given dates
-            isLeaveAlreadyApplied: function(fromDate, toDate, previousDates = []) {
-                let from = this.onFormatDate(fromDate);
-                let to = this.onFormatDate(toDate);
+            isLeaveAlreadyApplied: function (fromDate, toDate, previousDates = []) {
 
-                for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
-                    let dateStr = d.toDateString();
-                    if (this.appliedLeavesSet.has(dateStr) && !previousDates.includes(dateStr)) {
-                        return true; // Date already applied by someone else and not in original
-                    }
-                }
-                return false;
-            },
+    if (!(this.appliedLeavesSet instanceof Set)) {
+        this.appliedLeavesSet = new Set();
+    }
+
+    let from = this.onFormatDate(fromDate);
+    let to = this.onFormatDate(toDate);
+
+    for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
+        let dateStr = new Date(d).toDateString();
+
+        if (this.appliedLeavesSet.has(dateStr) && !previousDates.includes(dateStr)) {
+            return true;
+        }
+    }
+
+    return false;
+},
 
             // Validation when from date changes
             onValidation: function() {
@@ -947,9 +989,8 @@ sap.ui.define(
 
                 if (oSelectedItem) {
                     var oContext = oSelectedItem.getBindingContext("LeaveModel");
-                    var sStatus = oContext.getProperty("Status"); // ⚠️ Check exact case: "Status" vs "status"
-
-                    var bVisible = sStatus === "Submitted";
+                
+                    var bVisible = oContext.getProperty("Status") === "Submitted" && oContext.getProperty("EmpID") === this.oLoginModel.getProperty("/EmployeeID");
 
                     oUpdateButton.setVisible(bVisible);
                     oDeleteButton.setVisible(bVisible);

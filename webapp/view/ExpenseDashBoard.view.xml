@@ -79,7 +79,7 @@
                     wrap="Wrap"
                     justifyContent="Center"
                     alignItems="Start"
-                    class="invoiceTileContainer sapUiSmallMarginTop">
+                    class="invoiceTileContainer sapUiSmallMarginBottom">
 
         <!-- Total Spend -->
         <GenericTile
@@ -176,10 +176,10 @@
     </FlexBox>
     
 
-<layout:Grid defaultSpan="XL6 L6 M12 S12"  class="sapUiSmallMargin">
+<layout:Grid defaultSpan="XL6 L6 M12 S12"  hSpacing="1" vSpacing="1">
 					<layout:content>
 						<!-- 1. category Distribution Chart -->
-						<f:Card class="sapUiTinyMargin">
+						<f:Card >
     <f:header>
         <card:Header
             title="{i18n>spendbyucategory}"
@@ -240,7 +240,7 @@
 
 <!-- second chart  -->
 
-<f:Card class="sapUiTinyMargin">
+<f:Card >
 
 <f:header>
         <card:Header
@@ -306,7 +306,7 @@
 <!-- third chart -->
 
 
-<f:Card class="sapUiTinyMargin">
+<f:Card >
 
     <f:header>
         <card:Header
@@ -363,7 +363,7 @@
 <!-- forth chart -->
 
 
-<f:Card class="sapUiTinyMargin" >
+<f:Card  >
 
     <f:header>
         <card:Header
@@ -422,12 +422,11 @@
 				</layout:Grid>
 
                 
-              <f:Card class="sapUiMediumMarginBeginEnd sapUiTinyMarginBottom" width="auto"  >
+              <f:Card class="sapUiSmallMarginBeginEnd sapUiTinyMarginBottom" width="auto"  >
 
 
     <f:content>
                         <ScrollContainer
-                           
                             vertical="true"
                             horizontal="true">
 

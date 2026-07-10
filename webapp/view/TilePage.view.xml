@@ -87,8 +87,6 @@
                                                     allowWrapping="true"
                                                     class="sapUiTinyMargin"
                                                 >
-                                                   
-
                                                     <GenericTile
                                                         visible="{= ${AppVisibilityModel>/SelfService} === '1' ? true : false}"
                                                         class="sapUiSmallMargin glassTile blue"
@@ -206,7 +204,7 @@
                                                             />
                                                         </TileContent>
                                                     </GenericTile>
-                                                    <GenericTile
+                                                     <GenericTile
                                                         id="TV_id_PolicyTile"
                                                         class="sapUiSmallMargin glassTile blue"
                                                         visible="{= ${AppVisibilityModel>/Policy} !== '0' }"
@@ -221,103 +219,7 @@
                                                             />
                                                         </TileContent>
                                                     </GenericTile>
-                                                   
-                                                    <GenericTile
-                                                        class="sapUiSmallMargin glassTile blue"
-                                                        visible="{= ${AppVisibilityModel>/GoalQuestions} !== '0' ? true : false }"
-                                                        id="idGoalQuestions"
-                                                        header="{i18n>goalQuestions}"
-                                                        press="TileV_onpressGoalQuestions"
-                                                    >
-                                                        <TileContent
-                                                            unit="{i18n>goalQuestions}"
-                                                        >
-                                                            <ImageContent
-                                                                src="sap-icon://activity-assigned-to-goal"
-                                                            />
-                                                        </TileContent>
-                                                    </GenericTile>
-                                                    <GenericTile
-                                                        class="sapUiSmallMargin glassTile blue"
-                                                        visible="{= ${AppVisibilityModel>/Goals} !== '0' ? true : false }"
-                                                        id="idmanagegoals"
-                                                        header="{i18n>managegoals}"
-                                                        press="TileV_onpressManageGoals"
-                                                    >
-                                                        <TileContent
-                                                            unit="{i18n>managegoals}"
-                                                        >
-                                                            <ImageContent
-                                                                src="sap-icon://target-group"
-                                                            />
-                                                        </TileContent>
-                                                    </GenericTile>
 
-                                                    <GenericTile
-                                                        class="sapUiSmallMargin glassTile blue"
-                                                        visible="{= ${AppVisibilityModel>/ManageEvent} !== '0' ? true : false }"
-                                                        id="idmanageEvents"
-                                                        header="{i18n>manageevrnt}"
-                                                        press="TileV_onpressManageEvents"
-                                                    >
-                                                        <TileContent
-                                                            unit="{i18n>manageevrnt}"
-                                                        >
-                                                            <ImageContent
-                                                                src="sap-icon://marketing-campaign"
-                                                            />
-                                                        </TileContent>
-                                                    </GenericTile>
-                                                </layout:HorizontalLayout>
-                                            </ux:blocks>
-                                        </ux:ObjectPageSubSection>
-                                    </ux:subSections>
-                                </ux:ObjectPageSection>
-                                <ux:ObjectPageSection
-                                    titleUppercase="false"
-                                    title="Timesheet"
-                                    class="roomHeaderTitle1"
-                                    visible="{= ${TileAccessModel>/Timesheet} === '1' ? true : false}"
-                                >
-                                    <ux:subSections>
-                                        <ux:ObjectPageSubSection
-                                            titleUppercase="false"
-                                        >
-                                            <ux:blocks>
-                                                <layout:HorizontalLayout
-                                                    allowWrapping="true"
-                                                    class="sapUiTinyMargin"
-                                                >
-                                                    <GenericTile
-                                                        visible="{= ${AppVisibilityModel>/Timesheet} === '1' ? true : false}"
-                                                        class="sapUiSmallMargin glassTile blue"
-                                                        subheader="{i18n>subhead}"
-                                                        header="{i18n>headerTimesheet}"
-                                                        press="TileV_onpresstimesheet"
-                                                    >
-                                                        <TileContent
-                                                            unit="{i18n>tileTimesheetFooter}"
-                                                        >
-                                                            <ImageContent
-                                                                src="sap-icon://timesheet"
-                                                            />
-                                                        </TileContent>
-                                                    </GenericTile>
-                                                    <GenericTile
-                                                        visible="{= ${AppVisibilityModel>/AssignmentTask} === '1' ? true : false}"
-                                                        class="sapUiSmallMargin glassTile blue"
-                                                        header="{i18n>headerAssignTask}"
-                                                        subheader="{i18n>subhead}"
-                                                        press="TileV_onpressAssignment"
-                                                    >
-                                                        <TileContent
-                                                            unit="{i18n>tileAssignmentFooter}"
-                                                        >
-                                                            <ImageContent
-                                                                src="sap-icon://activity-assigned-to-goal"
-                                                            />
-                                                        </TileContent>
-                                                    </GenericTile>
                                                 </layout:HorizontalLayout>
                                             </ux:blocks>
                                         </ux:ObjectPageSubSection>
@@ -380,18 +282,54 @@
                                                             />
                                                         </TileContent>
                                                     </GenericTile>
+                                                    
+                                                </layout:HorizontalLayout>
+                                            </ux:blocks>
+                                        </ux:ObjectPageSubSection>
+                                    </ux:subSections>
+                                </ux:ObjectPageSection>
+                                <ux:ObjectPageSection
+                                    titleUppercase="false"
+                                    title="Timesheet"
+                                    class="roomHeaderTitle1"
+                                    visible="{= ${TileAccessModel>/Timesheet} === '1' ? true : false}"
+                                >
+                                    <ux:subSections>
+                                        <ux:ObjectPageSubSection
+                                            titleUppercase="false"
+                                        >
+                                            <ux:blocks>
+                                                <layout:HorizontalLayout
+                                                    allowWrapping="true"
+                                                    class="sapUiTinyMargin"
+                                                >
                                                     <GenericTile
+                                                        visible="{= ${AppVisibilityModel>/Timesheet} === '1' ? true : false}"
                                                         class="sapUiSmallMargin glassTile blue"
-                                                        visible="{= ${AppVisibilityModel>/GoalReview} !== '0' ? true : false }"
-                                                        id="idReviewGoals"
-                                                        header="{i18n>goalreview}"
-                                                        press="TileV_onpressReviewGoals"
+                                                        subheader="{i18n>subhead}"
+                                                        header="{i18n>headerTimesheet}"
+                                                        press="TileV_onpresstimesheet"
                                                     >
                                                         <TileContent
-                                                            unit="{i18n>goalreview}"
+                                                            unit="{i18n>tileTimesheetFooter}"
                                                         >
                                                             <ImageContent
-                                                                src="sap-icon://to-be-reviewed"
+                                                                src="sap-icon://timesheet"
+                                                            />
+                                                        </TileContent>
+                                                    </GenericTile>
+                                                    <GenericTile
+                                                        visible="{= ${AppVisibilityModel>/AssignmentTask} === '1' ? true : false}"
+                                                        class="sapUiSmallMargin glassTile blue"
+                                                        header="{i18n>headerAssignTask}"
+                                                        subheader="{i18n>subhead}"
+                                                        press="TileV_onpressAssignment"
+                                                    >
+                                                        <TileContent
+                                                            unit="{i18n>tileAssignmentFooter}"
+                                                        >
+                                                            <ImageContent
+                                                                src="sap-icon://activity-assigned-to-goal"
                                                             />
                                                         </TileContent>
                                                     </GenericTile>
@@ -400,6 +338,7 @@
                                         </ux:ObjectPageSubSection>
                                     </ux:subSections>
                                 </ux:ObjectPageSection>
+                                
                                 <ux:ObjectPageSection
                                     titleUppercase="false"
                                     title="Payslip"
@@ -476,72 +415,7 @@
                                         </ux:ObjectPageSubSection>
                                     </ux:subSections>
                                 </ux:ObjectPageSection>
-                                <ux:ObjectPageSection
-                                    titleUppercase="false"
-                                    title="Offer Generation"
-                                    class="roomHeaderTitle1"
-                                    visible="{= ${TileAccessModel>/OfferGeneration} === '1' ? true : false}"
-                                >
-                                    <ux:subSections>
-                                        <ux:ObjectPageSubSection
-                                            titleUppercase="false"
-                                        >
-                                            <ux:blocks>
-                                                <layout:HorizontalLayout
-                                                    allowWrapping="true"
-                                                    class="sapUiTinyMargin"
-                                                >
-                                                    <GenericTile
-                                                        visible="{= ${AppVisibilityModel>/GenerateTraineeOffer} === '1' ? true : false}"
-                                                        class="sapUiSmallMargin glassTile blue"
-                                                        header="{i18n>headerTrainee}"
-                                                        press="TileV_onpressTrainee"
-                                                        subheader="{i18n>subhead}"
-                                                    >
-                                                        <TileContent
-                                                            unit="{i18n>tileUnit}"
-                                                        >
-                                                            <ImageContent
-                                                                src="sap-icon://account"
-                                                            />
-                                                        </TileContent>
-                                                    </GenericTile>
-                                                    <GenericTile
-                                                        visible="{= ${AppVisibilityModel>/GenerateEmployeeOffer} === '1' ? true : false}"
-                                                        class="sapUiSmallMargin glassTile blue"
-                                                        header="{i18n>headerEmployeeOffer}"
-                                                        press="TileV_onPressOffer"
-                                                        subheader="{i18n>subhead}"
-                                                    >
-                                                        <TileContent
-                                                            unit="{i18n>tileUnit}"
-                                                        >
-                                                            <ImageContent
-                                                                src="sap-icon://employee-approvals"
-                                                            />
-                                                        </TileContent>
-                                                    </GenericTile>
-                                                    <GenericTile
-                                                        visible="{= ${AppVisibilityModel>/GenerateContract} === '1' ? true : false}"
-                                                        class="sapUiSmallMargin glassTile blue"
-                                                        header="{i18n>headerContractDetails}"
-                                                        press="TileV_onpressContract"
-                                                        subheader="{i18n>subhead}"
-                                                    >
-                                                        <TileContent
-                                                            unit="{i18n>tileUnit}"
-                                                        >
-                                                            <ImageContent
-                                                                src="sap-icon://decision"
-                                                            />
-                                                        </TileContent>
-                                                    </GenericTile>
-                                                </layout:HorizontalLayout>
-                                            </ux:blocks>
-                                        </ux:ObjectPageSubSection>
-                                    </ux:subSections>
-                                </ux:ObjectPageSection>
-                                <ux:ObjectPageSection
+                                 <ux:ObjectPageSection
                                     titleUppercase="false"
                                     title="Invoice"
                                     class="roomHeaderTitle1"
@@ -678,9 +552,9 @@
                                 </ux:ObjectPageSection>
                                 <ux:ObjectPageSection
                                     titleUppercase="false"
-                                    title="Quotation"
+                                    title="Offer Generation"
                                     class="roomHeaderTitle1"
-                                    visible="{= ${TileAccessModel>/Quotation} === '1' ? true : false}"
+                                    visible="{= ${TileAccessModel>/OfferGeneration} === '1' ? true : false}"
                                 >
                                     <ux:subSections>
                                         <ux:ObjectPageSubSection
@@ -692,44 +566,47 @@
                                                     class="sapUiTinyMargin"
                                                 >
                                                     <GenericTile
-                                                        visible="{= ${AppVisibilityModel>/A_Quotations} === '1' ? true : false}"
+                                                        visible="{= ${AppVisibilityModel>/GenerateTraineeOffer} === '1' ? true : false}"
                                                         class="sapUiSmallMargin glassTile blue"
-                                                        header="{i18n>headerQuotation}"
-                                                        press="TileV_onpressQuotation"
+                                                        header="{i18n>headerTrainee}"
+                                                        press="TileV_onpressTrainee"
+                                                        subheader="{i18n>subhead}"
                                                     >
                                                         <TileContent
-                                                            unit="{i18n>subheader}"
+                                                            unit="{i18n>tileUnit}"
                                                         >
                                                             <ImageContent
-                                                                src="sap-icon://my-sales-order"
+                                                                src="sap-icon://account"
                                                             />
                                                         </TileContent>
                                                     </GenericTile>
                                                     <GenericTile
-                                                        visible="{= ${AppVisibilityModel>/QuotationApp} === '1' ? true : false}"
+                                                        visible="{= ${AppVisibilityModel>/GenerateEmployeeOffer} === '1' ? true : false}"
                                                         class="sapUiSmallMargin glassTile blue"
-                                                        header="{i18n>hrQuotation}"
-                                                        press="TileV_onPressHrQuotation"
+                                                        header="{i18n>headerEmployeeOffer}"
+                                                        press="TileV_onPressOffer"
+                                                        subheader="{i18n>subhead}"
                                                     >
                                                         <TileContent
-                                                            unit="{i18n>createmaintain}"
+                                                            unit="{i18n>tileUnit}"
                                                         >
                                                             <ImageContent
-                                                                src="sap-icon://activity-assigned-to-goal"
+                                                                src="sap-icon://employee-approvals"
                                                             />
                                                         </TileContent>
                                                     </GenericTile>
                                                     <GenericTile
-                                                        visible="{= ${AppVisibilityModel>/SchemeUpload} === '1' ? true : false}"
+                                                        visible="{= ${AppVisibilityModel>/GenerateContract} === '1' ? true : false}"
                                                         class="sapUiSmallMargin glassTile blue"
-                                                        header="{i18n>schemeupload}"
-                                                        press="TileV_onPressManageSchemeUpload"
+                                                        header="{i18n>headerContractDetails}"
+                                                        press="TileV_onpressContract"
+                                                        subheader="{i18n>subhead}"
                                                     >
                                                         <TileContent
-                                                            unit="{i18n>createmaintain}"
+                                                            unit="{i18n>tileUnit}"
                                                         >
                                                             <ImageContent
-                                                                src="sap-icon://time-off"
+                                                                src="sap-icon://decision"
                                                             />
                                                         </TileContent>
                                                     </GenericTile>
@@ -816,6 +693,187 @@
                                         </ux:ObjectPageSubSection>
                                     </ux:subSections>
                                 </ux:ObjectPageSection>
+                                 <ux:ObjectPageSection
+                                    titleUppercase="false"
+                                    title="Goals"
+                                    class="roomHeaderTitle1"
+                                    wrapTitle="true"
+                                    visible="{= ${TileAccessModel>/Hiring} === '1' ? true : false}"
+                                >
+                                    <ux:subSections>
+                                        <ux:ObjectPageSubSection
+                                            titleUppercase="false"
+                                        >
+                                            <ux:blocks>
+                                                <layout:HorizontalLayout
+                                                    allowWrapping="true"
+                                                    class="sapUiTinyMargin"
+                                                >
+                                                <GenericTile
+                                                        class="sapUiSmallMargin glassTile blue"
+                                                        visible="{= ${AppVisibilityModel>/GoalQuestions} !== '0' ? true : false }"
+                                                        id="idGoalQuestions"
+                                                        header="{i18n>goalQuestions}"
+                                                        press="TileV_onpressGoalQuestions"
+                                                    >
+                                                        <TileContent
+                                                            unit="{i18n>goalQuestions}"
+                                                        >
+                                                            <ImageContent
+                                                                src="sap-icon://activity-assigned-to-goal"
+                                                            />
+                                                        </TileContent>
+                                                    </GenericTile>
+                                                    <GenericTile
+                                                        class="sapUiSmallMargin glassTile blue"
+                                                        visible="{= ${AppVisibilityModel>/Goals} !== '0' ? true : false }"
+                                                        id="idmanagegoals"
+                                                        header="{i18n>managegoals}"
+                                                        press="TileV_onpressManageGoals"
+                                                    >
+                                                        <TileContent
+                                                            unit="{i18n>managegoals}"
+                                                        >
+                                                            <ImageContent
+                                                                src="sap-icon://target-group"
+                                                            />
+                                                        </TileContent>
+                                                    </GenericTile>
+                                                    <GenericTile
+                                                        class="sapUiSmallMargin glassTile blue"
+                                                        visible="{= ${AppVisibilityModel>/GoalReview} !== '0' ? true : false }"
+                                                        id="idReviewGoals"
+                                                        header="{i18n>goalreview}"
+                                                        press="TileV_onpressReviewGoals"
+                                                    >
+                                                        <TileContent
+                                                            unit="{i18n>goalreview}"
+                                                        >
+                                                            <ImageContent
+                                                                src="sap-icon://to-be-reviewed"
+                                                            />
+                                                        </TileContent>
+                                                    </GenericTile>
+                                                </layout:HorizontalLayout>
+                                            </ux:blocks>
+                                        </ux:ObjectPageSubSection>
+                                    </ux:subSections>
+                                </ux:ObjectPageSection>
+                                 <ux:ObjectPageSection
+                                    titleUppercase="false"
+                                    title="Events and Announcements"
+                                    class="roomHeaderTitle1"
+                                    wrapTitle="true"
+                                    visible="{= ${TileAccessModel>/AnnouncementsandEvents} === '1' ? true : false}"
+                                >
+                                    <ux:subSections>
+                                        <ux:ObjectPageSubSection
+                                            titleUppercase="false"
+                                        >
+                                            <ux:blocks>
+                                                <layout:HorizontalLayout
+                                                    allowWrapping="true"
+                                                    class="sapUiTinyMargin"
+                                                >
+                                               <GenericTile
+                                                        class="sapUiSmallMargin glassTile blue"
+                                                        visible="{= ${AppVisibilityModel>/ManageEvent} !== '0' ? true : false }"
+                                                        id="idmanageEvents"
+                                                        header="{i18n>manageevrnt}"
+                                                        press="TileV_onpressManageEvents"
+                                                    >
+                                                        <TileContent
+                                                            unit="{i18n>manageevrnt}"
+                                                        >
+                                                            <ImageContent
+                                                                src="sap-icon://marketing-campaign"
+                                                            />
+                                                        </TileContent>
+                                                    </GenericTile>
+                                                   
+                                                    <GenericTile
+                                                        class="sapUiSmallMargin glassTile blue"
+                                                        visible="{= ${AppVisibletyModel>/Announcements} !=='0' ? true : false}"
+                                                        id="GT_idAnnouncements"
+                                                        header="{i18n>headerAnnouncements}"
+                                                        press="TileV_onpressAnnouncements"
+                                                    >
+                                                        <TileContent
+                                                            unit="{i18n>titleAnnouncements}"
+                                                        >
+                                                            <ImageContent
+                                                                src="sap-icon://marketing-campaign"
+                                                            />
+                                                        </TileContent>
+                                                    </GenericTile>
+                                                </layout:HorizontalLayout>
+                                            </ux:blocks>
+                                        </ux:ObjectPageSubSection>
+                                    </ux:subSections>
+                                </ux:ObjectPageSection>
+                                <ux:ObjectPageSection
+                                    titleUppercase="false"
+                                    title="Quotation"
+                                    class="roomHeaderTitle1"
+                                    visible="{= ${TileAccessModel>/Quotation} === '1' ? true : false}"
+                                >
+                                    <ux:subSections>
+                                        <ux:ObjectPageSubSection
+                                            titleUppercase="false"
+                                        >
+                                            <ux:blocks>
+                                                <layout:HorizontalLayout
+                                                    allowWrapping="true"
+                                                    class="sapUiTinyMargin"
+                                                >
+                                                    <GenericTile
+                                                        visible="{= ${AppVisibilityModel>/A_Quotations} === '1' ? true : false}"
+                                                        class="sapUiSmallMargin glassTile blue"
+                                                        header="{i18n>headerQuotation}"
+                                                        press="TileV_onpressQuotation"
+                                                    >
+                                                        <TileContent
+                                                            unit="{i18n>subheader}"
+                                                        >
+                                                            <ImageContent
+                                                                src="sap-icon://my-sales-order"
+                                                            />
+                                                        </TileContent>
+                                                    </GenericTile>
+                                                    <GenericTile
+                                                        visible="{= ${AppVisibilityModel>/QuotationApp} === '1' ? true : false}"
+                                                        class="sapUiSmallMargin glassTile blue"
+                                                        header="{i18n>hrQuotation}"
+                                                        press="TileV_onPressHrQuotation"
+                                                    >
+                                                        <TileContent
+                                                            unit="{i18n>createmaintain}"
+                                                        >
+                                                            <ImageContent
+                                                                src="sap-icon://activity-assigned-to-goal"
+                                                            />
+                                                        </TileContent>
+                                                    </GenericTile>
+                                                    <GenericTile
+                                                        visible="{= ${AppVisibilityModel>/SchemeUpload} === '1' ? true : false}"
+                                                        class="sapUiSmallMargin glassTile blue"
+                                                        header="{i18n>schemeupload}"
+                                                        press="TileV_onPressManageSchemeUpload"
+                                                    >
+                                                        <TileContent
+                                                            unit="{i18n>createmaintain}"
+                                                        >
+                                                            <ImageContent
+                                                                src="sap-icon://time-off"
+                                                            />
+                                                        </TileContent>
+                                                    </GenericTile>
+                                                </layout:HorizontalLayout>
+                                            </ux:blocks>
+                                        </ux:ObjectPageSubSection>
+                                    </ux:subSections>
+                                </ux:ObjectPageSection>
+                               
                                 <ux:ObjectPageSection
                                     titleUppercase="false"
                                     title="Asset"
@@ -939,30 +997,8 @@
                                                             />
                                                         </TileContent>
                                                     </GenericTile>
-                                                </layout:HorizontalLayout>
-                                            </ux:blocks>
-                                        </ux:ObjectPageSubSection>
-                                    </ux:subSections>
-                                </ux:ObjectPageSection>
 
-
-                                 <ux:ObjectPageSection
-                                    titleUppercase="false"
-                                    title="{i18n>hiring}"
-                                    class="roomHeaderTitle1"
-                                    visible="{= ${TileAccessModel>/Hiring} === '1' ? true : false}"
-                                >
-                                    <ux:subSections>
-                                        <ux:ObjectPageSubSection
-                                            titleUppercase="false"
-                                        >
-                                            <ux:blocks>
-                                                <layout:HorizontalLayout
-                                                    allowWrapping="true"
-                                                    class="sapUiTinyMargin"
-                                                >
-
-                                                 <GenericTile
+                                                     <GenericTile
                                                         visible="{= ${AppVisibilityModel>/CandidateQuestion} === '1' ? true : false}"
                                                         class="sapUiSmallMargin glassTile blue"
                                                         header="{i18n>candidatequestion}"
@@ -977,7 +1013,7 @@
                                                             />
                                                         </TileContent>
                                                     </GenericTile>
-                                                   <GenericTile
+                                                    <GenericTile
                                                         id="HD_id_HiringDashboardTile"
                                                         class="sapUiSmallMargin glassTile blue"
                                                         visible="{= ${AppVisibilityModel>/HiringDashboard} !== '0' }"
@@ -992,9 +1028,6 @@
                                                             />
                                                         </TileContent>
                                                     </GenericTile>
-                                                   
-                                                    
-                                                   
                                                 </layout:HorizontalLayout>
                                             </ux:blocks>
                                         </ux:ObjectPageSubSection>

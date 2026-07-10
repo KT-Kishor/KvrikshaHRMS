@@ -221,7 +221,8 @@ sap.ui.define([
                         "GoalReview": "/GoalReview",
                         "Policy": "/Policy",
                         "HiringDashboard": "/HiringDashboard",
-                        "CandidateQuestion": "/CandidateQuestion"
+                        "CandidateQuestion": "/CandidateQuestion",
+                        "Announcements": "/Announcements"
 
                     };
 
@@ -340,7 +341,8 @@ sap.ui.define([
                 "Policy Management": "Policy Management",
                 "Expense Dashboard": "Expense Dashboard",
                 "Candidate Question": "Candidate Question",
-                "Campus Hiring Dashboard": "Campus Hiring Dashboard"
+                "Campus Hiring Dashboard": "Campus Hiring Dashboard",
+                "Announcement": "Announcement"
             };
 
             this.getView().getModel("RaiseBugModel").setProperty(

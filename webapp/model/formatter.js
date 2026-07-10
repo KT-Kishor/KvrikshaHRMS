@@ -115,8 +115,18 @@ sap.ui.define(["sap/ui/core/format/DateFormat"], function (DateFormat) {
                     return "Indication03";
                 case "Open":
                     return "Success";
-                     case "Accepted":
+                case "Accepted":
                     return "Success";
+                case "Published":
+                    return "Success";
+                case "Blocked":
+                    return "Warning";
+                case "Critical":
+                    return "Error";
+                case "Info":
+                    return "Information";
+                case "Warning":
+                    return "Indication03";
                 default:
                     return "Indication01";
             }
@@ -723,7 +733,19 @@ sap.ui.define(["sap/ui/core/format/DateFormat"], function (DateFormat) {
     }
 
     return sSubType;
-}
+},
+
+ formatTestType: function (sTestId) {
+            switch (String(sTestId)) {
+                case "1":
+                    return "MCQ";
+                case "2":
+                    return "Coding";
+                default:
+                    return "";
+            }
+        }
+    
 
     };
 });

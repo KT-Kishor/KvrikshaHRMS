@@ -117,7 +117,7 @@ sap.ui.define(
                     const firstEntry = Array.isArray(oData.data) ? oData.data[0] : oData.data;
                     this.getOwnerComponent().setModel(new JSONModel(firstEntry), "AppVisibilityModel");
 
-                    const tileNames = ["Home", "Timesheet", "Payslip", "OfferGeneration", "Invoice", "Quotation", "Expense", "ManageAsset", "Recruitment", "Approvals","Hiring"];
+                    const tileNames = ["Home", "Timesheet", "Payslip", "OfferGeneration", "Invoice", "Quotation", "Expense", "ManageAsset", "Recruitment", "Approvals","Hiring","AnnouncementsandEvents"];
 
                     const tileKeys = firstEntry.TileKey?.split(",") || [];
                     const tileMapping = tileNames.reduce((map, name, i) => {
@@ -547,6 +547,9 @@ sap.ui.define(
             },
             TileV_onpressPolicy: function () {
                 this.getRouter().navTo("RoutePolicy");
+            },
+            TileV_onpressAnnouncements: function() {
+                this.getRouter().navTo("NameRouteAnnouncements");
             },
             TileV_onpressHiringDashboard: function () {
                 this.getRouter().navTo("RouteHiringDashboard");

@@ -77,7 +77,7 @@
 										<m:Input visible="{visiablityPlay>/gstVisiable}" value="{path:'SelectedCustomerModel>/SGST',formatter: '.Formatter.fromatNumber'}" editable="false" maxLength="15"/>
 
 										<m:Label visible="{= ${FilteredSOWModel>/Currency} === 'INR'?false:true}" text="{i18n>expConversionRate}" required="true" />
-										<m:Input id="CID_id_ConversionRate" visible="{= ${FilteredSOWModel>/Currency} === 'INR'?false:true}" placeholder="{i18n>companyInvoiceConversionRatePlace}" value="{SelectedCustomerModel>/ConversionRate}" change="onChangeConversionRate" valueStateText="{i18n>convValueStateText}" maxLength="15" editable="{visiablityPlay>/editable}" liveChange="onChnageConvertion"/>
+										<m:Input id="CID_id_ConversionRate" visible="{= ${FilteredSOWModel>/Currency} === 'INR'?false:true}" placeholder="{i18n>companyInvoiceConversionRatePlace}" value="{SelectedCustomerModel>/ConversionRate}" change="onChangeConversionRate" valueStateText="{i18n>convValueStateText}" maxLength="7" editable="{visiablityPlay>/editable}" liveChange="onChnageConvertion"/>
 
 										<m:Label visible="{= ${FilteredSOWModel>/Currency} === 'INR'?false:true}" text="{i18n>amountInINR}" required="true" />
 										<m:Input visible="{= ${FilteredSOWModel>/Currency} === 'INR'?false:true}" value="{path:'SelectedCustomerModel>/AmountInFCurrency',formatter: '.Formatter.fromatNumber'}" maxLength="20" editable="false"/>

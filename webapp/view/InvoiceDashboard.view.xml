@@ -16,9 +16,9 @@
 			<core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Header" type="XML" />
 		</customHeader>
 		<content>
-			<VBox class="sapUiTinyMargin">
+			<VBox class="sapUiSmallMarginTopBottom sapUiSmallMarginBeginEnd">
 				<!-- Filter Bar -->
-				<fb:FilterBar id="dashboardFilterBar"  useToolbar="false" clear="onClearFilters" showClearOnFB="true" search="onFilterChange" class="CommonRoundedTable">
+				<fb:FilterBar id="dashboardFilterBar"  useToolbar="false" clear="onClearFilters" showClearOnFB="true" search="onFilterChange" class="sapUiSmallMarginBottom CommonRoundedTable">
 					<fb:filterGroupItems>
 						<fb:FilterGroupItem name="Company" label="Company" groupName="Group1" visibleInFilterBar="true">
 							<fb:control>
@@ -42,14 +42,14 @@
 					</fb:filterGroupItems>
 				</fb:FilterBar>
 
-                <FlexBox
+                 <FlexBox
                     wrap="Wrap"
                     justifyContent="Center"
                     alignItems="Start"
-                    class="invoiceTileContainer sapUiSmallMarginTop sapUiTinyMargin">
-
+                    class="invoiceTileContainer sapUiSmallMarginBottom">
+ 
                     <GenericTile
-                        class="tileLayout tileTotal "
+                        class="tileLayout tileTotal"
                         header="{i18n>totalAmount}"
                         subheader="{i18n>All_Invoices}"
                        >
@@ -65,9 +65,9 @@
                                />
                         </TileContent>
                     </GenericTile>
-
+ 
                     <GenericTile
-                        class="tileLayout tileReceived "
+                        class="tileLayout tileReceived"
                         header="{i18n>invoiceReceivedAmount}"
                         subheader="{i18n>Payments_Received}"
                        >
@@ -82,9 +82,9 @@
                                 scale="K" />
                         </TileContent>
                     </GenericTile>
-
+ 
                     <GenericTile
-                        class="tileLayout tilePending "
+                        class="tileLayout tilePending"
                         header="{i18n>Pending_Amount}"
                         subheader="{i18n>Outstanding}"
                         >
@@ -99,9 +99,9 @@
                                 scale="K"/>
                         </TileContent>
                     </GenericTile>
-
+ 
                     <GenericTile
-                        class="tileLayout tileOverdue "
+                        class="tileLayout tileOverdue"
                         header="{i18n>Overdue_Amount}"
                         subheader="{i18n>Past_Due}"
                        >
@@ -134,10 +134,10 @@
                     </GenericTile>
                 </FlexBox>
                
-				<layout:Grid defaultSpan="XL6 L6 M12 S12" class="sapUiTinyMargin">
+				<layout:Grid defaultSpan="XL6 L6 M12 S12" hSpacing="1" vSpacing="1">
 					<layout:content>
 						<!-- 1. Status Distribution Chart -->
-						<f:Card class="sapUiTinyMargin">
+						<f:Card>
 							<f:header>
 								<Toolbar class="customdashboard">
 									<Title text="{i18n>invoiceStatusDash}" level="H5" wrapping="true" class="Dashboardtitle"/>
@@ -176,7 +176,7 @@
 						</f:Card>
 
 						<!-- 2. Monthly Trend Chart -->
-                        <f:Card class="sapUiTinyMargin">
+                        <f:Card>
                             <f:header>
                                 <Toolbar class="customdashboard">
                                     <Title text="{i18n>invoiceMonthly}" level="H5" wrapping="true" class="Dashboardtitle"/>
@@ -219,7 +219,7 @@
                         </f:Card>
 						
 						<!-- 3. Value by Company Chart -->
-						<f:Card class="sapUiTinyMargin">
+						<f:Card>
 							<f:header>
 								<Toolbar class="customdashboard">
 									<Title text="{i18n>companytotalinvoice}" level="H5" wrapping="true" class="Dashboardtitle"/>
@@ -257,7 +257,7 @@
 						</f:Card>
 
 						<!-- 4. Yearly Trend Chart (No Scroll Container Needed) -->
-                        <f:Card class="sapUiTinyMargin">
+                        <f:Card>
                             <f:header>
                                 <Toolbar class="customdashboard">
                                     <Title text="{i18n>yearlyInvoiceTrend}" level="H5" wrapping="true" class="Dashboardtitle"/>
@@ -303,10 +303,10 @@
 				</layout:Grid>
 
 				<!-- Grid for Charts -->
-                <layout:Grid defaultSpan="XL12 L12 M12 S12" class="sapUiTinyMargin">
+                <layout:Grid defaultSpan="XL12 L12 M12 S12" hSpacing="1" vSpacing="1">
                     <layout:content>
                                                <!-- 5. Payment Breakdown (Stacked Bar Chart) (WITH SCROLL CONTAINER) -->
-                        <f:Card class="sapUiTinyMargin">
+                        <f:Card>
                             <f:header>
                                 <Toolbar class="customdashboard">
                                     <Title text="{i18n>paymentBreakdown}" level="H5" wrapping="true" class="Dashboardtitle"/>
@@ -358,7 +358,7 @@
                         </f:Card>
 
                         <!-- 6. Pending Payments by Company (WITH SCROLL CONTAINER) -->
-                        <f:Card class="sapUiTinyMargin">
+                        <f:Card>
                             <f:header>
                                 <Toolbar class="customdashboard">
                                     <Title text="{i18n>pendingPaymentsByCompany}" level="H5" wrapping="true" class="Dashboardtitle"/>
@@ -402,10 +402,10 @@
                     </layout:content>
                 </layout:Grid>
                 
-				<layout:Grid defaultSpan="XL6 L6 M12 S12" class="sapUiTinyMargin">
+				<layout:Grid defaultSpan="XL6 L6 M12 S12" hSpacing="1" vSpacing="1">
                     <layout:content>
                         <!-- 7. Status Distribution Chart -->
-                        <f:Card class="sapUiTinyMargin">
+                        <f:Card visible="{= !!${InvoiceDashboardModel>/Chart7} &amp;&amp; ${InvoiceDashboardModel>/Chart7}.length > 0 }">
                             <f:header>
                                 <Toolbar class="customdashboard">
                                     <Title text="{i18n>invoiceStatusDashCredit}" level="H5" wrapping="true" class="Dashboardtitle"/>
@@ -440,7 +440,7 @@
                         </f:Card>
 
                         <!-- 8. Monthly Trend Chart -->
-                        <f:Card class="sapUiTinyMargin">
+                        <f:Card visible="{= !!${InvoiceDashboardModel>/Chart7} &amp;&amp; ${InvoiceDashboardModel>/Chart7}.length > 0 }">
                             <f:header>
                                 <Toolbar class="customdashboard">
                                     <Title text="{i18n>creditMemoMonthly}" level="H5" wrapping="true" class="Dashboardtitle"/>

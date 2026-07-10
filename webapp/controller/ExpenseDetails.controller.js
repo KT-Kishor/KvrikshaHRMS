@@ -345,7 +345,7 @@ sap.ui.define([
                 let data = await this.ajaxReadWithJQuery("ConversionRate", {
                     "from": oEvent.getSource().getSelectedItem().getText()
                 });
-                oModel.setProperty("/ConversionRate", data.rate.toFixed(2));
+                oModel.setProperty("/ConversionRate", data.rate.toFixed(4));
                 this.Exp_Frg_onChangeConverstionRate();
                 this.closeBusyDialog();
             },

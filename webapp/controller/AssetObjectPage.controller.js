@@ -581,12 +581,20 @@ onPDFDownload: function () {
         drawFilledRect(margin, y, 6, cardHeight, event.color, 0);
        
         // Event type badge (dark background)
-        doc.setFillColor(60, 60, 60);
-        doc.roundedRect(margin + 12, y + 6, 32, 8, 2, 2, "F");
-        doc.setTextColor(255, 255, 255);
+         // Type text only (no badge background)
         doc.setFont("helvetica", "bold");
-        doc.setFontSize(7);
-        doc.text(event.type, margin + 16, y + 12);
+        doc.setFontSize(9);
+        
+        // Use the event color for the text
+        doc.setTextColor(0,0,0);
+
+        doc.text(event.type, margin + 12, y + 12);
+        // doc.setFillColor(60, 60, 60);
+        // doc.roundedRect(margin + 12, y + 6, 32, 8, 2, 2, "F");
+        // doc.setTextColor(255, 255, 255);
+        // doc.setFont("helvetica", "bold");
+        // doc.setFontSize(7);
+        // doc.text(event.type, margin + 16, y + 12);
        
         // Title
         doc.setTextColor(40, 40, 40);

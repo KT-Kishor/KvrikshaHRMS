@@ -1530,6 +1530,7 @@ sap.ui.define(
                         "InvoiceTo": oModel.InvoiceTo,
                         "toEmailID": oModel.ContarctEmail,
                         "CC": sap.ui.getCore().byId("CCMail_TextArea").getValue(),
+                        "ReplyTo": this.getView().getModel("LoginModel").getProperty("/EmailID"),
                         "attachments": this.getView().getModel("UploaderData").getProperty("/attachments"),
                     };
                     this.getBusyDialog();

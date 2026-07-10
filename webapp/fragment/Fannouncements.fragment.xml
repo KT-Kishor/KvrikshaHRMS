@@ -1,0 +1,222 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:u="sap.ui.unified"
+	xmlns:uxap="sap.uxap"
+	xmlns:f="sap.ui.layout.form"
+>
+	<Dialog
+        id="FANC_id_AnnouncementDialog"
+        title="{= ${ANCView>/editMode} ? ${i18n>EditAnnouncement} : ${i18n>CreateAnnouncement} }"
+        contentWidth="{= ${device>/system/phone} ? '60%' : '30%' }"
+         contentHeight="{= ${device>/system/phone} ? '90%' : '70%' }"
+        horizontalScrolling="false"
+        verticalScrolling="true">
+		<content>
+			<ScrollContainer
+                width="100%"
+                height="100%"
+                vertical="true"
+            >
+				<f:SimpleForm
+                    id="ANC_id_SimpleForm"
+                    editable="true"
+                    layout="ResponsiveGridLayout"
+                    labelSpanXL="4"
+                    labelSpanL="4"
+                    labelSpanM="4"
+                    labelSpanS="12"
+                    adjustLabelSpan="false"
+                    emptySpanXL="0"
+                    emptySpanL="0"
+                    emptySpanM="0"
+                    emptySpanS="0"
+                    columnsXL="2"
+                    columnsL="2"
+                    columnsM="1"
+                    singleContainerFullSize="false"
+                    class="sapUiResponsiveContentPadding sapUiTinyMarginTop"
+                >
+					<f:content>
+						<!-- TITLE -->
+						<Label text="{i18n>AnnouncementTitle}" required="true" />
+						<Input
+                            id="ANC_id_Title"
+                            valueStateText="{i18n>AnnouncementTitleRequired}"
+                            value="{ANCView>/formData/AnnouncementTitle}"
+                            placeholder="{i18n>AnnouncementTitlePlaceholder}"
+                            maxLength="50"
+                            liveChange="ANC_onTitleChange"
+                        />
+						<!-- MESSAGE -->
+						<Label text="{i18n>AnnouncementMessage}" required="true" />
+						<TextArea
+                            valueStateText="{i18n>AnnouncementMessageRequired}"
+                            id="ANC_id_Description"
+                            value="{ANCView>/formData/AnnouncementMessage}"
+                            rows="4"
+                            growing="true"
+                            growingMaxLines="3"
+                            maxLength="1000"
+                            placeholder="{i18n>AnnouncementMessagePlaceholder}"
+                            liveChange="ANC_onMessageChange"
+                        />
+						<!-- DEPARTMENT (dynamic, loaded from EmployeeDetails) -->
+						<Label text="{i18n>AnnouncementDepartment}" required="true" />
+						<MultiComboBox
+                            id="ANC_id_Department"
+                            selectedKeys="{ANCView>/formData/DepartmentKeys}"
+                            placeholder="{i18n>selectDepartment}"
+                            selectionChange="ANC_onDepartmentChange"
+                            items="{DepartmentModel>/}"
+                            valueStateText="{i18n>AnnouncementDepartmentRequired}"
+                        >
+							<core:Item
+                                key="{DepartmentModel>department}"
+                                text="{DepartmentModel>department}"
+                            />
+						</MultiComboBox>
+						<!-- PRIORITY -->
+						<Label text="{i18n>Priority}" />
+						<Select
+                            id="ANC_id_Priority"
+                            selectedKey="{ANCView>/formData/Priority}"
+                            change="ANC_onPriorityChange"
+                        >
+							<core:Item key="Info" text="{i18n>PriorityInfo}" />
+							<core:Item key="Warning" text="{i18n>PriorityWarning}" />
+							<core:Item key="Critical" text="{i18n>PriorityCritical}" />
+						</Select>
+						<!-- STATUS -->
+						<Label text="{i18n>AnnouncementStatus}"/>
+						<Select
+                            id="ANC_id_Status"
+                            selectedKey="{ANCView>/formData/AnnouncementStatus}"
+                            change="ANC_onStatusChange"
+                        >
+							<core:Item key="Draft" text="{i18n>StatusDraft}" />
+							<core:Item key="Published" text="{i18n>StatusPublished}" />
+							<core:Item key="Blocked" text="{i18n>StatusBlocked}" />
+						</Select>
+					
+						<!-- EXPIRES DATE -->
+						<Label text="{i18n>ExpiresDate}" required="true" />
+						<DatePicker
+                        minDate="{todayModel>/today}"
+                           id="ANC_id_ExpiresDate"
+                           value="{ANCView>/formData/ExpiresDate}"
+                           displayFormat="dd/MM/yyyy"
+                           valueFormat="yyyy-MM-dd"
+                           placeholder="e.g. 2026-12-31"
+                           change="ANC_onDateValidation"
+                           valueStateText="{i18n>AnnouncementExpiryDateInvalid}"
+                            />
+						<!-- ATTACHMENT -->
+						<Label text="{i18n>Attachment}" required="true" />
+						<FlexBox alignItems="Center" wrap="Wrap">
+							<Input
+                                id="ANC_id_AttachmentDisplay"
+                                value="{ANCView>/formData/AnnouncementAttachmentName}"
+                                editable="true"
+                                showClearIcon="true"
+                                liveChange="ANC_onAttachmentClear"
+                                placeholder="{i18n>ChooseAttachment}"
+                                width="100%"
+                             
+                            >
+								<layoutData>
+									<FlexItemData growFactor="1"/>
+								</layoutData>
+							</Input>
+							<u:FileUploader
+                            class="sapUiTinyMarginBegin"
+                                id="ANC_id_AttachmentUploader"
+                                buttonOnly="true"
+                                buttonText="{i18n>Browse}"
+                                sameFilenameAllowed="true"
+                                fileType="pdf"
+                                width="auto"
+                                change="ANC_onAttachmentChange"
+                                typeMissmatch="ANC_onAttachmentTypeMismatch"
+                            />
+						</FlexBox>
+						<!-- BACKGROUND IMAGE -->
+						<Label text="{i18n>BackgroundImage}"  />
+						<FlexBox alignItems="Center" wrap="Wrap">
+							<Input
+                                id="ANC_id_BackgroundDisplay"
+                                value="{ANCView>/formData/AnnouncementBackgroundName}"
+                                editable="true"
+                                showClearIcon="true"
+                                liveChange="ANC_onBackgroundClear"
+                                placeholder="{i18n>ChooseBackgroundImage}"
+                                width="100%"
+                               
+                            >
+								<layoutData>
+									<FlexItemData growFactor="1"/>
+								</layoutData>
+							</Input>
+							<u:FileUploader
+                                class="sapUiTinyMarginBegin"
+                                id="ANC_id_BackgroundUploader"
+                                buttonOnly="true"
+                                buttonText="{i18n>Browse}"
+                                sameFilenameAllowed="true"
+                                fileType="jpg,jpeg,png"
+                                maximumFileSize="1"
+                                width="auto"
+                                change="ANC_onBackgroundChange"
+                                fileSizeExceed="ANC_onBackgroundSizeExceed"
+                                typeMissmatch="ANC_onBackgroundTypeMismatch"
+                            />
+						</FlexBox>
+					</f:content>
+				</f:SimpleForm>
+				<!--  MOBILE FOOTER BUTTONS (visible only on phone)  -->
+				<FlexBox
+                    width="100%"
+                    justifyContent="End"
+                    visible="{device>/system/phone}"
+                    class="sapUiSmallMarginTop sapUiResponsiveContentPadding"
+                >
+					<Button
+                        text="{= ${ANCView>/editMode} ? ${i18n>update} : ${i18n>save} }"
+                        type="Transparent"
+                        press="ANC_onSavePress"
+                        class="sapUiTinyMarginEnd"
+                    />
+					<Button
+                        text="{i18n>cancel}"
+                        type="Transparent"
+                        press="ANC_onCancelPress"
+                    />
+				</FlexBox>
+			</ScrollContainer>
+		</content>
+		<!--  DESKTOP FOOTER (hidden on phone via mobile buttons above)  -->
+		<footer>
+			<Toolbar>
+				<HBox
+                    width="100%"
+                    justifyContent="End"
+                    alignItems="Center">
+					<Button
+                        text="{= ${ANCView>/editMode} ? ${i18n>update} : ${i18n>save} }"
+                        press="ANC_onSavePress"
+                        type="Transparent"
+                        id="ANC_id_SaveButton"
+                        class="marginRight"
+                    />
+					<Button
+                        text="{i18n>cancel}"
+                        press="ANC_onCancelPress"
+                        type="Transparent"
+                        id="ANC_id_CancelButton"
+                        class="marginRight"
+                    />
+				</HBox>
+			</Toolbar>
+		</footer>
+	</Dialog>
+</core:FragmentDefinition>

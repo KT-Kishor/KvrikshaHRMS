@@ -3752,6 +3752,21 @@ color: #fff !important;
     -webkit-text-stroke: 0.3px rgba(255, 255, 255, 0.4);
 
     font-weight: 400;
+    letter-spacing: 0.5px;
+} 
+.datetextannouncement{
+  color: white;
+    font-size: .8rem;
+
+    /* Text Shadow */
+    text-shadow:
+        1px 1px 3px rgba(0, 0, 0, 0.8),
+        0 0 8px rgba(0, 0, 0, 0.6);
+
+    /* Optional Border Effect */
+    -webkit-text-stroke: 0.3px rgba(255, 255, 255, 0.4);
+
+    font-weight: 400;
 
     letter-spacing: 0.5px;
 }
@@ -4332,8 +4347,8 @@ color: #fff !important;
 .invoiceTileContainer {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
-    padding: 0.5rem 0;
+    gap: 1.25rem;
+    padding: 0.5rem;
     box-sizing: border-box;
     width: 100%;
 }
@@ -4362,6 +4377,7 @@ color: #fff !important;
     border-top: 4px solid #185fa5;
     background-color: #eef4ff;
 }
+
 .customTileWidth{
    width: 17rem !important;   /* Increase as needed */
     min-width: 17rem !important;
@@ -4667,4 +4683,247 @@ color: #fff !important;
 
 .noWrapStatus .sapMObjStatusText {
     white-space: nowrap !important;
+}
+
+
+/* ===========================================
+   Responsive MCQ Table
+   Desktop  : 98%
+   Tablet   : 90%
+   Mobile   : 80%
+=========================================== */
+
+.responsiveMcqTable {
+    width: 95% !important;
+    margin: 0 auto;
+}
+
+/* Tablet */
+@media only screen and (min-width: 600px) and (max-width: 1023px) {
+    .responsiveMcqTable {
+        width: 86% !important;
+        margin: 0 auto;
+    }
+}
+
+/* Mobile */
+@media only screen and (max-width: 599px) {
+    .responsiveMcqTable {
+        width: 78% !important;
+        margin: 0 auto;
+    }
+}
+
+.hideGrowingInfo .sapMGrowingListDescription {
+    display: none !important;
+}
+/* ===== Announcement Card ===== */
+.announcementCard {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* ===== Hero Section (image + overlay wrapper) ===== */
+.announcementHero {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+}
+
+.announcementHero .sapMImg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ===== Bottom Gradient Overlay ===== */
+.announcementOverlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 1rem;
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.75),
+        rgba(0, 0, 0, 0.2),
+        transparent
+    );
+    color: #fff;
+    z-index: 5;
+}
+
+.announcementOverlay .sapMTitle,
+.announcementOverlay .sapMText,
+.announcementOverlay .sapMLabel,
+.announcementOverlay .sapMObjStatus {
+    color: #fff !important;
+}
+
+.announcementOverlay .sapMTitle {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+/* ===== Maximize / Full-screen Button (plain icon, no circle) ===== */
+/* ===== Maximize / Full-screen Button ===== */
+.announcementMaximizeBtn{
+    position:absolute !important;
+    top:0px;
+    right:0px;
+    transform:translateY(-220px);
+    z-index:999;
+}
+
+/* Button Background */
+
+
+/* Icon */
+
+
+/* Hover */
+
+
+/* ===== Responsive tweak for smaller screens ===== */
+@media (max-width: 480px) {
+    .announcementHero {
+        height: 180px;
+    }
+}
+
+/* ================= DIALOG HERO ================= */
+
+.dialogAnnouncementHero{
+    position: relative;
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+}
+
+.dialogAnnouncementHero .sapMImg{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ================= DIALOG OVERLAY ================= */
+
+.dialogAnnouncementOverlay{
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 1rem;
+    background: linear-gradient(
+        to top,
+        rgba(0,0,0,.75),
+        rgba(0,0,0,.2),
+        transparent
+    );
+    color: #fff;
+    z-index: 5;
+}
+
+.dialogAnnouncementOverlay .sapMTitle,
+.dialogAnnouncementOverlay .sapMText,
+.dialogAnnouncementOverlay .sapMLabel,
+.dialogAnnouncementOverlay .sapMObjStatus{
+    color:#fff !important;
+}
+
+.dialogAnnouncementOverlay .sapMTitle{
+    font-size:1.4rem;
+    font-weight:700;
+}
+
+/* ================= DIALOG FULLSCREEN BUTTON ================= */
+
+.dialogAnnouncementMaximizeBtn{
+    position:absolute !important;
+    top:0;
+    right:0;
+    transform:translateY(-320px);
+    z-index:999;
+}
+
+.dialogAnnouncementMaximizeBtn .sapMBtnInner{
+    background:#c5d7ed !important;
+    border:2px solid #ffffff !important;
+    border-radius:50%;
+    width:2rem;
+    height:2rem;
+    box-shadow:0 2px 8px rgba(0,0,0,.45);
+}
+
+.dialogAnnouncementMaximizeBtn .sapMBtnIcon{
+    color:#98a5ca !important;
+    font-size:1rem;
+     border-radius:50%;
+    font-weight:bold;
+}
+
+.dialogAnnouncementMaximizeBtn:hover .sapMBtnInner{
+    background:#cfe0f5 !important;
+     border-radius:50%;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width:480px){
+
+    .dialogAnnouncementHero{
+        height:240px;
+    }
+
+    .dialogAnnouncementMaximizeBtn{
+        transform:translateY(-240px);
+    }
+}
+.announcementHero {
+    position: relative;
+}
+
+.announcementTopBar {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+}
+
+.expandText {
+    color: #fff;
+    font-weight: 600;
+}
+
+.announcementTopBar .sapMBtn {
+    color: #fff;
+    margin-left: -2px !important;
+}
+
+.overlayContent {
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    right: 20px;
+    z-index: 10;
+}
+.announcementDetailsCard {
+    background: #ffffff;
+    border: 1px solid #d9d9d9;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    padding: 1rem;
+    margin: 1rem 0;
+}
+
+.announcementDetailsCard .sapMLabel {
+    color: #5a6b85;
+    font-weight: 600;
+}
+
+.announcementDetailsCard .sapMText,
+.announcementDetailsCard .sapMLnk,
+.announcementDetailsCard .sapMObjStatus {
+    font-size: 0.95rem;
 }

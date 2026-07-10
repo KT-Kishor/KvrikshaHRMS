@@ -622,16 +622,16 @@ sap.ui.define([
 
             onChangeConversionRate: async function (oEvent) {
                 if (oEvent) {
-                    utils._LCvalidateAmount(oEvent);
+                    utils._LCvalidateMultipleDecimal(oEvent);
                 }
                 var oModel = this.SelectedCustomerModel;
                 var oData = oModel.getData();
-                if (!oEvent) {
+                if (!oEvent && !this.visiablityPlay.getProperty("/editVisi")) {
                     this.getBusyDialog();
                     let data = await this.ajaxReadWithJQuery("ConversionRate", {
                         "from": this.FilteredSOWModel.getProperty("/Currency")
                     });
-                    oModel.setProperty("/ConversionRate", data.rate.toFixed(2));
+                    oModel.setProperty("/ConversionRate", data.rate.toFixed(4));
                     this.closeBusyDialog();
                 }
                 var baseAmount = parseFloat(oData.TotalAmount) || 0;
@@ -784,12 +784,10 @@ sap.ui.define([
                     Address: String(oSelectedCustomerModel.Address),
                     PAN: String(oSelectedCustomerModel.PAN),
                     MobileNo: oSelectedCustomerModel.MobileNo != null ? String(oSelectedCustomerModel.MobileNo) : '',
-                    AmountInFCurrency: FilterModel.Currency === "INR" ?
-                        (!isNaN(oSelectedCustomerModel.AmountInFCurrency) ? oSelectedCustomerModel.AmountInFCurrency : "0") : parseFloat(oModel.subTotal) || 0,
+                    AmountInFCurrency: FilterModel.Currency === "INR" ? (!isNaN(oSelectedCustomerModel.AmountInFCurrency) ? oSelectedCustomerModel.AmountInFCurrency : "0") : parseFloat(oModel.subTotal) || 0,
                     Currency: FilterModel.Currency,
-                    ConversionRate: !isNaN(oSelectedCustomerModel.ConversionRate) ? parseFloat(oSelectedCustomerModel.ConversionRate) : 0,
-                    AmountInINR: FilterModel.Currency === "INR" ?
-                        parseFloat(oModel.subTotal) || 0 : parseFloat(oSelectedCustomerModel.AmountInFCurrency) || 0,
+                    ConversionRate: !isNaN(oSelectedCustomerModel.ConversionRate) ? oSelectedCustomerModel.ConversionRate : 0,
+                    AmountInINR: FilterModel.Currency === "INR" ? parseFloat(oModel.subTotal) || 0 : parseFloat(oSelectedCustomerModel.AmountInFCurrency) || 0,
                     CGST: oSelectedCustomerModel.Type === "CGST/SGST" ? parseFloat(oSelectedCustomerModel.CGST) || 0 : 0,
                     SGST: oSelectedCustomerModel.Type === "CGST/SGST" ? parseFloat(oSelectedCustomerModel.SGST) || 0 : 0,
                     IGST: oSelectedCustomerModel.Type === "IGST" ? parseFloat(oSelectedCustomerModel.IGST) || 0 : 0,
@@ -880,7 +878,7 @@ sap.ui.define([
                         utils._LCvalidateMandatoryField(this.byId("CID_id_SowPO"), "ID") &&
                         utils._LCvalidateMandatoryField(this.byId("CID_id_CurrencySelect"), "ID");
                     const bTDSValid = oModel.Currency === "INR" ? utils._LCvalidateVariablePay(this.byId("CID_id_IncomeTaxPercentage"), "ID") : true;
-                    const bConversionRateValid = oModel.Currency !== "INR" ? utils._LCvalidateAmount(this.byId("CID_id_ConversionRate"), "ID") : true;
+                    const bConversionRateValid = oModel.Currency !== "INR" ? utils._LCvalidateMultipleDecimal(this.byId("CID_id_ConversionRate"), "ID") : true;
                     const bOptionalValid = this.Discount && this.RateUnit && this.Particulars;
                     const bIsValid = bMandatoryValid && bTDSValid && bOptionalValid && bConversionRateValid;
                     if (!bIsValid) {
@@ -971,7 +969,7 @@ sap.ui.define([
                         utils._LCvalidateMandatoryField(this.byId("CID_id_SowPO"), "ID") &&
                         utils._LCvalidateEmail(this.byId("CID_id_InputMailID"), "ID") &&
                         (!!this.Discount && !!this.RateUnit && !!this.Particulars) &&
-                        (oModel.Currency === "INR" ? utils._LCvalidateVariablePay(this.byId("CID_id_IncomeTaxPercentage"), "ID") : utils._LCvalidateAmount(this.byId("CID_id_ConversionRate"), "ID"));
+                        (oModel.Currency === "INR" ? utils._LCvalidateVariablePay(this.byId("CID_id_IncomeTaxPercentage"), "ID") : utils._LCvalidateMultipleDecimal(this.byId("CID_id_ConversionRate"), "ID"));
 
                     if (!bIsValid) return MessageToast.show(this.i18nModel.getText("mandatoryFieldsError"));
 
@@ -1122,14 +1120,14 @@ sap.ui.define([
             },
 
             onChangePaymentConvertionRate: async function (oEvent) {
-                if (oEvent) utils._LCvalidateAmount(oEvent);
+                if (oEvent) utils._LCvalidateMultipleDecimal(oEvent);
                 var oModelData = this.getView().getModel("PaymentModel");
                 if (!oEvent) {
                     this.getBusyDialog();
                     let data = await this.ajaxReadWithJQuery("ConversionRate", {
                         "from": this.FilteredSOWModel.getProperty("/Currency")
                     });
-                    oModelData.setProperty("/ConversionRate", data.rate.toFixed(2));
+                    oModelData.setProperty("/ConversionRate", data.rate.toFixed(4));
                     this.closeBusyDialog();
                 }
                 var receivedAmount = parseFloat(oModelData.getData().ReceivedAmount);
@@ -1222,7 +1220,7 @@ sap.ui.define([
 
                 let isCurrencyValid = true;
                 if (paymentModel.Currency !== "INR") {
-                    isCurrencyValid = utils._LCvalidateAmount(sap.ui.getCore().byId("idFrgConvertionRate"), "ID");
+                    isCurrencyValid = utils._LCvalidateMultipleDecimal(sap.ui.getCore().byId("idFrgConvertionRate"), "ID");
                 } else {
                     await this.onChangeReceivedTDS();
                 }
@@ -1433,18 +1431,20 @@ sap.ui.define([
                     Subject: "KALPAVRIKSHA TECHNOLOGIES - INVOICE PAYMENT REMAINDER",
                     htmlbody: `<p>Dear Finance Team,</p>
                         <p>I hope you're doing well. This is a friendly remainder that payment for invoice ${modelData.InvNo}, issued on ${modelData.InvoiceDate}, is still outstanding.</p>
-                        <li><b>Invoice No : ${modelData.InvNo}</b></li>
-                        <li><b>Due Date : ${modelData.PayByDate}</b></li>
-                        <li><b>Invoice Amount : ${this.Formatter.fromatNumber(modelData.TotalAmount)} ${modelData.Currency}</b></li>
-                        ${creditMemoHTML}
-                         <li><b>Received Amount : ${this.Formatter.fromatNumber(this.getView().getModel("InvoicePayment").getProperty("/AllReceivedAmount"))} ${modelData.Currency}</b></li>                   
-                        <li><b>Due Amount : ${this.Formatter.fromatNumber(
-                        this.getView().getModel("InvoicePayment").getProperty("/AllDueAmount")) === '0.00'
-                            ? this.Formatter.fromatNumber(modelData.TotalAmount)
-                            : this.Formatter.fromatNumber(this.getView().getModel("InvoicePayment").getProperty("/AllDueAmount"))
-                        } ${modelData.Currency}</b></li>           
-                        <li><b>Total Amount : ${this.Formatter.fromatNumber(netPayable)} ${modelData.Currency}</b></li>   
-                        <li><b>Description : ${modelData.InvoiceDescription}</b></li>
+                        <ul>
+                            <li><b>Invoice No : ${modelData.InvNo}</b></li>
+                            <li><b>Due Date : ${modelData.PayByDate}</b></li>
+                            <li><b>Invoice Amount : ${this.Formatter.fromatNumber(modelData.TotalAmount)} ${modelData.Currency}</b></li>
+                            ${creditMemoHTML}
+                            <li><b>Received Amount : ${this.Formatter.fromatNumber(this.getView().getModel("InvoicePayment").getProperty("/AllReceivedAmount"))} ${modelData.Currency}</b></li>                   
+                            <li><b>Due Amount : ${this.Formatter.fromatNumber(
+                            this.getView().getModel("InvoicePayment").getProperty("/AllDueAmount")) === '0.00'
+                                ? this.Formatter.fromatNumber(modelData.TotalAmount)
+                                : this.Formatter.fromatNumber(this.getView().getModel("InvoicePayment").getProperty("/AllDueAmount"))
+                            } ${modelData.Currency}</b></li>           
+                            <li><b>Total Amount : ${this.Formatter.fromatNumber(netPayable)} ${modelData.Currency}</b></li>   
+                            <li><b>Description : ${modelData.InvoiceDescription}</b></li>
+                        </ul>
                         <p>If you’ve already made the payment, kindly disregard this remainder. Otherwise, we would appreciate it if you could arrange payment as soon as possible.</p>
                         <p>If you have any questions or need further information, please don't hesitate to contact us.</p>
                         <p>Thank you for your attention to this matter.</p>
@@ -1477,11 +1477,13 @@ sap.ui.define([
                     Subject: `${modelData.CustomerName} - ${modelData.InvoiceDescription}`,
                     htmlbody: `<p>Dear Finance Team,</p>
                     <p>Please find the following invoice details below:</p>
-                    <li><b>Invoice No : ${modelData.InvNo}</b></li>
-                    <li><b>Invoice Date : ${modelData.InvoiceDate}</b></li>
-                    <li><b>Total Amount : ${this.Formatter.fromatNumber(modelData.TotalAmount)} ${modelData.Currency}</b></li>
-                    <li><b>Description : ${modelData.InvoiceDescription}</b></li>
-
+                    <ul>
+                        <li><b>Invoice No : ${modelData.InvNo}</b></li>
+                        <li><b>Invoice Date : ${modelData.InvoiceDate}</b></li>
+                        <li><b>Total Amount : ${this.Formatter.fromatNumber(modelData.TotalAmount)} ${modelData.Currency}</b></li>
+                        <li><b>Description : ${modelData.InvoiceDescription}</b></li>
+                    </ul>
+                    
                     <p style="margin-bottom: 0;"><b>Note:</b></p>
                     <ul style="margin-top: 0;">
                         <li>Any requests for changes must be communicated within 5 days from the invoice date. Requests received after this period will not be considered.</li>

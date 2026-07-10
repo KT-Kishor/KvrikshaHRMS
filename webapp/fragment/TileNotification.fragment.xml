@@ -139,7 +139,7 @@
                                 minScreenWidth="Tablet"
                                 demandPopin="true"
                             >
-                                <Text text="{i18n>paymentterms}" />
+                             <Text text="{i18n>MSA_Contract_End_Date}" />
                             </Column>
                         </columns>
                         <items>

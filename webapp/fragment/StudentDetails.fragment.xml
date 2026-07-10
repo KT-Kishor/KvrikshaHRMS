@@ -23,63 +23,7 @@
         <content>
             <VBox class="sapUiSmallMarginBeginEnd sapUiSmallMarginTopBottom" width="100%">
 
-                <!-- ===== PROFILE HEADER ===== -->
-            
-                    <!-- <Avatar
-                        src="{= ${studentModel>/photo} ? 'data:image/jpeg;base64,' + ${studentModel>/photo} : '' }"
-                        initials="{= ${studentModel>/candidate_Name} ? ${studentModel>/candidate_Name}.substring(0,2).toUpperCase() : 'NA'}"
-                        displayShape="Circle"
-                        displaySize="XL"
-                        backgroundColor="Accent6"
-                        class="sapUiLargeMarginEnd sapUiSmallMarginBottom"
-                    />
-                    <VBox justifyContent="Center">
-                        <Title
-                            level="H2"
-                            text="{studentModel>/candidate_Name}"
-                            class="sapUiTinyMarginBottom"
-                        />
-                        <Text
-                            text="{studentModel>/candidate_Email}"
-                            class="sapUiTinyMarginBottom"
-                        />
-                        <FlexBox
-                            wrap="Wrap"
-                            class="sapUiTinyMarginTop"
-                            alignItems="Center"
-                        >
-                            <HBox class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
-                                <core:Icon
-                                    src="sap-icon://person-placeholder"
-                                    color="#0070f2"
-                                    size="0.875rem"
-                                    class="sapUiTinyMarginEnd"
-                                />
-                                <Text text="{studentModel>/student_Id}" />
-                            </HBox>
-                            <HBox class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
-                                <Text text="{studentModel>/skill_level}" />
-                            </HBox>
-                            <HBox class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
-                                <core:Icon
-                                    src="sap-icon://source-code"
-                                    color="#0070f2"
-                                    size="0.875rem"
-                                    class="sapUiTinyMarginEnd"
-                                />
-                                <Text text="{studentModel>/preferred_language}" />
-                            </HBox>
-                            <HBox class="sapUiTinyMarginBottom">
-                                <core:Icon
-                                    src="{= ${studentModel>/overallResult} === 'Pass' ? 'sap-icon://accept' : 'sap-icon://decline'}"
-                                    color="{= ${studentModel>/overallResult} === 'Pass' ? '#107e3e' : '#bb0000'}"
-                                    size="0.875rem"
-                                    class="sapUiTinyMarginEnd"
-                                />
-                                <Text text="{studentModel>/overallResult}" />
-                            </HBox>
-                        </FlexBox>
-                    </VBox> -->
+              
                     <layout:Grid
     defaultSpan="L6 M6 S12"
     width="100%"
@@ -104,7 +48,7 @@
                     src="{= ${studentModel>/photo} ? 'data:image/jpeg;base64,' + ${studentModel>/photo} : '' }"
                     initials="{= ${studentModel>/candidate_Name}.substring(0,2).toUpperCase()}"
                     displayShape="Circle"
-                    displaySize="L"
+                    displaySize="XL"
                     backgroundColor="Accent6"
                     class="sapUiLargeMarginEnd"/>
                 <VBox>
@@ -121,10 +65,10 @@
  
                     <Text class="sapUiTinyMarginTop" text="{studentModel>/preferred_language}"/>
 
-                    <ObjectStatus
+                    <!-- <ObjectStatus
                     class="sapUiTinyMarginTop"
                         text="{studentModel>/overallResult}"
-                        state="{= ${studentModel>/overallResult} === 'Pass' ? 'Success' : 'Error'}"/>
+                        state="{= ${studentModel>/overallResult} === 'Pass' ? 'Success' : 'Error'}"/> -->
 
                 </VBox>
 
@@ -200,6 +144,24 @@
 
     </FlexBox>
 
+    <FlexBox
+        wrap="Wrap"
+        justifyContent="Start"
+        alignItems="Start"
+        class="sapUiTinyMarginBottom">
+
+        <Label
+            vAlign="Middle"
+            text="{i18n>resultStatus}"
+            width="8rem"/>
+
+           <ObjectStatus
+                    
+                        text="{studentModel>/overallResult}"
+                        state="{= ${studentModel>/overallResult} === 'Pass' ? 'Success' : 'Error'}"/>
+
+    </FlexBox>
+
 </VBox>
 
     </layout:content>
@@ -218,7 +180,7 @@
                     <layout:content>
                         <!-- MCQ Score - Blue -->
                         <GenericTile
-                            class="tileLayout tileTotal blueTile sapUiTinyMarginBottom"
+                            class="tileLayout  blueTile  sapUiTinyMarginBottom"
                             header="{i18n>mcqScoreHeader}"
                             subheader="{i18n>mcqScoreSubheader}"
                             width="90%"
@@ -240,7 +202,7 @@
 
                         <!-- Coding Score - Orange -->
                         <GenericTile
-                            class="tileLayout tileTotal orangeTile sapUiTinyMarginBottom"
+                            class="tileLayout  orangeTile sapUiTinyMarginBottom"
                             header="{i18n>codingScoreHeader}"
                             subheader="{i18n>codingScoreSubheader}"
                             width="90%"
@@ -262,7 +224,7 @@
 
                         <!-- Overall Score - Green -->
                         <GenericTile
-                            class="tileLayout tileTotal greenTile sapUiTinyMarginBottom"
+                            class="tileLayout  greenTile sapUiTinyMarginBottom "
                             header="{i18n>overallScoreHeader}"
                             subheader="{i18n>overallScoreSubheader}"
                             width="90%"
@@ -284,7 +246,7 @@
 
                         <!-- Total Marks - Red -->
                         <GenericTile
-                            class="tileLayout tileTotal redTile sapUiTinyMarginBottom"
+                            class="tileLayout  redTile sapUiTinyMarginBottom"
                             header="{i18n>totalMarksHeader}"
                             subheader="{i18n>totalMarksSubheader}"
                             width="90%"
@@ -453,6 +415,7 @@
                 </layout:Grid>
 
                 <!-- ===== MCQ QUESTION BREAKDOWN TABLE ===== -->
+                
                 <Title
                     level="H5"
                     text="{i18n>mcqBreakdownTitle}"
@@ -460,33 +423,30 @@
                 />
 
                 <!-- Filter Bar -->
-                <FlexBox
-                    wrap="Wrap"
-                    justifyContent="SpaceBetween"
-                    alignItems="Center"
-                    width="96%"
-                    class="sapUiTinyMarginBottom"
-                >
-                    <SegmentedButton
-                        id="mcqFilterBtn"
-                        selectedKey="All"
-                        selectionChange="onMcqFilterChange"
-                        class="sapUiSmallMarginBegin sapUiTinyMarginEnd sapUiTinyMarginBottom"
-                        width="15rem"
-                    >
-                        <items>
-                            <SegmentedButtonItem key="All" text="{i18n>filterAll}" />
-                            <SegmentedButtonItem key="Correct" text="{i18n>filterCorrect}" />
-                            <SegmentedButtonItem key="Incorrect" text="{i18n>filterIncorrect}" />
-                            <SegmentedButtonItem key="Skipped" text="{i18n>filterSkipped}" />
-                        </items>
-                    </SegmentedButton>
-                    <Text
-                        id="mcqFilterCount"
-                        text="{= ${studentModel>/totalQuestions} + ' ' + ${i18n>questionsUnit}}"
-                        class="sapUiTinyMarginBottom"
-                    />
-                </FlexBox>
+            <OverflowToolbar width="100%">
+    <SegmentedButton
+        id="mcqFilterBtn"
+        selectedKey="All"
+        selectionChange="onMcqFilterChange">
+
+       
+
+        <items>
+            <SegmentedButtonItem key="All" text="All"/>
+            <SegmentedButtonItem key="Correct" text="Correct"/>
+            <SegmentedButtonItem key="Incorrect" text="Incorrect"/>
+            <SegmentedButtonItem key="Skipped" text="Skipped"/>
+        </items>
+
+    </SegmentedButton>
+
+    <ToolbarSpacer/>
+
+    <Text
+        id="mcqFilterCount"
+        class ="sapUiMediumMarginEnd"
+        text="{= ${studentModel>/totalQuestions} + ' Questions'}"/>
+</OverflowToolbar>
 
                 <Table
                     id="mcqBreakdownTable"
@@ -495,15 +455,12 @@
                         sorter: { path: 'order_no', descending: false }
                     }"
                     mode="None"
-                    fixedLayout="false"
-                    width="96%"
-                    noDataText="{i18n>noQuestionsAvailable}"
-                    sticky="ColumnHeaders"
-                    growing="true"
-                    growingThreshold="10"
-                    growingScrollToLoad="false"
-                    class="CommonRoundedTable sapUiSmallMarginBeginEnd"
-                >
+
+    fixedLayout="false"
+    autoPopinMode="true"
+    sticky="ColumnHeaders"
+    class="CommonRoundedTable responsiveMcqTable sapUiSmallMarginTop">
+            
                     <headerToolbar >
                         <Toolbar >
                             <Title level="H6" text="{i18n>questionsTitle}"  />
@@ -511,22 +468,22 @@
                     </headerToolbar>
 
                     <columns >
-                        <Column width="4rem" hAlign="Center">
-                            <Text text="{i18n>colNumber}" />
+                        <Column importance="Low" width="3rem">
+                            <Text text="{i18n>orderno}" />
                         </Column>
                         <Column minScreenWidth="Tablet" demandPopin="true">
                             <Text text="{i18n>colQuestion}" />
                         </Column>
-                        <Column width="10rem" minScreenWidth="Desktop" demandPopin="true">
+                        <Column  minScreenWidth="Desktop"  demandPopin="true">
                             <Text text="{i18n>colYourAnswer}" />
                         </Column>
-                        <Column width="10rem" minScreenWidth="Desktop" demandPopin="true">
+                        <Column importance="Low" minScreenWidth="Desktop" demandPopin="true">
                             <Text text="{i18n>colCorrectAnswer}" />
                         </Column>
-                        <Column width="7rem" hAlign="Center">
+                        <Column  importance="Low" hAlign="Center">
                             <Text text="{i18n>colStatus}" />
                         </Column>
-                        <Column width="5rem" hAlign="Center">
+                        <Column  importance="Low" hAlign="Center">
                             <Text text="{i18n>colMarks}" />
                         </Column>
                     </columns>
@@ -610,8 +567,10 @@
                         <Panel
                             expandable="true"
                             expanded="true"
-                            class="sapUiNoContentPadding sapUiSmallMarginBottom sapUiSmallMarginBegin sapUiSmallMarginEnd"
-                            width="96%"
+                             class="sapUiNoContentPadding
+           sapUiSmallMarginBottom
+           sapUiMediumMarginBegin
+           responsiveMcqTable"
                         >
                             <headerToolbar>
                                 <Toolbar>

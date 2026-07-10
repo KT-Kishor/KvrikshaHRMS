@@ -3,7 +3,7 @@
 	xmlns:f="sap.ui.layout.form"
 	xmlns:core="sap.ui.core">
 	<Dialog
-        id="MIF_id_DialogManRemark">
+        id="MIF_id_DialogManRemark1">
 		<f:SimpleForm
             editable="true"
             layout="ResponsiveGridLayout"
@@ -23,19 +23,19 @@
 			<f:content>
 
             <Label
-        id="MIF_id_EmailLabel"
+        id="MIF_id_EmailLabel1"
         text="Email"
-        visible="false"/>
+       />
 
     <TextArea
-        id="MIF_id_Email"
+        id="MIF_id_Email1"
         rows="3"
+        editable="false"
         placeholder="Enter email content..."
-        visible="false"
         maxLength="1000"/>
         
-				<Label id="MIF_id_RemarkLabel" required="true"></Label>
-				<TextArea value="" liveChange="MIF_liveChangeForMangerComments"  rows="4" id="MIF_id_remark" placeholder="{i18n>remarks}" maxLength="2000"/>
+				<Label id="MIF_id_RemarkLabel1" required="true"></Label>
+				<TextArea value="" liveChange="MIF_liveChangeForMangerComments"  rows="4" id="MIF_id_remark1" placeholder="{i18n>remarks}" maxLength="100"/>
 
 			</f:content>
 		</f:SimpleForm>
@@ -45,7 +45,7 @@
             width="100%"
             justifyContent="End"
             alignItems="Center">
-			<Button type="Transparent" id="MIF_id_OkBtn" press="MTF_onPressOk" text=""/>
+			<Button type="Transparent" id="MIF_id_OkBtn1" press="MTF_onPressOk" text=""/>
 		
 		
 			<Button text="{i18n>close}" type="Transparent" press="MIF_onPressClose" />

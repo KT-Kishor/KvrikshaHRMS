@@ -7,13 +7,13 @@ sap.ui.define(
     "../utils/validation",
     "sap/ui/model/FilterOperator",
     "sap/ui/model/Filter",
+    "../model/formatter",
   ],
-  function (BaseController, JSONModel, MessageBox, MessageToast, utils, FilterOperator, Filter) {
+  function (BaseController, JSONModel, MessageBox, MessageToast, utils, FilterOperator, Filter, Formatter) {
     "use strict";
 
-    return BaseController.extend(
-      "sap.kt.com.minihrsolution.controller.CandidateQuestion",
-      {
+    return BaseController.extend(  "sap.kt.com.minihrsolution.controller.CandidateQuestion", {
+         Formatter: Formatter,
         onInit: function () {
           this.getRouter().getRoute("RouteManageCandidateQuestion")
             .attachPatternMatched(this.QD_onRouteMatched, this);

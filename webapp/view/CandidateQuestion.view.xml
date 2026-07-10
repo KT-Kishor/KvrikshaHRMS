@@ -206,9 +206,12 @@
                     <items>
                         <ColumnListItem type="Navigation" press="onpressquestion">
                             <cells>
-                                <Text
-                                    text="{Questionmodel>test_id}"
-                                />
+                               <Text
+    text="{
+        path: 'Questionmodel>test_id',
+        formatter: '.Formatter.formatTestType'
+    }"
+/>
                                 <Text
                                     text="{Questionmodel>question_text}"
                                 />

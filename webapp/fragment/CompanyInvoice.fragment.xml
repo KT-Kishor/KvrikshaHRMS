@@ -42,7 +42,7 @@
 					<HBox width="100%" justifyContent="SpaceBetween" visible="{= ${PaymentModel>/Currency} !== 'INR'}">
 						<VBox width="calc(50% - 10px)">
 						<Label text="{i18n>expConversionRate}" required="true"></Label>
-							<Input value="{PaymentModel>/ConversionRate}" placeholder="{i18n>expenseConversionRatePlaceholder}" id="idFrgConvertionRate" change="onChangePaymentConvertionRate" maxLength="15" valueStateText="{i18n>ammountValuState}"/>
+							<Input value="{PaymentModel>/ConversionRate}" placeholder="{i18n>expenseConversionRatePlaceholder}" id="idFrgConvertionRate" change="onChangePaymentConvertionRate" maxLength="7" valueStateText="{i18n>ammountValuState}"/>
 						</VBox>
 						<VBox width="calc(50% - 10px)">
 							<Label text="{i18n>amountInINR}"></Label>
@@ -109,7 +109,7 @@
 							<Text text="{path:'PaymentDetailModel>ReceivedAmount',formatter: '.Formatter.fromatNumber'}" />
 							<Text text="{path:'PaymentDetailModel>ReceivedTDS',formatter: '.Formatter.fromatNumber'}" />
 							<Text text="{path:'PaymentDetailModel>DueAmount',formatter: '.Formatter.fromatNumber'}" />
-							<Text text="{path:'PaymentDetailModel>ConversionRate',formatter: '.Formatter.fromatNumber'}" />
+							<Text text="{path:'PaymentDetailModel>ConversionRate'}" />
 							<Text text="{path:'PaymentDetailModel>AmountInINR',formatter: '.Formatter.fromatNumber'}" />
 						</cells>
 					</ColumnListItem>

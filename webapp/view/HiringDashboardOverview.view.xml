@@ -45,85 +45,19 @@
                 class="LogNot logoutBtn"
             />
             <!-- Logout Button -->
-            <Button
-                press="onLogout"
-                icon="sap-icon://log"
-                tooltip="{i18n>logoutTooltip}"
-                type="Transparent"
-                class="LogNot logoutBtn"
-            />
+            <Button press="onLogout" icon="sap-icon://log" tooltip="{i18n>logoutTooltip}" type="Transparent" class="LogNot logoutBtn"/>
         </headerContent>
         <content>
-            <!-- SEARCH + FILTERS -->
-            <!-- <VBox>
-                <fb:FilterBar
-                    id="HDO_id_FilterBar"
-                    visible="false"
-                    useToolbar="false"
-                    search="HDO_onSearch"
-                    clear="HDO_onClear"
-                    showClearOnFB="true"
-                >
-                    <fb:filterGroupItems>
-                        <fb:FilterGroupItem
-                            name="CandidateName"
-                            label="{i18n>candidateName}"
-                            groupName="General"
-                            visibleInFilterBar="true"
-                        >
-                            <fb:control>
-                                <SearchField
-                                    id="HDO_id_Search2"
-                                    liveChange="HDO_onLiveSearch"
-                                />
-                            </fb:control>
-                        </fb:FilterGroupItem>
-                        <fb:FilterGroupItem
-                            name="Skill"
-                            label="{i18n>skillLevel}"
-                            groupName="General"
-                            visibleInFilterBar="true"
-                        >
-                            <fb:control>
-                                <ComboBox id="HDO_id_Skill" />
-                            </fb:control>
-                        </fb:FilterGroupItem>
-                        <fb:FilterGroupItem
-                            name="Language"
-                            label="{i18n>language}"
-                            groupName="General"
-                            visibleInFilterBar="true"
-                        >
-                            <fb:control>
-                                <ComboBox id="HDO_id_Language"/>
-                            </fb:control>
-                        </fb:FilterGroupItem>
-                    </fb:filterGroupItems>
-                </fb:FilterBar>
-            </VBox> -->
+           
             <!-- KPI SECTION -->
-            <FlexBox
-                wrap="Wrap"
-                justifyContent="Start"
-                alignItems="Start"
-                class="sapUiSmallMarginTop"
-            >
+            <FlexBox wrap="Wrap" justifyContent="SpaceAround" alignItems="Start" class="sapUiSmallMargin">
                 <!-- Total Candidates - Blue -->
-                <GenericTile
-                    class="tileLayout tileTotal blueTile sapUiSmallMargin"
-                    header="{i18n>totalCandidates}"
-                    subheader="{i18n>totalRegisteredSubheader}"
+                <GenericTile class="tileLayout tileTotal blueTile sapUiSmallMargin" header="{i18n>totalCandidates}" subheader="{i18n>totalRegisteredSubheader}"
                 >
                     <tileContent>
                         <TileContent>
                             <content>
-                                <NumericContent
-                                    class="sapUiSmallMarginTop"
-                                    value="{DashboardModel>/totalCandidates}"
-                                    icon="sap-icon://group"
-                                    indicator="Up"
-                                    valueColor="Good"
-                                    withMargin="false"
+                                <NumericContent class="sapUiSmallMarginTop" value="{DashboardModel>/totalCandidates}" icon="sap-icon://group" indicator="Up" valueColor="Good" withMargin="false"
                                 />
                             </content>
                         </TileContent>
@@ -138,12 +72,26 @@
                     <tileContent>
                         <TileContent>
                             <content>
+                                <NumericContent class="sapUiSmallMarginTop" value="{DashboardModel>/totalMcqAssignments}" icon="sap-icon://education" indicator="Up" valueColor="Critical" withMargin="false"/>
+                            </content>
+                        </TileContent>
+                    </tileContent>
+                </GenericTile>
+                <!-- MCQ Passed - Green -->
+                <GenericTile
+                    class="tileLayout tileTotal greenTile sapUiSmallMargin"
+                    header="{i18n>mcqPassed}"
+                    subheader="{i18n>mcqClearedSubheader}"
+                >
+                    <tileContent>
+                        <TileContent>
+                            <content>
                                 <NumericContent
                                     class="sapUiSmallMarginTop"
-                                    value="{DashboardModel>/totalMcqAssignments}"
-                                    icon="sap-icon://education"
+                                    value="{DashboardModel>/mcqPassed}"
+                                    icon="sap-icon://accept"
                                     indicator="Up"
-                                    valueColor="Critical"
+                                    valueColor="Good"
                                     withMargin="false"
                                 />
                             </content>
@@ -165,27 +113,6 @@
                                     icon="sap-icon://source-code"
                                     indicator="Up"
                                     valueColor="Critical"
-                                    withMargin="false"
-                                />
-                            </content>
-                        </TileContent>
-                    </tileContent>
-                </GenericTile>
-                <!-- MCQ Passed - Green -->
-                <GenericTile
-                    class="tileLayout tileTotal greenTile sapUiSmallMargin"
-                    header="{i18n>mcqPassed}"
-                    subheader="{i18n>mcqClearedSubheader}"
-                >
-                    <tileContent>
-                        <TileContent>
-                            <content>
-                                <NumericContent
-                                    class="sapUiSmallMarginTop"
-                                    value="{DashboardModel>/mcqPassed}"
-                                    icon="sap-icon://accept"
-                                    indicator="Up"
-                                    valueColor="Good"
                                     withMargin="false"
                                 />
                             </content>
@@ -514,7 +441,7 @@
         }
     }"
                             >
-                                <viz:dataset>
+                                 <viz:dataset>
                                     <vizData:FlattenedDataset
                                         data="{ChartModel>/McqCoding}"
                                     >
@@ -553,26 +480,32 @@
 
           <f:Card class="sapUiSmallMarginBeginEnd sapUiTinyMarginBottom" width="auto">
   <f:content>
- 
-      <Table
-        id="HDO_id_CandidateTable"
-        width="100%"
-        growing="true"
-        growingThreshold="10"
-        growingScrollToLoad="true"
-        updateFinished="onTableUpdateFinished"
-        items="{CandidateModel>/Candidates}"
-        busyIndicatorDelay="0"
-        alternateRowColors="true"
-        >
+
+    
+    <Table
+     busyIndicatorDelay="0"
+    id="HDO_id_CandidateTable"
+    width="100%"
+    growing="true"
+          mode="MultiSelect"
+         selectionChange="onCandidateSelectionChange"
+  growingThreshold="10"
+    alternateRowColors="true"
+     growingTriggerText="{i18n>loadMoreBtn}"
+    updateFinished="onUpdateFinished"
+    items="{path:'CandidateModel>/Candidates' , length:10000}"
+    class="hideGrowingInfo .sapMGrowingListDescription"
+>
 
         <!-- HEADER TOOLBAR -->
         <headerToolbar>
           <OverflowToolbar>
 
-           <Title
-  text="{= ${i18n>candidatesTitlePrefix} + ' (' + (${CandidateModel>/FilteredCount} || 0) + ')' }"
-  level="H3"/>
+          
+  <Title
+    text="{= ${i18n>candidatesTitlePrefix} + ' (' + ${CandidateModel>/Count} + ')' }"
+    level="H3"/>
+
 
             <ToolbarSpacer />
 
@@ -599,28 +532,31 @@
           <Column width="6rem" vAlign="Middle">
             <Text text="{i18n>colPhoto}" />
           </Column>
-          <Column minScreenWidth="Tablet" demandPopin="true">
+          <!-- <Column minScreenWidth="Tablet" demandPopin="true">
             <Text text="{i18n>colStudentId}" />
+          </Column> -->
+          <Column >
+            <Text text="{i18n>colName}" width="15rem"/>
           </Column>
-          <Column minScreenWidth="Tablet" demandPopin="true">
-            <Text text="{i18n>colName}" />
-          </Column>
-          <Column minScreenWidth="Desktop" demandPopin="true" width="15rem">
+          <Column minScreenWidth="Desktop" demandPopin="true" width="20rem">
             <Text text="{i18n>colEmail}" />
           </Column>
-          <Column minScreenWidth="Tablet" demandPopin="true">
-            <Text text="{i18n>colMcqScore}" />
+          <Column minScreenWidth="Tablet" demandPopin="true" width="6rem">
+            <Text text="{i18n>mcq}" />
           </Column>
-          <Column minScreenWidth="Tablet" demandPopin="true">
-            <Text text="{i18n>colCodingScore}" />
+          <Column minScreenWidth="Tablet" demandPopin="true" width="6rem">
+            <Text text="{i18n>coding}" />
           </Column>
-          <Column minScreenWidth="Tablet" demandPopin="true">
+          <Column minScreenWidth="Tablet" demandPopin="true" width="6rem">
             <Text text="{i18n>colOverall}" />
           </Column>
-          <Column minScreenWidth="Tablet" demandPopin="true">
+          <Column minScreenWidth="Tablet" demandPopin="true" width="6rem">
             <Text text="{i18n>colResult}" />
           </Column>
-          <Column minScreenWidth="Tablet" demandPopin="true">
+          <Column minScreenWidth="Tablet" demandPopin="true" width="6rem">
+            <Text text="{i18n>colStatus}" />
+          </Column>
+          <Column minScreenWidth="Tablet" demandPopin="true" width="6rem">
             <Text text="{i18n>colAction}" />
           </Column>
         </columns>
@@ -638,18 +574,18 @@
               />
               <!-- STUDENT ID -->
               <ObjectIdentifier
-                title="{CandidateModel>student_Id}"
-                text="{CandidateModel>id}"
+                title="{CandidateModel>candidate_Name}"
+                text="{CandidateModel>student_Id}"
               />
               <!-- NAME -->
-              <Text
+              <!-- <Text
                 text="{CandidateModel>candidate_Name}"
                 wrapping="false"
-              />
+              /> -->
               <!-- EMAIL -->
-              <Link
+              <Text
                 text="{CandidateModel>candidate_Email}"
-                href="{= 'mailto:' + ${CandidateModel>candidate_Email} }"
+               
               />
               <!-- MCQ SCORE -->
               <ObjectStatus
@@ -680,7 +616,8 @@
                   : 'Error'
                 }"
               />
-              <!-- RESULT -->
+           
+                <!-- RESULT -->
               <ObjectStatus
                 text="{CandidateModel>overallResult}"
                 state="{=
@@ -691,6 +628,21 @@
                   : 'Warning'
                 }"
               />
+
+              <Link
+                text="{CandidateModel>status}"
+               press="onStatusPress"
+              />
+              <!-- <ObjectStatus
+                text="{CandidateModel>status}"
+                state="{=
+                  ${CandidateModel>status} === 'Selected'
+                  ? 'Success'
+                  : ${CandidateModel>status} === 'Rejected'
+                  ? 'Error'
+                  : 'Warning'
+                }"
+              /> -->
               <!-- ACTION -->
               <Button
                 text="{i18n>viewBtn}"
@@ -701,7 +653,8 @@
         </items>
 
       </Table>
-   
+     
+  
   </f:content>
 </f:Card>
         </content>
@@ -713,6 +666,16 @@
                         type="XML"
                     />
                 </contentLeft>
+                <contentRight>
+<FlexBox  wrap="Wrap"
+    justifyContent="End"
+    alignItems="Center" class="TraineeButtons">
+<!-- Save/Edit and Merge Buttons -->
+<Button id="MI_id_Btn_Pass" text="{i18n>passCandidate}" press="MI_onPressPassCandidate" type="Transparent" visible="true"/>
+<Button id="MI_id_B" text="{i18n>select}" press="MI_onPressButtons" type="Transparent" visible="true"/>
+<Button id="MI_id_Bu" text="{i18n>rejected}" press="MI_onPressButtons" type="Transparent" visible="true"/>
+</FlexBox>
+</contentRight>
             </Bar>
         </footer>
     </Page>

@@ -34,7 +34,7 @@ sap.ui.define([
             if (!this._masterDataLoaded) {
                 this._masterDataLoaded = true;
 
-                this._fetchCommonData("CompanyCodeDetails", "CompanyCodeDetailsModel", {});
+                this._fetchCommonData("CompanyCodeDetails", "CompanyCodeDetailsModel");
                 this._fetchCommonData("AppVisibility", "RoleModel");
                 this._fetchCommonData("Country", "CountryModel");
                 this._fetchCommonData("State", "StateModel");
@@ -44,6 +44,7 @@ sap.ui.define([
                 this._fetchCommonData("Designation", "DesignationModel");
                 this._fetchCommonData("Department", "DepartmentModel");
                 this._fetchCommonData("BaseLocation", "BaseLocationModel");
+                this._fetchCommonData("Role_Department", "RoleDepartmentModel");
             }
 
             this.setModel(new JSONModel({

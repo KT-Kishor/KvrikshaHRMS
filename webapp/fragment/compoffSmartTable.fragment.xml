@@ -8,8 +8,8 @@
 				<ToolbarSpacer/>
 				<Button visible="false" press="AL_onPressBarChart" text="{i18n>openBarCharts}" type="Transparent" />
 				<Button press="AL_onPressApplyLeave" text="{i18n>applycomp}" type="Transparent"/>
-				<Button id="AL_id_compoffUpdatebtn" text="{i18n>editcompoff}" press="AL_onPressUpdate" visible="{= ${LeaveModel>Status} === 'Submitted' }" type="Transparent"/>
-				<Button id="AL_id_compoffDeletebtn" text="{i18n>deleteCompOff}" press="AL_onPressDelete" visible="{= ${LeaveModel>Status} === 'Submitted' }" type="Transparent"/>
+				<Button id="AL_id_compoffUpdatebtn" text="{i18n>editcompoff}" press="AL_onPressUpdate"  type="Transparent"/>
+				<Button id="AL_id_compoffDeletebtn" text="{i18n>deleteCompOff}" press="AL_onPressDelete"  type="Transparent"/>
 				<Button visible="false" text="{i18n>download}" press="AL_DownalodTableData"></Button>
 			</OverflowToolbar>
 		</headerToolbar>

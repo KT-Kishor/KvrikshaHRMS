@@ -29,14 +29,14 @@
     <!-- NAME SEARCH -->
     <fb:FilterGroupItem
       name="candidate_Name"
-      label="{i18n>nameFilterLabel}"
+      label="{i18n>Search}"
       groupName="General"
       visibleInFilterBar="true">
 
       <fb:control>
         <Input
           id="nameInput"
-          placeholder="{i18n>searchByNamePlaceholder}"
+          placeholder="{i18n>searchPlaceholder}"
           liveChange="onLiveSearch"
           showClearIcon="true"/>
       </fb:control>
@@ -81,22 +81,16 @@
 </fb:FilterBar>
 
     <!-- ================= TABLE ================= -->
-   <Table
-  id="candidateTable"
-  items="{candidateModel>/candidates}"
-  busyIndicatorDelay="0"
-  growing="true"
-  growingThreshold="50"
-  alternateRowColors="true"
-  width="auto"
-  class="sapUiTinyMargin CommonRoundedTable">
+   <Table id="candidateTable" items="{candidateModel>/candidates}" busyIndicatorDelay="0" growing="true" growingThreshold="10" alternateRowColors="true" width="auto"
+ growingTriggerText="{i18n>loadMoreBtn}" updateFinished="onUpdateFinished" class="sapUiTinyMargin CommonRoundedTable hideGrowingInfo .sapMGrowingListDescription">
   <!-- HEADER TOOLBAR -->
   <headerToolbar>
     <OverflowToolbar>
       
+      <!-- <Title text="{= ${i18n>candidatesTitlePrefix} + ' (' + ${candidateModel>/candidates}.length + ')' }" level="H2"/> -->
       <Title
-  text="{= ${i18n>candidatesTitlePrefix} + ' (' + ${candidateModel>/candidates}.length + ')' }"
-  level="H2"/>
+    text="{= ${i18n>candidatesTitlePrefix} + ' (' + ${viewModel>/candidateCount} + ')' }"
+    level="H2"/>
 
       <ToolbarSpacer />
 
@@ -111,46 +105,49 @@
   </headerToolbar>
 
       <columns>
+    <Column width="5rem">
+        <Text text="{i18n>colPhoto}"/>
+    </Column>
 
-        <Column  minScreenWidth="Tablet"
-                            demandPopin="true"><Text text="{i18n>colPhoto}"/></Column>
-        <Column  minScreenWidth="Tablet"
-                            demandPopin="true"><Text text="{i18n>colId}"/></Column>
-        <Column  minScreenWidth="Tablet"
-                            demandPopin="true"><Text text="{i18n>colName}"/></Column>
-        <Column  minScreenWidth="Tablet"
-                            demandPopin="true"><Text text="{i18n>colEmail}"/></Column>
-        <Column  minScreenWidth="Tablet"
-                            demandPopin="true"><Text text="{i18n>colSkill}"/></Column>
-        <Column  minScreenWidth="Tablet"
-                            demandPopin="true"><Text text="{i18n>colLanguage}"/></Column>
+    <!-- ID Column (Reduced Width) -->
+    <Column width="6rem">
+        <Text text="{i18n>studentId}"/>
+    </Column>
 
-      </columns>
+    <Column minScreenWidth="Tablet" demandPopin="true" width="12rem">
+        <Text text="{i18n>colName}"/>
+    </Column>
 
+    <!-- Email Column (Increased Width) -->
+    <Column minScreenWidth="Tablet" demandPopin="true" width="20rem">
+        <Text text="{i18n>colEmail}"/>
+    </Column>
+
+    <Column minScreenWidth="Tablet" demandPopin="true" width="10rem">
+        <Text text="{i18n>colSkill}"/>
+    </Column>
+
+    <Column minScreenWidth="Tablet" demandPopin="true" width="10rem">
+        <Text text="{i18n>colLanguage}"/>
+    </Column>
+
+    <Column minScreenWidth="Tablet" demandPopin="true" width="10rem">
+        <Text text="{i18n>colStatus}"/>
+    </Column>
+</columns>
       <items>
-
         <ColumnListItem>
-
           <cells>
-
-            <Avatar
-              src="{candidateModel>Photo}"
-              displaySize="S"
-              displayShape="Circle"
-              fallbackIcon="sap-icon://person-placeholder" />
-
-            <Text text="{candidateModel>id}" />
+            <Avatar src="{candidateModel>Photo}" displaySize="S" displayShape="Circle" fallbackIcon="sap-icon://person-placeholder" />
+            <Text text="{candidateModel>student_Id}" />
             <Text text="{candidateModel>candidate_Name}" />
             <Text text="{candidateModel>candidate_Email}" />
             <Text text="{candidateModel>skill_level}" />
             <Text text="{candidateModel>preferred_language}" />
-
+            <Text text="{candidateModel>Status}" />
           </cells>
-
         </ColumnListItem>
-
       </items>
-
     </Table>
 
   </content>

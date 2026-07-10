@@ -1,0 +1,263 @@
+<mvc:View
+    controllerName="sap.kt.com.minihrsolution.controller.Announcements"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.uxap"
+    xmlns:m="sap.m"
+    xmlns:f="sap.f"
+    xmlns:fb="sap.ui.comp.filterbar"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+>
+    <m:Page
+        id="ANC_id_AnnouncementPage"
+        enableScrolling="false"
+    >
+        <m:customHeader>
+            <core:Fragment
+                fragmentName="sap.kt.com.minihrsolution.fragment.Header"
+                type="XML"
+            />
+        </m:customHeader>
+        <!-- ================= FILTER BAR ================= -->
+        <fb:FilterBar
+            id="ANC_id_FilterBar"
+            search="ANC_onSearchAnnouncement"
+            clear="ANC_onClearAnnouncement"
+            useToolbar="false"
+            showClearOnFB="true"
+            showGoOnFB="true"
+            showFilterConfiguration="false"
+            class="sapUiResponsiveContentPadding sapUiSmallMargin announcementFilterBar CommonRoundedTable"
+        >
+            <fb:filterGroupItems>
+                <!-- Search -->
+                <fb:FilterGroupItem
+                    groupName="Basic"
+                    name="Search"
+                    label="{i18n>searchAnnouncement}"
+                    visibleInFilterBar="true"
+                >
+                    <fb:control>
+                        <m:SearchField
+                            id="ANC_id_SearchAnnouncement"
+                            width="100%"
+                            placeholder="{i18n>searchAnnouncement}"
+                            liveChange="ANC_onLiveSearchAnnouncement"
+                        />
+                    </fb:control>
+                </fb:FilterGroupItem>
+                <!-- Department -->
+                <fb:FilterGroupItem
+                    groupName="Basic"
+                    name="Department"
+                    label="{i18n>departmentAnnouncement}"
+                    visible="{visibilityModel>/showDepartmentFilter}"
+                    visibleInFilterBar="{visibilityModel>/showDepartmentFilter}"
+                >
+                    <fb:control>
+                        <m:ComboBox
+                            id="ANC_id_DepartmentFilter"
+                            width="100%"
+                            placeholder="{i18n>departmentAnnouncement}"
+                            
+                            items="{DepartmentModel>/}"
+                        >
+                            <core:Item
+                                key="{DepartmentModel>department}"
+                                text="{DepartmentModel>department}"
+                            />
+                        </m:ComboBox>
+                    </fb:control>
+                </fb:FilterGroupItem>
+            </fb:filterGroupItems>
+        </fb:FilterBar>
+        <!-- ================= CONTENT ================= -->
+        <ObjectPageLayout
+            id="ANC_id_ObjectPageLayout"
+            showAnchorBar="false"
+            useIconTabBar="false"
+            enableLazyLoading="false"
+            class="sapUiContentPadding"
+            height="calc(100vh - 11rem)"
+        >
+            <sections>
+                <ObjectPageSection showTitle="false">
+                    <subSections>
+                        <ObjectPageSubSection>
+                            <blocks>
+                                <m:FlexBox
+                                    id="ANC_id_AnnouncementFlexBox"
+                                    wrap="Wrap"
+                                 justifyContent="Start" alignItems="Start" 
+                                    renderType="Bare"
+                                    class="sapUiMediumMarginBottom "
+                                    items="{Announcements>/data}"
+                                >
+                                    <m:items>
+                                        <f:Card
+                                            width="300px"
+                                            height="400px"
+                                            class="sapUiSmallMarginEnd sapUiMediumMarginBottom"
+                                        >
+                                            <f:content>
+                                                <m:VBox
+                                                    width="100%"
+                                                    height="100%"
+                                                >
+                                                    <!-- ============ HERO IMAGE ============ -->
+                                                    <m:VBox
+                                                        width="100%"
+                                                        class="sapUiNoContentPadding announcementHero"
+                                                    >
+                                                        <m:Image
+                                                            src="{path:'Announcements>AnnouncementBackground',formatter:'.ANC_formatBase64Image'}"
+                                                            visible="{path:'Announcements>AnnouncementBackground',formatter:'.ANC_hasValue'}"
+                                                            width="100%"
+                                                            height="220px"
+                                                            decorative="false"
+                                                        />
+                                             
+                                                    <m:HBox
+    class="announcementTopBar"
+    alignItems="Center"
+    justifyContent="Start">
+
+    <m:ObjectStatus
+        visible="{visibilityModel>/showAdminControls}"
+        text="{path:'Announcements>Priority', formatter:'.Formatter.formatStatusText'}"
+        state="{path:'Announcements>Priority', formatter:'.Formatter.formatObjectStatus'}"
+        class="sapUiTinyMarginEnd"/>
+
+    <m:Button
+        icon="sap-icon://full-screen"
+        type="Transparent"
+        press="ANC_onViewBackground"/>
+</m:HBox>
+                                                       <m:VBox class="overlayContent">
+
+    <m:Title
+        text="{Announcements>AnnouncementTitle}"
+        level="H1"
+        wrapping="true"
+        class="titleText sapUiTinyMarginBottom"
+    />
+
+    <!-- Expires Date -->
+    <m:HBox
+        visible="{visibilityModel>/showAdminControls}"
+        alignItems="Center"
+        class="sapUiTinyMarginBottom">
+
+        <m:Label
+            text="{i18n>ExpiresDate}"
+            design="Bold"
+            class="datetextannouncement sapUiTinyMarginEnd"
+        />
+
+        <m:Text
+            text="{path:'Announcements>ExpiresDate', formatter:'.Formatter.formatDate'}"
+            class="datetextannouncement"
+        />
+
+    </m:HBox>
+
+    <!-- Department -->
+    <m:FlexBox
+    visible="{visibilityModel>/showAdminControls}"
+    wrap="Wrap"
+    alignItems="Start"
+    class="sapUiTinyMarginBottom">
+
+    <m:Label
+        text="{i18n>departmentAnnouncement}"
+        design="Bold"
+        class="datetextannouncement sapUiTinyMarginEnd"/>
+
+    <m:Text
+        text="{Announcements>AnnouncementDepartment}"
+        wrapping="true"
+        width="100%"
+        class="datetextannouncement"/>
+
+</m:FlexBox>
+
+</m:VBox>
+                                                    </m:VBox>
+                                                    <!-- ============ BODY: takes remaining space, spaces content top vs footer bottom ============ -->
+                                                    <m:VBox
+                                                        class="sapUiTinyMargin"
+                                                        height="80%"
+                                                        justifyContent="SpaceBetween"
+                                                    >
+                                                        <!-- TOP GROUP: description only -->
+                                                        <m:VBox>
+                                                            <m:Text
+                                                                text="{Announcements>AnnouncementMessage}"
+                                                                wrapping="true"
+                                                                maxLines="8"
+                                                                class="sapUiSmallMarginTop"
+                                                            />
+                                                        </m:VBox>
+                                                        <!-- BOTTOM GROUP: Attachment + Edit / Delete, always pinned to card bottom -->
+                                                       <m:HBox width="100%"
+            justifyContent="End">
+            <m:ObjectStatus
+            
+            visible="{visibilityModel>/showAdminControls}"
+            class="sapUiTinyMarginTop"
+            text="{path:'Announcements>AnnouncementStatus', formatter:'.Formatter.formatStatusText'}"
+            state="{path:'Announcements>AnnouncementStatus', formatter:'.Formatter.formatObjectStatus'}"/>
+                                                            <m:Button
+                                                                id="ANC_id_AttachmentLink"
+                                                                text="{i18n>viewAttachment}"
+                                                                type="Transparent"
+                                                                visible="{path:'Announcements>AnnouncementAttachment', formatter:'.ANC_hasValue'}"
+                                                                press="ANC_onAttachmentPress"
+                                                            />
+                                                            <m:ToolbarSpacer />
+                                                            <m:Button
+                                                                text="{i18n>Edit}"
+                                                                type="Transparent"
+                                                                press="ANC_onEditPress"
+                                                                visible="{visibilityModel>/showAdminControls}"
+                                                            />
+                                                            <m:Button
+                                                                text="{i18n>Delete}"
+                                                                type="Transparent"
+                                                                press="ANC_onDeletePress"
+                                                                visible="{visibilityModel>/showAdminControls}"
+                                                            />
+                                                        </m:HBox>
+                                                    </m:VBox>
+                                                </m:VBox>
+                                            </f:content>
+                                        </f:Card>
+                                    </m:items>
+                                </m:FlexBox>
+                            </blocks>
+                        </ObjectPageSubSection>
+                    </subSections>
+                </ObjectPageSection>
+            </sections>
+        </ObjectPageLayout>
+        <!-- ================= FOOTER ================= -->
+        <m:footer>
+            <m:Bar>
+                <m:contentLeft>
+                    <core:Fragment
+                        fragmentName="sap.kt.com.minihrsolution.fragment.Footer"
+                        type="XML"
+                    />
+                </m:contentLeft>
+                <m:contentRight>
+                    <m:Button
+                        id="ANC_id_AddButton"
+                        text="{i18n>CreateAnnouncement}"
+                        press="ANC_onCreatePress"
+                        visible="{visibilityModel>/showAdminControls}"
+                    />
+                </m:contentRight>
+            </m:Bar>
+        </m:footer>
+    </m:Page>
+</mvc:View>
