@@ -222,7 +222,7 @@ sap.ui.define([
                         "Policy": "/Policy",
                         "HiringDashboard": "/HiringDashboard",
                         "CandidateQuestion": "/CandidateQuestion",
-                        "Announcements": "/Announcements"
+                        "Announcement": "/Announcement"
 
                     };
 

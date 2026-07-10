@@ -793,7 +793,7 @@
                                                    
                                                     <GenericTile
                                                         class="sapUiSmallMargin glassTile blue"
-                                                        visible="{= ${AppVisibletyModel>/Announcements} !=='0' ? true : false}"
+                                                        visible="{= ${AppVisibilityModel>/Announcement} !=='0' ? true : false}"
                                                         id="GT_idAnnouncements"
                                                         header="{i18n>headerAnnouncements}"
                                                         press="TileV_onpressAnnouncements"
