@@ -934,6 +934,13 @@
           ]
         },
         {
+          "name":"NameRouteAnnouncements",
+          "pattern":"PatternAnnouncemts",
+          "target": [
+            "TargetAnnouncements"
+          ]
+        },
+        {
           "name": "RouteHiringDashboard",
           "pattern": "HiringDashboard",
           "target": [
@@ -1533,6 +1540,13 @@
           "clearControlAggregation": false,
           "viewId": "Policy",
           "viewName": "Policy"
+        },
+        "TargetAnnouncements":{
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId":"View_idAnnouncements",
+          "viewName": "Announcements"
         },
          "TargetHiringDashboard":{
           "viewType": "XML",
