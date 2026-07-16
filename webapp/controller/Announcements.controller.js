@@ -3,14 +3,12 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
     return BaseController.extend("sap.kt.com.minihrsolution.controller.Announcements", {
         Formatter: Formatter,
         // =================== LIFECYCLE ===================
-        onInit: async function () {
+        onInit:  function () {
             this._ANC_initModels();
             this._iSearchDebounce = null;
             this._iLoadToken = 0;
             this._bIsAdmin = false;
             this._sUserDepartment = "";
-            this._sDefaultBackground = await this._getDefaultImageBase64();
-
             this._aEmployeeListCache = null;
             this._employeeListPromise = null;
             // Tracks the currently active Blob URL for the PDF viewer so it
@@ -18,6 +16,7 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
             this.getView().setModel(new JSONModel({
                 pdfSource: ""
             }), "pdfModel");
+            
             this.getRouter().getRoute("NameRouteAnnouncements").attachPatternMatched(this._ANC_onRouteMatched, this);
         },
         // BUSY: shown from route match through login, role/department
@@ -26,8 +25,19 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
             var LoginFUnction = await this.commonLoginFunction("Announcement");
             if (!LoginFUnction) return;
             this.getView().getModel("LoginModel").setProperty("/HeaderName", "Announcements");
+             const announcementsearch = this.byId("ANC_id_SearchAnnouncement");
+            const Announcemntdepartment = this.byId("ANC_id_DepartmentFilter");
+                  
+            if (Announcemntdepartment) {
+                Announcemntdepartment.setSelectedKey("");
+                Announcemntdepartment.setValue("");
+            }
+            if (announcementsearch) {
+                announcementsearch.setValue("");
+            }
             // this._ViewDatePickersReadOnly(["ANC_id_ExpiresDate"]);
-
+            this.ANC_onSearchAnnouncement() 
+           this._sDefaultBackground = await this._getDefaultImageBase64();
             try {
                 // ---- Reset ----
                 this._bIsAdmin = false;
@@ -90,7 +100,7 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
 
                 this.getView().getModel("DepartmentModel").setData(aData);
                 // ---- Load announcements ----
-                this.ANC_loadAnnouncements();
+                await this.ANC_loadAnnouncements();
             } catch (e) {
                 console.error("Route match failed:", e);
             } finally {
@@ -127,7 +137,7 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
 
         img.onerror = reject;
 
-        img.src = sap.ui.require.toUrl("sap/kt/com/minihrsolution/image/BlackBG.jpg");
+        img.src = sap.ui.require.toUrl("sap/kt/com/minihrsolution/image/Blue.jpg");
     });
 },
         _ANC_initModels: function () {
@@ -336,34 +346,34 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
         ANC_onDepartmentChange: function () {
             this._ANC_readWithRetry(3);
         },
-        _ANC_readWithRetry: async function (iRetriesLeft) {
-            try {
-                const sDepartment = this.byId("ANC_id_DepartmentFilter").getSelectedKey();
+       _ANC_readWithRetry: async function (iRetriesLeft) {
+    try {
+        const sDepartment = this.byId("ANC_id_DepartmentFilter").getSelectedKey();
 
-                let sUrl = "Announcement";
+        const filter = {};
 
-                if (sDepartment) {
-                    sUrl += `?AnnouncementDepartment="${encodeURIComponent(sDepartment)}"`;
-                }
+        if (sDepartment) {
+            filter.AnnouncementDepartment = sDepartment;
+        }
 
-                const oData = await this.ajaxReadWithJQuery(sUrl);
+        const oData = await this.ajaxReadWithJQuery("Announcement", filter);
 
-                return {
-                    ok: true,
-                    data: oData
-                };
+        return {
+            ok: true,
+            data: oData
+        };
 
-            } catch (e) {
-                if (iRetriesLeft > 0) {
-                    return this._ANC_readWithRetry(iRetriesLeft - 1);
-                }
+    } catch (e) {
+        if (iRetriesLeft > 0) {
+            return this._ANC_readWithRetry(iRetriesLeft - 1);
+        }
 
-                return {
-                    ok: false,
-                    error: e
-                };
-            }
-        },
+        return {
+            ok: false,
+            error: e
+        };
+    }
+},
         _ANC_applyClientFilters: function () {
             var oFlexBox = this.byId("ANC_id_AnnouncementFlexBox");
             var oBinding = oFlexBox.getBinding("items");
@@ -852,7 +862,7 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
                 AnnouncementAttachment: oFormData.AnnouncementAttachment || "",
                 AnnouncementAttachmentName: oFormData.AnnouncementAttachmentName || "",
                 AnnouncementBackground: oFormData.AnnouncementBackground || this._sDefaultBackground,
-                AnnouncementBackgroundName: oFormData.AnnouncementBackgroundName || "BlackBG.jpg"
+                AnnouncementBackgroundName: oFormData.AnnouncementBackgroundName || "Blue.jpg"
             };
             this.getBusyDialog();
             try {
@@ -926,17 +936,9 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
             }
         },
         // =================== FORMATTERS ===================
-       ANC_formatBase64Image: function (sImage) {
-    if (!sImage) {
-        return sap.ui.require.toUrl("../image/grow2.jpg");
-    }
-
-    if (sImage.startsWith("data:")) {
-        return sImage;
-    }
-
-    return "data:image/jpeg;base64," + sImage;
-},
+       ANC_formatBase64Image: function (sBase64) {
+            return sBase64 ? "data:image/png;base64," + sBase64 : "";
+        },
         ANC_hasValue: function (sValue) {
             return !!sValue;
         },
@@ -948,6 +950,7 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
         // =================== NAVIGATION ===================
         onPressback: function () {
             this.getRouter().navTo("RouteTilePage");
+
         },
         onLogout: function () {
             this.CommonLogoutFunction();

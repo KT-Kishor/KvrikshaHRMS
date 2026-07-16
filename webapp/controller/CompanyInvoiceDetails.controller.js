@@ -418,7 +418,7 @@ sap.ui.define([
 
                         const total = subTotalInGST + subTotalNotGST;
                         const tds = ((total * incomePerc) / 100).toFixed(2);
-                        oModel.setProperty("/IncomeTax", Math.round(tds));
+                        oModel.setProperty("/IncomeTax", parseFloat(tds).toFixed(2));
                     }
                     this.visiablityPlay.refresh(true);
                 } catch (error) {
@@ -675,7 +675,7 @@ sap.ui.define([
                     const totalAmount = subTotalInGST + subTotalNotGST;
                     const tds = ((totalAmount * incomePerc) / 100).toFixed(2);
 
-                    oNavigationModel.setProperty("/IncomeTax", Math.round(tds));
+                    oNavigationModel.setProperty("/IncomeTax", parseFloat(tds).toFixed(2));
                 } else {
                     oNavigationModel.setProperty("/IncomeTax", "0.00");
                 }
@@ -728,7 +728,7 @@ sap.ui.define([
                     var incomePerc = parseFloat(oData.IncomePerc) || 0;
 
                     var tds = ((subTotalInGST + subTotalNotGST) * incomePerc / 100).toFixed(2);
-                    oNavigationModel.setProperty("/IncomeTax", Math.round(tds));
+                    oNavigationModel.setProperty("/IncomeTax", parseFloat(tds).toFixed(2));
                 }
             },
 
@@ -1615,7 +1615,7 @@ sap.ui.define([
 
                     const total = subTotalInGST + subTotalNotGST;
                     const tds = ((total * incomePerc) / 100).toFixed(2);
-                    oNavigationModel.setProperty("/IncomeTax", Math.round(tds));
+                    oNavigationModel.setProperty("/IncomeTax", parseFloat(tds).toFixed(2));
                 }
                 oNavigationModel.refresh();
             },

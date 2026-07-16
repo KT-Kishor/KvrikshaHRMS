@@ -49,10 +49,11 @@
         </headerContent>
         <content>
            
+           <VBox width="100%" class="sapUiSmallMarginBottom">
             <!-- KPI SECTION -->
-            <FlexBox wrap="Wrap" justifyContent="SpaceAround" alignItems="Start" class="sapUiSmallMargin">
+            <FlexBox wrap="Wrap" justifyContent="Center"  class="invoiceTileContainer sapUiTinyMarginBottom sapUiTinyMarginTop">
                 <!-- Total Candidates - Blue -->
-                <GenericTile class="tileLayout tileTotal blueTile sapUiSmallMargin" header="{i18n>totalCandidates}" subheader="{i18n>totalRegisteredSubheader}"
+                <GenericTile class="tileLayout tileTotal blueTile" header="{i18n>totalCandidates}" subheader="{i18n>totalRegisteredSubheader}"
                 >
                     <tileContent>
                         <TileContent>
@@ -65,7 +66,7 @@
                 </GenericTile>
                 <!-- MCQ Assignments - Orange -->
                 <GenericTile
-                    class="tileLayout tileTotal orangeTile sapUiSmallMargin"
+                    class="tileLayout tileTotal orangeTile "
                     header="{i18n>mcqAssignments}"
                     subheader="{i18n>assignedTestsSubheader}"
                 >
@@ -79,7 +80,7 @@
                 </GenericTile>
                 <!-- MCQ Passed - Green -->
                 <GenericTile
-                    class="tileLayout tileTotal greenTile sapUiSmallMargin"
+                    class="tileLayout tileTotal greenTile "
                     header="{i18n>mcqPassed}"
                     subheader="{i18n>mcqClearedSubheader}"
                 >
@@ -100,7 +101,7 @@
                 </GenericTile>
                 <!-- Coding Assignments - Orange -->
                 <GenericTile
-                    class="tileLayout tileTotal orangeTile sapUiSmallMargin"
+                    class="tileLayout tileTotal orangeTile "
                     header="{i18n>codingAssignments}"
                     subheader="{i18n>assignedTestsSubheader}"
                 >
@@ -121,7 +122,7 @@
                 </GenericTile>
                 <!-- Coding Passed - Green -->
                 <GenericTile
-                    class="tileLayout tileTotal greenTile sapUiSmallMargin"
+                    class="tileLayout tileTotal greenTile "
                     header="{i18n>codingPassed}"
                     subheader="{i18n>codingClearedSubheader}"
                 >
@@ -140,9 +141,11 @@
                         </TileContent>
                     </tileContent>
                 </GenericTile>
+                </FlexBox>
+                <FlexBox wrap="Wrap" justifyContent="Center"  class="invoiceTileContainer sapUiTinyMarginBottom">
                 <!-- Failed - Red -->
                 <GenericTile
-                    class="tileLayout tileTotal redTile sapUiSmallMargin"
+                    class="tileLayout tileTotal redTile "
                     header="{i18n>failed}"
                     subheader="{i18n>didNotClearSubheader}"
                 >
@@ -163,7 +166,7 @@
                 </GenericTile>
                 <!-- In Progress - Orange -->
                 <GenericTile
-                    class="tileLayout tileTotal orangeTile sapUiSmallMargin"
+                    class="tileLayout tileTotal orangeTile "
                     header="{i18n>inProgress}"
                     subheader="{i18n>currentlyOngoingSubheader}"
                 >
@@ -184,7 +187,7 @@
                 </GenericTile>
                 <!-- Average Score - Blue -->
                 <GenericTile
-                    class="tileLayout tileTotal blueTile sapUiSmallMargin"
+                    class="tileLayout tileTotal blueTile "
                     header="{i18n>averageScore}"
                     subheader="{i18n>allCandidatesSubheader}"
                 >
@@ -205,7 +208,7 @@
                 </GenericTile>
                 <!-- Pass Rate - Green -->
                 <GenericTile
-                    class="tileLayout tileTotal greenTile sapUiSmallMargin"
+                    class="tileLayout tileTotal greenTile "
                     header="{i18n>passRate}"
                     subheader="{i18n>overallPassSubheader}"
                 >
@@ -227,7 +230,7 @@
                 </GenericTile>
                 <!-- Fail Rate - Red -->
                 <GenericTile
-                    class="tileLayout tileTotal redTile sapUiSmallMargin"
+                    class="tileLayout tileTotal redTile "
                     header="{i18n>failRate}"
                     subheader="{i18n>overallFailSubheader}"
                 >
@@ -248,10 +251,12 @@
                     </tileContent>
                 </GenericTile>
             </FlexBox>
+            </VBox>
             <!-- CHARTS -->
             <layout:Grid
                 defaultSpan="XL6 L6 M12 S12"
-                class="sapUiMediumMarginTop"
+                class="sapUiSmallMarginTop" 
+                hSpacing="1" vSpacing="1"
             >
                 <layout:content>
 
@@ -366,7 +371,7 @@
                     </f:Card>
 
                     <!-- 3. Test Completed Chart -->
-                    <f:Card>
+                    <f:Card >
                         <f:header>
                             <Toolbar class="customdashboard">
                                 <Title text="{i18n>testCompleted}" level="H5" wrapping="true" class="Dashboardtitle"/>
@@ -421,7 +426,7 @@
                     </f:Card>
 
                     <!-- 4. MCQ vs Coding Chart -->
-                    <f:Card>
+                    <f:Card >
                         <f:header>
                             <Toolbar class="customdashboard">
                                 <Title text="{i18n>mcqVsCoding}" level="H5" wrapping="true" class="Dashboardtitle"/>

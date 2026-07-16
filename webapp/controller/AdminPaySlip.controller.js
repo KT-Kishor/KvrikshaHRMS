@@ -11,7 +11,7 @@ sap.ui.define(
             },
 
             _onRouteMatched: async function (oEvent) {
-                if (!this) this = this.getOwnerComponent().getModel("ThisModel")?.getData().that;
+                if (!this.that) this.that = this.getOwnerComponent().getModel("ThisModel")?.getData().that;
                 var LoginFunction = await this.commonLoginFunction("PaySlip");
                 if (!LoginFunction) return;
                 this._isClearPressed = false;
@@ -44,7 +44,7 @@ sap.ui.define(
                 this.i18nModel = this.getView().getModel("i18n").getResourceBundle();
                 this.oModel.setProperty("/isRouteLOP", false);
                 this.getView().getModel("LoginModel").setProperty("/HeaderName", this.i18nModel.getText("paySlipTitle"));
-                this.closeBusyDialog();
+                this.that.closeBusyDialog();
                 this.initializeBirthdayCarousel();
             },
 
@@ -121,7 +121,7 @@ sap.ui.define(
             },
 
             AP_onPressAddPayslip: function () {
-                this.getBusyDialog();
+                // this.that.getBusyDialog();
                 this.oModel.setProperty("/isCreate", true);
                 this.oModel.setProperty("/isIdSelected", false);
                 this.oModel.setProperty("/EmpData", {});
@@ -137,7 +137,7 @@ sap.ui.define(
                     endDate: oDate.getSecondDateValue(),
                     fromDetail: true
                 });
-                this.getBusyDialog();
+                this.that.getBusyDialog();
                 var sPath = oEvent.getSource().getBindingContext("PaySlip").getPath();
                 this.oModel.setProperty("/isCreate", false);
                 this.oModel.setProperty("/isIdSelected", true);

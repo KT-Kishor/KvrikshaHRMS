@@ -179,7 +179,8 @@
 <layout:Grid defaultSpan="XL6 L6 M12 S12"  hSpacing="1" vSpacing="1">
 					<layout:content>
 						<!-- 1. category Distribution Chart -->
-						<f:Card >
+						<f:Card  class="sapUiTinyMarginBottom"  >
+                        
     <f:header>
         <card:Header
             title="{i18n>spendbyucategory}"
@@ -240,7 +241,7 @@
 
 <!-- second chart  -->
 
-<f:Card >
+<f:Card class="sapUiTinyMarginBottom sapUiTinyMarginBegin">
 
 <f:header>
         <card:Header
@@ -306,7 +307,7 @@
 <!-- third chart -->
 
 
-<f:Card >
+<f:Card class="sapUiTinyMarginBottom">
 
     <f:header>
         <card:Header
@@ -363,7 +364,7 @@
 <!-- forth chart -->
 
 
-<f:Card  >
+<f:Card  class="sapUiTinyMarginBottom sapUiTinyMarginBegin">
 
     <f:header>
         <card:Header

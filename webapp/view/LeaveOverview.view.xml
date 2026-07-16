@@ -19,61 +19,28 @@
 
             <VBox class="sapUiSmallMargin">
 
-                <PlanningCalendar
-                    id="LO_id_PlanningCalendar"
-                    startDate="{viewModel>/startDate}"
-                    rows="{path: 'PlanningModel>/people'}"
-                    appointmentsVisualization="Filled"
-                    appointmentSelect="handleAppointmentSelect"
-                    showEmptyIntervalHeaders="false"
-                    showWeekNumbers="true"
-                    showDayNamesLine="true"
-                    viewKey="{viewModel>/viewKey}">
+                <PlanningCalendar id="LO_id_PlanningCalendar" startDate="{viewModel>/startDate}" rows="{path: 'PlanningModel>/people'}" appointmentsVisualization="Filled" appointmentSelect="handleAppointmentSelect" showEmptyIntervalHeaders="false" showWeekNumbers="true" showDayNamesLine="true" viewKey="{viewModel>/viewKey}">
 
                     <toolbarContent>
 
                         <!-- <ToolbarSpacer/> -->
 
-                        <ComboBox
-                            id="idManagerCombo"
-                            width="16rem"
-                            selectedKey="{LoginModel>/EmployeeID}"
-                            items="{ManagerModel>/}"
-                            showClearIcon="true"
-                            visible="{= ${LoginModel>/Role} === 'Admin' }"
-                            change=".onManagerChange"
-                            class="sapUiTinyMarginEnd">
-
-                            <core:ListItem
-                                key="{ManagerModel>ManagerID}"
-                                text="{= ${ManagerModel>ManagerName} + ' (' + ${ManagerModel>ManagerID} + ')' }"/>
+                        <ComboBox id="idManagerCombo" width="16rem" selectedKey="{LoginModel>/EmployeeID}" items="{ManagerModel>/}" showClearIcon="true" visible="{= ${LoginModel>/Role} === 'Admin' }" change=".onManagerChange" class="sapUiTinyMarginEnd">
+                            <core:ListItem key="{ManagerModel>ManagerID}" text="{= ${ManagerModel>ManagerName} + ' (' + ${ManagerModel>ManagerID} + ')' }"/>
                         </ComboBox>
 
-                        <Button
-                            text="{i18n>btnLegend}"
-                            press=".onOpenMessagePopover"
-                            class="sapUiTinyMarginEnd"/>
+                        <Button text="{i18n>btnLegend}" press=".onOpenMessagePopover" class="sapUiTinyMarginEnd"/>
 
-                        <Button
-                            text="{i18n>Apply_Leave_Plan}"
-                            press=".AL_onPressApplyLeave"/>
+                        <Button text="{i18n>Apply_Leave_Plan}" press=".AL_onPressApplyLeave"/>
 
                     </toolbarContent>
 
                     <rows>
 
-                        <PlanningCalendarRow
-                            icon="{PlanningModel>pic}"
-                            title="{PlanningModel>role}"
-                            text="{PlanningModel>name}"
-                            appointments="{path:'PlanningModel>appointments', templateShareable:false}"
-                            intervalHeaders="{path:'PlanningModel>headers', templateShareable:false}">
+                        <PlanningCalendarRow icon="{PlanningModel>pic}" title="{PlanningModel>role}" text="{PlanningModel>name}" appointments="{path:'PlanningModel>appointments', templateShareable:false}" intervalHeaders="{path:'PlanningModel>headers', templateShareable:false}">
 
                             <customData>
-                                <core:CustomData
-                                    key="emp-name"
-                                    value="{PlanningModel>name}"
-                                    writeToDom="true"/>
+                                <core:CustomData key="emp-name" value="{PlanningModel>name}" writeToDom="true"/>
                             </customData>
 
                             <appointments>

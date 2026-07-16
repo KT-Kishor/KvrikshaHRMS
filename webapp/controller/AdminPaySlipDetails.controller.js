@@ -10,6 +10,7 @@ sap.ui.define([
             },
 
             _onRouteMatched: async function (oEvent) {
+                this.getBusyDialog();
                 if (!this.that) this.that = this.getOwnerComponent().getModel("ThisModel")?.getData().that;
                 this.scrollToSection("APD_id_NavAdmin", "APD_id_First");
                 var LoginFunction = await this.commonLoginFunction("PaySlip");
@@ -22,12 +23,12 @@ sap.ui.define([
                     this.oModel.setProperty("/isRouteLOP", false);
                     this.flagID = false;
                 }
-                this.that.closeBusyDialog();
+                this.closeBusyDialog();
             },
 
             APD_onPressBack: function () {
                 var oRoutePath = this.oModel.getProperty("/BackRoute");
-                if (oRoutePath === "RouteAdminPaySlip") this.getRouter().navTo(oRoutePath,{from:"AdminPayslipdetails"});
+                if (oRoutePath === "RouteAdminPaySlip") this.getRouter().navTo(oRoutePath, { from: "AdminPayslipdetails" });
                 else this.getRouter().navTo(oRoutePath, { sPath: this.oModel.getProperty("/BackPath"), Role: this.oModel.getProperty("/BackPathRole") });
             },
 
@@ -52,7 +53,14 @@ sap.ui.define([
                                 MessageBox.error(this.i18nModel.getText("bankDetailsNotFound"));
                                 return;
                             }
-                            if (response.result[0].EarningData[0].Amount === 0 && response.result[0].EarningData[0].YearlyAmount === 0) {
+                            // Find Basic Salary first
+                            let oEarning = response.result[0].EarningData.find(item => item.Description === "Basic Salary");
+
+                            // If Basic Salary is not found, check for Stipend
+                            if (!oEarning) oEarning = response.result[0].EarningData.find(item => item.Description === "Stipend");
+
+                            // Validate the selected earning record
+                            if (oEarning && oEarning.Amount === 0 && oEarning.YearlyAmount === 0) {
                                 this.oModel.setProperty("/EmpData", {});
                                 this.oModel.setProperty("/isIdSelected", false);
                                 MessageBox.error(this.i18nModel.getText("stipendAmount"));
@@ -234,8 +242,8 @@ sap.ui.define([
                     if (response.success) {
                         MessageBox.success(this.i18nModel.getText("paySlipCreated"), {
                             onClose: function () {
-                                this.getRouter().navTo("RouteAdminPaySlip",{
-                                   from:"AdminPayslipdetails"
+                                this.getRouter().navTo("RouteAdminPaySlip", {
+                                    from: "AdminPayslipdetails"
                                 });
                             }.bind(this)
                         });
@@ -245,8 +253,8 @@ sap.ui.define([
                     console.warn(e);
                     MessageBox.error(this.i18nModel.getText("errorCreatingPaySlip"), {
                         onClose: function () {
-                            this.getRouter().navTo("RouteAdminPaySlip",{
-                                from:"AdminPayslipdetails"
+                            this.getRouter().navTo("RouteAdminPaySlip", {
+                                from: "AdminPayslipdetails"
                             });
                         }.bind(this)
                     });
@@ -405,7 +413,7 @@ sap.ui.define([
                         if (!item.Description && item.YearlyAmount === "") {
                             throw new Error("Fields cannot be empty, please recheck the data.");
                         }
-                    }else if (item.Description === "Variable Pay") {
+                    } else if (item.Description === "Variable Pay") {
                         // Allow 0 value
                         if (!item.Description || item.YearlyAmount === null || item.YearlyAmount === "") {
                             throw new Error("Fields cannot be empty, please recheck the data.");

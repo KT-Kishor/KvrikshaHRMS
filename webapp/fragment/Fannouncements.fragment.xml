@@ -83,7 +83,7 @@
                             selectedKey="{ANCView>/formData/Priority}"
                             change="ANC_onPriorityChange"
                         >
-							<core:Item key="Info" text="{i18n>PriorityInfo}" />
+							<core:Item key="Information" text="{i18n>PriorityInfo}" />
 							<core:Item key="Warning" text="{i18n>PriorityWarning}" />
 							<core:Item key="Critical" text="{i18n>PriorityCritical}" />
 						</Select>

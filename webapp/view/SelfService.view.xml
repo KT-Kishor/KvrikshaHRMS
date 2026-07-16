@@ -1520,8 +1520,8 @@
                 <ObjectPageSection
                     titleUppercase="false"
                     id="idmyassetself"
-                    title="{i18n>MyAssetTitle}"
-                    visible="{viewModel>/ResignationVisible}"
+                    title="{i18n>asset}"
+                    visible="{viewModel>/Asset}"
                 >
                     <subSections>
                         <ObjectPageSubSection

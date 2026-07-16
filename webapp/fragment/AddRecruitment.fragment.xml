@@ -9,9 +9,9 @@
 			<layout:content>
 				<Label text="{i18n>candidateName}" required="true" />
 				<Input value="{stuDataModel>/FullName}" id="FM_RE_Name" placeholder="{i18n>placeName}" liveChange="onValidateName" valueStateText="{i18n>commonNameValueState}" valueState="{modelValuStateError>/NameState}" maxLength="100" editable="{EditableModeltruefalse>/Editable}" />
-				<Label text="{i18n>TableColCurrentPackage}" required="true" />
+				<Label text="{i18n>TableColCurrentPackage}"  />
 				<Input value="{stuDataModel>/CurrentSalary}" liveChange="onValidateCTC" id="FM_RE_CurrentCTC" placeholder="{i18n>CurrentSalaryField}" valueState="{modelValuStateError>/CurrentCTCState}" valueStateText="{i18n>CurrentCTC}" showValueHelp="true" valueHelpRequest="SalaryInfoPress" valueHelpIconSrc="sap-icon://message-information" editable="{EditableModeltruefalse>/Editable}" maxLength="10" />
-				<Label text="{i18n>TableColExpectedPackage}" required="true" />
+				<Label text="{i18n>TableColExpectedPackage}" />
 				<Input value="{stuDataModel>/ExpectedSalary}" liveChange="onValidateCTC" id="FM_RE_ExpectedCTC" showValueHelp="true" placeholder="{i18n>ExpectedSalaryField}" valueHelpRequest="SalaryInfoPress" valueHelpIconSrc="sap-icon://message-information" valueState="{modelValuStateError>/ExpectedCTCState}" valueStateText="{i18n>ExpectedCTC}" editable="{EditableModeltruefalse>/Editable}" maxLength="10" />
 				<Label text="{i18n>LabeleAVLForInterview}" />
 				<ComboBox items="{setInterviewYesNo>/results}" id="FM_RE_AvlInterview" selectedKey="{stuDataModel>/AvailableForInterview}" valueState="{modelValuStateError>/AvailableForInterviewState}" editable="{EditableModeltruefalse>/Editable}" valueStateText="{i18n>InterviewAVL}" change="onDropdownChange">

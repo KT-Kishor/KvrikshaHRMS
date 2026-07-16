@@ -113,7 +113,8 @@
 }
 
 .sapMObjStatusText {
-  width: 70px;
+  width: 75px;
+  text-shadow: none !important;
 }
 
 .hBoxfrag {
@@ -3738,6 +3739,12 @@ color: #fff !important;
     left: 20px;
     color: white;
 }
+.overlayContentANC {
+    position: absolute;
+    top: 40px;
+    left: 18px;
+    color: white;
+}
 /* Date */
 .dateText {
     color: white;
@@ -3757,12 +3764,6 @@ color: #fff !important;
 .datetextannouncement{
   color: white;
     font-size: .8rem;
-
-    /* Text Shadow */
-    text-shadow:
-        1px 1px 3px rgba(0, 0, 0, 0.8),
-        0 0 8px rgba(0, 0, 0, 0.6);
-
     /* Optional Border Effect */
     -webkit-text-stroke: 0.3px rgba(255, 255, 255, 0.4);
 
@@ -4797,7 +4798,7 @@ color: #fff !important;
 .dialogAnnouncementHero{
     position: relative;
     width: 100%;
-    height: 220px;
+    height: 180px;
     overflow: hidden;
 }
 
@@ -4887,8 +4888,9 @@ color: #fff !important;
 .announcementTopBar {
     position: absolute;
     top: 10px;
-    right: 10px;
-    z-index: 10;
+    left: 20px;
+    z-index: 100;
+    font-size: 1.2rem;
 }
 
 .expandText {
@@ -4898,7 +4900,8 @@ color: #fff !important;
 
 .announcementTopBar .sapMBtn {
     color: #fff;
-    margin-left: -2px !important;
+    margin-right: 20px !important;
+    
 }
 
 .overlayContent {
@@ -4906,7 +4909,14 @@ color: #fff !important;
     left: 20px;
     bottom: 20px;
     right: 20px;
-    z-index: 10;
+    z-index: 99;
+}
+.overlayContentANC {
+    position: absolute;
+    left: 18px;
+    bottom: 20px;
+    right: 20px;
+    z-index: 99;
 }
 .announcementDetailsCard {
     background: #ffffff;
@@ -4927,3 +4937,36 @@ color: #fff !important;
 .announcementDetailsCard .sapMObjStatus {
     font-size: 0.95rem;
 }
+.mcqFilterWrapper {
+    width: 100%;
+    max-width: 95%;
+    overflow:auto;
+    box-sizing: border-box;
+}
+@media (max-width:480px){
+
+    .mcqFilterWrapper{
+         max-width: 80%;
+    }
+
+}
+
+.mcqFilterWrapper .sapMSegB {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+}
+
+.mcqFilterWrapper .sapMSegBBtn {
+    min-width: 0 !important;
+}
+
+.mcqFilterWrapper .sapMSegBBtn .sapMSegBBtnInner {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.textannouncement{
+  left:20px;
+}
+

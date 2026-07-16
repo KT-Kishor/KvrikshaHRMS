@@ -372,7 +372,7 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
         this.getView().setModel(SlotModel, "SlotModel");
         const oView = this.getView();
         this.i18nModel = oView.getModel("i18n").getResourceBundle();
-        this.companyName = "Kvriksha Technologies Private Limited";
+        this.companyName = "Kalpavriksha Technologies";
         // --- Initialization ---
         this._makeDatePickersReadOnly(["SS_id_Dob", "SS_id_ResgEndDate", "SS_id_DocType"]);
 
@@ -387,6 +387,7 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
           Max: new Date(),
           TraineeRole: false,
           Letter: false,
+          Asset:true,
           ResignationVisible: false,
           CanWithdrawResignation: false,
           ShowStatusControl: false,
@@ -433,10 +434,11 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
         this.ViewModel.setProperty("/isContractorRole", bIsContractor);
         this.ViewModel.setProperty("/ShowStatusControl", ["Admin", "HR Manager", "HR"].includes(sLoggedInRole));
         this.ViewModel.setProperty("/ResignationVisible", this.sPath === "SelfService" && !bIsTrainee && !bIsContractor);
+        // this.ViewModel.setProperty("/Asset", this.sPath === "SelfService",true);
         var aIds = ["SS_id_ldob", "SS_id_lb", "SS_id_lpa", "SS_id_lca", "SS_id_Lmo", "SS_id_lr", "SS_id_les", "SS_id_Pf", "SS_id_lName", "SS_id_Rf", "SS_id_Mf", "SS_id_Af", "SS_id_Ps", "SS_idEmeSalS", "SS_id_lN", "SS_id_Ms", "SS_id_As", "SS_id_An", "SS_id_Ah", "SS_id_Bn", "SS_id_Bb", "SS_id_Ifc", "SS_id_Ba", "SS_id_LPan", "SS_id_LAdhar"];
         if (this.sPath === "SelfService") {
           this.ViewModel.setProperty("/SelfServiceBtn", true);
-          this.getView().getModel("LoginModel").setProperty("/HeaderName", this.i18nModel.getText("tileSelfSerciceFooter"));
+          this.getView().getModel("LoginModel").setProperty("/HeaderName", this.i18nModel.getText("headerSelfService"));
           this.ViewModel.setProperty("/SetProfile", true);
           if (loginModel) this.EmployeeID = loginModel.getProperty("/EmployeeID");
           aIds.forEach(
@@ -702,7 +704,7 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
                 this.byId("SS_id_DocType")?.setValueState("None");
                 this.ReadEmployeeDocument();
                 break;
-              case "My Asset":
+              case "Asset":
                 this.getMyAssetsdata(this.EmployeeID)
                 break;
             }
@@ -766,7 +768,7 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
           this.byId("SS_id_DocType").setValue("");
           this.ReadEmployeeDocument();
           break;
-        case "My Asset":
+        case "Asset":
           this.getMyAssetsdata(this.EmployeeID)
           break;
       }
@@ -4500,7 +4502,7 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
           var aAssets = Array.isArray(oData.data) ? oData.data : [oData.data];
 
           if (!aAssets || aAssets.length === 0) {
-            MessageToast.show("No assets found for " + sEmpName);
+            MessageToast.show("No assets found");
             return;
           }
 

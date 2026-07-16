@@ -65,6 +65,7 @@ sap.ui.define([
         },
 
         initializeLoginModel: function () {
+            this.getOwnerComponent().setModel(new sap.ui.model.json.JSONModel({ that: this }), "ThisModel");
             let oLoginModel = this.getOwnerComponent().getModel("LoginModel");
             if (!oLoginModel) {
                 oLoginModel = new JSONModel({
@@ -1004,124 +1005,124 @@ sap.ui.define([
             }
         },
         //common confirmation dialog box
- showConfirmationDialog: function (
-    sTitle,
-    sMessage,
-    fnOnConfirm,
-    fnOnCancel,
-    sOkText,
-    sCancelText
-) {
+        showConfirmationDialog: function (
+            sTitle,
+            sMessage,
+            fnOnConfirm,
+            fnOnCancel,
+            sOkText,
+            sCancelText
+        ) {
 
-    var oResourceBundle = this.getOwnerComponent()
-        .getModel("i18n")
-        .getResourceBundle();
+            var oResourceBundle = this.getOwnerComponent()
+                .getModel("i18n")
+                .getResourceBundle();
 
-    var dialog = new sap.m.Dialog({
+            var dialog = new sap.m.Dialog({
 
-        type: "Message",
+                type: "Message",
 
-        contentWidth: "25rem",
+                contentWidth: "25rem",
 
-        customHeader: new sap.m.Bar({
+                customHeader: new sap.m.Bar({
 
-            contentLeft: [
+                    contentLeft: [
 
-                new sap.ui.core.Icon({
-                    src: "sap-icon://question-mark",
-                    color: "#788fa6",
-                    size: "1.3rem"
-                }).addStyleClass(""),
+                        new sap.ui.core.Icon({
+                            src: "sap-icon://question-mark",
+                            color: "#788fa6",
+                            size: "1.3rem"
+                        }).addStyleClass(""),
 
-                new sap.m.Title({
-                    text: sTitle
-                }).addStyleClass("")
+                        new sap.m.Title({
+                            text: sTitle
+                        }).addStyleClass("")
 
-            ]
+                    ]
 
-        }),
+                }),
 
-        content: [
+                content: [
 
-            new sap.m.VBox({
+                    new sap.m.VBox({
 
-                width: "100%",
+                        width: "100%",
 
-                items: [
+                        items: [
 
-                    new sap.m.Text({
-                        text: sMessage
-                    }).addStyleClass("customDialogText")
+                            new sap.m.Text({
+                                text: sMessage
+                            }).addStyleClass("customDialogText")
 
-                ]
+                        ]
 
-            })
+                    })
 
-        ],
+                ],
 
-       footer: new sap.m.Toolbar({
+                footer: new sap.m.Toolbar({
 
-    content: [
+                    content: [
 
-        new sap.m.HBox({
+                        new sap.m.HBox({
 
-            width: "100%",
-            justifyContent: "End",
-            wrap: "Wrap",
+                            width: "100%",
+                            justifyContent: "End",
+                            wrap: "Wrap",
 
-            items: [
+                            items: [
 
-                new sap.m.Button({
-                    text: sOkText || oResourceBundle.getText("OkButton"),
+                                new sap.m.Button({
+                                    text: sOkText || oResourceBundle.getText("OkButton"),
 
-                    type: "Transparent",
-                    press: function () {
-                        dialog.close();
+                                    type: "Transparent",
+                                    press: function () {
+                                        dialog.close();
 
-                        if (typeof fnOnConfirm === "function") {
-                            fnOnConfirm();
-                        }
+                                        if (typeof fnOnConfirm === "function") {
+                                            fnOnConfirm();
+                                        }
 
-                    }
+                                    }
 
-                }).addStyleClass("sapUiTinyMarginEnd"),
+                                }).addStyleClass("sapUiTinyMarginEnd"),
 
-                new sap.m.Button({
+                                new sap.m.Button({
 
-                    text: sCancelText || oResourceBundle.getText("CancelButton"),
+                                    text: sCancelText || oResourceBundle.getText("CancelButton"),
 
-                    type: "Transparent",
+                                    type: "Transparent",
 
-                    press: function () {
+                                    press: function () {
 
-                        dialog.close();
+                                        dialog.close();
 
-                        if (typeof fnOnCancel === "function") {
-                            fnOnCancel();
-                        }
+                                        if (typeof fnOnCancel === "function") {
+                                            fnOnCancel();
+                                        }
 
-                    }
+                                    }
 
-                })
+                                })
 
-            ]
+                            ]
 
-        })
+                        })
 
-    ]
+                    ]
 
-}),
+                }),
 
-        afterClose: function () {
-            dialog.destroy();
-        }
+                afterClose: function () {
+                    dialog.destroy();
+                }
 
-    });
+            });
 
-    dialog.addStyleClass("customConfirmationDialog");
+            dialog.addStyleClass("customConfirmationDialog");
 
-    dialog.open();
-},
+            dialog.open();
+        },
 
         _initMessagePopover: function () {
             var i18n = this.getOwnerComponent().getModel("i18n").getResourceBundle();
@@ -1783,29 +1784,29 @@ sap.ui.define([
             }
             this.getCount()
         },
-        getCount:async function(){
-                var oEndingSoonModel = new JSONModel({ "notificationCount": 0 });
-                this.getOwnerComponent().setModel(oEndingSoonModel, "EndingSoonModel");
+        getCount: async function () {
+            var oEndingSoonModel = new JSONModel({ "notificationCount": 0 });
+            this.getOwnerComponent().setModel(oEndingSoonModel, "EndingSoonModel");
 
-               var LoginModel = this.getView().getModel("LoginModel");
-                 const sRole = LoginModel.getProperty("/Role");
-                const sEmployeeID = LoginModel.getProperty("/EmployeeID");
+            var LoginModel = this.getView().getModel("LoginModel");
+            const sRole = LoginModel.getProperty("/Role");
+            const sEmployeeID = LoginModel.getProperty("/EmployeeID");
 
-                if (
-                    sRole === "Admin" ||
-                    sRole === "IT Manager" ||
-                    sRole === "IT Consultant"
-                ) {
-                    let data = await this.ajaxReadWithJQuery(
-                        "getDashboardEndingSoonSummary",
-                        {
-                            Role: sRole,
-                            EmployeeID: sEmployeeID
-                        }
-                    );
+            if (
+                sRole === "Admin" ||
+                sRole === "IT Manager" ||
+                sRole === "IT Consultant"
+            ) {
+                let data = await this.ajaxReadWithJQuery(
+                    "getDashboardEndingSoonSummary",
+                    {
+                        Role: sRole,
+                        EmployeeID: sEmployeeID
+                    }
+                );
 
-                    oEndingSoonModel.setProperty("/notificationCount", data.data);
-                }
+                oEndingSoonModel.setProperty("/notificationCount", data.data);
+            }
         },
 
         onPressCC: function (oEvent) {

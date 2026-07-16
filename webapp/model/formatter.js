@@ -123,12 +123,12 @@ sap.ui.define(["sap/ui/core/format/DateFormat"], function (DateFormat) {
                     return "Warning";
                 case "Critical":
                     return "Error";
-                case "Info":
-                    return "Information";
+                case "Information":
+                    return "None";
                 case "Warning":
                     return "Indication03";
                 default:
-                    return "Indication01";
+                    return "None";
             }
         },
 

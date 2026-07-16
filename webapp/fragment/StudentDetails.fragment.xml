@@ -5,11 +5,12 @@
     xmlns:f="sap.f"
     xmlns:cards="sap.f.cards"
     xmlns:layout="sap.ui.layout"
+    xmlns:m="sap.m"
 >
    <Dialog
     title="{i18n>candidateAssessmentReportTitle}"
     contentWidth="80%"
-    draggable="true"
+   draggable="true"
     resizable="true"
     verticalScrolling="true"
     horizontalScrolling="false">
@@ -172,101 +173,100 @@
 
                 <!-- ===== SCORE SUMMARY TILES (styled like HiringDashboardOverview) ===== -->
                 <Title level="H5" text="{i18n>scoreSummaryTitle}" class="sapUiTinyMarginBottom sapUiSmallMarginBegin"  />
-                <layout:Grid
-                    defaultSpan="L3 M6 S12"
-                    width="100%"
-                    class="sapUiTinyMarginBottom sapUiTinyMarginBeginEnd"
-                >
-                    <layout:content>
+               <FlexBox
+    wrap="Wrap"
+    justifyContent="Center"
+    width="100%">
+                  
                         <!-- MCQ Score - Blue -->
-                        <GenericTile
-                            class="tileLayout  blueTile  sapUiTinyMarginBottom"
+                        <m:GenericTile
+                            class="tileLayout blueTile sapUiSmallMarginBottom sapUiSmallMarginEnd"
                             header="{i18n>mcqScoreHeader}"
                             subheader="{i18n>mcqScoreSubheader}"
-                            width="90%"
+                           
                         >
-                            <tileContent>
-                                <TileContent unit="%">
-                                    <content>
-                                        <NumericContent
+                            <m:tileContent>
+                                <m:TileContent unit="%">
+                                    <m:content>
+                                        <m:NumericContent
                                             class="sapUiTinyMarginTop"
                                             value="{studentModel>/mcqScore}"
                                             icon="sap-icon://education"
                                             valueColor="Good"
                                             withMargin="false"
                                         />
-                                    </content>
-                                </TileContent>
-                            </tileContent>
-                        </GenericTile>
-
+                                    </m:content>
+                                </m:TileContent>
+                            </m:tileContent>
+                        </m:GenericTile>
+                     
                         <!-- Coding Score - Orange -->
-                        <GenericTile
-                            class="tileLayout  orangeTile sapUiTinyMarginBottom"
+                        <m:GenericTile
+                            class="tileLayout  orangeTile sapUiSmallMarginBottom sapUiSmallMarginEnd"
                             header="{i18n>codingScoreHeader}"
                             subheader="{i18n>codingScoreSubheader}"
-                            width="90%"
+                           
                         >
-                            <tileContent>
-                                <TileContent unit="%">
-                                    <content>
-                                        <NumericContent
+                            <m:tileContent>
+                                <m:TileContent unit="%">
+                                    <m:content>
+                                        <m:NumericContent
                                             class="sapUiTinyMarginTop"
                                             value="{studentModel>/codingScore}"
                                             icon="sap-icon://source-code"
                                             valueColor="Critical"
                                             withMargin="false"
                                         />
-                                    </content>
-                                </TileContent>
-                            </tileContent>
-                        </GenericTile>
+                                    </m:content>
+                                </m:TileContent>
+                            </m:tileContent>
+                        </m:GenericTile>
 
                         <!-- Overall Score - Green -->
-                        <GenericTile
-                            class="tileLayout  greenTile sapUiTinyMarginBottom "
+                        <m:GenericTile
+                            class="tileLayout  greenTile sapUiSmallMarginBottom sapUiSmallMarginEnd "
                             header="{i18n>overallScoreHeader}"
                             subheader="{i18n>overallScoreSubheader}"
-                            width="90%"
+                            
                         >
-                            <tileContent>
-                                <TileContent unit="%">
-                                    <content>
-                                        <NumericContent
+                            <m:tileContent>
+                                <m:TileContent unit="%">
+                                    <m:content>
+                                        <m:NumericContent
                                             class="sapUiTinyMarginTop"
                                             value="{studentModel>/overallScore}"
                                             icon="sap-icon://bar-chart"
                                             valueColor="Good"
                                             withMargin="false"
                                         />
-                                    </content>
-                                </TileContent>
-                            </tileContent>
-                        </GenericTile>
+                                    </m:content>
+                                </m:TileContent>
+                            </m:tileContent>
+                        </m:GenericTile>
 
                         <!-- Total Marks - Red -->
-                        <GenericTile
-                            class="tileLayout  redTile sapUiTinyMarginBottom"
+                        <m:GenericTile
+                            class="tileLayout  redTile sapUiSmallMarginBottom sapUiSmallMarginEnd"
                             header="{i18n>totalMarksHeader}"
                             subheader="{i18n>totalMarksSubheader}"
-                            width="90%"
+                            
                         >
-                            <tileContent>
-                                <TileContent>
-                                    <content>
-                                        <NumericContent
+                            <m:tileContent>
+                                <m:TileContent>
+                                    <m:content>
+                                        <m:NumericContent
                                             class="sapUiTinyMarginTop"
                                             value="{studentModel>/totalMarks}"
                                             icon="sap-icon://list"
                                             valueColor="Error"
                                             withMargin="false"
                                         />
-                                    </content>
-                                </TileContent>
-                            </tileContent>
-                        </GenericTile>
-                    </layout:content>
-                </layout:Grid>
+                                    </m:content>
+                                </m:TileContent>
+                            </m:tileContent>
+                        </m:GenericTile>
+                    
+                   </FlexBox>
 
                 <!-- ===== TEST DETAILS HEADING ===== -->
                 <Title
@@ -284,7 +284,7 @@
                 >
                     <layout:content>
                         <!-- MCQ Card -->
-                        <f:Card class="CommonRoundedTable sapUiTinyMarginBottom" width="98%">
+                        <f:Card class="CommonRoundedTable sapUiTinyMarginBottom" width="100%">
                             <f:header>
                                 <cards:Header
             title="{i18n>mcqTestTitle}"
@@ -348,7 +348,7 @@
                         </f:Card>
 
                         <!-- Coding Card -->
-                        <f:Card class="CommonRoundedTable sapUiTinyMarginBottom" width="98%">
+                        <f:Card class="CommonRoundedTable sapUiTinyMarginBottom" width="100%">
                             <f:header>
                              <cards:Header
                              
@@ -423,30 +423,25 @@
                 />
 
                 <!-- Filter Bar -->
-            <OverflowToolbar width="100%">
+      <VBox width="100%" class="mcqFilterWrapper sapUiSmallMarginBegin sapUiSmallMarginEnd">
     <SegmentedButton
         id="mcqFilterBtn"
+        width="100%"
         selectedKey="All"
         selectionChange="onMcqFilterChange">
-
-       
-
         <items>
             <SegmentedButtonItem key="All" text="All"/>
             <SegmentedButtonItem key="Correct" text="Correct"/>
-            <SegmentedButtonItem key="Incorrect" text="Incorrect"/>
+            <SegmentedButtonItem key="Incorrect" text="Wrong"/>
             <SegmentedButtonItem key="Skipped" text="Skipped"/>
         </items>
-
     </SegmentedButton>
-
-    <ToolbarSpacer/>
 
     <Text
         id="mcqFilterCount"
-        class ="sapUiMediumMarginEnd"
+        class="sapUiTinyMarginTop"
         text="{= ${studentModel>/totalQuestions} + ' Questions'}"/>
-</OverflowToolbar>
+</VBox>
 
                 <Table
                     id="mcqBreakdownTable"
@@ -529,28 +524,6 @@
                         </ColumnListItem>
                     </items>
                 </Table>
-
-                <!-- ===== TIMELINE ===== -->
-                <!-- <Title
-                    level="H5"
-                    text="{i18n>timelineTitle}"
-                    class="sapUiMediumMarginTop sapUiSmallMarginBottom"
-                />
-                <form:SimpleForm
-                    editable="false"
-                    layout="ResponsiveGridLayout"
-                    labelSpanM="4"
-                    emptySpanM="0"
-                >
-                    <Label text="{i18n>profileCreatedLabel}" />
-                    <Text text="{studentModel>/created_at}" />
-                    <Label text="{i18n>mcqStartedLabel}" />
-                    <Text text="{studentModel>/mcqStartedAt}" />
-                    <Label text="{i18n>mcqSubmittedLabel}" />
-                    <Text text="{studentModel>/mcqSubmittedAt}" />
-                    <Label text="{i18n>codeSubmittedLabel}" />
-                    <Text text="{studentModel>/codingSubmittedAt}" />
-                </form:SimpleForm> -->
 
                 <!-- ===== SUBMITTED CODE(S) ===== -->
                 <Title

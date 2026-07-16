@@ -171,7 +171,7 @@ sap.ui.define(
                     oDateRange.setMaxDate(oMaxDate);
 
                     const i18n = this.getView().getModel("i18n")?.getResourceBundle();
-                    this.oLoginModel.setProperty("/HeaderName", i18n.getText("compoffheader"));
+                    this.oLoginModel.setProperty("/HeaderName", i18n.getText("headerCompOff"));
 
                     this.getView().setModel(new JSONModel({ selectedType: 1 }), "selectedModel");
                     this.getView().setModel(new JSONModel({
@@ -267,8 +267,8 @@ sap.ui.define(
                         }
 
                         // Check if leave is already applied
-                        if (this.isLeaveAlreadyApplied(oData.fromDate, oData.toDate)) {
-                            return MessageBox.error(this.i18nModel.getText("OvertimeleaveAlreadyApplied"));
+                        if (this.isLeaveAlreadyApplied(oData.fromDate, oData.toDate, oData.halfDay, oData.leaveSessionType)) {
+                            return MessageBox.error(this.i18nModel.getText("leaveAlreadyApplied"));
                         }
 
                         // ✅ Keep current-month check (remove if not needed)
@@ -435,9 +435,12 @@ sap.ui.define(
                                 oRadioGroup.setValueState("None");
                             }
 
-                    if (this.isLeaveAlreadyApplied(oData.fromDate, oData.toDate, this.previousLeaveDates)) {
-                        return MessageBox.error(this.i18nModel.getText("OvertimeleaveAlreadyApplied"));
-                    }
+                    var currentLeaveId = oData.ID || oData.id || null;
+
+                            // Check if leave is already applied (passing ID to exclude self-matching during updates)
+                            if (this.isLeaveAlreadyApplied(oData.fromDate, oData.toDate, oData.halfDay, oData.leaveSessionType, currentLeaveId,this.previousLeaveDates)) {
+                                return MessageBox.error(this.i18nModel.getText("leaveAlreadyApplied"));
+                            }
 
                     // Parse dates
                     const fromDateParts = (oData.fromDate || "").split("/").map(Number);

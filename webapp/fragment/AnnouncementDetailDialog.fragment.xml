@@ -15,7 +15,7 @@
             <Bar>
 
                 <contentMiddle>
-                    <Title text="Announcement Details"/>
+                    <Title  text="{Announcements>AnnouncementTitle}"/>
                 </contentMiddle>
 
                 <contentRight>
@@ -28,84 +28,32 @@
             </Bar>
         </customHeader>
 		<content>
+        <ScrollContainer
+                    vertical="true"
+                    horizontal="false"
+                    height="100%"
+                    class="sapUiTinyMargin" id="ANC_id_ScrollContainer">
 			<VBox width="100%">
 				<!-- ================= HERO IMAGE ================= -->
-				<VBox
+				<!-- <VBox
                     width="100%"
                     class="sapUiNoContentPadding dialogAnnouncementHero"
-                >
+                > -->
 					<!-- Background Image -->
-					<Image
+					<!-- <Image
                         src="{path:'Announcements>AnnouncementBackground',formatter:'.ANC_formatBase64Image'}"
                         visible="{path:'Announcements>AnnouncementBackground',formatter:'.ANC_hasValue'}"
                         width="100%"
                         height="220px"
                         decorative="false"
-                    />
-					
-					<VBox
-                        class="dialogOverlayContent"
-                    >
-						<Title
-                            id="ANC_id_DetailTitle"
-                            text="{Announcements>AnnouncementTitle}"
-                            level="H3"
-                            wrapping="true"
-                            class="dialogTitleText sapUiTinyMarginBottom"
-                        />
-                          <HBox
-        visible="{visibilityModel>/showAdminControls}"
-        alignItems="Center"
-        class="sapUiTinyMarginBottom">
-        
-						<Label
-                        visible="{visibilityModel>/showAdminControls}"
-                            id="ANC_id_DetailExpiresLabel"
-                            text="{i18n>ExpiresDate}"
-                            class="dateText sapUiTinyMarginBottom sapUiTinyMarginEnd"
-                        />
-						<Text
-                        visible="{visibilityModel>/showAdminControls}"
-                            id="ANC_id_DetailExpiresText"
-                            text="{
-                                path:'Announcements>ExpiresDate',
-                                formatter:'.Formatter.formatDate'
-                            }"
-                            class="dateText sapUiTinyMarginBottom"
-                        />
-                        </HBox>
-                        <FlexBox
-    visible="{visibilityModel>/showAdminControls}"
-    wrap="Wrap"
-    alignItems="Start"
-    class="sapUiTinyMarginBottom">
-                        <Label
-                        visible="{visibilityModel>/showAdminControls}"
-                            id="ANC_id_departmentLabel"
-                            text="{i18n>departmentAnnouncement}"
-                            class="dateText sapUiTinyMarginBottom sapUiTinyMarginEnd"
-                        />
-                        <Text
-                        visible="{visibilityModel>/showAdminControls}"
-                            id="ANC_id_DetailDepartmentText"
-                            text="{Announcements>AnnouncementDepartment}"
-                            class="dateText sapUiTinyMarginBottom"
-                        />
-                        </FlexBox>
-					</VBox>
-				</VBox>
-              
-                 <ScrollContainer
-                    vertical="true"
-                    horizontal="false"
-                    height="320px"
-                    width="100%"
-                    class="sapUiSmallMarginTop" id="ANC_id_ScrollContainer">
-            <VBox class="announcementDetailsCard sapUiSmallMargin">
+                    /> -->
+				<!-- </VBox> -->
+                
+                 <VBox class="announcementDetailsCard sapUiTinyMargin">
 
     <layout:Grid
         defaultSpan="XL6 L6 M6 S12"
-        hSpacing="2"
+        hSpacing="1"
         vSpacing="1">
 
         <!-- Created Date -->
@@ -139,6 +87,13 @@
                 design="Bold"/>
             <Text text="{Announcements>CreatedBy}"/>
         </HBox>
+        <HBox alignItems="Center">
+            <Label
+                text="{i18n>Priority}"
+                width="120px"
+                design="Bold"/>
+            <Text text="{Announcements>Priority}"/>
+        </HBox>
 
         <!-- Status -->
         <HBox alignItems="Center">
@@ -150,27 +105,52 @@
                 text="{path:'Announcements>AnnouncementStatus', formatter:'.Formatter.formatStatusText'}"
                 state="{path:'Announcements>AnnouncementStatus', formatter:'.Formatter.formatObjectStatus'}"/>
         </HBox>
+        <HBox
+        alignItems="Center"
+        width="100%"
+        visible="{visibilityModel>/showAdminControls}">
+        <Label
+            text="{i18n>departmentAnnouncement}"
+            width="120px"
+            design="Bold"/>
+        <Text
+            text="{Announcements>AnnouncementDepartment}"
+            wrapping="true"/>
+    </HBox>
+         <HBox
+        alignItems="Center"
+        width="100%"
+        visible="{visibilityModel>/showAdminControls}">
+        <Label
+            text="{i18n>ExpiresDate}"
+            width="120px"
+            design="Bold"/>
+        <Text
+            text="{path:'Announcements>ExpiresDate', formatter:'.Formatter.formatDate'}"/>
+    </HBox>
 
     </layout:Grid>
 
 </VBox>
-                
               
 				<!-- ================= BODY ================= -->
 				<!-- <VBox class="sapUiSmallMargin" renderType="Bare"> -->
                 
-
-                    <VBox class="sapUiSmallMargin" >
-
+                    <VBox class="announcementDetailsCard sapUiTinyMargin" >
+                        <Label
+            text="{i18n>AnnouncementMessage}"
+            class="sapUiTinyMarginBottom"
+            design="Bold"/>
                        <Text
                         text="{Announcements>AnnouncementMessage}"
                         wrapping="true"
                     />
                     </VBox>
 
-                </ScrollContainer>
+              
 			
 			</VBox>
+              </ScrollContainer>
 		</content>
 	</Dialog>
 </core:FragmentDefinition>

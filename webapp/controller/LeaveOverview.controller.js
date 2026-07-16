@@ -98,22 +98,21 @@ sap.ui.define([
                 this.getView().setModel(oViewModel, "viewModel");
 
                 // Manager dropdown model
-                const aData = this.getView().getModel("EmpDetails").getData();
+                const aData = this.getView().getModel("EmpDetails").getProperty("/");
 
                 const aUniqueManagers = Object.values(
                     aData.reduce((acc, item) => {
-                        acc[item.ManagerID] = {
-                            ManagerID: item.ManagerID,
-                            ManagerName: item.ManagerName
-                        };
+                        if (item.EmployeeStatus === "Active") {
+                            acc[item.ManagerID] = {
+                                ManagerID: item.ManagerID,
+                                ManagerName: item.ManagerName
+                            };
+                        }
                         return acc;
                     }, {})
                 );
 
-                this.getView().setModel(
-                    new JSONModel(aUniqueManagers),
-                    "ManagerModel"
-                );
+                this.getView().setModel(new JSONModel(aUniqueManagers), "ManagerModel");
 
                 // User info
                 const loginModel = this.getOwnerComponent().getModel("LoginModel");
@@ -127,24 +126,19 @@ sap.ui.define([
                     .getModel("i18n")
                     .getResourceBundle();
 
-                loginModel.setProperty(
-                    "/HeaderName",
-                    this.i18nModel.getText("resourecPlanning")
-                );
+                loginModel.setProperty("/HeaderName", this.i18nModel.getText("resourecPlanning"));
 
                 let params;
 
                 // Initial load
                 if (!Value) {
-
-                    const Manager_ID = aData.find(
-                        i => i.EmployeeID === this.userId
-                    )?.ManagerID;
-
+                    const Manager_ID = aData.find(i => i.EmployeeID === this.userId)?.ManagerID;
                     if (!Manager_ID) {
-                        MessageBox.error(
-                            "Manager is not assigned to this employee."
-                        );
+                        MessageBox.error("Manager is not assigned to this employee.", {
+                            onClose: () => {
+                                this.getRouter().navTo("RouteTilePage"); // Navigate to tile page
+                            }
+                        });
                         return;
                     }
 
@@ -964,8 +958,9 @@ sap.ui.define([
                     }
 
                     // Check if leave is already applied
-                    if (this.isLeaveAlreadyApplied(oData.fromDate, oData.toDate)) return MessageBox.error(this.i18nModel.getText("leaveAlreadyApplied"));
-
+                        if (this.isLeaveAlreadyApplied(oData.fromDate, oData.toDate, oData.halfDay, oData.leaveSessionType)) {
+                            return MessageBox.error(this.i18nModel.getText("leaveAlreadyApplied"));
+                        }
                     // Calculate used leaves
                     var LeaveModel = this.getView().getModel("EmpLeaveModel").getData();
 
@@ -1168,9 +1163,13 @@ sap.ui.define([
                     }
 
                     //  Already applied check
-                    if (this.isLeaveAlreadyApplied(oData.fromDate, oData.toDate, this.previousLeaveDates)) {
-                        return MessageBox.error(this.i18nModel.getText("leaveAlreadyApplied"));
-                    }
+                                                // Get the unique ID of the leave being edited (if updating, otherwise null)
+                            var currentLeaveId = oData.ID || oData.id || null;
+
+                            // Check if leave is already applied (passing ID to exclude self-matching during updates)
+                            if (this.isLeaveAlreadyApplied(oData.fromDate, oData.toDate, oData.halfDay, oData.leaveSessionType, currentLeaveId,this.previousLeaveDates)) {
+                                return MessageBox.error(this.i18nModel.getText("leaveAlreadyApplied"));
+                            }
 
                     //  Quota calculation (unchanged)
                     var LeaveModel = this.getView().getModel("EmpLeaveModel").getData();
@@ -1336,6 +1335,7 @@ sap.ui.define([
         },
 
         onFormatDate: function (dateString) {
+            if(!dateString) return null;
             var parts = dateString.split('/');
             return new Date(parts[2], parts[1] - 1, parts[0]);
         },
@@ -1399,14 +1399,80 @@ sap.ui.define([
             }
         },
 
-        isLeaveAlreadyApplied: function (fromDate, toDate, previousDates = []) {
+        isLeaveAlreadyApplied: function (fromDate, toDate, currentHalfDay, currentSession, currentLeaveId, previousDates = []) {
             let from = this.onFormatDate(fromDate);
             let to = this.onFormatDate(toDate);
+            
+            // Get the existing applied leaves from your model
+            let leaveModel = this.getView().getModel("LeaveModel");
+            if (!leaveModel) {
+                return false;
+            }
+            let appliedLeaves = leaveModel.getData() || [];
+
+            // Format current halfDay to a boolean for consistent comparison
+            let isCurrentHalfDay = String(currentHalfDay) === "true";
 
             for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
                 let dateStr = d.toDateString();
-                if (this.appliedLeavesSet.has(dateStr) && !previousDates.includes(dateStr)) {
-                    return true; // Date already applied by someone else and not in original
+
+                // Skip if this date is part of the leave being edited (previousDates)
+                if (previousDates.includes(dateStr)) {
+                    continue;
+                }
+
+                // Check against each existing applied leave
+                for (let i = 0; i < appliedLeaves.length; i++) {
+                    let item = appliedLeaves[i];
+
+                    // 1. Skip if it's the exact leave record we are currently updating/editing
+                    // Checking both PascalCase 'ID' and camelCase 'id' for safety
+                    let itemID = item.ID || item.id;
+                    if (currentLeaveId && itemID === currentLeaveId) {
+                        continue;
+                    }
+
+                    // 2. Exclude rejected leaves from blocking (using 'Status')
+                    let itemStatus = item.Status || item.status;
+                    if (itemStatus === "Rejected") {
+                        continue;
+                    }
+
+                    // Parse existing leave dates (using 'StartDate' and 'EndDate')
+                    let itemStartDate = item.StartDate || item.fromDate;
+                    let itemEndDate = item.EndDate || item.toDate;
+                    
+                    if (!itemStartDate || !itemEndDate) {
+                        continue; // Skip if dates are missing
+                    }
+
+                    let existingFrom = this.onFormatDate(this.Formatter.formatDate(itemStartDate));
+                    let existingTo = this.onFormatDate(this.Formatter.formatDate(itemEndDate));
+
+                    // Check if our loop date 'd' falls within this existing leave's range
+                    if (d >= existingFrom && d <= existingTo) {
+                        // Using 'HalfDay' property from your database model
+                        let itemHalfDay = item.HalfDay !== undefined ? item.HalfDay : item.halfDay;
+                        let isExistingHalfDay = String(itemHalfDay) === "true";
+
+                        // Scenario 1: Existing leave is a Full Day -> Always Block
+                        if (!isExistingHalfDay) {
+                            return true;
+                        }
+
+                        // Scenario 2: Existing leave is a Half Day, but current application is a Full Day -> Block
+                        if (isExistingHalfDay && !isCurrentHalfDay) {
+                            return true;
+                        }
+
+                        // Scenario 3: Both are Half Days -> Block ONLY if they overlap on the same session (leaveSessionType)
+                        if (isExistingHalfDay && isCurrentHalfDay) {
+                            let itemSession = item.leaveSessionType;
+                            if (itemSession === currentSession) {
+                                return true; // Both are morning or both are afternoon
+                            }
+                        }
+                    }
                 }
             }
             return false;

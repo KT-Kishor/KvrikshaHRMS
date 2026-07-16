@@ -24,7 +24,7 @@ sap.ui.define(
                     this._fetchCommonData("NewTask", "TaskModel", {});
                     this.MA_onSearch()
                     this.i18nModel = this.getView().getModel("i18n").getResourceBundle();
-                    this.getView().getModel("LoginModel").setProperty("/HeaderName", "Create New Assignment");
+                    this.getView().getModel("LoginModel").setProperty("/HeaderName", this.i18nModel.getText("headerAssignTask"));
                     // Check if coming back from tile page
                     if (localStorage.getItem("cameFromTilePage") === "true") {
                         this.MA_onPressClear(); // Clear filter fields

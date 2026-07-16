@@ -882,8 +882,6 @@ if (sExperienceInput) {
                 // Use getFragmentControl instead of sap.ui.getCore().byId for fragment controls
                 const isValid =
                     utils._LCvalidateName(this.getFragmentControl("FM_RE_Name"), "ID") &&
-                    utils._LCvalidateAmount(this.getFragmentControl("FM_RE_CurrentCTC"), "ID") &&
-                    utils._LCvalidateMandatoryField(this.getFragmentControl("FM_RE_ExpectedCTC"), "ID") &&
                     utils._LCvalidateMandatoryField(this.getFragmentControl("FM_RE_NoticePeriod"), "ID") &&
                     // Country, State, City validation
                     this._validateCountry() &&

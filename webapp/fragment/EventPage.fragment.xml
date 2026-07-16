@@ -14,7 +14,7 @@
 
         <HBox
             wrap="Wrap"
-            justifyContent="Start"
+            justifyContent="Center"
             width="100%"
             class="eventCardsContainer sapUiSmallMargin"
              visible="{= ${EventCardModel>/UpcomingEvents}.length > 0 }"
@@ -166,12 +166,11 @@
         <Title
             text="Past Events"
             level="H2"
-           
             class="sectionTitle sapUiSmallMarginBegin sapUiTinyMarginTop sapUiSmallMarginBottom" />
 
         <HBox
             wrap="Wrap"
-            justifyContent="Start"
+            justifyContent="Center"
             width="100%"
             class="sapUiSmallMargin"
             visible="{= ${EventCardModel>/PastEvents}.length > 0 }"
@@ -303,19 +302,6 @@
         formatter: '.showPastMessage'
     }"
     class="sapUiLargeMarginTop sapUiLargeMarginBottom"/>
-
-    <!-- <IllustratedMessage
-    illustrationType="sapIllus-NoActivities"
-    title="No Events Available"
-    description="Currently there are no upcoming or past events available."
-  visible="{
-    parts: [
-        { path: 'EventCardModel>/UpcomingEvents' },
-        { path: 'EventCardModel>/PastEvents' }
-    ],
-    formatter: '.showNoEventsMessage'
-}"
-    class="sapUiLargeMarginTop sapUiLargeMarginBottom"/> -->
 
     </VBox>
      <HBox class="footer-bar" alignItems="Center" justifyContent="SpaceBetween" width="100%" >

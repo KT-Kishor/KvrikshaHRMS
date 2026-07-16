@@ -439,7 +439,7 @@
                                                     >
                                                         <TileContent
                                                             unit="{i18n>tileUnit}"
-                                                            footer="{i18n>SendMail}"
+                                                            
                                                         >
                                                             <ImageContent
                                                                 src="sap-icon://add-document"
@@ -793,7 +793,7 @@
                                                    
                                                     <GenericTile
                                                         class="sapUiSmallMargin glassTile blue"
-                                                        visible="{= ${AppVisibilityModel>/Announcement} !=='0' ? true : false}"
+                                                        visible="{= ${AppVisibletyModel>/Announcement} !=='0' ? true : false}"
                                                         id="GT_idAnnouncements"
                                                         header="{i18n>headerAnnouncements}"
                                                         press="TileV_onpressAnnouncements"

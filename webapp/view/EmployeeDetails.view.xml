@@ -14,18 +14,12 @@
 				<fb:filterGroupItems>
 					<fb:FilterGroupItem name="EmployeeID" label="{i18n>employeeID}" groupName="Group1" visibleInFilterBar="true" >
 						<fb:control>
-							<ComboBox  showSecondaryValues= "true"  items="{sEmployeeDetails>/}" id="ED_id_EmpIDFilter" showClearIcon="true">
-								<core:ListItem key="{sEmployeeDetails>EmployeeID}" text="{sEmployeeDetails>EmployeeID}" additionalText="{sEmployeeDetails>EmployeeName}" />
+							<ComboBox  showSecondaryValues= "true"  items="{sEmployeeDetailsAll>/}" id="ED_id_EmpIDFilter" showClearIcon="true">
+								<core:ListItem key="{sEmployeeDetailsAll>EmployeeID}" text="{sEmployeeDetailsAll>EmployeeName}" additionalText="{sEmployeeDetailsAll>EmployeeID}" />
 							</ComboBox>
 						</fb:control>
 					</fb:FilterGroupItem>
-					<!-- <fb:FilterGroupItem name="Type" label="{i18n>type}" groupName="Group1" visibleInFilterBar="true">
-						<fb:control>
-							<ComboBox  showSecondaryValues= "true"  items="{EmpType>/}" id="ED_id_TypeFilter" showClearIcon="true">
-								<core:ListItem key="{EmpType>ID}" text="{EmpType>Type}" />
-							</ComboBox>
-						</fb:control>
-					</fb:FilterGroupItem> -->
+					
 					<fb:FilterGroupItem name="ManagerID" label="{i18n>manager}" groupName="Group1" visibleInFilterBar="true" visible="{= ${LoginModel>/Role} === 'Admin' }">
 						<fb:control>
 							<ComboBox showSecondaryValues= "true"  items="{empModel>/}" id="ED_id_ManagerFilter" showClearIcon="true">

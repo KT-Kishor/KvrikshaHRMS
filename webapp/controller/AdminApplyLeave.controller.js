@@ -767,14 +767,67 @@ sap.ui.define(
                 },
 
                 // Check if leave is already applied for given dates
-                isLeaveAlreadyApplied: function (fromDate, toDate, previousDates = []) {
+                isLeaveAlreadyApplied: function (fromDate, toDate, currentHalfDay, currentSession, currentLeaveId, previousDates = []) {
                     let from = this.onFormatDate(fromDate);
                     let to = this.onFormatDate(toDate);
+                    
+                    // Get the existing applied leaves from your model
+                    let leaveModel = this.getView().getModel("LeaveModel");
+                    if (!leaveModel) {
+                        return false;
+                    }
+                    let appliedLeaves = leaveModel.getData() || [];
+
+                    // Format current halfDay to a boolean for consistent comparison
+                    let isCurrentHalfDay = String(currentHalfDay) === "true";
 
                     for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
                         let dateStr = d.toDateString();
-                        if (this.appliedLeavesSet.has(dateStr) && !previousDates.includes(dateStr)) {
-                            return true; // Date already applied by someone else and not in original
+
+                        // Skip if this date is part of the leave being edited (previousDates)
+                        if (previousDates.includes(dateStr)) {
+                            continue;
+                        }
+
+                        // Check against each existing applied leave
+                        for (let i = 0; i < appliedLeaves.length; i++) {
+                            let item = appliedLeaves[i];
+
+                            // 1. Skip if it's the exact leave record we are currently updating/editing
+                            if (currentLeaveId && (item.ID === currentLeaveId || item.id === currentLeaveId)) {
+                                continue;
+                            }
+
+                            // 2. Exclude rejected leaves from blocking
+                            if (item.status === "Rejected") {
+                                continue;
+                            }
+
+                            // Parse existing leave dates
+                            let existingFrom = this.onFormatDate(this.Formatter.formatDate(item.fromDate));
+                            let existingTo = this.onFormatDate(this.Formatter.formatDate(item.toDate));
+
+                            // Check if our loop date 'd' falls within this existing leave's range
+                            if (d >= existingFrom && d <= existingTo) {
+                                let isExistingHalfDay = String(item.halfDay) === "true";
+
+                                // Scenario 1: Existing leave is a Full Day -> Always Block
+                                if (!isExistingHalfDay) {
+                                    return true;
+                                }
+
+                                // Scenario 2: Existing leave is a Half Day, but current application is a Full Day -> Block
+                                if (isExistingHalfDay && !isCurrentHalfDay) {
+                                    return true;
+                                }
+
+                                // Scenario 3: Both are Half Days -> Block ONLY if they overlap on the same session (Morning/Afternoon)
+                                if (isExistingHalfDay && isCurrentHalfDay) {
+                                    if (item.leaveSessionType === currentSession) {
+                                        return true; // Both are morning or both are afternoon
+                                    }
+                                }
+                            }
                         }
                     }
                     return false;
@@ -935,7 +988,7 @@ sap.ui.define(
                             }
 
                             // Check if leave is already applied
-                            if (this.isLeaveAlreadyApplied(oData.fromDate, oData.toDate)) {
+                            if (this.isLeaveAlreadyApplied(oData.fromDate, oData.toDate, oData.halfDay, oData.leaveSessionType)) {
                                 return MessageBox.error(this.i18nModel.getText("leaveAlreadyApplied"));
                             }
 
@@ -1127,7 +1180,11 @@ sap.ui.define(
                                 }
                             }
 
-                            if (this.isLeaveAlreadyApplied(oData.fromDate, oData.toDate, this.previousLeaveDates)) {
+                            // Get the unique ID of the leave being edited (if updating, otherwise null)
+                            var currentLeaveId = oData.ID || oData.id || null;
+
+                            // Check if leave is already applied (passing ID to exclude self-matching during updates)
+                            if (this.isLeaveAlreadyApplied(oData.fromDate, oData.toDate, oData.halfDay, oData.leaveSessionType, currentLeaveId)) {
                                 return MessageBox.error(this.i18nModel.getText("leaveAlreadyApplied"));
                             }
 

@@ -77,7 +77,6 @@
             showAnchorBar="false"
             useIconTabBar="false"
             enableLazyLoading="false"
-            class="sapUiContentPadding"
             height="calc(100vh - 11rem)"
         >
             <sections>
@@ -88,16 +87,16 @@
                                 <m:FlexBox
                                     id="ANC_id_AnnouncementFlexBox"
                                     wrap="Wrap"
-                                 justifyContent="Start" alignItems="Start" 
+                                 justifyContent="Center" alignItems="Start" 
                                     renderType="Bare"
-                                    class="sapUiMediumMarginBottom "
+                                    class="sapUiMediumMarginBottom"
                                     items="{Announcements>/data}"
                                 >
                                     <m:items>
                                         <f:Card
-                                            width="300px"
+                                            width="320px"
                                             height="400px"
-                                            class="sapUiSmallMarginEnd sapUiMediumMarginBottom"
+                                            class="sapUiTinyMargin sapUiTinyMarginBottom"
                                         >
                                             <f:content>
                                                 <m:VBox
@@ -107,7 +106,7 @@
                                                     <!-- ============ HERO IMAGE ============ -->
                                                     <m:VBox
                                                         width="100%"
-                                                        class="sapUiNoContentPadding announcementHero"
+                                                        class="announcementHero"
                                                     >
                                                         <m:Image
                                                             src="{path:'Announcements>AnnouncementBackground',formatter:'.ANC_formatBase64Image'}"
@@ -120,20 +119,21 @@
                                                     <m:HBox
     class="announcementTopBar"
     alignItems="Center"
-    justifyContent="Start">
+    width="100%"
+    justifyContent="SpaceBetween">
 
     <m:ObjectStatus
         visible="{visibilityModel>/showAdminControls}"
         text="{path:'Announcements>Priority', formatter:'.Formatter.formatStatusText'}"
         state="{path:'Announcements>Priority', formatter:'.Formatter.formatObjectStatus'}"
-        class="sapUiTinyMarginEnd"/>
+       />
 
     <m:Button
         icon="sap-icon://full-screen"
         type="Transparent"
         press="ANC_onViewBackground"/>
 </m:HBox>
-                                                       <m:VBox class="overlayContent">
+                                                       <m:VBox class="overlayContentANC">
 
     <m:Title
         text="{Announcements>AnnouncementTitle}"
@@ -145,11 +145,10 @@
     <!-- Expires Date -->
     <m:HBox
         visible="{visibilityModel>/showAdminControls}"
-        alignItems="Center"
-        class="sapUiTinyMarginBottom">
+        alignItems="Center">
 
         <m:Label
-            text="{i18n>ExpiresDate}"
+            text="{i18n>labelExpriresdate}"
             design="Bold"
             class="datetextannouncement sapUiTinyMarginEnd"
         />
@@ -169,7 +168,7 @@
     class="sapUiTinyMarginBottom">
 
     <m:Label
-        text="{i18n>departmentAnnouncement}"
+        text="{i18n>labeldepartment}"
         design="Bold"
         class="datetextannouncement sapUiTinyMarginEnd"/>
 
@@ -188,14 +187,15 @@
                                                         class="sapUiTinyMargin"
                                                         height="80%"
                                                         justifyContent="SpaceBetween"
+                                                        alignItems="Start"
                                                     >
                                                         <!-- TOP GROUP: description only -->
                                                         <m:VBox>
                                                             <m:Text
                                                                 text="{Announcements>AnnouncementMessage}"
                                                                 wrapping="true"
-                                                                maxLines="8"
-                                                                class="sapUiSmallMarginTop"
+                                                                maxLines="11"
+                                                                class="textannouncement  sapUiTinyMargin"
                                                             />
                                                         </m:VBox>
                                                         <!-- BOTTOM GROUP: Attachment + Edit / Delete, always pinned to card bottom -->
@@ -234,6 +234,7 @@
                                         </f:Card>
                                     </m:items>
                                 </m:FlexBox>
+                                
                             </blocks>
                         </ObjectPageSubSection>
                     </subSections>
