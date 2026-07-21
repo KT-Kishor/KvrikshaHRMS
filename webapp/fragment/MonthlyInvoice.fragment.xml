@@ -4,8 +4,8 @@
 
     <Dialog
         id="MonthlyInvoiceDialog"
-        contentWidth="1000px"
-        contentHeight="500px"
+        contentWidth="auto"
+        contentHeight="auto"
         resizable="true"
         draggable="true">
 
