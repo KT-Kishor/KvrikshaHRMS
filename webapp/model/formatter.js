@@ -529,7 +529,7 @@ sap.ui.define(["sap/ui/core/format/DateFormat"], function (DateFormat) {
 
         paymentOrActualAmount: function(paymentAmount, currency) {
             var value = Number(paymentAmount || 0);
-            if (isNaN(value)) return "- -";
+            if (isNaN(value)) return "0.00";
 
             var oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
                 groupingBaseSize: 3,
