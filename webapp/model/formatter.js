@@ -239,7 +239,7 @@ sap.ui.define(["sap/ui/core/format/DateFormat"], function (DateFormat) {
             }
 
             if (avalue === "0" || avalue === 0) {
-                return "- -";
+                return "0.00";
             }
             var numericValue = parseFloat(avalue);
             if (isNaN(numericValue)) {
@@ -486,7 +486,7 @@ sap.ui.define(["sap/ui/core/format/DateFormat"], function (DateFormat) {
                 isNaN(amount) ||
                 amount === 0
             ) {
-                return "-- ";
+                return "0.00 " + (currency || "");
             }
 
             // Convert amount safely to number
@@ -714,22 +714,20 @@ sap.ui.define(["sap/ui/core/format/DateFormat"], function (DateFormat) {
 
             return (bytes / (1024 * 1024)).toFixed(2) + " MB";
         },
-        formatSubTypeText: function (sSubType, vNoofDays, sLeaveSessionType) {
+      formatSubTypeText: function (sSubType, vNoofDays, sLeaveSessionType) {
 
     if (sSubType === "Overtime") {
 
         var fNoofDays = parseFloat(vNoofDays) || 0;
+        var sDayText = fNoofDays === 1 ? "Day" : "Days";
 
-        // If NoofDays > 0.5, do not show leaveSessionType
-       if (fNoofDays > 0.5) {
+        // If there is a half day (.5), include the session type
+        if (fNoofDays % 1 === 0.5) {
+            return sSubType + " (" + fNoofDays + " " + sDayText + " - " + sLeaveSessionType + ")";
+        }
 
-    var sDayText = fNoofDays === 1 ? "Day" : "Days";
-
-    return sSubType + " (" + fNoofDays + " " + sDayText + ")";
-}
-
-        // If NoofDays <= 0.5, show leaveSessionType
-        return sSubType + " (" + fNoofDays + " - " + sLeaveSessionType + ")";
+        // Full day(s)
+        return sSubType + " (" + fNoofDays + " " + sDayText + ")";
     }
 
     return sSubType;
@@ -744,8 +742,59 @@ sap.ui.define(["sap/ui/core/format/DateFormat"], function (DateFormat) {
                 default:
                     return "";
             }
-        }
-    
+        },
+    CurrencyInINRExpense: function (sValue) {
+    if (sValue || sValue === 0) {
+        return parseFloat(sValue).toLocaleString("en-IN") + " INR";
+    }
+    return "";
+},
+fromatNumberexpense: function (currencyOrValue, totalAmount, amountInINR) {
+    var avalue;
+
+    // If only one argument passed, treat it as value to format
+    if (totalAmount === undefined && amountInINR === undefined) {
+        avalue = currencyOrValue;
+    } else {
+        // Multi-parameter call from multi-part binding
+        avalue = currencyOrValue === "INR" ? totalAmount : amountInINR;
+    }
+
+    if (avalue === "0" || avalue === 0) {
+        return "- -";
+    }
+
+    var numericValue = parseFloat(avalue);
+    if (isNaN(numericValue)) {
+        return "";
+    }
+
+    var oFormatOptions = {
+        groupingBaseSize: 3,
+        groupingSize: 2,
+        minIntegerDigits: 1,
+        minFractionDigits: 2,
+        maxFractionDigits: 2
+    };
+
+    var oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance(oFormatOptions);
+
+    return oFloatFormat.format(numericValue) + " INR";
+},
+formatPaymentSubtitle: function (fPending, fReimbursement) {
+
+    var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+        groupingBaseSize: 3,
+        groupingSize: 2,
+        minFractionDigits: 0,
+        maxFractionDigits: 2
+    });
+
+    var sPending = oFormat.format(fPending || 0);
+    var sReimbursement = oFormat.format(fReimbursement || 0);
+
+    return "Pending: " + sPending + " INR | Reimbursement: " + sReimbursement + " INR";
+}
 
     };
 });

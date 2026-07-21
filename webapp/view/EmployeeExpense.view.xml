@@ -10,6 +10,7 @@
     xmlns:viz="sap.viz.ui5.controls"
     xmlns:vizFeeds="sap.viz.ui5.controls.common.feeds"
     xmlns:vizData="sap.viz.ui5.data"
+    xmlns:c="sap.suite.ui.microchart"
 >
     <Page
         id="EE_id_Page"
@@ -90,9 +91,60 @@
                     alignItems="Start"
                     class="invoiceTileContainer sapUiTinyMarginBottom"
                 >
+                <GenericTile
+                                    class="tileLayout customTileWidth blueTile"
+                                   header="{= 'Previous FY - ' + ${EE_ExpenseModel>/PreFinancialYear} }"
+                                    frameType="TwoByOne"
+                                    press="onPressManageJobs"
+                                >
+                                    <tileContent>
+                                        <TileContent frameType="TwoByOne">
+                                            <content>
+                                                <c:ComparisonMicroChart
+                                                    view="Wide"
+                                                    size="Responsive"
+                                                >
+                                                    <c:data>    
+                                                        <c:ComparisonMicroChartData
+                                                            title="Total Expense"
+                                                            value="{EE_ExpenseModel>/PreTotalAmount}"
+                                                            displayValue="{
+                                path:'EE_ExpenseModel>/PreTotalAmount',
+                                formatter:'.Formatter.CurrencyInINRExpense'
+                            }"
+                                                            color="Neutral"
+                                                             
+                                                        />
+                                                        <c:ComparisonMicroChartData
+                                                            title="Total Reimbursement"
+                                                            value="{EE_ExpenseModel>/PreReimbursementAmount}"
+                                                            displayValue="{
+                                path:'EE_ExpenseModel>/PreReimbursementAmount',
+                                formatter:'.Formatter.CurrencyInINRExpense'
+                            }"
+                                                            color="Good"
+                                                            
+                                                        />
+                                                        <c:ComparisonMicroChartData
+                                                            title="Total Pending"
+                                                            value="{EE_ExpenseModel>/PrePendingAmount}"
+                                                            displayValue="{
+                                path:'EE_ExpenseModel>/PrePendingAmount',
+                                formatter:'.Formatter.CurrencyInINRExpense'
+                            }"
+                                                            color="Error"
+                                                           
+                                                        />
+                                                    </c:data>
+                                                </c:ComparisonMicroChart>
+                                            </content>
+                                        </TileContent>
+                                    </tileContent>
+                                </GenericTile>
                     <GenericTile
                         class="tileLayout customTileWidth blueTile"
                         header="{i18n>totalExpense}"
+                          subheader="{= ${EE_ExpenseModel>/totalExpenseCount} + ' Open Claims' }"
                         press="onTilePress"
                     >
                         <customData>
@@ -102,7 +154,7 @@
                             />
                         </customData>
                         <tileContent>
-                            <TileContent unit="INR">
+                            <TileContent >
                                 <content>
                                     <NumericContent
                                         value="{
@@ -118,65 +170,11 @@
                             </TileContent>
                         </tileContent>
                     </GenericTile>
-                    <GenericTile
-                        class="tileLayout customTileWidth orangeTile"
-                        header="{i18n>companyExpense}"
-                        press="onTilePress"
-                    >
-                        <customData>
-                            <core:CustomData
-                                key="type"
-                                value="COMPANY"
-                            />
-                        </customData>
-                        <tileContent>
-                            <TileContent unit="INR">
-                                <content>
-                                    <NumericContent
-                                        value="{
-        path:'EE_ExpenseModel>/companyExpense',
-        formatter:'.formatter.fromatNumberinvoice'
-    }"
-                                        scale="K"
-                                        indicator="Down"
-                                        icon="sap-icon://paid-leave"
-                                        valueColor="Critical"
-                                    />
-                                </content>
-                            </TileContent>
-                        </tileContent>
-                    </GenericTile>
-                    <GenericTile
-                        class="tileLayout customTileWidth redTile"
-                        header="{i18n>pendingExpense}"
-                        press="onTilePress"
-                    >
-                        <customData>
-                            <core:CustomData
-                                key="type"
-                                value="PENDING"
-                            />
-                        </customData>
-                        <tileContent>
-                            <TileContent unit="INR">
-                                <content>
-                                    <NumericContent
-                                        value="{
-        path:'EE_ExpenseModel>/pendingExpense',
-        formatter:'.formatter.fromatNumberinvoice'
-    }"
-                                        scale="K"
-                                        indicator="Down"
-                                        icon="sap-icon://pending"
-                                        valueColor="Error"
-                                    />
-                                </content>
-                            </TileContent>
-                        </tileContent>
-                    </GenericTile>
+                    
                     <GenericTile
                         class="tileLayout customTileWidth greenTile"
                         header="{i18n>reimbursementAmount}"
+                          subheader="{= ${EE_ExpenseModel>/reimbursementExpenseCount} + ' Open Claims' }"
                         press="onTilePress"
                     >
                         <customData>
@@ -186,7 +184,7 @@
                             />
                         </customData>
                         <tileContent>
-                            <TileContent unit="INR">
+                            <TileContent >
                                 <content>
                                     <NumericContent
                                         value="{
@@ -202,6 +200,35 @@
                             </TileContent>
                         </tileContent>
                     </GenericTile>
+                     <GenericTile
+                        class="tileLayout customTileWidth redTile"
+                        header="{i18n>pendingExpense}"
+                        subheader="{= ${EE_ExpenseModel>/pendingExpenseCount} + ' Open Claims' }"
+                        press="onTilePress"
+                    >
+                        <customData>
+                            <core:CustomData
+                                key="type"
+                                value="PENDING"
+                            />
+                        </customData>
+                        <tileContent>
+                            <TileContent >
+                                <content>
+                                    <NumericContent
+                                        value="{
+        path:'EE_ExpenseModel>/pendingExpense',
+        formatter:'.formatter.fromatNumberinvoice'
+    }"
+                                        scale="K"
+                                        indicator="Down"
+                                        icon="sap-icon://pending"
+                                        valueColor="Error"
+                                    />
+                                </content>
+                            </TileContent>
+                        </tileContent>
+                    </GenericTile>
                 </FlexBox>
 
                 <!-- ================= EXPENSE TYPE BREAKDOWN + PAYMENT BREAKDOWN ================= -->
@@ -212,6 +239,186 @@
                 >
                     <layout:content>
                         <!-- LEFT SIDE CARD -->
+                        <f:Card>
+                            <f:header>
+                                <card:Header
+                                    title="{i18n>monthlyExpenseTrend}"
+                                    subtitle="{i18n>financialYearOverview}"
+                                />
+                            </f:header>
+                            <f:content>
+                                <viz:VizFrame
+                                    id="EE_id_MonthlyChart"
+                                    vizType="line"
+                                    width="100%"
+                                    height="350px"
+                                    selectData="onMonthlyChartSelect"
+                                    uiConfig="{applicationSet:'fiori'}"
+                                    vizProperties="{
+        title: { visible: false }
+    }"
+                                >
+                                    <viz:dataset>
+                                        <vizData:FlattenedDataset
+                                            data="{EE_ExpenseChartModel>/monthly}"
+                                        >
+                                            <vizData:dimensions>
+                                                <vizData:DimensionDefinition
+                                                    name="Month"
+                                                    value="{EE_ExpenseChartModel>Month}"
+                                                />
+                                            </vizData:dimensions>
+                                            <vizData:measures>
+                                                <vizData:MeasureDefinition
+                                                    name="Total Amount"
+                                                    value="{EE_ExpenseChartModel>TotalAmount}"
+                                                />
+                                            </vizData:measures>
+                                        </vizData:FlattenedDataset>
+                                    </viz:dataset>
+                                    <viz:feeds>
+                                        <vizFeeds:FeedItem
+                                            uid="valueAxis"
+                                            type="Measure"
+                                            values="Total Amount"
+                                        />
+                                        <vizFeeds:FeedItem
+                                            uid="categoryAxis"
+                                            type="Dimension"
+                                            values="Month"
+                                        />
+                                    </viz:feeds>
+                                </viz:VizFrame>
+                            </f:content>
+                        </f:Card>
+                        
+                        <!-- RIGHT SIDE PIE CHART -->
+                        <f:Card>
+                            <f:header>
+                                <card:Header
+                                    title="{i18n>paymentBreakdown}"
+                                    subtitle="{
+    parts: [
+        { path: 'EE_ExpenseModel>/pendingExpense' },
+        { path: 'EE_ExpenseModel>/reimbursementAmount' }
+    ],
+    formatter: '.formatter.formatPaymentSubtitle'
+}"
+                                />
+                            </f:header>
+                            <f:content>
+                                <viz:VizFrame
+                                    id="EE_id_ExpenseTypeChart"
+                                    vizType="donut"
+                                    width="100%"
+                                    height="350px"
+                                    selectData="onExpenseChartSelect"
+                                    uiConfig="{applicationSet:'fiori'}"
+                                >
+                                    <viz:dataset>
+                                        <vizData:FlattenedDataset
+                                            data="{EE_ExpenseChartModel>/typeChart}"
+                                        >
+                                            <vizData:dimensions>
+                                                <vizData:DimensionDefinition
+                                                    name="Expense Type"
+                                                    value="{EE_ExpenseChartModel>ExpenseType}"
+                                                />
+                                            </vizData:dimensions>
+                                            <vizData:measures>
+                                                <vizData:MeasureDefinition
+                                                    name="Amount"
+                                                    value="{EE_ExpenseChartModel>Amount}"
+                                                />
+                                            </vizData:measures>
+                                        </vizData:FlattenedDataset>
+                                    </viz:dataset>
+
+                                    <viz:feeds>
+                                        <vizFeeds:FeedItem
+                                            uid="size"
+                                            type="Measure"
+                                            values="Amount"
+                                        />
+
+                                        <vizFeeds:FeedItem
+                                            uid="color"
+                                            type="Dimension"
+                                            values="Expense Type"
+                                        />
+                                    </viz:feeds>
+                                </viz:VizFrame>
+                            </f:content>
+                        </f:Card>
+                    </layout:content>
+                </layout:Grid>
+
+                <!-- ================= MONTHLY CHART + TRIP TYPE CHART ================= -->
+                <layout:Grid
+                    defaultSpan="XL6 L6 M12 S12"
+                    hSpacing="1"
+                    vSpacing="1"
+                >
+                    <layout:content>
+                        
+                        <!-- ================= STATUS CHART ================= -->
+                        <f:Card>
+                            <f:header>
+                                <card:Header
+                                    title="{i18n>tripTypeAnalysis}"
+                                    subtitle="{i18n>expenseByTripType}"
+                                />
+                            </f:header>
+                            <f:content>
+                                <viz:VizFrame
+                                    id="EE_id_TripTypeChart"
+                                    vizType="column"
+                                    width="100%"
+                                    height="350px"
+                                    selectData="onTripChartSelect"
+                                    uiConfig="{applicationSet:'fiori'}"
+                                    vizProperties="{
+        title: { visible: false }
+    }"
+                                >
+                                    <viz:dataset>
+                                        <vizData:FlattenedDataset
+                                            data="{EE_ExpenseChartModel>/tripType}"
+                                        >
+                                            <vizData:dimensions>
+                                                <vizData:DimensionDefinition
+                                                    name="Trip Type"
+                                                    value="{EE_ExpenseChartModel>TripType}"
+                                                />
+                                            </vizData:dimensions>
+                                            <vizData:measures>
+                                                <vizData:MeasureDefinition
+                                                    name="Amount"
+                                                    value="{EE_ExpenseChartModel>Amount}"
+                                                />
+                                            </vizData:measures>
+                                        </vizData:FlattenedDataset>
+                                    </viz:dataset>
+                                    <viz:feeds>
+                                        <vizFeeds:FeedItem
+                                            uid="valueAxis"
+                                            type="Measure"
+                                            values="Amount"
+                                        />
+                                        <vizFeeds:FeedItem
+                                            uid="categoryAxis"
+                                            type="Dimension"
+                                            values="Trip Type"
+                                        />
+                                        <vizFeeds:FeedItem
+                                            uid="color"
+                                            type="Dimension"
+                                            values="Trip Type"
+                                        />
+                                    </viz:feeds>
+                                </viz:VizFrame>
+                            </f:content>
+                        </f:Card>
                         <f:Card>
                             <f:header>
                                 <card:Header
@@ -292,178 +499,6 @@
                                         </CustomListItem>
                                     </List>
                                 </ScrollContainer>
-                            </f:content>
-                        </f:Card>
-                        <!-- RIGHT SIDE PIE CHART -->
-                        <f:Card>
-                            <f:header>
-                                <card:Header
-                                    title="{i18n>paymentBreakdown}"
-                                    subtitle="{i18n>expensePaymentAnalysis}"
-                                />
-                            </f:header>
-                            <f:content>
-                                <viz:VizFrame
-                                    id="EE_id_ExpenseTypeChart"
-                                    vizType="donut"
-                                    width="100%"
-                                    height="350px"
-                                    selectData="onExpenseChartSelect"
-                                    uiConfig="{applicationSet:'fiori'}"
-                                >
-                                    <viz:dataset>
-                                        <vizData:FlattenedDataset
-                                            data="{EE_ExpenseChartModel>/typeChart}"
-                                        >
-                                            <vizData:dimensions>
-                                                <vizData:DimensionDefinition
-                                                    name="Expense Type"
-                                                    value="{EE_ExpenseChartModel>ExpenseType}"
-                                                />
-                                            </vizData:dimensions>
-                                            <vizData:measures>
-                                                <vizData:MeasureDefinition
-                                                    name="Amount"
-                                                    value="{EE_ExpenseChartModel>Amount}"
-                                                />
-                                            </vizData:measures>
-                                        </vizData:FlattenedDataset>
-                                    </viz:dataset>
-
-                                    <viz:feeds>
-                                        <vizFeeds:FeedItem
-                                            uid="size"
-                                            type="Measure"
-                                            values="Amount"
-                                        />
-
-                                        <vizFeeds:FeedItem
-                                            uid="color"
-                                            type="Dimension"
-                                            values="Expense Type"
-                                        />
-                                    </viz:feeds>
-                                </viz:VizFrame>
-                            </f:content>
-                        </f:Card>
-                    </layout:content>
-                </layout:Grid>
-
-                <!-- ================= MONTHLY CHART + TRIP TYPE CHART ================= -->
-                <layout:Grid
-                    defaultSpan="XL6 L6 M12 S12"
-                    hSpacing="1"
-                    vSpacing="1"
-                >
-                    <layout:content>
-                        <f:Card>
-                            <f:header>
-                                <card:Header
-                                    title="{i18n>monthlyExpenseTrend}"
-                                    subtitle="{i18n>financialYearOverview}"
-                                />
-                            </f:header>
-                            <f:content>
-                                <viz:VizFrame
-                                    id="EE_id_MonthlyChart"
-                                    vizType="line"
-                                    width="100%"
-                                    height="350px"
-                                    selectData="onMonthlyChartSelect"
-                                    uiConfig="{applicationSet:'fiori'}"
-                                    vizProperties="{
-        title: { visible: false }
-    }"
-                                >
-                                    <viz:dataset>
-                                        <vizData:FlattenedDataset
-                                            data="{EE_ExpenseChartModel>/monthly}"
-                                        >
-                                            <vizData:dimensions>
-                                                <vizData:DimensionDefinition
-                                                    name="Month"
-                                                    value="{EE_ExpenseChartModel>Month}"
-                                                />
-                                            </vizData:dimensions>
-                                            <vizData:measures>
-                                                <vizData:MeasureDefinition
-                                                    name="Total Amount"
-                                                    value="{EE_ExpenseChartModel>TotalAmount}"
-                                                />
-                                            </vizData:measures>
-                                        </vizData:FlattenedDataset>
-                                    </viz:dataset>
-                                    <viz:feeds>
-                                        <vizFeeds:FeedItem
-                                            uid="valueAxis"
-                                            type="Measure"
-                                            values="Total Amount"
-                                        />
-                                        <vizFeeds:FeedItem
-                                            uid="categoryAxis"
-                                            type="Dimension"
-                                            values="Month"
-                                        />
-                                    </viz:feeds>
-                                </viz:VizFrame>
-                            </f:content>
-                        </f:Card>
-                        <!-- ================= STATUS CHART ================= -->
-                        <f:Card>
-                            <f:header>
-                                <card:Header
-                                    title="{i18n>tripTypeAnalysis}"
-                                    subtitle="{i18n>expenseByTripType}"
-                                />
-                            </f:header>
-                            <f:content>
-                                <viz:VizFrame
-                                    id="EE_id_TripTypeChart"
-                                    vizType="column"
-                                    width="100%"
-                                    height="350px"
-                                    selectData="onTripChartSelect"
-                                    uiConfig="{applicationSet:'fiori'}"
-                                    vizProperties="{
-        title: { visible: false }
-    }"
-                                >
-                                    <viz:dataset>
-                                        <vizData:FlattenedDataset
-                                            data="{EE_ExpenseChartModel>/tripType}"
-                                        >
-                                            <vizData:dimensions>
-                                                <vizData:DimensionDefinition
-                                                    name="Trip Type"
-                                                    value="{EE_ExpenseChartModel>TripType}"
-                                                />
-                                            </vizData:dimensions>
-                                            <vizData:measures>
-                                                <vizData:MeasureDefinition
-                                                    name="Amount"
-                                                    value="{EE_ExpenseChartModel>Amount}"
-                                                />
-                                            </vizData:measures>
-                                        </vizData:FlattenedDataset>
-                                    </viz:dataset>
-                                    <viz:feeds>
-                                        <vizFeeds:FeedItem
-                                            uid="valueAxis"
-                                            type="Measure"
-                                            values="Amount"
-                                        />
-                                        <vizFeeds:FeedItem
-                                            uid="categoryAxis"
-                                            type="Dimension"
-                                            values="Trip Type"
-                                        />
-                                        <vizFeeds:FeedItem
-                                            uid="color"
-                                            type="Dimension"
-                                            values="Trip Type"
-                                        />
-                                    </viz:feeds>
-                                </viz:VizFrame>
                             </f:content>
                         </f:Card>
                     </layout:content>

@@ -134,7 +134,7 @@
                                 buttonOnly="true"
                                 buttonText="{i18n>Browse}"
                                 sameFilenameAllowed="true"
-                                fileType="pdf"
+                                fileType="pdf,jpg,jpeg,png"
                                 width="auto"
                                 change="ANC_onAttachmentChange"
                                 typeMissmatch="ANC_onAttachmentTypeMismatch"

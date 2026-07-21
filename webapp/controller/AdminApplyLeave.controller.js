@@ -901,12 +901,7 @@ sap.ui.define(
                 AL_onPressSubmit: async function () {
                     try {
                         // Validate fields
-                        if (
-                            utils._LCstrictValidationComboBox(sap.ui.getCore().byId("AL_id_Leavetype"), "ID") &&
-                            utils._LCvalidateDate(sap.ui.getCore().byId("AL_id_FromDate"), "ID") &&
-                            utils._LCvalidateDate(sap.ui.getCore().byId("AL_id_ToDate"), "ID") &&
-                            utils._LCvalidateMandatoryField(sap.ui.getCore().byId("AL_id_LeaveComments"), "ID")
-                        ) {
+                        if ( utils._LCstrictValidationComboBox(sap.ui.getCore().byId("AL_id_Leavetype"), "ID") && utils._LCvalidateDate(sap.ui.getCore().byId("AL_id_FromDate"), "ID") && utils._LCvalidateDate(sap.ui.getCore().byId("AL_id_ToDate"), "ID") && utils._LCvalidateMandatoryField(sap.ui.getCore().byId("AL_id_LeaveComments"), "ID")) {
                             var oData = this.getView().getModel("LeaveTempModel").getData();
                             var oRadioGroup = sap.ui.getCore().byId("AL_id_leasveSessionType");
                             if (JSON.parse(oData.halfDay) && (!oData.leaveSessionType || oData.leaveSessionType === "")) {
@@ -952,7 +947,9 @@ sap.ui.define(
                                 }
                                 var appliedDays = parseFloat(oData.NoofDays);
                                 if (appliedDays > availableQuota) {
-                                    return MessageBox.error("You have " + availableQuota + " CompOff days remaining.");
+                                   return MessageBox.error(
+                               "No CompOff balance is available. You cannot submit a CompOff request at this time."
+                               );
                                 }
                             }
 
@@ -1065,6 +1062,34 @@ sap.ui.define(
                                 }
                             }
 
+                            if (oData.typeOfLeave === "Sick Leave") {
+                                var leaveTypeData = this.getView().getModel("leaveTypeModel").getData();
+                                var sickQuota = 0;
+
+                                // ⚠️ Adjust field names to match your actual leaveTypeModel structure
+                                if (Array.isArray(leaveTypeData) && leaveTypeData.length > 0) {
+                                    var sickEntry = leaveTypeData.find(function (item) {
+                                        return item.name === "Sick Leave";
+                                    });
+                                    sickQuota = sickEntry ? parseFloat(sickEntry.quota || "0") : 0;
+                                } else if (leaveTypeData && leaveTypeData.quota) {
+                                    sickQuota = parseFloat(leaveTypeData.quota || "0");
+                                }
+
+                                var usedSickDays = LeaveModel
+                                    .filter(function (item) { return item.typeOfLeave === "Sick Leave" && (item.status === "Approved" || item.status === "Submitted") })
+                                    .reduce(function (total, item) {
+                                        return total + parseFloat(item.NoofDays || 0);
+                                    }, 0);
+
+                                // 3. Add the currently applied days
+                                var appliedDays = parseFloat(oData.NoofDays);
+                                var projectedSickDays = usedSickDays + appliedDays;
+
+                                // 4. Check against quota
+                                if (projectedSickDays > sickQuota) return MessageBox.error("You have exceeded your Sick Leave quota.");
+                            }
+
                             if (oData.typeOfLeave === "LOP" || oData.typeOfLeave === "CompOff" || totalNoofDays <= quotaLeave.Count) {
                                 oData.fromDate = new Date(startDate.getTime() - startDate.getTimezoneOffset() * 60000).toISOString().split("T")[0];
                                 oData.toDate = new Date(endDate.getTime() - endDate.getTimezoneOffset() * 60000).toISOString().split("T")[0];
@@ -1107,12 +1132,7 @@ sap.ui.define(
                 AL_onPressSave: async function () {
                     try {
                         // Validate fields
-                        if (
-                            utils._LCstrictValidationComboBox(sap.ui.getCore().byId("AL_id_Leavetype"), "ID") &&
-                            utils._LCvalidateDate(sap.ui.getCore().byId("AL_id_FromDate"), "ID") &&
-                            utils._LCvalidateDate(sap.ui.getCore().byId("AL_id_ToDate"), "ID") &&
-                            utils._LCvalidateMandatoryField(sap.ui.getCore().byId("AL_id_LeaveComments"), "ID")
-                        ) {
+                        if (utils._LCstrictValidationComboBox(sap.ui.getCore().byId("AL_id_Leavetype"), "ID") && utils._LCvalidateDate(sap.ui.getCore().byId("AL_id_FromDate"), "ID") && utils._LCvalidateDate(sap.ui.getCore().byId("AL_id_ToDate"), "ID") && utils._LCvalidateMandatoryField(sap.ui.getCore().byId("AL_id_LeaveComments"), "ID")) {
                             var oData = this.getView().getModel("LeaveTempModel").getData();
 
                             var oRadioGroup = sap.ui.getCore().byId("AL_id_leasveSessionType");
@@ -1262,10 +1282,37 @@ sap.ui.define(
 
                             // Final quota check
                             var valid = true;
-                            if (parseFloat(this.UpdateNoofDays) === parseFloat(oData.NoofDays)) {
-                                valid = true;
-                            } else {
-                                valid = totalNoofDays <= quotaLeave.Count
+                            (parseFloat(this.UpdateNoofDays) === parseFloat(oData.NoofDays)) ? valid = true : valid = totalNoofDays <= quotaLeave.Count
+
+                            if (oData.typeOfLeave === "Sick Leave") {
+                                var leaveTypeData = this.getView().getModel("leaveTypeModel").getData();
+                                var sickQuota = 0;
+
+                                // ⚠️ Adjust field names to match your actual leaveTypeModel structure
+                                if (Array.isArray(leaveTypeData) && leaveTypeData.length > 0) {
+                                    var sickEntry = leaveTypeData.find(function (item) {
+                                        return item.name === "Sick Leave";
+                                    });
+                                    sickQuota = sickEntry ? parseFloat(sickEntry.quota || "0") : 0;
+                                } else if (leaveTypeData && leaveTypeData.quota) {
+                                    sickQuota = parseFloat(leaveTypeData.quota || "0");
+                                }
+
+                                var usedSickDays = LeaveModel
+                                    .filter(function (item) {
+                                        return item.typeOfLeave === "Sick Leave" &&
+                                            (item.status === "Approved" || item.status === "Submitted");
+                                    })
+                                    .reduce(function (total, item) {
+                                        return total + parseFloat(item.NoofDays || 0);
+                                    }, 0);
+
+                                // Subtract this record's own previous days, since we're editing it (not adding new)
+                                var projectedSickDays = usedSickDays + parseFloat(oData.NoofDays) - parseFloat(this.UpdateNoofDays || 0);
+
+                                if (projectedSickDays > sickQuota) {
+                                    return MessageBox.error("You have exceeded your Sick Leave quota.");
+                                }
                             }
 
                             // Check leave type and quota
@@ -1517,11 +1564,10 @@ sap.ui.define(
                     const aCols = [
                         { label: this.i18nModel.getText("fromDate"), property: "fromDate", type: "string" },
                         { label: this.i18nModel.getText("toDate"), property: "toDate", type: "string" },
-                        { label: this.i18nModel.getText("fromDate"), property: "fromDate", type: "string" },
-                        { label: this.i18nModel.getText("toDate"), property: "toDate", type: "string" },
                         { label: this.i18nModel.getText("noOfDays"), property: "NoofDays", type: "string" },
                         { label: this.i18nModel.getText("typeOfLeave"), property: "typeOfLeave", type: "string" },
                         { label: this.i18nModel.getText("halfDay"), property: "halfDay", type: "string " },
+                        { label: this.i18nModel.getText("status"), property: "status", type: "string " },
                     ];
                     const oSettings = {
                         workbook: {

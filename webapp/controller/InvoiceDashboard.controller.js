@@ -4,20 +4,27 @@ sap.ui.define([
     "sap/m/MessageToast",
     "sap/ui/core/Fragment",
     "../model/formatter",
-], function (BaseController, JSONModel, MessageToast, Fragment, Formatter) {
+], function(BaseController, JSONModel, MessageToast, Fragment, Formatter) {
     "use strict";
-    const INITIAL_CHART_TYPES = { statusType: "donut", monthlyType: "line", companyType: "bar", yearlyType: "line", paymentBreakdownType: "bar", pendingByCompanyType: "bar" };
+    const INITIAL_CHART_TYPES = {
+        statusType: "donut",
+        monthlyType: "line",
+        companyType: "bar",
+        yearlyType: "line",
+        paymentBreakdownType: "bar",
+        pendingByCompanyType: "bar"
+    };
     return BaseController.extend("sap.kt.com.minihrsolution.controller.InvoiceDashboard", {
         Formatter: Formatter,
-        onInit: function () {
+        onInit: function() {
             this.getView().setModel(new JSONModel(INITIAL_CHART_TYPES), "invoiceChartTypeModel");
             this.getOwnerComponent().getRouter().getRoute("RouteInvoiceDashboard").attachPatternMatched(this._onObjectMatched, this);
             this.getView().setModel(new JSONModel([]), "companies");
             this.getOwnerComponent().getRouter().getRoute("RouteInvoiceDashboard").attachPatternMatched(this._onObjectMatched, this);
         },
 
-        _onObjectMatched: async function () {
-            var LoginFUnction = await this.commonLoginFunction("InvoiceDashboard");//CompanyInvoice
+        _onObjectMatched: async function() {
+            var LoginFUnction = await this.commonLoginFunction("InvoiceDashboard"); //CompanyInvoice
             if (!LoginFUnction) return;
             this.getView().getModel("LoginModel").setProperty("/HeaderName", "Invoice Dashboard");
             this.i18nModel = this.getView().getModel("i18n").getResourceBundle();
@@ -25,7 +32,15 @@ sap.ui.define([
             this.invoiceChartTypeModel = this.getView().getModel("invoiceChartTypeModel")
 
             var oJsonModel = new JSONModel({
-                Chart1: [], Chart2: [], Chart3: [], Chart4: [], Chart5: [], Chart6: [], Chart7: [], Chart8: [], PaymentDetails: []
+                Chart1: [],
+                Chart2: [],
+                Chart3: [],
+                Chart4: [],
+                Chart5: [],
+                Chart6: [],
+                Chart7: [],
+                Chart8: [],
+                PaymentDetails: []
             });
             this.getView().setModel(oJsonModel, "InvoiceDashboardModel");
             this.InvoiceDashboardModel = this.getView().getModel("InvoiceDashboardModel");
@@ -40,7 +55,7 @@ sap.ui.define([
                 this.closeBusyDialog();
             });
         },
-        onFilterChange: async function () {
+        onFilterChange: async function() {
             try {
                 const oCompanyFilter = this.byId("companyFilter");
                 const oYearFilter = this.byId("yearFilter");
@@ -51,7 +66,9 @@ sap.ui.define([
                 let dFrom = oDateRange.getDateValue();
                 let dTo = oDateRange.getSecondDateValue();
 
-                let filters = { CustomerName: aSelectedCompanies.join(",") };
+                let filters = {
+                    CustomerName: aSelectedCompanies.join(",")
+                };
 
                 // ✅ Common Date Formatter (move outside)
                 const formatDate = (date) => {
@@ -65,10 +82,9 @@ sap.ui.define([
                 if (dFrom && dTo) {
                     this.byId("yearFilter").setValue("");
 
-                    filters.InvoiceStartDate = formatDate(dFrom);   // ✅ FIXED
-                    filters.InvoiceEndDate = formatDate(dTo);       // ✅ FIXED
-                }
-                else {
+                    filters.InvoiceStartDate = formatDate(dFrom); // ✅ FIXED
+                    filters.InvoiceEndDate = formatDate(dTo); // ✅ FIXED
+                } else {
                     let startYear;
 
                     if (sSelectedYear) {
@@ -76,16 +92,16 @@ sap.ui.define([
                     } else {
                         // ✅ Get Current Financial Year
                         const today = new Date();
-                        startYear = today.getMonth() >= 3
-                            ? today.getFullYear()
-                            : today.getFullYear() - 1;
+                        startYear = today.getMonth() >= 3 ?
+                            today.getFullYear() :
+                            today.getFullYear() - 1;
                     }
 
                     const endYear = startYear + 1;
                     this.byId("yearFilter").setValue(startYear + " - " + endYear);
 
-                    const fyStart = new Date(startYear, 3, 1);  // April 1
-                    const fyEnd = new Date(endYear, 2, 31);     // March 31
+                    const fyStart = new Date(startYear, 3, 1); // April 1
+                    const fyEnd = new Date(endYear, 2, 31); // March 31
 
                     filters.InvoiceStartDate = formatDate(fyStart);
                     filters.InvoiceEndDate = formatDate(fyEnd);
@@ -99,7 +115,7 @@ sap.ui.define([
                 this.InvoiceDashboardModel.setProperty("/Chart5", response.paymentBreakdownMap);
                 this.InvoiceDashboardModel.setProperty("/Chart6", response.PendingInvoice);
                 this.InvoiceDashboardModel.setProperty("/TileData", response.TileData);
-                
+
                 var responseData = await this.ajaxCreateWithJQuery("getCompanyInvoiceYearlyTrend", filters);
                 this.InvoiceDashboardModel.setProperty("/Chart4", responseData.data);
                 this.InvoiceDashboardModel.setProperty("/PaymentDetails", responseData.AllPaymentDetails);
@@ -109,6 +125,7 @@ sap.ui.define([
                 this.InvoiceDashboardModel.setProperty("/Chart8", responseCreditNote.data.MonthChart);
                 this.InvoiceDashboardModel.setProperty("/CreditNoteTotalAmount", responseCreditNote.data.CreditNoteTotalAmount);
                 this.InvoiceDashboardModel.setProperty("/CreditNoteCount", responseCreditNote.data.CreditNoteCount);
+                this._calculateTrend();
                 this.closeBusyDialog();
             } catch (error) {
                 MessageToast.show(error.message || error.responseText);
@@ -116,7 +133,7 @@ sap.ui.define([
             }
         },
 
-        onchangeFY: function (oEvent) {
+        onchangeFY: function(oEvent) {
             // get selected year from DatePicker
             const sYear = oEvent.getSource().getValue();
             if (!sYear) return;
@@ -127,7 +144,7 @@ sap.ui.define([
             this.byId("yearFilter").setValue(financialYear);
         },
 
-        onClearFilters: function () {
+        onClearFilters: function() {
             this.byId("companyFilter").setSelectedKeys(null);
             this.byId("DashI_id_Date").setValue("");
 
@@ -145,7 +162,7 @@ sap.ui.define([
         },
 
         // First chart click event handler
-        onStatusChartSelect: function (oEvent) {
+        onStatusChartSelect: function(oEvent) {
             const oData = oEvent.getParameter("data")?.[0];
             if (!oData || !oData.data?.Status) return;
             const sStatus = oData.data.Status;
@@ -192,25 +209,28 @@ sap.ui.define([
                 oDialog.open(); // Dialog, not Popover
             });
         },
-        onCloseDialog: function (oEvent) {
+        onCloseDialog: function(oEvent) {
             oEvent.getSource().getParent().getParent().close();
         },
-        onInvoicePaymentAmountPress: function (oEvent) {
+        onInvoicePaymentAmountPress: function(oEvent) {
             const oContext = oEvent.getSource().getBindingContext("popoverData");
             this.onCommonPaymentAmountPress(oContext, oEvent.getSource());
         },
-        onInvoiceNumberPress: function (oEvent) {
+        onInvoiceNumberPress: function(oEvent) {
 
-            this.getRouter().navTo("RouteCompanyInvoiceDetails", { sPath: encodeURIComponent(oEvent.getSource().getBindingContext("popoverData").getObject().InvNo), dash: "InvoiceDashboard" });
+            this.getRouter().navTo("RouteCompanyInvoiceDetails", {
+                sPath: encodeURIComponent(oEvent.getSource().getBindingContext("popoverData").getObject().InvNo),
+                dash: "InvoiceDashboard"
+            });
         },
-        onPressFirstChart: function (oEvent) {
+        onPressFirstChart: function(oEvent) {
             var oContext = oEvent.getSource().getBindingContext("popoverData");
             this.onCommonCreditNotesPress(oContext);
         },
 
 
         //Second chart click event handler
-        onMonthlyInvoiceSelect: function (oEvent) {
+        onMonthlyInvoiceSelect: function(oEvent) {
             const oData = oEvent.getParameter("data")?.[0];
             if (!oData || !oData.data?.Month) return;
             const Month = oData.data.Month;
@@ -256,29 +276,32 @@ sap.ui.define([
                 oDialog.open(); // Dialog, not Popover
             });
         },
-        onCloseDialog: function (oEvent) {
+        onCloseDialog: function(oEvent) {
             oEvent.getSource().getParent().getParent().close();
         },
 
-        onInvoiceCreditNotesMonthlyPress: function (oEvent) {
+        onInvoiceCreditNotesMonthlyPress: function(oEvent) {
             var oContext = oEvent.getSource().getBindingContext("MonthlyInvoiceData");
             this.onCommonCreditNotesPress(oContext);
         },
-        onMonthlyPaymentAmountPress: function (oEvent) {
+        onMonthlyPaymentAmountPress: function(oEvent) {
             var oContext = oEvent.getSource().getBindingContext("MonthlyInvoiceData");
             this.onCommonPaymentAmountPress(oContext, oEvent.getSource());
         },
-        onPressMonthlyListItem: function (oEvent) {
+        onPressMonthlyListItem: function(oEvent) {
             const oContext = oEvent.getSource().getBindingContext("MonthlyInvoiceData");
             if (!oContext) return;
             const oData = oContext.getObject();
             if (!oData || !oData.InvNo) return;
-            this.getRouter().navTo("RouteCompanyInvoiceDetails", { sPath: encodeURIComponent(oData.InvNo), dash: "InvoiceDashboard" });
+            this.getRouter().navTo("RouteCompanyInvoiceDetails", {
+                sPath: encodeURIComponent(oData.InvNo),
+                dash: "InvoiceDashboard"
+            });
         },
 
 
         //Third chart click event handler
-        onTotalInvoiceValueSelect: function (oEvent) {
+        onTotalInvoiceValueSelect: function(oEvent) {
             const oData = oEvent.getParameter("data")?.[0];
             if (!oData || !oData.data?.Company) return;
             const sCompany = oData.data.Company;
@@ -326,25 +349,28 @@ sap.ui.define([
                 oDialog.open();
             });
         },
-        onPressInvoiceDetails: function (oEvent) {
+        onPressInvoiceDetails: function(oEvent) {
             const oContext = oEvent.getSource().getBindingContext("companyPopoverData");
             if (!oContext) return;
             const oData = oContext.getObject();
             if (!oData || !oData.InvNo) return;
-            this.getRouter().navTo("RouteCompanyInvoiceDetails", { sPath: encodeURIComponent(oData.InvNo), dash: "InvoiceDashboard" });
+            this.getRouter().navTo("RouteCompanyInvoiceDetails", {
+                sPath: encodeURIComponent(oData.InvNo),
+                dash: "InvoiceDashboard"
+            });
         },
 
-        onTotalVoicePaymentAmountPress: function (oEvent) {
+        onTotalVoicePaymentAmountPress: function(oEvent) {
             var oContext = oEvent.getSource().getBindingContext("companyPopoverData");
             this.onCommonCreditNotesPress(oContext);
         },
-        onPressActualAmount: function (oEvent) {
+        onPressActualAmount: function(oEvent) {
             var oContext = oEvent.getSource().getBindingContext("companyPopoverData");
             this.onCommonPaymentAmountPress(oContext, oEvent.getSource());
         },
 
         //Fourth chart click event handler - Yearly Invoice Trend
-        onYearlyInvoiceSelect: function (oEvent) {
+        onYearlyInvoiceSelect: function(oEvent) {
             const oData = oEvent.getParameter("data")?.[0];
 
             if (!oData || !oData.data?.Year) return;
@@ -396,21 +422,26 @@ sap.ui.define([
                 });
             }
             this._pYearPopover.then(oDialog => {
-                oDialog.setModel(new JSONModel({ Year: sYear, Records: aYearRecords, TotalAmount: iTotalAmount, AllActualAmount: iActualAmount }), "yearPopoverData");
+                oDialog.setModel(new JSONModel({
+                    Year: sYear,
+                    Records: aYearRecords,
+                    TotalAmount: iTotalAmount,
+                    AllActualAmount: iActualAmount
+                }), "yearPopoverData");
                 oDialog.open();
             });
         },
-        onYearlyPaymentAmountPress: function (oEvent) {
+        onYearlyPaymentAmountPress: function(oEvent) {
             var oContext = oEvent.getSource().getBindingContext("yearPopoverData");
             this.onCommonPaymentAmountPress(oContext, oEvent.getSource());
         },
-        onInvoiceCreditNotesPress: function (oEvent) {
+        onInvoiceCreditNotesPress: function(oEvent) {
             var oContext = oEvent.getSource().getBindingContext("yearPopoverData");
             this.onCommonCreditNotesPress(oContext);
         },
 
         //Fifth chart click event handler - Payment Breakdown by Company
-        onPaymentBreakdownSelect: function (oEvent) {
+        onPaymentBreakdownSelect: function(oEvent) {
             const oData = oEvent.getParameter("data")?.[0];
             if (!oData || !oData.data?.Company) return;
             const sCompany = oData.data.Company;
@@ -458,27 +489,33 @@ sap.ui.define([
                 oDialog.open();
             });
         },
-        onInvoiceCreditNotesPressPaymentBreakdown: function (oEvent) {
+        onInvoiceCreditNotesPressPaymentBreakdown: function(oEvent) {
             var oContext = oEvent.getSource().getBindingContext("PaymentBreakdownPopoverData");
             this.onCommonCreditNotesPress(oContext);
         },
-        onPressInvoiceDetailsYearly: function (oEvent) {
+        onPressInvoiceDetailsYearly: function(oEvent) {
             var oContext = oEvent.getSource().getBindingContext("yearPopoverData");
             if (!oContext) return;
             const oData = oContext.getObject();
             if (!oData || !oData.InvNo) return;
-            this.getRouter().navTo("RouteCompanyInvoiceDetails", { sPath: encodeURIComponent(oData.InvNo), dash: "InvoiceDashboard" });
+            this.getRouter().navTo("RouteCompanyInvoiceDetails", {
+                sPath: encodeURIComponent(oData.InvNo),
+                dash: "InvoiceDashboard"
+            });
         },
-        onPaymentBreakdownPress: function (oEvent) {
+        onPaymentBreakdownPress: function(oEvent) {
             var oContext = oEvent.getSource().getBindingContext("PaymentBreakdownPopoverData");
             if (!oContext) return;
             const oData = oContext.getObject();
             if (!oData || !oData.InvNo) return;
-            this.getRouter().navTo("RouteCompanyInvoiceDetails", { sPath: encodeURIComponent(oData.InvNo), dash: "InvoiceDashboard" });
+            this.getRouter().navTo("RouteCompanyInvoiceDetails", {
+                sPath: encodeURIComponent(oData.InvNo),
+                dash: "InvoiceDashboard"
+            });
         },
 
         //Sixth chart click event handler - Pending Invoice by Company
-        onPendingCompanySelect: function (oEvent) {
+        onPendingCompanySelect: function(oEvent) {
             const oData = oEvent.getParameter("data")?.[0];
             if (!oData || !oData.data?.Company) return;
             const CompanyName = oData.data.Company;
@@ -531,20 +568,23 @@ sap.ui.define([
             });
         },
 
-        onInvoiceCreditNotesPressPendingInvoices: function (oEvent) {
+        onInvoiceCreditNotesPressPendingInvoices: function(oEvent) {
             var oContext = oEvent.getSource().getBindingContext("PendingInvoicesData");
             this.onCommonCreditNotesPress(oContext);
         },
-        onInvoicePressChart6: function (oEvent) {
+        onInvoicePressChart6: function(oEvent) {
             const oContext = oEvent.getSource().getBindingContext("PendingInvoicesData");
             if (!oContext) return;
             const oData = oContext.getObject();
             if (!oData || !oData.InvNo) return;
-            this.getRouter().navTo("RouteCompanyInvoiceDetails", { sPath: encodeURIComponent(oData.InvNo), dash: "InvoiceDashboard" });
+            this.getRouter().navTo("RouteCompanyInvoiceDetails", {
+                sPath: encodeURIComponent(oData.InvNo),
+                dash: "InvoiceDashboard"
+            });
         },
 
         // 7 Chart click event handler
-        onStatusChartSelectCreditNote: function (oEvent) {
+        onStatusChartSelectCreditNote: function(oEvent) {
 
             const oData = oEvent.getParameter("data")?.[0];
 
@@ -605,15 +645,18 @@ sap.ui.define([
                 oDialog.open();
             });
         },
-        onPressCreditNoteInvoice: function (oEvent) {
+        onPressCreditNoteInvoice: function(oEvent) {
             const oContext = oEvent.getSource().getBindingContext("CreditNoteListPopoverData");
             if (!oContext) return MessageToast.show("No data found for this row.");
             const oRowData = oContext.getObject();
             if (!oRowData.InvNo) return MessageToast.show("No Invoice details found for this credit note.");
-            this.getRouter().navTo("RouteCreditNoteDetails", { sPath: encodeURIComponent(oRowData.CCInvNo), dash: "InvoiceDashboard" });
+            this.getRouter().navTo("RouteCreditNoteDetails", {
+                sPath: encodeURIComponent(oRowData.CCInvNo),
+                dash: "InvoiceDashboard"
+            });
         },
 
-        onMonthlyInvoiceSelectCreditNote: function (oEvent) {
+        onMonthlyInvoiceSelectCreditNote: function(oEvent) {
 
             const oData = oEvent.getParameter("data")?.[0];
 
@@ -674,7 +717,7 @@ sap.ui.define([
                 oDialog.open();
             });
         },
-        onPendingInvoicePress: function (oEvent) {
+        onPendingInvoicePress: function(oEvent) {
             const oContext = oEvent.getSource().getBindingContext("MonthlyListPopoverData");
             if (!oContext) return;
 
@@ -687,7 +730,7 @@ sap.ui.define([
             });
         },
 
-        onCommonPaymentAmountPress: function (oEvent, oSourceControl) {
+        onCommonPaymentAmountPress: function(oEvent, oSourceControl) {
             const oContext = oEvent;
             if (oEvent.getObject().Currency && oEvent.getObject().Currency === "INR") return MessageToast.show("Sorry, payment details are not supported for INR currency. Please select another currency.");
 
@@ -697,32 +740,55 @@ sap.ui.define([
             this.onCommonDisplayThreeColumnPopup(aData, oSourceControl);
         },
 
-        onCommonCreditNotesPress: function (oEvent) {
+        onCommonCreditNotesPress: function(oEvent) {
             var oContext = oEvent;
             if (!oContext) var oContext = oEvent.getSource().getBindingContext("dialogData");
 
             if (!oContext) return MessageToast.show("No data found for this row.");
             const oRowData = oContext.getObject();
             if (!oRowData.CCInvNo[0]) return MessageToast.show("No Credit Note details found for this invoice.");
-            this.getRouter().navTo("RouteCreditNoteDetails", { sPath: encodeURIComponent(oRowData.CCInvNo[0]), dash: "InvoiceDashboard" });
+            this.getRouter().navTo("RouteCreditNoteDetails", {
+                sPath: encodeURIComponent(oRowData.CCInvNo[0]),
+                dash: "InvoiceDashboard"
+            });
         },
 
-        onCommonDisplayThreeColumnPopup: function (aItems, oSourceControl) {
-            var oModel = new JSONModel({ items: aItems });
+        onCommonDisplayThreeColumnPopup: function(aItems, oSourceControl) {
+            var oModel = new JSONModel({
+                items: aItems
+            });
             var oTable = new sap.m.Table({
                 inset: false,
                 columns: [
-                    new sap.m.Column({ header: new sap.m.Text({ text: "Received Amount" }) }),
-                    new sap.m.Column({ header: new sap.m.Text({ text: "Exchange Rate" }) }),
-                    new sap.m.Column({ header: new sap.m.Text({ text: "Amount in INR" }) })
+                    new sap.m.Column({
+                        header: new sap.m.Text({
+                            text: "Received Amount"
+                        })
+                    }),
+                    new sap.m.Column({
+                        header: new sap.m.Text({
+                            text: "Exchange Rate"
+                        })
+                    }),
+                    new sap.m.Column({
+                        header: new sap.m.Text({
+                            text: "Amount in INR"
+                        })
+                    })
                 ],
                 items: {
                     path: "/items",
                     template: new sap.m.ColumnListItem({
                         cells: [
-                            new sap.m.Text({ text: "{= ${ReceivedAmount} + ' ' + ${Currency} }" }),
-                            new sap.m.Text({ text: "{ConversionRate}" }),
-                            new sap.m.Text({ text: "{AmountInINR}" })
+                            new sap.m.Text({
+                                text: "{= ${ReceivedAmount} + ' ' + ${Currency} }"
+                            }),
+                            new sap.m.Text({
+                                text: "{ConversionRate}"
+                            }),
+                            new sap.m.Text({
+                                text: "{AmountInINR}"
+                            })
                         ]
                     })
                 }
@@ -735,33 +801,141 @@ sap.ui.define([
                 content: [oTable],
                 endButton: new sap.m.Button({
                     text: "Close",
-                    press: function () {
+                    press: function() {
                         oPopover.close();
                     }
                 }),
-                afterClose: function () { oPopover.destroy() }
+                afterClose: function() {
+                    oPopover.destroy()
+                }
             });
             oPopover.openBy(oSourceControl);
         },
-        onLogout: function () {
+        onLogout: function() {
             this.CommonLogoutFunction(); // Navigate to login page
         },
-        onPressback: function () { this.getRouter().navTo("RouteTilePage") },
-        IN_onPressStatusPie: function () { this.invoiceChartTypeModel.setProperty("/statusType", "pie"); },
-        IN_onPressStatusBar: function () { this.invoiceChartTypeModel.setProperty("/statusType", "bar"); },
-        IN_onPressStatusDonut: function () { this.invoiceChartTypeModel.setProperty("/statusType", "donut"); },
-        IN_onPressMonthlyPie: function () { this.invoiceChartTypeModel.setProperty("/monthlyType", "waterfall"); },
-        IN_onPressMonthlyBar: function () { this.invoiceChartTypeModel.setProperty("/monthlyType", "bar"); },
-        IN_onPressMonthlyLine: function () { this.invoiceChartTypeModel.setProperty("/monthlyType", "line"); },
-        IN_onPressCompanyPie: function () { this.invoiceChartTypeModel.setProperty("/companyType", "waterfall"); },
-        IN_onPressCompanyBar: function () { this.invoiceChartTypeModel.setProperty("/companyType", "bar"); },
-        IN_onPressYearlyBar: function () { this.invoiceChartTypeModel.setProperty("/yearlyType", "bar"); },
-        IN_onPressYearlyLine: function () { this.invoiceChartTypeModel.setProperty("/yearlyType", "line"); },
-        onPressPaymentStackedColumn: function () { this.invoiceChartTypeModel.setProperty("/paymentBreakdownType", "stacked_bar"); },
-        onPressPaymentStackedBar: function () { this.invoiceChartTypeModel.setProperty("/paymentBreakdownType", "column"); },
-        onPressPaymentGroupedBar: function () { this.invoiceChartTypeModel.setProperty("/paymentBreakdownType", "bar"); },
-        onPressPendingColumn: function () { this.invoiceChartTypeModel.setProperty("/pendingByCompanyType", "column"); },
-        onPressPendingBar: function () { this.invoiceChartTypeModel.setProperty("/pendingByCompanyType", "bar"); },
+        onPressback: function() {
+            this.getRouter().navTo("RouteTilePage")
+        },
+        IN_onPressStatusPie: function() {
+            this.invoiceChartTypeModel.setProperty("/statusType", "pie");
+        },
+        IN_onPressStatusBar: function() {
+            this.invoiceChartTypeModel.setProperty("/statusType", "bar");
+        },
+        IN_onPressStatusDonut: function() {
+            this.invoiceChartTypeModel.setProperty("/statusType", "donut");
+        },
+        IN_onPressMonthlyPie: function() {
+            this.invoiceChartTypeModel.setProperty("/monthlyType", "waterfall");
+        },
+        IN_onPressMonthlyBar: function() {
+            this.invoiceChartTypeModel.setProperty("/monthlyType", "bar");
+        },
+        IN_onPressMonthlyLine: function() {
+            this.invoiceChartTypeModel.setProperty("/monthlyType", "line");
+        },
+        IN_onPressCompanyPie: function() {
+            this.invoiceChartTypeModel.setProperty("/companyType", "waterfall");
+        },
+        IN_onPressCompanyBar: function() {
+            this.invoiceChartTypeModel.setProperty("/companyType", "bar");
+        },
+        IN_onPressYearlyBar: function() {
+            this.invoiceChartTypeModel.setProperty("/yearlyType", "bar");
+        },
+        IN_onPressYearlyLine: function() {
+            this.invoiceChartTypeModel.setProperty("/yearlyType", "line");
+        },
+        onPressPaymentStackedColumn: function() {
+            this.invoiceChartTypeModel.setProperty("/paymentBreakdownType", "stacked_bar");
+        },
+        onPressPaymentStackedBar: function() {
+            this.invoiceChartTypeModel.setProperty("/paymentBreakdownType", "column");
+        },
+        onPressPaymentGroupedBar: function() {
+            this.invoiceChartTypeModel.setProperty("/paymentBreakdownType", "bar");
+        },
+        onPressPendingColumn: function() {
+            this.invoiceChartTypeModel.setProperty("/pendingByCompanyType", "column");
+        },
+        onPressPendingBar: function() {
+            this.invoiceChartTypeModel.setProperty("/pendingByCompanyType", "bar");
+        },
+
+        _calculateTrend: function () {
+            var oModel = this.getView().getModel("InvoiceDashboardModel");
+            var aChart8 = oModel.getProperty("/Chart2");
+
+            if (!aChart8 || aChart8.length === 0) {
+                this._setTrendDefaults("No Data");
+                return;
+            }
+
+            var aMonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+            // Extract just the 3-letter month name, whether the field is "Apr" or "Apr 2026"
+            var fnGetMonthOnly = function (sMonthField) {
+                if (!sMonthField) { return null; }
+                return sMonthField.substring(0, 3);
+            };
+
+            var oToday = new Date();
+            var sCurrentMonthName = aMonthNames[oToday.getMonth()];
+
+            var oPrevDate = new Date(oToday.getFullYear(), oToday.getMonth() - 1, 1);
+            var sPrevMonthName = aMonthNames[oPrevDate.getMonth()];
+
+            var oCurrentMonthData = aChart8.find(function (oRec) {
+                return fnGetMonthOnly(oRec.Month) === sCurrentMonthName;
+            });
+            var oPreviousMonthData = aChart8.find(function (oRec) {
+                return fnGetMonthOnly(oRec.Month) === sPrevMonthName;
+            });
+
+            if (!oCurrentMonthData) {
+                this._setTrendDefaults("No Data for " + sCurrentMonthName);
+                return;
+            }
+
+            var fCurrentAmount  = Number(oCurrentMonthData.TotalAmount) || 0;
+            var fPreviousAmount = oPreviousMonthData ? (Number(oPreviousMonthData.TotalAmount) || 0) : 0;
+
+            var sIndicator = "None";
+            var sColor = "Neutral";
+            var sIcon = "sap-icon://line-chart";
+
+            if (!oPreviousMonthData) {
+                sIndicator = "None";
+                sColor = "Neutral";
+                sIcon = "sap-icon://line-chart";
+            } else if (fCurrentAmount > fPreviousAmount) {
+                sIndicator = "Up";
+                sColor = "Good";
+                sIcon = "sap-icon://trend-up";
+            } else if (fCurrentAmount < fPreviousAmount) {
+                sIndicator = "Down";
+                sColor = "Error";
+                sIcon = "sap-icon://trend-down";
+            }
+            // equal amounts -> stays None / Neutral / line-chart
+
+            oModel.setProperty("/TrendAmount", fCurrentAmount);
+            oModel.setProperty("/TrendIndicator", sIndicator);
+            oModel.setProperty("/TrendColor", sColor);
+            oModel.setProperty("/TrendIcon", sIcon);
+            oModel.setProperty("/TrendMonthLabel",
+            oCurrentMonthData.Month + (oPreviousMonthData ? " vs " + oPreviousMonthData.Month : ""));
+        },
+
+        _setTrendDefaults: function (sLabel) {
+            var oModel = this.getView().getModel("InvoiceDashboardModel");
+            oModel.setProperty("/TrendAmount", 0);
+            oModel.setProperty("/TrendIndicator", "None");
+            oModel.setProperty("/TrendColor", "Neutral");
+            oModel.setProperty("/TrendIcon", "sap-icon://line-chart");
+            oModel.setProperty("/TrendMonthLabel", sLabel);
+        },
 
     });
-});
+});s

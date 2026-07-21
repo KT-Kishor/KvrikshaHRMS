@@ -7,59 +7,21 @@
 >
     <Page id="AP_id_PaySlipPage">
         <customHeader>
-            <core:Fragment
-                fragmentName="sap.kt.com.minihrsolution.fragment.Header"
-                type="XML"
-            />
+            <core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Header" type="XML"/>
         </customHeader>
         <content>
-            <fb:FilterBar
-                id="AP_id_AdminPaySlip"
-                clear="AP_onClear"
-                showClearOnFB="true"
-                search=".AP_onSearch"
-                showFilterConfiguration="false"
-                showRestoreButton="true"
-                useToolbar="false"
-                class="sapUiTinyMargin CommonRoundedTable"
-            >
+            <fb:FilterBar id="AP_id_AdminPaySlip" clear="AP_onClear" showClearOnFB="true" search=".AP_onSearch" showFilterConfiguration="false" showRestoreButton="true" useToolbar="false" class="sapUiTinyMargin CommonRoundedTable">
                 <fb:filterGroupItems>
-                    <fb:FilterGroupItem
-                        groupName="Basic"
-                        name="EmployeeID"
-                        label="{i18n>employeeOffer}"
-                        visibleInFilterBar="true"
-                    >
+                    <fb:FilterGroupItem groupName="Basic" name="EmployeeID" label="{i18n>employeeOffer}" visibleInFilterBar="true">
                         <fb:control>
-                            <ComboBox
-                                id="AP_id_Employee"
-                                showClearIcon="true"
-                                items="{path:'EmployeeModel>/',length:1000}"
-                                showSecondaryValues="true" filterSecondaryValues="true"
-                            >
-                                <core:ListItem
-                                    key="{EmployeeModel>EmployeeID}"
-                                    text="{EmployeeModel>EmployeeID}"
-                                    additionalText="{EmployeeModel>EmployeeName}"
-                                />
+                            <ComboBox id="AP_id_Employee" showClearIcon="true" items="{path:'EmployeeModel>/',length:1000}" showSecondaryValues="true" filterSecondaryValues="true">
+                                <core:ListItem key="{EmployeeModel>EmployeeID}" text="{EmployeeModel>EmployeeID}" additionalText="{EmployeeModel>EmployeeName}"/>
                             </ComboBox>
                         </fb:control>
                     </fb:FilterGroupItem>
-                    <fb:FilterGroupItem
-                        groupName="Basic"
-                        name="PaySlipDate"
-                        label="{i18n>monthAndYear}"
-                        visibleInFilterBar="true"
-                    >
+                    <fb:FilterGroupItem groupName="Basic" name="PaySlipDate" label="{i18n>monthAndYear}" visibleInFilterBar="true">
                         <fb:control>
-                            <DateRangeSelection
-                                id="AP_id_Date"
-                                name="PaySlipDate"
-                                delimiter="to"
-                                displayFormat="MM-yyyy"
-                                valueFormat="MM-yyyy"
-                                change="Q_onFilterChange"
-                            />
+                            <DateRangeSelection id="AP_id_Date" name="PaySlipDate" delimiter="to" displayFormat="MM-yyyy" valueFormat="MM-yyyy" change="Q_onFilterChange"/>
                         </fb:control>
                     </fb:FilterGroupItem>
 
@@ -72,47 +34,17 @@
 					</fb:FilterGroupItem>
                 </fb:filterGroupItems>
             </fb:FilterBar>
-            <Table
-                id="AP_id_AdminPaySlipTable"
-                busyIndicatorDelay="0"
-                class="sapUiTinyMargin CommonRoundedTable"
-                width="auto"
-                growing="true"
-                growingThreshold="50"
-                growingScrollToLoad="true"
-                sticky="ColumnHeaders,HeaderToolbar"
-                items="{
+            <Table id="AP_id_AdminPaySlipTable" busyIndicatorDelay="0" class="sapUiTinyMargin CommonRoundedTable" width="auto" growing="true" growingThreshold="50" growingScrollToLoad="true" sticky="ColumnHeaders,HeaderToolbar" items="{
                     path: 'PaySlip>/EmpTable',
-                    sorter: [
-                        {
-                            path: 'FinancialYear',
-                            descending: false,
-                            group: true
-                        },
-                        {
-                            path: 'EmployeeID',
-                            descending: false
-                        },
-                        {
-                            path: 'YearMonth',
-                            descending: true
-                        }
-                    ],
+                    sorter: [{path: 'FinancialYear',descending: false,group: true},{path: 'EmployeeID',descending: false},{path: 'YearMonth',descending: true}],
                     groupHeaderFactory: '.getGroupHeader'
                 }"
             >
                 <headerToolbar>
                     <Toolbar>
-                        <Title
-                            id="AP_id_Title"
-                            text="{= ${i18n>paySlipDetails} + ' (' + ${PaySlip>/EmpTable}.length + ')' }"
-                        />
+                        <Title id="AP_id_Title" text="{= ${i18n>paySlipDetails} + ' (' + ${PaySlip>/EmpTable}.length + ')' }" />
                         <ToolbarSpacer />
-                        <Button
-                            text="{i18n>paySlipTitle}"
-                            type="Transparent"
-                            press="AP_onPressAddPayslip"
-                        />
+                        <Button text="{i18n>paySlipTitle}" type="Transparent" press="AP_onPressAddPayslip" />
                         <Button text="{i18n>download}" press="AP_TableDataDownload"/>
                     </Toolbar>
                 </headerToolbar>

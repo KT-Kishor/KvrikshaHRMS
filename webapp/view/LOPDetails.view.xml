@@ -3,7 +3,7 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:fb="sap.ui.comp.filterbar">
-	<Page id="LOD_id_LOPDetailsPage"  title="{i18n>titleInBox}" class="glassHeader classheader">
+	<Page id="LOD_id_LOPDetailsPage" class="glassHeader classheader">
 	<customHeader>
         <core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Header" type="XML" />
         </customHeader>

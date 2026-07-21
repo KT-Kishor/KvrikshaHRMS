@@ -9,41 +9,60 @@ sap.ui.define(["./BaseController", "sap/m/MessageToast", "sap/ui/model/json/JSON
         },
         onInit: function() {
             this.getRouter().getRoute("RouteEmployeeExpense").attachMatched(this._onRouteMatched, this);
+            sap.viz.ui5.format.ChartFormatter.getInstance().registerCustomFormatter(
+    "INR_FORMAT",
+    function (value) {
+        if (value == null) {
+            return "";
+        }
+        return Number(value).toLocaleString("en-IN") + " INR";
+    }
+);
+
+sap.viz.ui5.api.env.Format.numericFormatter(
+    sap.viz.ui5.format.ChartFormatter.getInstance()
+);
         },
-        _applyExpenseChartColors: function() {
-            var oChart = this.byId("EE_id_ExpenseTypeChart");
-            oChart.setVizProperties({
-                plotArea: {
-                    dataPointStyle: {
-                        rules: [{
-                            dataContext: {
-                                "Expense Type": this.i18n.getText("companyExpense")
-                            },
-                            properties: {
-                                color: "#f1760b"
-                            },
-                            displayName: this.i18n.getText("companyExpense")
-                        }, {
-                            dataContext: {
-                                "Expense Type": this.i18n.getText("pendingExpense")
-                            },
-                            properties: {
-                                color: "#BB0000"
-                            },
-                            displayName: this.i18n.getText("pendingExpense")
-                        }, {
-                            dataContext: {
-                                "Expense Type": this.i18n.getText("reimbursementAmount")
-                            },
-                            properties: {
-                                color: "#107E3E"
-                            },
-                            displayName: this.i18n.getText("reimbursementAmount")
-                        }]
+       _applyExpenseChartColors: function () {
+    var oChart = this.byId("EE_id_ExpenseTypeChart");
+
+    oChart.setVizProperties({
+        plotArea: {
+            dataLabel: {
+                visible: true,
+                type: "value",
+                formatString: "INR_FORMAT"
+            },
+            dataPointStyle: {
+                rules: [
+                    {
+                        dataContext: {
+                            "Expense Type": this.i18n.getText("pendingExpense")
+                        },
+                        properties: {
+                            color: "#BB0000"
+                        },
+                        displayName: this.i18n.getText("pendingExpense")
+                    },
+                    {
+                        dataContext: {
+                            "Expense Type": this.i18n.getText("reimbursementAmount")
+                        },
+                        properties: {
+                            color: "#107E3E"
+                        },
+                        displayName: this.i18n.getText("reimbursementAmount")
                     }
-                }
-            });
+                ]
+            }
         },
+        valueAxis: {
+            label: {
+                formatString: "INR_FORMAT"
+            }
+        }
+    });
+},
         _applyTripTypeChartColors: function() {
             var oChart = this.byId("EE_id_TripTypeChart");
             oChart.setVizProperties({
@@ -63,6 +82,7 @@ sap.ui.define(["./BaseController", "sap/m/MessageToast", "sap/ui/model/json/JSON
                 // Default Financial Year
                 this.byId("EE_id_ExpenseDate").setDateValue(new Date(new Date().getMonth() < 3 ? new Date().getFullYear() - 1 : new Date().getFullYear(), 3, 1));
                 this.byId("EE_id_ExpenseDate").setSecondDateValue(new Date(new Date().getMonth() < 3 ? new Date().getFullYear() : new Date().getFullYear() + 1, 2, 31));
+
                 this.EE_onGoPress();
             } catch (e) {
                 console.error("Login Error:", e);
@@ -91,25 +111,28 @@ sap.ui.define(["./BaseController", "sap/m/MessageToast", "sap/ui/model/json/JSON
                 this._oFullExpenseData = oResponse;
                 console.log("Expense Response:", oResponse);
                 const oFirst4Card = oResponse?.First4Card || {};
+                const oPreviousFY = oResponse?.PreviousFinancialYearCard || {};
                 oView.setModel(new JSONModel(oResponse || {}), "EE_ExpenseBarChartModel");
                 oView.setModel(new JSONModel({
                     totalExpense: oFirst4Card.TotalAmount || 0,
-                    companyExpense: oFirst4Card.CompanyAmount || 0,
                     pendingExpense: oFirst4Card.PendingAmount || 0,
-                    reimbursementAmount: oFirst4Card.ReimbursementAmount || 0
+                    reimbursementAmount: oFirst4Card.ReimbursementAmount || 0,
+
+
+                     totalExpenseCount: (oFirst4Card.TotalRecords || []).length,
+    pendingExpenseCount: (oFirst4Card.PendingRecords || []).length,
+    reimbursementExpenseCount: (oFirst4Card.ReimbursementRecords || []).length,
+
+                     PreFinancialYear: oPreviousFY.FinancialYear || "",
+    PreTotalAmount: oPreviousFY.TotalAmount || 0,
+    PreReimbursementAmount: oPreviousFY.ReimbursementAmount || 0,
+    PrePendingAmount: oPreviousFY.PendingAmount || 0,
+
                 }), "EE_ExpenseModel");
                 const aExpenseTypeChart = [];
-                const iCompany = oResponse?.PaymentBreakdown?.CompanyAmount || 0;
                 const iPending = oResponse?.PaymentBreakdown?.PendingAmount || 0;
                 const iReimbursement = oResponse?.PaymentBreakdown?.ReimbursementAmount || 0;
-                if (iCompany > 0) {
-                    aExpenseTypeChart.push({
-                        ExpenseTypeKey: "COMPANY",
-                        ExpenseType: this.i18n.getText("companyExpense"),
-                        Amount: iCompany,
-                        color: "#f1760b"
-                    });
-                }
+                
                 if (iPending > 0) {
                     aExpenseTypeChart.push({
                         ExpenseTypeKey: "PENDING",
@@ -144,31 +167,38 @@ sap.ui.define(["./BaseController", "sap/m/MessageToast", "sap/ui/model/json/JSON
                 this.closeBusyDialog();
             }
         },
-        _applyCommonChartSettings: function(sChartId) {
-            var oChart = this.byId(sChartId);
-            if (!oChart) {
-                return;
-            }
-            oChart.setVizProperties({
-                title: {
-                    visible: false
-                },
-                legend: {
-                    visible: true
-                },
-                interaction: {
-                    selectability: {
-                        mode: "SINGLE"
-                    }
-                },
-                plotArea: {
-                    dataLabel: {
-                        visible: true,
-                        type: "value"
-                    }
-                }
-            });
+       _applyCommonChartSettings: function (sChartId) {
+    var oChart = this.byId(sChartId);
+    if (!oChart) {
+        return;
+    }
+
+    oChart.setVizProperties({
+        title: {
+            visible: false
         },
+        legend: {
+            visible: true
+        },
+        interaction: {
+            selectability: {
+                mode: "SINGLE"
+            }
+        },
+        plotArea: {
+            dataLabel: {
+                visible: true,
+                type: "value",
+                formatString: "INR_FORMAT"
+            }
+        },
+        valueAxis: {
+            label: {
+                formatString: "INR_FORMAT"
+            }
+        }
+    });
+},
         onNavBack: function() {
             if (this._sSource === "RouteEmployeeExpense") {
                 this.getRouter().navTo("RouteEmployeeExpense");
@@ -249,11 +279,6 @@ sap.ui.define(["./BaseController", "sap/m/MessageToast", "sap/ui/model/json/JSON
                     aRecords = oData?.TotalRecords || [];
                     fGrandTotal = oData?.TotalAmount || 0;
                     sTitle = this.i18n.getText("totalExpenseDetails");
-                    break;
-                case "COMPANY":
-                    aRecords = oData?.CompanyRecords || [];
-                    fGrandTotal = oData?.CompanyAmount || 0;
-                    sTitle = this.i18n.getText("companyExpenseDetails");
                     break;
                 case "PENDING":
                     aRecords = oData?.PendingRecords || [];

@@ -397,13 +397,24 @@ sap.ui.define([
                 var yearMonth = new Date(this.oModel.getProperty("/EmpData/YearMonth"));
 
                 const sameYear = joiningDate.getFullYear() === yearMonth.getFullYear();
-                const sameMonth = joiningDate.getMonth() === yearMonth.getMonth(); // getMonth() is 0-based
+                const sameMonth = joiningDate.getMonth() === yearMonth.getMonth();
 
                 if (sameMonth && sameYear) {
-                    return sap.ui.core.format.DateFormat.getDateInstance({ pattern: "yyyy-MM-dd" }).format(joiningDate);
-                }
-                else {
-                    return sap.ui.core.format.DateFormat.getDateInstance({ pattern: "yyyy-MM-dd" }).format(yearMonth);
+                    return sap.ui.core.format.DateFormat.getDateInstance({
+                        pattern: "yyyy-MM-dd"
+                    }).format(joiningDate);
+                } else {
+                    // Keep month & year from YearMonth, change only the date to today's date
+                    var today = new Date();
+                    var updatedDate = new Date(
+                        yearMonth.getFullYear(),
+                        yearMonth.getMonth(),
+                        today.getDate()
+                    );
+
+                    return sap.ui.core.format.DateFormat.getDateInstance({
+                        pattern: "yyyy-MM-dd"
+                    }).format(updatedDate);
                 }
             },
 

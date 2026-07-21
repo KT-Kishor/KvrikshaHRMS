@@ -1202,7 +1202,7 @@ sap.ui.define(["./BaseController", "../utils/validation", "sap/ui/model/json/JSO
 
                 var oPayload = {
                     EmployeeName: oModel.CompanyHeadName,
-                    toEmailID: oModel.MsaEmail,
+                    toEmailID: sap.ui.getCore().byId("Mail_id_Text").getValue(),
                     CC: sap.ui.getCore().byId("CCMail_TextArea").getValue(),
                     attachments: this.getView().getModel("UploaderData").getProperty("/attachments"),
                 };

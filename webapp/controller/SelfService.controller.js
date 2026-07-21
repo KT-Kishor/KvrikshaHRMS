@@ -9,8 +9,22 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
       const today = new Date();
       const nextMonthFirstDate = new Date(today.getFullYear(), today.getMonth() + 1, 1);
       const maxDate18YearsAgo = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+      var oToday = new Date();
+      var iYear = oToday.getFullYear();
+      var iMonth = oToday.getMonth(); // 0 = Jan, 3 = Apr
+
+      var oFYStart, oFYEnd;
+
+      // Financial Year: 1 Apr - 31 Mar
+      if (iMonth >= 3) { // April to December
+          oFYStart = new Date(iYear, 3, 1);      // 1 Apr current year
+          oFYEnd = new Date(iYear + 1, 2, 31);   // 31 Mar next year
+      } else { // January to March
+          oFYStart = new Date(iYear - 1, 3, 1);  // 1 Apr previous year
+          oFYEnd = new Date(iYear, 2, 31);       // 31 Mar current year
+      }
       var oDateModel = new sap.ui.model.json.JSONModel();
-      oDateModel.setData({ maxDate: maxDate18YearsAgo, focusedDate: new Date(2000, 0, 1), minDate: new Date(1950, 0, 1), nextMonthMinDate: nextMonthFirstDate });
+      oDateModel.setData({ maxDate: maxDate18YearsAgo, focusedDate: new Date(2000, 0, 1), minDate: new Date(1950, 0, 1), nextMonthMinDate: nextMonthFirstDate , minDateAppraisal:oFYStart , maxDateAppraisal:oFYEnd});
       this.getView().setModel(oDateModel, "controller");
       this.getRouter().getRoute("SelfService").attachMatched(this._onRouteMatched, this);
       // this.getRouter().navTo("SelfService", { sPath: "SelfService" });

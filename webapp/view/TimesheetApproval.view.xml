@@ -11,30 +11,12 @@
             <core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Header" type="XML" />
         </customHeader>
         <content>
-            <u:CalendarDateInterval
-                id="TSA_id_calendar"
-                width="100%"
-                startDate="{viewModel>/calendarStartDate}" 
-                days="7"
-                 legend="calendarLegend"
-                select="TSA_onCalendarDateSelect" 
-                startDateChange="filterTimesheetForCurrentWeek"
- />
-            <fb:FilterBar
-                class="sapUiTinyMargin CommonRoundedTable"
-                id="TSA_id_Filter"
-                persistencyKey="myPersKey"
-                useToolbar="false"
-                clear="TSA_onClear"
-                showClearOnFB="true"
-                search="TSA_onSearch"
-                filterChange="onFilterChange"
-                showFilterConfiguration="false"
-                afterVariantLoad="onAfterVariantLoad">
+            <u:CalendarDateInterval id="TSA_id_calendar" width="100%" startDate="{viewModel>/calendarStartDate}"  days="7"  legend="calendarLegend" select="TSA_onCalendarDateSelect"  startDateChange="filterTimesheetForCurrentWeek"/>
+            <fb:FilterBar class="sapUiTinyMargin CommonRoundedTable" id="TSA_id_Filter" persistencyKey="myPersKey" useToolbar="false" clear="TSA_onClear" showClearOnFB="true" search="TSA_onSearch" filterChange="onFilterChange" showFilterConfiguration="false" afterVariantLoad="onAfterVariantLoad">
                 <fb:filterGroupItems>
                     <fb:FilterGroupItem name="EmployeeID" label="{i18n>employeeID}" groupName="Group1" visibleInFilterBar="true" >
                         <fb:control>
-                    <ComboBox  showSecondaryValues= "true"  id="TSA_id_Employee" showClearIcon="true" items="{path:'EmployeeFilterModel>/'}" >
+                    <ComboBox showSecondaryValues= "true" id="TSA_id_Employee" showClearIcon="true" items="{path:'EmployeeFilterModel>/'}" >
 						<core:ListItem key="{EmployeeFilterModel>EmployeeID}" text="{EmployeeFilterModel>EmployeeID}" additionalText="{EmployeeFilterModel>EmployeeName}" />
 					</ComboBox>                        
                         </fb:control>
@@ -55,33 +37,13 @@
                     </fb:FilterGroupItem>
                     <fb:FilterGroupItem name="Year" label="{i18n>year}" groupName="Group1" visibleInFilterBar="true">
                         <fb:control>
-                            <DatePicker 
-                                id="TSA_id_Year"
-                                displayFormat="yyyy"
-                                valueFormat="yyyy"
-                                showclearicon="true"
-                                placeholder="{i18n>year}" />
+                            <DatePicker id="TSA_id_Year" displayFormat="yyyy" valueFormat="yyyy" showclearicon="true" placeholder="{i18n>year}" />
                         </fb:control>
                     </fb:FilterGroupItem>
                 </fb:filterGroupItems>
             </fb:FilterBar>
-            <Table
-                id="TSA_id_Table"
-                mode="MultiSelect"
-                sticky="ColumnHeaders"
-                items="{path:'ApprovalTimesheetModel>/', sorter: {path: 'EmployeeName',descending: false,group: true},groupHeaderFactory: '.getGroupHeader'}"
-                growing="true"
-                selectionChange="TSA_onSelect"
-                growingScrollToLoad="true"
-                growingThreshold="50"
-                alternateRowColors="true"
-                 class="sapUiTinyMargin CommonRoundedTable"
-                width="auto"
-                 noDataText="{i18n>noData}">
+            <Table id="TSA_id_Table" mode="MultiSelect" sticky="ColumnHeaders" items="{path:'ApprovalTimesheetModel>/', sorter: {path: 'EmployeeName',descending: false,group: true},groupHeaderFactory: '.getGroupHeader'}" growing="true" selectionChange="TSA_onSelect" growingScrollToLoad="true" growingThreshold="50" alternateRowColors="true"  class="sapUiTinyMargin CommonRoundedTable" width="auto"  noDataText="{i18n>noData}">
                 <columns>
-                    <!-- <Column demandPopin="true">
-                        <Text text="{i18n>employeeID}"/>
-                    </Column> -->
                     <Column minScreenWidth="Tablet" demandPopin="true">
                         <Text text="{i18n>assignmentName}"/>
                     </Column>
@@ -107,14 +69,11 @@
                 <items>
                     <ColumnListItem>
                         <cells>
-                            <!-- <Text text="{ApprovalTimesheetModel>EmployeeID}"/> -->
                             <Text text="{ApprovalTimesheetModel>TaskName}"/>
-                         
                             <Text text="{path:'ApprovalTimesheetModel>Date',formatter:'.Formatter.formatDate'}"/>
                             <Text text="{ApprovalTimesheetModel>Day}"/>
                             <Text text="{ApprovalTimesheetModel>HoursWorked}"/>
-                            <ObjectStatus text="{ApprovalTimesheetModel>Status}" inverted="false"
-                                state="{path:'ApprovalTimesheetModel>Status', formatter: '.Formatter.formatObjectStatus'}" />
+                            <ObjectStatus text="{ApprovalTimesheetModel>Status}" inverted="false" state="{path:'ApprovalTimesheetModel>Status', formatter: '.Formatter.formatObjectStatus'}" />
                             <Button text="{i18n>View}" press="TSA_onShowComments" />
                         </cells>
                     </ColumnListItem>
@@ -127,12 +86,11 @@
                     <core:Fragment fragmentName="sap.kt.com.minihrsolution.fragment.Footer" type="XML" />
                 </contentLeft>
                 <contentRight>
-                <FlexBox class="TraineeButtons"  wrap="Wrap"
-    justifyContent="End"
-    alignItems="Center">
-                   <Button text="Approve" press="TSA_onApprove" type="Transparent" enabled="{viewModel>/canApproveReject}"/>
-                   <Button text="Reject" press="TSA_onReject" type="Transparent" enabled="{viewModel>/canApproveReject}"/>
-                   </FlexBox>
+                    <FlexBox class="TraineeButtons"  wrap="Wrap" justifyContent="End" alignItems="Center">
+                        <Button text="Download Timesheet"  press="onDownloadTimesheetPress" type="Transparent"/>
+                        <Button text="Approve" press="TSA_onApprove" type="Transparent" enabled="{viewModel>/canApproveReject}"/>
+                        <Button text="Reject" press="TSA_onReject" type="Transparent" enabled="{viewModel>/canApproveReject}"/>
+                    </FlexBox>
                 </contentRight>
             </Bar>
         </footer>

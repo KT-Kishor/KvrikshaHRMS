@@ -1035,7 +1035,7 @@ sap.ui.define(
                     oField.setValueState("Error");
                     oField.setValueStateText("Date must be within financial year only");
                     return;
-                }
+                }   
                 // -----------------------------
                 // 3. EMPTY VALUE CHECK
                 // -----------------------------
@@ -1108,16 +1108,16 @@ sap.ui.define(
                         return;
                     }
                     const sStartDate = oData.Start_Date;
-                    const dStartDate = new Date(sStartDate.split("/").reverse().join("-"));
-                    const dToday = new Date();
-                    dToday.setHours(0, 0, 0, 0);
-                    dStartDate.setHours(0, 0, 0, 0);
-                    if (dStartDate < dToday) {
-                        this.byId("PL_id_StartDate").setValueState("Error");
-                        this.byId("PL_id_StartDate").setValueStateText(this.i18nModel.getText("startDatePastNotAllowed"));
-                        MessageBox.error(this.i18nModel.getText("startDatePastNotAllowed"));
-                        return;
-                    }
+                    // const dStartDate = new Date(sStartDate.split("/").reverse().join("-"));
+                    // const dToday = new Date();
+                    // dToday.setHours(0, 0, 0, 0);
+                    // dStartDate.setHours(0, 0, 0, 0);
+                    // if (dStartDate < dToday) {
+                    //     this.byId("PL_id_StartDate").setValueState("Error");
+                    //     this.byId("PL_id_StartDate").setValueStateText(this.i18nModel.getText("startDatePastNotAllowed"));
+                    //     MessageBox.error(this.i18nModel.getText("startDatePastNotAllowed"));
+                    //     return;
+                    // }
                     // PAYLOAD
                     const sEmployeeId = String(
                         this.getView().getModel("LoginModel").getProperty("/EmployeeID") || ""
@@ -1626,6 +1626,9 @@ sap.ui.define(
                     this.FPL_oViewDialog = oDialog;
                     this.getView().addDependent(oDialog);
                     oDialog.open();
+                    this._FragmentDatePickersReadOnly([
+                        this.getView().createId("PL_id_StartDateText1"),
+                    ]);
                     //  pdf name should visible in maximize size code 
                     // setInterval(function () {
                     //     var oChartContainer = this.byId("PL_id_PdfChartContainer");
@@ -1884,6 +1887,7 @@ sap.ui.define(
                         ID: this._selectedPolicyId,
                     },
                     data: {
+                        Start_Date: oData.Start_Date,
                         PolicyName: oData.title,
                         PolicyDesc: oData.description,
                         Department: oData.department,

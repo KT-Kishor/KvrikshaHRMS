@@ -6,14 +6,22 @@ sap.ui.define([
     "sap/m/MessageBox",
     "sap/ui/model/FilterOperator",
     "sap/ui/model/Filter",
+     "sap/viz/ui5/format/ChartFormatter",
+    "sap/viz/ui5/api/env/Format"
 
-], function (BaseController, JSONModel, formatter, Fragment, MessageBox, FilterOperator, Filter) {
+], function (BaseController, JSONModel, formatter, Fragment, MessageBox, FilterOperator, Filter, ChartFormatter,
+    Format) {
     "use strict";
 
     return BaseController.extend("sap.kt.com.minihrsolution.controller.ExpenseDashBoard", {
         formatter: formatter,
         onInit: function () {
             this.getRouter().getRoute("RouteExpensedashboard").attachMatched(this._onRouteMatched, this);
+            Format.numericFormatter(ChartFormatter.getInstance());
+
+ChartFormatter.getInstance().registerCustomFormatter("INR_FORMAT", function (value) {
+    return Number(value).toLocaleString("en-IN") + " INR";
+});
         },
 
         _onRouteMatched: async function () {
@@ -22,6 +30,15 @@ sap.ui.define([
             const oLoginModel = this.getOwnerComponent().getModel("LoginModel");
             this.i18nModel = this.getView().getModel("i18n").getResourceBundle();
             this.getView().getModel("LoginModel").setProperty("/HeaderName", this.i18nModel.getText("expensedashboard"));
+    //          var iCurrentYear = new Date().getFullYear();
+
+    // // Previous Financial Year
+    // var sPreviousFY = (iCurrentYear - 1) + "-" + iCurrentYear;
+
+    // this.getView().setModel(new JSONModel({
+    //     previousFYHeader: "Previous FY : " + sPreviousFY
+    // }), "fyModel");
+
             await this._loadFinancialYearData();
         },
 
@@ -59,18 +76,21 @@ sap.ui.define([
                 var oData = {
                     First4Card: oResponse.First4Card,
                     PaymentBreakdown: oResponse.PaymentBreakdown,
+                    PreviousFinancialYearCard:oResponse.PreviousFinancialYearCard,
                     ByExpenseType: oResponse.ByExpenseType,
                     MonthlyTrend: oResponse.MonthlyTrend,
                     Top10Expenses: oResponse.Top10Expenses,
                     TripTypeData: oResponse.TripTypeData,
 
-                    PaymentCompanyAmount: oResponse.PaymentBreakdown.CompanyRecords,
-                    PaymentReimbursementAmount: oResponse.PaymentBreakdown.ReimbursementRecords,
-                    PaymentPendingAmount: oResponse.PaymentBreakdown.PendingRecords,
-
+                   PaymentReimbursementAmount: oResponse.PaymentBreakdown.ReimbursementAmount,
+                     PaymentPendingAmount: oResponse.PaymentBreakdown.PendingAmount,
+                    
+                        PreFinancialYear:oResponse.PreviousFinancialYearCard.FinancialYear,
+                     PreTotalAmount:oResponse.PreviousFinancialYearCard.TotalAmount,
+                     PreReimbursementAmount:oResponse.PreviousFinancialYearCard.ReimbursementAmount,
+                     PrePendingAmount:oResponse.PreviousFinancialYearCard.PendingAmount,
 
                     TotalExpenseCount: (oResponse.First4Card.TotalAmountRecords || []).length,
-                    CompanyCount: (oResponse.First4Card.CompanyRecords || []).length,
                     PendingCount: (oResponse.First4Card.PendingRecords || []).length,
                     ReimbursementCount: (oResponse.First4Card.ReimbursementRecords || []).length,
 
@@ -83,10 +103,6 @@ sap.ui.define([
                 this.getView().setModel(oDashboardModel, "DashboardModel");
                 // Donut Chart Model
                 let aPaymentData = [
-                    {
-                        Type: "Company",
-                        Amount: oResponse.PaymentBreakdown.CompanyAmount
-                    },
                     {
                         Type: "Reimbursement",
                         Amount: oResponse.PaymentBreakdown.ReimbursementAmount
@@ -101,7 +117,6 @@ sap.ui.define([
                     new sap.ui.model.json.JSONModel({
                         PaymentData: aPaymentData,
                         Total:
-                            oResponse.PaymentBreakdown.CompanyAmount +
                             oResponse.PaymentBreakdown.ReimbursementAmount +
                             oResponse.PaymentBreakdown.PendingAmount
                     }),
@@ -116,15 +131,16 @@ sap.ui.define([
                             visible: false
                         },
                         plotArea: {
-                            dataLabel: {
-                                visible: true
-                            }
-                        },
-                        valueAxis: {
-                            title: {
-                                visible: false
-                            }
-                        },
+        dataLabel: {
+            visible: true,
+            formatString: "INR_FORMAT"
+        }
+    },
+    valueAxis: {
+        label: {
+            formatString: "INR_FORMAT"
+        }
+    },
                         categoryAxis: {
                             title: {
                                 visible: false
@@ -142,21 +158,24 @@ sap.ui.define([
                         title: {
                             visible: false
                         },
-                        plotArea: {
-                            dataLabel: {
-                                visible: true
-                            },
+                         plotArea: {
+            dataLabel: {
+                visible: true,
+                formatString: "INR_FORMAT"
+            },
                             colorPalette: [
-                                "#1976D2",
                                 "#43A047",
                                 "#FB8C00"
                             ]
                         },
-                        valueAxis: {
-                            title: {
-                                visible: false
-                            }
-                        },
+                         valueAxis: {
+            title: {
+                visible: false
+            },
+            label: {
+                formatString: "INR_FORMAT"
+            }
+        },
                         categoryAxis: {
                             title: {
                                 visible: false
@@ -167,6 +186,30 @@ sap.ui.define([
                         }
                     });
                 }
+
+                var oPaymentChart = this.byId("paymentDonutChart");
+
+if (oPaymentChart) {
+    oPaymentChart.setVizProperties({
+        title: {
+            visible: false
+        },
+        legend: {
+            visible: true
+        },
+        plotArea: {
+            dataLabel: {
+                visible: true,
+                type: "value",
+                formatString: "INR_FORMAT"
+            },
+            colorPalette: [
+                "#43A047", // Reimbursement
+                "#c62828"  // Pending
+            ]
+        }
+    });
+}
 
             } catch (error) {
                 this.closeBusyDialog();
@@ -301,6 +344,12 @@ sap.ui.define([
                 );
 
                 var oDashboardModel = new sap.ui.model.json.JSONModel(oResponse);
+                const oPreviousFY = oResponse.PreviousFinancialYearCard || {};
+
+oResponse.PreFinancialYear = oPreviousFY.FinancialYear;
+oResponse.PreTotalAmount = oPreviousFY.TotalAmount;
+oResponse.PreReimbursementAmount = oPreviousFY.ReimbursementAmount;
+oResponse.PrePendingAmount = oPreviousFY.PendingAmount;
 
                 this.getView().setModel(oDashboardModel, "DashboardModel");
 
@@ -331,7 +380,6 @@ sap.ui.define([
             oVizFrame.setVizProperties({
                 plotArea: {
                     colorPalette: [
-                        "#E9730C", // Reimbursement
                         "#107E3E", // Company
                         "#BB0000"  // Pending
                     ],
@@ -371,14 +419,6 @@ sap.ui.define([
             }
 
             switch (sType) {
-                case "COMPANY":
-                    oDialogModel.setData({
-                        Title: "Company Paid Data",
-                        Records: oDashboardModel.getProperty("/CompanyRecords"),
-                        Amount: oDashboardModel.getProperty("/First4Card/CompanyAmount"),
-                        ShowStatus: false
-                    });
-                    break;
 
                 case "PENDING":
                     oDialogModel.setData({

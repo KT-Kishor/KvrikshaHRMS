@@ -154,45 +154,79 @@ sap.ui.define(
                 this.getRouter().navTo("RouteNavAdminPaySlipApp");
             },
 
-            AP_TableDataDownload: function () {
-                var table = this.byId("AP_id_AdminPaySlipTable");
-                const oModelData = table.getModel("PaySlip").getData().EmpTable;
-                const aFormattedData = oModelData.map(item => {
-                    return {
-                        ...item,
-                        YearMonth: Formatter.formatMonthYear(item.YearMonth),
-                        DeductionsTotalMonthly: Formatter.CurrencyInINRText(item.DeductionsTotalMonthly),
-                        EarningsTotalMonthly: Formatter.CurrencyInINRText(item.EarningsTotalMonthly),
-                        NetPay: Formatter.CurrencyInINRText(item.NetPay),
-                    };
-                });
-                const aCols = [
-                    { label: this.i18nModel.getText("employeeID"), property: "EmployeeID", type: "string" },
-                    { label: this.i18nModel.getText("employeeName"), property: "EmployeeName", type: "string" },
-                    { label: this.i18nModel.getText("monthAndYear"), property: "YearMonth", type: "string" },
-                    { label: this.i18nModel.getText("payableDays"), property: "PayableDays", type: "string" },
-                    { label: this.i18nModel.getText("totalEarningAmount"), property: "EarningsTotalMonthly", type: "string" },
-                    { label: this.i18nModel.getText("totalDeductionAmount"), property: "DeductionsTotalMonthly", type: "string " },
-                    { label: this.i18nModel.getText("netPay"), property: "NetPay", type: "string" },
-                ];
-                const oSettings = {
-                    workbook: {
-                        columns: aCols,
-                        context: {
-                            sheetName: this.i18nModel.getText("payslipDetails")
-                        }
-                    },
-                    dataSource: aFormattedData,
-                    fileName: "Payslip_Details.xlsx"
-                };
-                const oSheet = new Spreadsheet(oSettings);
-                oSheet.build().then(function () {
-                    sap.m.MessageToast.show(this.i18nModel.getText("downloadsuccessfully"));
-                }.bind(this)).finally(function () {
-                    oSheet.destroy();
-                });
-            }
-        },
-        );
+            AP_TableDataDownload: async function () {
+    var table = this.byId("AP_id_AdminPaySlipTable");
+    const oModelData = table.getModel("PaySlip").getData().EmpTable;
+
+    const aFormattedData = oModelData.map(item => ({
+        ...item,
+        YearMonth: Formatter.formatMonthYear(item.YearMonth),
+        DeductionsTotalMonthly: Formatter.CurrencyInINRText(item.DeductionsTotalMonthly),
+        EarningsTotalMonthly: Formatter.CurrencyInINRText(item.EarningsTotalMonthly),
+        NetPay: Formatter.CurrencyInINRText(item.NetPay),
+    }));
+
+    // Rows for the same employee MUST be consecutive for merging to work
+    aFormattedData.sort((a, b) => {
+    if (a.EmployeeID !== b.EmployeeID) {
+        return a.EmployeeID > b.EmployeeID ? 1 : -1;
     }
-);
+    return new Date(b._sortYearMonth) - new Date(a._sortYearMonth); // latest month first
+});
+    const oGrouped = {};
+    aFormattedData.forEach(item => {
+        if (!oGrouped[item.EmployeeID]) oGrouped[item.EmployeeID] = [];
+        oGrouped[item.EmployeeID].push(item);
+    });
+
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet(this.i18nModel.getText("payslipDetails"));
+
+    sheet.columns = [
+        { header: this.i18nModel.getText("employeeID"), key: "EmployeeID", width: 15 },
+        { header: this.i18nModel.getText("employeeName"), key: "EmployeeName", width: 25 },
+        { header: this.i18nModel.getText("monthAndYear"), key: "YearMonth", width: 15 },
+        { header: this.i18nModel.getText("payableDays"), key: "PayableDays", width: 15 },
+        { header: this.i18nModel.getText("totalEarningAmount"), key: "EarningsTotalMonthly", width: 20 },
+        { header: this.i18nModel.getText("totalDeductionAmount"), key: "DeductionsTotalMonthly", width: 20 },
+        { header: this.i18nModel.getText("netPay"), key: "NetPay", width: 20 },
+    ];
+    sheet.getRow(1).font = { bold: true };
+
+    let currentRow = 2; // row 1 = header
+
+    Object.keys(oGrouped).forEach(sEmpId => {
+        const aRows = oGrouped[sEmpId];
+        const startRow = currentRow;
+
+        aRows.forEach(oRow => {
+            sheet.addRow(oRow);
+            currentRow++;
+        });
+
+        const endRow = currentRow - 1;
+
+        // Merge EmployeeID and EmployeeName vertically across this employee's rows
+        if (endRow > startRow) {
+            sheet.mergeCells(`A${startRow}:A${endRow}`);
+            sheet.mergeCells(`B${startRow}:B${endRow}`);
+        }
+
+        sheet.getCell(`A${startRow}`).alignment = { vertical: "middle", horizontal: "center" };
+        sheet.getCell(`B${startRow}`).alignment = { vertical: "middle", horizontal: "center" };
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: "application/octet-stream" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Payslip_Details.xlsx";
+    a.click();
+    URL.revokeObjectURL(url);
+
+    sap.m.MessageToast.show(this.i18nModel.getText("downloadsuccessfully"));
+}
+
+        });
+    });

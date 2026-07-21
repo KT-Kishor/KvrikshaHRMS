@@ -24,6 +24,15 @@ sap.ui.define([
     async _onRouteMatched(oEvent) {
       var LoginFunction = await this.commonLoginFunction("PaySlip");
       if (!LoginFunction) return;
+       this._fromRoute = oEvent.getParameter("arguments").sMyInBox;
+       var oButton = this.byId("idHomeBtn");
+
+                if (this._fromRoute === "LOPDetail") {
+                    oButton.setIcon("sap-icon://home");  // back icon
+                } else {
+                    oButton.setIcon("sap-icon://nav-back");    // default home icon
+                }
+       this.getView().getModel("LoginModel").setProperty("/HeaderName", "LOP Details");
       const currentDate = new Date();
       // Get first day of the month
       const startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);

@@ -4380,8 +4380,8 @@ color: #fff !important;
 }
 
 .customTileWidth{
-   width: 17rem !important;   /* Increase as needed */
-    min-width: 17rem !important;
+   width: 20rem !important;   /* Increase as needed */
+    min-width: 20rem !important;
 }
 .tileReceived {
     border-top: 4px solid #3b6d11;
@@ -4969,4 +4969,3 @@ color: #fff !important;
 .textannouncement{
   left:20px;
 }
-

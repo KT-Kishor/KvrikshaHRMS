@@ -462,34 +462,6 @@
                                                         </TileContent>
                                                     </GenericTile>
                                                     <GenericTile
-                                                        visible="{= ${AppVisibilityModel>/InvoiceApp} === '1' ? true : false}"
-                                                        class="sapUiSmallMargin glassTile blue"
-                                                        header="{i18n>headerCompanyInvoice}"
-                                                        press="TileV_onpressInvoiceApp"
-                                                    >
-                                                        <TileContent
-                                                            unit="{i18n>tileInvoiceFooter}"
-                                                        >
-                                                            <ImageContent
-                                                                src="sap-icon://my-sales-order"
-                                                            />
-                                                        </TileContent>
-                                                    </GenericTile>
-                                                    <GenericTile
-                                                        visible="{= ${AppVisibilityModel>/ConsultantInvoice} === '1' ? true : false}"
-                                                        class="sapUiSmallMargin glassTile blue"
-                                                        header="{i18n>headerContractorInvoice}"
-                                                        press="TileV_onpressConsultantInvoice"
-                                                    >
-                                                        <TileContent
-                                                            unit="{i18n>tileInvoiceFooter}"
-                                                        >
-                                                            <ImageContent
-                                                                src="sap-icon://monitor-payments"
-                                                            />
-                                                        </TileContent>
-                                                    </GenericTile>
-                                                    <GenericTile
                                                         visible="{= ${AppVisibilityModel>/PurchaseOrder} === '1' ? true : false}"
                                                         class="sapUiSmallMargin glassTile blue"
                                                         header="{i18n>headerPoGenarate}"
@@ -497,6 +469,20 @@
                                                     >
                                                         <TileContent
                                                             unit="{i18n>tilePotitle}"
+                                                        >
+                                                            <ImageContent
+                                                                src="sap-icon://my-sales-order"
+                                                            />
+                                                        </TileContent>
+                                                    </GenericTile>
+                                                    <GenericTile
+                                                        visible="{= ${AppVisibilityModel>/InvoiceApp} === '1' ? true : false}"
+                                                        class="sapUiSmallMargin glassTile blue"
+                                                        header="{i18n>headerCompanyInvoice}"
+                                                        press="TileV_onpressInvoiceApp"
+                                                    >
+                                                        <TileContent
+                                                            unit="{i18n>tileInvoiceFooter}"
                                                         >
                                                             <ImageContent
                                                                 src="sap-icon://my-sales-order"
@@ -517,6 +503,7 @@
                                                             />
                                                         </TileContent>
                                                     </GenericTile>
+
                                                     <GenericTile
                                                         visible="{= ${AppVisibilityModel>/InvoiceApp} === '1' ? true : false}"
                                                         class="sapUiSmallMargin glassTile 	blue"
@@ -542,6 +529,20 @@
                                                         >
                                                             <ImageContent
                                                                 src="sap-icon://business-objects-experience"
+                                                            />
+                                                        </TileContent>
+                                                    </GenericTile>
+                                                     <GenericTile
+                                                        visible="{= ${AppVisibilityModel>/ConsultantInvoice} === '1' ? true : false}"
+                                                        class="sapUiSmallMargin glassTile blue"
+                                                        header="{i18n>headerContractorInvoice}"
+                                                        press="TileV_onpressConsultantInvoice"
+                                                    >
+                                                        <TileContent
+                                                            unit="{i18n>tileInvoiceFooter}"
+                                                        >
+                                                            <ImageContent
+                                                                src="sap-icon://monitor-payments"
                                                             />
                                                         </TileContent>
                                                     </GenericTile>

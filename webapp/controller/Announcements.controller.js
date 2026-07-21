@@ -1,9 +1,9 @@
-sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/Fragment", "sap/ui/model/Filter", "sap/ui/model/FilterOperator", "sap/m/MessageToast", "sap/m/MessageBox", "../utils/validation", "../model/formatter"], function (BaseController, JSONModel, Fragment, Filter, FilterOperator, MessageToast, MessageBox, utils, Formatter) {
+sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/Fragment", "sap/ui/model/Filter", "sap/ui/model/FilterOperator", "sap/m/MessageToast", "sap/m/MessageBox", "../utils/validation", "../model/formatter"], function(BaseController, JSONModel, Fragment, Filter, FilterOperator, MessageToast, MessageBox, utils, Formatter) {
     "use strict";
     return BaseController.extend("sap.kt.com.minihrsolution.controller.Announcements", {
         Formatter: Formatter,
         // =================== LIFECYCLE ===================
-        onInit:  function () {
+        onInit: function() {
             this._ANC_initModels();
             this._iSearchDebounce = null;
             this._iLoadToken = 0;
@@ -16,18 +16,18 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
             this.getView().setModel(new JSONModel({
                 pdfSource: ""
             }), "pdfModel");
-            
+
             this.getRouter().getRoute("NameRouteAnnouncements").attachPatternMatched(this._ANC_onRouteMatched, this);
         },
         // BUSY: shown from route match through login, role/department
         // resolution, and the initial announcement load.
-        _ANC_onRouteMatched: async function () {
+        _ANC_onRouteMatched: async function() {
             var LoginFUnction = await this.commonLoginFunction("Announcement");
             if (!LoginFUnction) return;
             this.getView().getModel("LoginModel").setProperty("/HeaderName", "Announcements");
-             const announcementsearch = this.byId("ANC_id_SearchAnnouncement");
+            const announcementsearch = this.byId("ANC_id_SearchAnnouncement");
             const Announcemntdepartment = this.byId("ANC_id_DepartmentFilter");
-                  
+
             if (Announcemntdepartment) {
                 Announcemntdepartment.setSelectedKey("");
                 Announcemntdepartment.setValue("");
@@ -36,8 +36,8 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
                 announcementsearch.setValue("");
             }
             // this._ViewDatePickersReadOnly(["ANC_id_ExpiresDate"]);
-            this.ANC_onSearchAnnouncement() 
-           this._sDefaultBackground = await this._getDefaultImageBase64();
+            this.ANC_onSearchAnnouncement()
+            this._sDefaultBackground = await this._getDefaultImageBase64();
             try {
                 // ---- Reset ----
                 this._bIsAdmin = false;
@@ -84,15 +84,15 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
                 var aUniqueDepartments = [
                     ...new Set(
                         aDepartments
-                            .map(function (oItem) {
-                                return (oItem.Department || oItem.department || "").trim();
-                            })
-                            .filter(Boolean)
+                        .map(function(oItem) {
+                            return (oItem.Department || oItem.department || "").trim();
+                        })
+                        .filter(Boolean)
                     )
                 ];
 
                 // Format for ComboBox/Select binding
-                var aData = aUniqueDepartments.map(function (sDepartment) {
+                var aData = aUniqueDepartments.map(function(sDepartment) {
                     return {
                         department: sDepartment
                     };
@@ -107,7 +107,7 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
                 this.closeBusyDialog();
             }
         },
-        formatStatusText: function (sStatus) {
+        formatStatusText: function(sStatus) {
             var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle ? this.getOwnerComponent && this.getOwnerComponent().getModel("i18n").getResourceBundle() : null;
             switch (sStatus) {
                 case "Draft":
@@ -120,27 +120,27 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
                     return sStatus || "";
             }
         },
-        _getDefaultImageBase64: function () {
-    return new Promise(function (resolve, reject) {
-        var img = new Image();
+        _getDefaultImageBase64: function() {
+            return new Promise(function(resolve, reject) {
+                var img = new Image();
 
-        img.onload = function () {
-            var canvas = document.createElement("canvas");
-            canvas.width = img.width;
-            canvas.height = img.height;
+                img.onload = function() {
+                    var canvas = document.createElement("canvas");
+                    canvas.width = img.width;
+                    canvas.height = img.height;
 
-            var ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0);
+                    var ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0);
 
-            resolve(canvas.toDataURL("image/jpeg").split(",")[1]);
-        };
+                    resolve(canvas.toDataURL("image/jpeg").split(",")[1]);
+                };
 
-        img.onerror = reject;
+                img.onerror = reject;
 
-        img.src = sap.ui.require.toUrl("sap/kt/com/minihrsolution/image/Blue.jpg");
-    });
-},
-        _ANC_initModels: function () {
+                img.src = sap.ui.require.toUrl("sap/kt/com/minihrsolution/image/Blue.jpg");
+            });
+        },
+        _ANC_initModels: function() {
             var oDepartmentModel = new JSONModel([]);
             this.getView().setModel(oDepartmentModel, "DepartmentModel");
             var oViewModel = new JSONModel({
@@ -165,7 +165,7 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
         },
 
         // =================== EMPLOYEE / DEPARTMENT RESOLUTION ===================
-        _ANC_getEmployeeList: async function (sEmployeeID) {
+        _ANC_getEmployeeList: async function(sEmployeeID) {
             // Return cached employee if already loaded
             if (this._aEmployeeListCache) {
                 return this._aEmployeeListCache;
@@ -178,29 +178,29 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
                 filters: {
                     EmployeeID: sEmployeeID
                 }
-            }).then(function (oResponse) {
+            }).then(function(oResponse) {
                 var aEmployees = (oResponse && oResponse.data) ? oResponse.data : [];
                 // Find exact matching employee
-                var oEmployee = aEmployees.find(function (oEmp) {
+                var oEmployee = aEmployees.find(function(oEmp) {
                     return String(oEmp.EmployeeID).trim() === String(sEmployeeID).trim();
                 }) || null;
 
                 this._aEmployeeListCache = oEmployee;
                 return oEmployee;
-            }.bind(this)).catch(function () {
+            }.bind(this)).catch(function() {
 
                 this._aEmployeeListCache = null;
                 return null;
-            }.bind(this)).finally(function () {
+            }.bind(this)).finally(function() {
                 this._employeeListPromise = null;
             }.bind(this));
             return this._employeeListPromise;
         },
-        _ANC_buildDepartmentModel: function (aEmployees) {
-            var aDepartments = [...new Set(aEmployees.map(function (oEmp) {
+        _ANC_buildDepartmentModel: function(aEmployees) {
+            var aDepartments = [...new Set(aEmployees.map(function(oEmp) {
                 return oEmp.Department;
             }).filter(Boolean))];
-            var aData = aDepartments.map(function (sDept) {
+            var aData = aDepartments.map(function(sDept) {
                 return {
                     department: sDept
                 };
@@ -209,7 +209,7 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
             this.getView().setModel(oModel, "DepartmentModel");
         },
         // =================== DATE HELPERS ===================
-        _ANC_toDateOnly: function (vValue) {
+        _ANC_toDateOnly: function(vValue) {
             if (!vValue) {
                 return "";
             }
@@ -235,7 +235,7 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
             return sYear + "-" + sMonth + "-" + sDay;
         },
         // =================== LOAD / FILTER ===================
-        ANC_loadAnnouncements: async function () {
+        ANC_loadAnnouncements: async function() {
             var oView = this.getView();
             var oViewModel = oView.getModel("ANCView");
             this._iLoadToken++;
@@ -267,12 +267,12 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
 
                     if (sSelectedDepartment) {
 
-                        aData = aData.filter(function (oItem) {
+                        aData = aData.filter(function(oItem) {
 
                             var sAnnouncementDepartment =
                                 (oItem.AnnouncementDepartment || "")
-                                    .toLowerCase()
-                                    .trim();
+                                .toLowerCase()
+                                .trim();
 
                             if (sAnnouncementDepartment === "all") {
                                 return true;
@@ -280,7 +280,7 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
 
                             return sAnnouncementDepartment
                                 .split(",")
-                                .map(function (sDept) {
+                                .map(function(sDept) {
                                     return sDept.trim();
                                 })
                                 .includes(sSelectedDepartment);
@@ -289,12 +289,11 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
 
                     }
 
-                }
-                else {
+                } else {
 
                     var sToday = this._ANC_toDateOnly(new Date());
 
-                    aData = aData.filter(function (oItem) {
+                    aData = aData.filter(function(oItem) {
 
                         //==========================
                         // Status must be Published
@@ -317,8 +316,8 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
                         //==========================
                         var sAnnouncementDepartment =
                             (oItem.AnnouncementDepartment || "")
-                                .toLowerCase()
-                                .trim();
+                            .toLowerCase()
+                            .trim();
 
                         if (sAnnouncementDepartment === "all") {
                             return true;
@@ -326,7 +325,7 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
 
                         return sAnnouncementDepartment
                             .split(",")
-                            .map(function (sDept) {
+                            .map(function(sDept) {
                                 return sDept.trim();
                             })
                             .includes(sDepartment);
@@ -343,38 +342,38 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
                 this.closeBusyDialog();
             }
         },
-        ANC_onDepartmentChange: function () {
+        ANC_onDepartmentChange: function() {
             this._ANC_readWithRetry(3);
         },
-       _ANC_readWithRetry: async function (iRetriesLeft) {
-    try {
-        const sDepartment = this.byId("ANC_id_DepartmentFilter").getSelectedKey();
+        _ANC_readWithRetry: async function(iRetriesLeft) {
+            try {
+                const sDepartment = this.byId("ANC_id_DepartmentFilter").getSelectedKey();
 
-        const filter = {};
+                const filter = {};
 
-        if (sDepartment) {
-            filter.AnnouncementDepartment = sDepartment;
-        }
+                if (sDepartment) {
+                    filter.AnnouncementDepartment = sDepartment;
+                }
 
-        const oData = await this.ajaxReadWithJQuery("Announcement", filter);
+                const oData = await this.ajaxReadWithJQuery("Announcement", filter);
 
-        return {
-            ok: true,
-            data: oData
-        };
+                return {
+                    ok: true,
+                    data: oData
+                };
 
-    } catch (e) {
-        if (iRetriesLeft > 0) {
-            return this._ANC_readWithRetry(iRetriesLeft - 1);
-        }
+            } catch (e) {
+                if (iRetriesLeft > 0) {
+                    return this._ANC_readWithRetry(iRetriesLeft - 1);
+                }
 
-        return {
-            ok: false,
-            error: e
-        };
-    }
-},
-        _ANC_applyClientFilters: function () {
+                return {
+                    ok: false,
+                    error: e
+                };
+            }
+        },
+        _ANC_applyClientFilters: function() {
             var oFlexBox = this.byId("ANC_id_AnnouncementFlexBox");
             var oBinding = oFlexBox.getBinding("items");
             if (!oBinding) {
@@ -388,13 +387,13 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
             }
             oBinding.filter(aFilters);
         },
-        ANC_onSearchAnnouncement: function () {
+        ANC_onSearchAnnouncement: function() {
             this.ANC_loadAnnouncements();
         },
         // NOTE: restored the reload call at the end (your pasted version had
         // dropped it) — Clear should re-run the load so the list actually
         // refreshes after fields are cleared.
-        ANC_onClearAnnouncement: function () {
+        ANC_onClearAnnouncement: function() {
             var oSearchField = this.byId("ANC_id_SearchAnnouncement");
             var oDeptFilter = this.byId("ANC_id_DepartmentFilter");
             if (oSearchField) {
@@ -405,13 +404,13 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
             }
         },
 
-        ANC_onLiveSearchAnnouncement: function () {
+        ANC_onLiveSearchAnnouncement: function() {
             this._ANC_applyClientFilters();
         },
-        _ANC_patchLocalAnnouncement: function (sId, oPatch) {
+        _ANC_patchLocalAnnouncement: function(sId, oPatch) {
             var oModel = this.getView().getModel("Announcements");
             var aData = oModel.getProperty("/data") || [];
-            var iIndex = aData.findIndex(function (oItem) {
+            var iIndex = aData.findIndex(function(oItem) {
                 return oItem.AnnouncementID === sId;
             });
             if (iIndex === -1) {
@@ -421,26 +420,26 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
             oModel.setProperty("/data", aData);
             this._ANC_applyClientFilters();
         },
-        _ANC_addLocalAnnouncement: function (oNewItem) {
+        _ANC_addLocalAnnouncement: function(oNewItem) {
             var oModel = this.getView().getModel("Announcements");
             var aData = oModel.getProperty("/data") || [];
             aData.unshift(oNewItem);
             oModel.setProperty("/data", aData);
             this._ANC_applyClientFilters();
         },
-        _ANC_removeLocalAnnouncement: function (sId) {
+        _ANC_removeLocalAnnouncement: function(sId) {
             var oModel = this.getView().getModel("Announcements");
             var aData = oModel.getProperty("/data") || [];
-            aData = aData.filter(function (oItem) {
+            aData = aData.filter(function(oItem) {
                 return oItem.AnnouncementID !== sId;
             });
             oModel.setProperty("/data", aData);
             this._ANC_applyClientFilters();
         },
         // =================== CREATE / EDIT DIALOG ===================
-        ANC_onCreatePress: function () {
+        ANC_onCreatePress: function() {
             this._oEditingItem = null;
-            this._ANC_openDialog().then(function () {
+            this._ANC_openDialog().then(function() {
                 this.getView().getModel("ANCView").setProperty("/editMode", false);
                 this.getView().getModel("ANCView").setProperty("/formData", {
                     AnnouncementTitle: "",
@@ -458,34 +457,38 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
 
             }.bind(this));
         },
-        ANC_onEditPress: function (oEvent) {
+        ANC_onEditPress: async function (oEvent) {
             var oCtx = oEvent.getSource().getBindingContext("Announcements");
             var oData = Object.assign({}, oCtx.getObject());
-            oData.DepartmentKeys = oData.AnnouncementDepartment ? oData.AnnouncementDepartment.split(",").map(function (s) {
-                return s.trim();
-            }) : [];
+
+            oData.DepartmentKeys = oData.AnnouncementDepartment ? oData.AnnouncementDepartment.split(",").map(function (s) { return s.trim() }) : [];
+
             this._oEditingItem = oData;
-            this._ANC_openDialog().then(function () {
-                this.getView().getModel("ANCView").setProperty("/editMode", true);
-                this.getView().getModel("ANCView").setProperty("/formData", {
-                    AnnouncementID: oData.AnnouncementID,
-                    AnnouncementTitle: oData.AnnouncementTitle,
-                    AnnouncementMessage: oData.AnnouncementMessage,
-                    DepartmentKeys: oData.DepartmentKeys,
-                    AnnouncementDepartment: oData.AnnouncementDepartment,
-                    Priority: oData.Priority,
-                    AnnouncementStatus: oData.AnnouncementStatus,
-                    ExpiresDate: this._ANC_toDateOnly(oData.ExpiresDate),
-                    CreatedDate: this._ANC_toDateOnly(oData.CreatedDate),
-                    CreatedBy: oData.CreatedBy,
-                    AnnouncementAttachment: oData.AnnouncementAttachment,
-                    AnnouncementAttachmentName: oData.AnnouncementAttachmentName,
-                    AnnouncementBackground: oData.AnnouncementBackground,
-                    AnnouncementBackgroundName: oData.AnnouncementBackgroundName
-                });
-            }.bind(this));
+
+            await this._ANC_openDialog();
+
+            let data = await this.ajaxReadWithJQuery("AnnouncementAttachment",{ AnnouncementID: oData.AnnouncementID });
+
+            this.getView().getModel("ANCView").setProperty("/editMode", true);
+
+            this.getView().getModel("ANCView").setProperty("/formData", {
+                AnnouncementID: oData.AnnouncementID,
+                AnnouncementTitle: oData.AnnouncementTitle,
+                AnnouncementMessage: oData.AnnouncementMessage,
+                DepartmentKeys: oData.DepartmentKeys,
+                AnnouncementDepartment: oData.AnnouncementDepartment,
+                Priority: oData.Priority,
+                AnnouncementStatus: oData.AnnouncementStatus,
+                ExpiresDate: this._ANC_toDateOnly(oData.ExpiresDate),
+                CreatedDate: this._ANC_toDateOnly(oData.CreatedDate),
+                CreatedBy: oData.CreatedBy,
+                AnnouncementAttachment: data?.data?.[0]?.AnnouncementAttachment,
+                AnnouncementAttachmentName: data?.data?.[0]?.AnnouncementAttachmentName,
+                AnnouncementBackground: oData.AnnouncementBackground,
+                AnnouncementBackgroundName: oData.AnnouncementBackgroundName
+            });
         },
-        _ANC_openDialog: function () {
+        _ANC_openDialog: function() {
             var oView = this.getView();
             if (this.ANC_oDialog) {
                 this.ANC_oDialog.open();
@@ -495,19 +498,19 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
                 id: oView.getId(),
                 name: "sap.kt.com.minihrsolution.fragment.Fannouncements",
                 controller: this
-            }).then(function (oDialog) {
+            }).then(function(oDialog) {
                 this.ANC_oDialog = oDialog;
                 oView.addDependent(oDialog);
                 oDialog.open();
             }.bind(this));
         },
-        ANC_onCancelPress: function () {
+        ANC_onCancelPress: function() {
             this._ANC_resetFieldStates();
             this.ANC_oDialog.close();
         },
-        _ANC_resetFieldStates: function () {
+        _ANC_resetFieldStates: function() {
             var aIds = ["ANC_id_Title", "ANC_id_Description", "ANC_id_Department", "ANC_id_Priority", "ANC_id_Status", "ANC_id_ExpiresDate"];
-            aIds.forEach(function (sId) {
+            aIds.forEach(function(sId) {
                 var oControl = this.byId(sId);
                 if (oControl) {
                     oControl.setValueState("None");
@@ -515,16 +518,16 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
             }.bind(this));
         },
         // =================== FIELD VALIDATION (LIVE CLEAR) ===================
-        ANC_onTitleChange: function (oEvent) {
+        ANC_onTitleChange: function(oEvent) {
             utils._LCvalidateMandatoryField(oEvent);
         },
-        ANC_onMessageChange: function (oEvent) {
+        ANC_onMessageChange: function(oEvent) {
             utils._LCvalidateMandatoryField(oEvent);
         },
-        ANC_onDepartmentChange: function (oEvent) {
+        ANC_onDepartmentChange: function(oEvent) {
             utils._LCvalidationMultiComboBox(oEvent);
         },
-        ANC_onDateValidation: function (oEvent) {
+        ANC_onDateValidation: function(oEvent) {
             var oField = oEvent.getSource();
             var sValue = oField.getValue();
             if (!sValue) {
@@ -541,52 +544,58 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
             oField.setValueStateText("");
         },
         // =================== FILE UPLOAD ===================
-       ANC_onAttachmentChange: function (oEvent) {
-    const oFile = oEvent.getParameter("files")?.[0];
+        ANC_onAttachmentChange: function(oEvent) {
+            const oFile = oEvent.getParameter("files")?.[0];
 
-    if (!oFile) {
-        return;
-    }
+            if (!oFile) {
+                return;
+            }
 
-    // Validate file type
-    if (oFile.type !== "application/pdf") {
-        MessageToast.show(this.getI18nText("InvalidFileType"));
-        return;
-    }
+            const aAllowedTypes = [
+                "application/pdf",
+                "image/jpeg",
+                "image/jpg",
+                "image/png"
+            ];
 
-    const reader = new FileReader();
+            if (!aAllowedTypes.includes(oFile.type)) {
+                MessageToast.show(this.getI18nText("InvalidFileType"));
+                return;
+            }
 
-    reader.onload = function (oEvent) {
+            const reader = new FileReader();
 
-        // Remove Data URL prefix
-        const sBase64 = oEvent.target.result.split(",")[1];
+            reader.onload = function(oEvent) {
 
-        // Compress Base64
-        const sCompressedBase64 = this.compressBase64(sBase64);
+                // Remove Data URL prefix
+                const sBase64 = oEvent.target.result.split(",")[1];
 
-        const oViewModel = this.getView().getModel("ANCView");
+                // Compress Base64
+                const sCompressedBase64 = this.compressBase64(sBase64);
 
-        oViewModel.setProperty(
-            "/formData/AnnouncementAttachment",
-            sCompressedBase64
-        );
+                const oViewModel = this.getView().getModel("ANCView");
 
-        oViewModel.setProperty(
-            "/formData/AnnouncementAttachmentName",
-            oFile.name
-        );
+                oViewModel.setProperty(
+                    "/formData/AnnouncementAttachment",
+                    sCompressedBase64
+                );
 
-        MessageToast.show(this.getI18nText("uploadSuccessfull") || "File selected successfully.");
+                oViewModel.setProperty(
+                    "/formData/AnnouncementAttachmentName",
+                    oFile.name
+                );
 
-    }.bind(this);
+                MessageToast.show(this.getI18nText("uploadSuccessfull") || "File selected successfully.");
 
-    reader.onerror = function () {
-        MessageToast.show(this.getI18nText("UploadFailed"));
-    }.bind(this);
+            }.bind(this);
 
-    reader.readAsDataURL(oFile);
-},
-        ANC_onBackgroundChange: function (oEvent) {
+            reader.onerror = function() {
+                MessageToast.show(this.getI18nText("UploadFailed"));
+            }.bind(this);
+
+            reader.readAsDataURL(oFile);
+        },
+        ANC_onBackgroundChange: function(oEvent) {
             var oFile = oEvent.getParameter("files") && oEvent.getParameter("files")[0];
             if (!oFile) {
                 return;
@@ -595,16 +604,16 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
                 MessageToast.show(this.getI18nText("InvalidFileType"));
                 return;
             }
-            this.compressAndConvertFile(oFile).then(function (oFileData) {
+            this.compressAndConvertFile(oFile).then(function(oFileData) {
                 var oViewModel = this.getView().getModel("ANCView");
                 oViewModel.setProperty("/formData/AnnouncementBackground", oFileData.File);
                 oViewModel.setProperty("/formData/AnnouncementBackgroundName", oFileData.FileName);
-            }.bind(this)).catch(function (sError) {
+            }.bind(this)).catch(function(sError) {
                 MessageToast.show(sError || this.getI18nText("BackgroundTooLarge"));
             }.bind(this));
         },
         // =================== PDF VIEWER (BLOB URL) ===================
-        _ANC_base64ToBlobUrl: function (sBase64, sMimeType) {
+        _ANC_base64ToBlobUrl: function(sBase64, sMimeType) {
             var sCleanBase64 = sBase64.indexOf(",") > -1 ? sBase64.split(",")[1] : sBase64;
             var sByteChars = atob(sCleanBase64);
             var aByteNumbers = new Array(sByteChars.length);
@@ -617,13 +626,13 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
             });
             return URL.createObjectURL(oBlob);
         },
-        _ANC_revokeCurrentPdfBlobUrl: function () {
+        _ANC_revokeCurrentPdfBlobUrl: function() {
             if (this._sCurrentPdfBlobUrl) {
                 URL.revokeObjectURL(this._sCurrentPdfBlobUrl);
                 this._sCurrentPdfBlobUrl = null;
             }
         },
-        ANC_onClosePDFDialog: function () {
+        ANC_onClosePDFDialog: function() {
             if (this._oPDFDialog) {
                 this._oPDFDialog.close();
             }
@@ -632,25 +641,25 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
             this._ANC_revokeCurrentPdfBlobUrl();
             this.getView().getModel("pdfModel").setProperty("/pdfSource", "");
         },
-        ANC_onBackgroundSizeExceed: function () {
+        ANC_onBackgroundSizeExceed: function() {
             MessageToast.show(this.getI18nText("BackgroundTooLarge"));
         },
-        ANC_onBackgroundTypeMismatch: function () {
+        ANC_onBackgroundTypeMismatch: function() {
             MessageToast.show(this.getI18nText("InvalidFileType"));
         },
-        ANC_onAttachmentClear: function (oEvent) {
+        ANC_onAttachmentClear: function(oEvent) {
             var sValue = oEvent.getParameter("value");
             if (sValue) return;
             this.ANC_onRemoveAttachment();
         },
-        ANC_onBackgroundClear: function (oEvent) {
+        ANC_onBackgroundClear: function(oEvent) {
             var sValue = oEvent.getParameter("value");
             if (sValue) {
                 return;
             }
             this.ANC_onRemoveBackground();
         },
-        ANC_onRemoveAttachment: function () {
+        ANC_onRemoveAttachment: function() {
             var oViewModel = this.getView().getModel("ANCView");
             oViewModel.setProperty("/formData/AnnouncementAttachment", null);
             oViewModel.setProperty("/formData/AnnouncementAttachmentName", "");
@@ -659,7 +668,7 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
                 oUploader.setValue("");
             }
         },
-        ANC_onRemoveBackground: function () {
+        ANC_onRemoveBackground: function() {
             var oViewModel = this.getView().getModel("ANCView");
             oViewModel.setProperty("/formData/AnnouncementBackground", null);
             oViewModel.setProperty("/formData/AnnouncementBackgroundName", "");
@@ -668,71 +677,56 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
                 oUploader.setValue("");
             }
         },
-       ANC_onAttachmentPress: function (oEvent) {
+        ANC_onAttachmentPress:async function(oEvent) {
+            var oContext = oEvent.getSource().getBindingContext("Announcements");
 
-    var oContext = oEvent.getSource().getBindingContext("Announcements");
+            if (!oContext) return MessageToast.show("Binding Context not found.");
+            this.getBusyDialog();
+           let data = await this.ajaxReadWithJQuery("AnnouncementAttachment", {
+                        "AnnouncementID": oContext.getProperty("AnnouncementID")
+                    });
+            // Decompress if stored in compressed format
+            this.closeBusyDialog();
+            var sBase64 = (data && data?.data && data?.data[0]?.AnnouncementAttachment) || "";
+            if (this.isCompressedBase64(sBase64)) sBase64 = this.decompressBase64(sBase64);
 
-    if (!oContext) {
-        MessageToast.show("Binding Context not found.");
-        return;
-    }
+            // Remove Data URL prefix if present
+            if (sBase64.startsWith("data:")) sBase64 = sBase64.split(",")[1];
 
-    var sBase64 = oContext.getProperty("AnnouncementAttachment");
+            // Remove whitespace
+            sBase64 = sBase64.replace(/\s/g, "");
 
-    if (!sBase64) {
-        MessageToast.show("No attachment found.");
-        return;
-    }
+            this._ANC_revokeCurrentPdfBlobUrl();
 
-    // Decompress if stored in compressed format
-    if (this.isCompressedBase64(sBase64)) {
-        sBase64 = this.decompressBase64(sBase64);
-    }
+            try {
+                this._sCurrentPdfBlobUrl = this._ANC_base64ToBlobUrl(sBase64,"application/pdf");
+            } catch (e) {
+                return MessageToast.show(this.getI18nText("LoadError"));
+            }
 
-    // Remove Data URL prefix if present
-    if (sBase64.startsWith("data:")) {
-        sBase64 = sBase64.split(",")[1];
-    }
+            if (!this._oPreviewDialog) {
 
-    // Remove whitespace
-    sBase64 = sBase64.replace(/\s/g, "");
+                Fragment.load({
+                    id: this.getView().getId(),
+                    name: "sap.kt.com.minihrsolution.fragment.DocumentPreview",
+                    controller: this
+                }).then(function(oDialog) {
 
-    this._ANC_revokeCurrentPdfBlobUrl();
+                    this._oPreviewDialog = oDialog;
+                    this.getView().addDependent(oDialog);
 
-    try {
-        this._sCurrentPdfBlobUrl = this._ANC_base64ToBlobUrl(
-            sBase64,
-            "application/pdf"
-        );
-    } catch (e) {
-        console.error(e);
-        MessageToast.show(this.getI18nText("LoadError"));
-        return;
-    }
+                    this._showPdfPreview();
+                    this._oPreviewDialog.open();
 
-    if (!this._oPreviewDialog) {
+                }.bind(this));
 
-        Fragment.load({
-            id: this.getView().getId(),
-            name: "sap.kt.com.minihrsolution.fragment.DocumentPreview",
-            controller: this
-        }).then(function (oDialog) {
+            } else {
 
-            this._oPreviewDialog = oDialog;
-            this.getView().addDependent(oDialog);
-
-            this._showPdfPreview();
-            this._oPreviewDialog.open();
-
-        }.bind(this));
-
-    } else {
-
-        this._showPdfPreview();
-        this._oPreviewDialog.open();
-    }
-},
-        _showPdfPreview: function () {
+                this._showPdfPreview();
+                this._oPreviewDialog.open();
+            }
+        },
+        _showPdfPreview: function() {
 
             var oImage = this.byId("previewImage");
             var oHtml = this.byId("previewHtml");
@@ -753,7 +747,7 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
 
             oHtml.setContent(sIframe);
         },
-        onClosePreview: function () {
+        onClosePreview: function() {
 
             if (this._oPreviewDialog) {
                 this._oPreviewDialog.close();
@@ -761,7 +755,7 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
 
             this._ANC_revokeCurrentPdfBlobUrl();
         },
-        onDownloadPreview: function () {
+        onDownloadPreview: function() {
 
             if (!this._sCurrentPdfBlobUrl) {
                 return;
@@ -775,7 +769,7 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
             document.body.removeChild(oLink);
         },
         // =================== VIEW / MAXIMIZE DETAIL ===================
-        ANC_onViewBackground: function (oEvent) {
+        ANC_onViewBackground: function(oEvent) {
             var oButton = oEvent.getSource();
             var oBindingContext = oButton.getBindingContext("Announcements");
             var oView = this.getView();
@@ -784,7 +778,7 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
                     id: oView.getId(),
                     name: "sap.kt.com.minihrsolution.fragment.AnnouncementDetailDialog",
                     controller: this
-                }).then(function (oDialog) {
+                }).then(function(oDialog) {
                     this._oDetailDialog = oDialog;
                     oView.addDependent(oDialog);
                     oDialog.setBindingContext(oBindingContext, "Announcements");
@@ -800,7 +794,7 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
                 this._oDetailDialog.open();
             }
         },
-        ANC_onCloseDetailDialog: function () {
+        ANC_onCloseDetailDialog: function() {
             if (this._oDetailDialog) {
                 this._oDetailDialog.close();
             }
@@ -808,7 +802,7 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
         // =================== SAVE / DELETE ===================
         // BUSY: covers both Create and Edit/Update, since both paths run
         // through this single function.
-        ANC_onSavePress: async function () {
+        ANC_onSavePress: async function() {
             var oView = this.getView();
             var oViewModel = oView.getModel("ANCView");
             var oFormData = oViewModel.getProperty("/formData");
@@ -838,14 +832,8 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
             }
             oExpiresDate.setValueState("None");
             oExpiresDate.setValueStateText("");
-            if (!oFormData.AnnouncementAttachment) {
-                MessageBox.error(this.getI18nText("AnnouncementAttachmentRequired"));
-                return;
-            }
-            // if (!oFormData.AnnouncementBackground) {
-            //     MessageBox.error(this.getI18nText("AnnouncementBackgroundRequired"));
-            //     return;
-            // }
+            if (!oFormData.AnnouncementAttachment) return MessageBox.error(this.getI18nText("AnnouncementAttachmentRequired"));
+            
             var bEdit = oViewModel.getProperty("/editMode");
             var oLoginModel = this.getView().getModel("LoginModel");
             var sCurrentUser = oLoginModel ? oLoginModel.getProperty("/EmployeeName") : "Admin";
@@ -896,10 +884,10 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
                         await this.ANC_loadAnnouncements();
                     }
                 }
-                var aUploaders = this.getView().findAggregatedObjects(true, function (oControl) {
+                var aUploaders = this.getView().findAggregatedObjects(true, function(oControl) {
                     return oControl.isA("sap.ui.unified.FileUploader");
                 });
-                aUploaders.forEach(function (oUploader) {
+                aUploaders.forEach(function(oUploader) {
                     oUploader.clear();
                 });
                 MessageToast.show(this.getI18nText("AnnouncementSaved"));
@@ -911,14 +899,14 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
                 this.closeBusyDialog();
             }
         },
-        ANC_onDeletePress: function (oEvent) {
+        ANC_onDeletePress: function(oEvent) {
             var oCtx = oEvent.getSource().getBindingContext("Announcements");
             var sId = oCtx.getProperty("AnnouncementID");
-            this.showConfirmationDialog(this.getI18nText("ConfirmDeleteTitle"), this.getI18nText("ConfirmDeleteMessage"), function () {
+            this.showConfirmationDialog(this.getI18nText("ConfirmDeleteTitle"), this.getI18nText("ConfirmDeleteMessage"), function() {
                 this._ANC_deleteAnnouncement(sId);
             }.bind(this));
         },
-        _ANC_deleteAnnouncement: async function (sId) {
+        _ANC_deleteAnnouncement: async function(sId) {
             this.getBusyDialog();
             try {
                 await this.ajaxDeleteWithJQuery("Announcement", {
@@ -936,23 +924,23 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
             }
         },
         // =================== FORMATTERS ===================
-       ANC_formatBase64Image: function (sBase64) {
+        ANC_formatBase64Image: function(sBase64) {
             return sBase64 ? "data:image/png;base64," + sBase64 : "";
         },
-        ANC_hasValue: function (sValue) {
+        ANC_hasValue: function(sValue) {
             return !!sValue;
         },
-        ANC_formatSubtitle: function (sDepartment, sCreatedBy) {
+        ANC_formatSubtitle: function(sDepartment, sCreatedBy) {
             var sDept = sDepartment || "";
             var sBy = sCreatedBy ? this.getI18nText("CreatedBy") + ": " + sCreatedBy : "";
             return [sDept, sBy].filter(Boolean).join(" \u00b7 ");
         },
         // =================== NAVIGATION ===================
-        onPressback: function () {
+        onPressback: function() {
             this.getRouter().navTo("RouteTilePage");
 
         },
-        onLogout: function () {
+        onLogout: function() {
             this.CommonLogoutFunction();
         },
 

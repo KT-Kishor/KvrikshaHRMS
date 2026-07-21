@@ -123,7 +123,6 @@
     justifyContent="SpaceBetween">
 
     <m:ObjectStatus
-        visible="{visibilityModel>/showAdminControls}"
         text="{path:'Announcements>Priority', formatter:'.Formatter.formatStatusText'}"
         state="{path:'Announcements>Priority', formatter:'.Formatter.formatObjectStatus'}"
        />
@@ -163,9 +162,7 @@
     <!-- Department -->
     <m:FlexBox
     visible="{visibilityModel>/showAdminControls}"
-    wrap="Wrap"
-    alignItems="Start"
-    class="sapUiTinyMarginBottom">
+    alignItems="Start">
 
     <m:Label
         text="{i18n>labeldepartment}"
@@ -175,7 +172,6 @@
     <m:Text
         text="{Announcements>AnnouncementDepartment}"
         wrapping="true"
-        width="100%"
         class="datetextannouncement"/>
 
 </m:FlexBox>
@@ -211,7 +207,6 @@
                                                                 id="ANC_id_AttachmentLink"
                                                                 text="{i18n>viewAttachment}"
                                                                 type="Transparent"
-                                                                visible="{path:'Announcements>AnnouncementAttachment', formatter:'.ANC_hasValue'}"
                                                                 press="ANC_onAttachmentPress"
                                                             />
                                                             <m:ToolbarSpacer />

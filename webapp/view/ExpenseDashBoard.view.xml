@@ -1,6 +1,6 @@
 <mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:mc="sap.suite.ui.microchart" xmlns:card="sap.f.cards" xmlns:f="sap.f" controllerName="sap.kt.com.minihrsolution.controller.ExpenseDashBoard" xmlns:core="sap.ui.core" displayBlock="true" xmlns:layout="sap.ui.layout" xmlns:com="sap.suite.ui.commons" xmlns:viz="sap.viz.ui5.controls"
 	xmlns:vizFeeds="sap.viz.ui5.controls.common.feeds"
-	xmlns:vizData="sap.viz.ui5.data" xmlns:fb="sap.ui.comp.filterbar">
+	xmlns:vizData="sap.viz.ui5.data" xmlns:fb="sap.ui.comp.filterbar" xmlns:c="sap.suite.ui.microchart">
 
 <Page id="dashboardPage" class="glassHeader classheader" >
 <customHeader>
@@ -10,7 +10,7 @@
                 type="Transparent"
                 press="onPressback"/>
 
-            <Title text="Expense Dashboard" level="H2"/>
+            <Title text="Company Expense Dashboard" level="H2"/>
 </contentLeft>
 <contentRight>
   
@@ -83,6 +83,55 @@
 
         <!-- Total Spend -->
         <GenericTile
+                                    class="tileLayout customTileWidth blueTile"
+                                    header="{= 'Previous FY : ' + ${DashboardModel>/PreFinancialYear} }"
+                                    frameType="TwoByOne"
+                                    press="onPressManageJobs"
+                                >
+                                    <tileContent>
+                                        <TileContent >
+                                            <content>
+                                                <c:ComparisonMicroChart
+                                                    view="Wide"
+                                                    size="Responsive"
+                                                    scale=""
+                                                >
+                                                    <c:data>    
+                                                        <c:ComparisonMicroChartData
+                                                             value="{DashboardModel>/PreTotalAmount}"
+                                                            title="Total Expense"
+                                                             displayValue="{
+                                path:'DashboardModel>/PreTotalAmount',
+                                formatter:'.Formatter.CurrencyInINRExpense'
+                            }"
+                                                            color="Neutral"
+                                                         />
+                                                        <c:ComparisonMicroChartData
+                                                            title="Total Reimbursement"
+                                                             value="{DashboardModel>/PreReimbursementAmount}"
+                                                            displayValue="{
+                                path:'DashboardModel>/PreReimbursementAmount',
+                                formatter:'.Formatter.CurrencyInINRExpense'
+                            }"
+                                                            color="Good"
+                                                        />
+                                                        <c:ComparisonMicroChartData
+                                                            title="Total Pending"
+                                                            value="{DashboardModel>/PrePendingAmount}"
+                                                           displayValue="{
+                                path:'DashboardModel>/PrePendingAmount',
+                                formatter:'.Formatter.CurrencyInINRExpense'
+                            }"
+                                                            color="Error"
+                                                        />
+                                                    </c:data>
+                                                </c:ComparisonMicroChart>
+                                            </content>
+                                        </TileContent>
+                                    </tileContent>
+                                </GenericTile>
+
+        <GenericTile
             class="tileLayout customTileWidth blueTile "
             header="{i18n>totalexpense}"
             subheader="{= ${DashboardModel>/TotalExpenseCount} + ' Open Claims' }"
@@ -99,29 +148,6 @@
                             icon="sap-icon://money-bills"
                             indicator="Up"
                             valueColor="Good"/>
-                    </content>
-                </TileContent>
-            </tileContent>
-        </GenericTile>
-
-        <!-- Company Paid -->
-        <GenericTile
-            class="tileLayout customTileWidth orangeTile "
-            header="{i18n>companypaiddata}"
-            subheader="{= ${DashboardModel>/CompanyCount} + ' Open Claims' }"
-            press="onCompanyPaidTilePress">
-
-            <tileContent>
-                <TileContent  >
-                    <content>
-                        <NumericContent
-                        class="sapUiSmallMarginTop"
-                               value="{path:'DashboardModel>/First4Card/CompanyAmount',
-                            formatter:'.formatter.fromatNumberinvoice'}"
-                            scale="K" 
-                             indicator="Down"
-                            icon="sap-icon://paid-leave"
-                            valueColor="Critical"/>
                     </content>
                 </TileContent>
             </tileContent>
@@ -178,75 +204,76 @@
 
 <layout:Grid defaultSpan="XL6 L6 M12 S12"  hSpacing="1" vSpacing="1">
 					<layout:content>
-						<!-- 1. category Distribution Chart -->
-						<f:Card  class="sapUiTinyMarginBottom"  >
-                        
+                    
+                    <f:Card class="sapUiTinyMarginBottom">
+
     <f:header>
         <card:Header
-            title="{i18n>spendbyucategory}"
-            subtitle="{i18n>expensetypedistribution}"/>
+            title="{i18n>monthlyexpensetrend}"
+            subtitle="{i18n>financialyearoverview}"/>
     </f:header>
 
     <f:content>
-     <ScrollContainer
-            height="350px"
+
+        <viz:VizFrame
+            id="monthlyExpenseChart"
+            vizType="line"
             width="100%"
-            vertical="true"
-            horizontal="false">
-        <List
-            items="{DashboardModel>/ByExpenseType}"
-            showSeparators="None">
+            height="350px"
+            selectData="onMonthlyExpenseChartSelect"
+            uiConfig="{applicationSet:'fiori'}">
 
-            <CustomListItem>
-                <HBox
-                    width="100%"
-                    alignItems="Center"
-                    class="sapUiSmallMargin">
+            <viz:dataset>
+                <vizData:FlattenedDataset
+                    data="{DashboardModel>/MonthlyTrend}">
 
-                    <!-- Icon -->
-                    <core:Icon
-    src="{
-        path: 'DashboardModel>ItemType',
-        formatter: '.formatter.getItemTypeIcon'
-    }"
-    size="1.5rem"
-    class="categoryIcon sapUiTinyMarginEnd"/>
+                    <vizData:dimensions>
+                        <vizData:DimensionDefinition
+                            name="Month"
+                            value="{DashboardModel>Month}" />
+                    </vizData:dimensions>
 
-                    <!-- Category + Progress -->
-                    <VBox width="70%" class="sapUiSmallMarginBottom">
-                        <Title
-                            text="{DashboardModel>ItemType}"
-                            level="H5"/>
+                    <vizData:measures>
+                        <vizData:MeasureDefinition
+                            name="Expense Amount"
+                            value="{DashboardModel>TotalAmount}" />
+                    </vizData:measures>
 
-                        <ProgressIndicator
-                            percentValue="{DashboardModel>Percentage}"
-                            displayValue="{DashboardModel>Percentage}%"
-                            showValue="false"
-                            width="100%"
-                            state="Success"/>
-                    </VBox>
+                </vizData:FlattenedDataset>
+            </viz:dataset>
 
-                    <!-- Amount -->
-                    <Text
-                        text="{path: 'DashboardModel>Amount', formatter: '.formatter.fromatNumber'}"
-                        class="sapUiMediumMarginBegin categoryAmount"/>
+            <viz:feeds>
+                <vizFeeds:FeedItem
+                    uid="valueAxis"
+                    type="Measure"
+                    values="Expense Amount"/>
 
-                </HBox>
-            </CustomListItem>
+                <vizFeeds:FeedItem
+                    uid="categoryAxis"
+                    type="Dimension"
+                    values="Month"/>
+            </viz:feeds>
 
-        </List>
-        </ScrollContainer>
+        </viz:VizFrame>
+
     </f:content>
-</f:Card>
 
+</f:Card>
+						
 <!-- second chart  -->
 
-<f:Card class="sapUiTinyMarginBottom sapUiTinyMarginBegin">
+<f:Card class="sapUiTinyMarginBottom">
 
 <f:header>
         <card:Header
             title="{i18n>paymentbreakdown}"
-            subtitle="{path: 'PaymentChartModel>/Total', formatter: '.formatter.fromatNumber'} Total Amount"/>
+           subtitle="{
+    parts: [
+        { path: 'DashboardModel>/PaymentPendingAmount' },
+        { path: 'DashboardModel>/PaymentReimbursementAmount' }
+    ],
+    formatter: '.formatter.formatPaymentSubtitle'
+}"/>
     </f:header>
 
     <f:content>
@@ -304,67 +331,11 @@
     </f:content>
 </f:Card>
 
-<!-- third chart -->
+
+<!-- Third chart -->
 
 
-<f:Card class="sapUiTinyMarginBottom">
-
-    <f:header>
-        <card:Header
-            title="{i18n>monthlyexpensetrend}"
-            subtitle="{i18n>financialyearoverview}"/>
-    </f:header>
-
-    <f:content>
-
-        <viz:VizFrame
-            id="monthlyExpenseChart"
-            vizType="line"
-            width="100%"
-            height="350px"
-            selectData="onMonthlyExpenseChartSelect"
-            uiConfig="{applicationSet:'fiori'}">
-
-            <viz:dataset>
-                <vizData:FlattenedDataset
-                    data="{DashboardModel>/MonthlyTrend}">
-
-                    <vizData:dimensions>
-                        <vizData:DimensionDefinition
-                            name="Month"
-                            value="{DashboardModel>Month}" />
-                    </vizData:dimensions>
-
-                    <vizData:measures>
-                        <vizData:MeasureDefinition
-                            name="Expense Amount"
-                            value="{DashboardModel>TotalAmount}" />
-                    </vizData:measures>
-
-                </vizData:FlattenedDataset>
-            </viz:dataset>
-
-            <viz:feeds>
-                <vizFeeds:FeedItem
-                    uid="valueAxis"
-                    type="Measure"
-                    values="Expense Amount"/>
-
-                <vizFeeds:FeedItem
-                    uid="categoryAxis"
-                    type="Dimension"
-                    values="Month"/>
-            </viz:feeds>
-
-        </viz:VizFrame>
-
-    </f:content>
-
-</f:Card>
-<!-- forth chart -->
-
-
-<f:Card  class="sapUiTinyMarginBottom sapUiTinyMarginBegin">
+<f:Card  class="sapUiTinyMarginBottom">
 
     <f:header>
         <card:Header
@@ -417,6 +388,66 @@
 
     </f:content>
 
+</f:Card>
+<!-- 4. category Distribution Chart -->
+						<f:Card  class="sapUiTinyMarginBottom"  >
+                        
+    <f:header>
+        <card:Header
+            title="{i18n>spendbyucategory}"
+            subtitle="{i18n>expensetypedistribution}"/>
+    </f:header>
+
+    <f:content>
+     <ScrollContainer
+            height="350px"
+            width="100%"
+            vertical="true"
+            horizontal="false">
+        <List
+            items="{DashboardModel>/ByExpenseType}"
+            showSeparators="None">
+
+            <CustomListItem>
+                <HBox
+                    width="100%"
+                    alignItems="Center"
+                    class="sapUiSmallMargin">
+
+                    <!-- Icon -->
+                    <core:Icon
+    src="{
+        path: 'DashboardModel>ItemType',
+        formatter: '.formatter.getItemTypeIcon'
+    }"
+    size="1.5rem"
+    class="categoryIcon sapUiTinyMarginEnd"/>
+
+                    <!-- Category + Progress -->
+                    <VBox width="70%" class="sapUiSmallMarginBottom">
+                        <Title
+                            text="{DashboardModel>ItemType}"
+                            level="H5"/>
+
+                        <ProgressIndicator
+                            percentValue="{DashboardModel>Percentage}"
+                            displayValue="{DashboardModel>Percentage}%"
+                            showValue="false"
+                            width="100%"
+                            state="Success"/>
+                    </VBox>
+
+                    <!-- Amount -->
+                    <Text
+                        text="{path: 'DashboardModel>Amount', formatter: '.formatter.CurrencyInINRExpense'}"
+                        class="sapUiMediumMarginBegin categoryAmount"/>
+
+                </HBox>
+            </CustomListItem>
+
+        </List>
+        </ScrollContainer>
+    </f:content>
 </f:Card>
 
 					</layout:content>
@@ -535,10 +566,10 @@
 
                         <!-- Amount -->
                         <Text
-                            text="{path: 'DashboardModel>TotalAmount', formatter: '.formatter.fromatNumber'}"
+                            text="{path: 'DashboardModel>TotalAmount', formatter: '.formatter.fromatNumberexpense'}"
                             />
                         <Text
-                            text="{path: 'DashboardModel>ReimbursementAmount', formatter: '.formatter.fromatNumber'}"
+                            text="{path: 'DashboardModel>ReimbursementAmount', formatter: '.formatter.fromatNumberexpense'}"
                             />
 
                        

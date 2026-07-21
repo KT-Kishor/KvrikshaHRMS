@@ -1,0 +1,65 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form">
+
+    <Dialog
+        id="downloadTimesheetDialog"
+        title="Download Timesheet"
+        contentWidth="26rem">
+
+        <content>
+            <f:SimpleForm
+                editable="true"
+                layout="ResponsiveGridLayout"
+                labelSpanXL="4"
+                labelSpanL="4"
+                labelSpanM="4"
+                labelSpanS="12"
+                adjustLabelSpan="false"
+                emptySpanXL="0"
+                emptySpanL="0"
+                emptySpanM="0"
+                emptySpanS="0">
+
+                <core:Title text="Selection"/>
+
+                <Label text="Employee" required="true"/>
+                <!-- <ComboBox id="employeeSelect" showClearIcon="true" width="100%" items="{EmployeeFilterModel>/}" value="{DownloadTimesheetModel>/SelectedEmployee}">
+                    <core:ListItem key="{EmployeeFilterModel>EmployeeID}" text="{EmployeeFilterModel>EmployeeID}" additionalText="{EmployeeFilterModel>EmployeeName}"/>
+                </ComboBox> -->
+                <ComboBox showSecondaryValues= "true" id="employeeSelect" showClearIcon="true" items="{path:'EmployeeFilterModel>/'}" value="{DownloadTimesheetModel>/SelectedEmployee}">
+						<core:ListItem key="{EmployeeFilterModel>EmployeeID}" text="{EmployeeFilterModel>EmployeeID}" additionalText="{EmployeeFilterModel>EmployeeName}" />
+					</ComboBox>   
+                <Label text="Month" required="true"/>
+                <ComboBox id="monthSelect" showClearIcon="true" width="100%" items="{DownloadTimesheetModel>/MonthList}" value="{DownloadTimesheetModel>/SelectedMonth}">
+                    <core:Item key="{DownloadTimesheetModel>MonthKey}" text="{DownloadTimesheetModel>MonthLabel}"/>
+                </ComboBox>
+
+                <Label text="Download Format" required="true"/>
+                <RadioButtonGroup
+                    id="formatRadioGroup"
+                    columns="2"
+                    selectedIndex="{DownloadTimesheetModel>/SelectedFormat}"
+                    select="onFormatSelect">
+                    <RadioButton text="PDF" selected="true"/>
+                    <RadioButton text="Excel"/>
+                </RadioButtonGroup>
+
+            </f:SimpleForm>
+        </content>
+
+        <beginButton>
+            <Button
+                text="Download"
+                type="Transparent"
+                press="onConfirmDownload"/>
+        </beginButton>
+        <endButton>
+            <Button
+                text="Cancel"
+                press="onCancelDownload"/>
+        </endButton>
+
+    </Dialog>
+</core:FragmentDefinition>

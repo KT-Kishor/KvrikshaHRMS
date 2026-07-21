@@ -74,9 +74,9 @@ sap.ui.define([
                         oView.setModel(oModel, "ContractModelWizart");
                         oView.byId("C_id_PageCreate").setVisible(true);
                         oView.byId("CUF_id_Contractpage").setVisible(false);
-                        const supdateAgreementDate = new Date();
-                        oView.byId("CD_id_Datestart")?.setMinDate(supdateAgreementDate);
-                        oView.byId("CD_id_DateEnd")?.setMinDate(supdateAgreementDate);
+                        // const supdateAgreementDate = new Date();
+                        // oView.byId("CD_id_Datestart")?.setMinDate(supdateAgreementDate);
+                        // oView.byId("CD_id_DateEnd")?.setMinDate(supdateAgreementDate);
 
                         this.getView().byId("CD_id_Submit").setEnabled(false);
                         this.CD_onResetWizard();
@@ -247,34 +247,34 @@ sap.ui.define([
                 const sAgreementDate = oAgreementDatePicker.getDateValue();
 
                 if (sAgreementDate) {
-                    const sStartDate = oStartDatePicker?.getDateValue();
-                    const sEndDate = oEndDatePicker?.getDateValue();
+                    // const sStartDate = oStartDatePicker?.getDateValue();
+                    // const sEndDate = oEndDatePicker?.getDateValue();
 
                     // Validate Start Date
-                    if (sStartDate && sStartDate < sAgreementDate) {
-                        oStartDatePicker.setDateValue(null);
-                        oStartDatePicker.setValue("");
-                        oStartDatePicker.setValueState("Error");
-                        oStartDatePicker.setValueStateText("Start Date must be after Agreement Date");
-                    } else {
-                        oStartDatePicker.setValueState("None");
-                    }
+                    // if (sStartDate && sStartDate < sAgreementDate) {
+                    //     oStartDatePicker.setDateValue(null);
+                    //     oStartDatePicker.setValue("");
+                    //     oStartDatePicker.setValueState("Error");
+                    //     oStartDatePicker.setValueStateText("Start Date must be after Agreement Date");
+                    // } else {
+                    //     oStartDatePicker.setValueState("None");
+                    // }
 
                     // Validate End Date
-                    if (sEndDate && sEndDate < sAgreementDate) {
-                        oEndDatePicker.setDateValue(null);
-                        oEndDatePicker.setValue("");
-                        oEndDatePicker.setValueState("Error");
-                        oEndDatePicker.setValueStateText("End Date must be after Agreement Date");
-                    } else {
-                        oEndDatePicker.setValueState("None");
-                    }
+                    // if (sEndDate && sEndDate < sAgreementDate) {
+                    //     oEndDatePicker.setDateValue(null);
+                    //     oEndDatePicker.setValue("");
+                    //     oEndDatePicker.setValueState("Error");
+                    //     oEndDatePicker.setValueStateText("End Date must be after Agreement Date");
+                    // } else {
+                    //     oEndDatePicker.setValueState("None");
+                    // }
 
-                    oStartDatePicker.setMinDate(sAgreementDate);
-                    oStartDatePicker.setMaxDate(null); // 👈 clear any previously set maxDate
+                    // oStartDatePicker.setMinDate(sAgreementDate);
+                    // oStartDatePicker.setMaxDate(null); // 👈 clear any previously set maxDate
 
-                    oEndDatePicker.setMinDate(sAgreementDate);
-                    oEndDatePicker.setMaxDate(null); // 👈 clear any previously set maxDate
+                    // oEndDatePicker.setMinDate(sAgreementDate);
+                    // oEndDatePicker.setMaxDate(null); // 👈 clear any previously set maxDate
                     this._forceRevalidate(oStartDatePicker);
                     this._forceRevalidate(oEndDatePicker);
                 }
@@ -320,61 +320,77 @@ sap.ui.define([
             onChangeAggrementDate: function () {
                 const oAgreementDatePicker = this.byId("CU_id_AgreementDate");
                 const oStartDatePicker = this.byId("CU_id_AssignmentStartDate");
-                const oEndDatePicker = this.byId("CU_id_AssignmentEndDate");
+                // const oEndDatePicker = this.byId("CU_id_AssignmentEndDate");
                 const oAgreementDate = oAgreementDatePicker?.getDateValue();
 
-                if (oAgreementDate) {
-                    const oStartDate = oStartDatePicker?.getDateValue();
-                    const oEndDate = oEndDatePicker?.getDateValue();
+                // if (oAgreementDate) {
+                //     const oStartDate = oStartDatePicker?.getDateValue();
+                //     const oEndDate = oEndDatePicker?.getDateValue();
 
-                    if (oStartDate && oStartDate < oAgreementDate) {
-                        oStartDatePicker.setValue("");
-                        oStartDatePicker.setValueState("Error");
-                    } else {
-                        oStartDatePicker.setValueState("None");
-                    }
+                //     if (oStartDate && oStartDate < oAgreementDate) {
+                //         oStartDatePicker.setValue("");
+                //         oStartDatePicker.setValueState("Error");
+                //     } else {
+                //         oStartDatePicker.setValueState("None");
+                //     }
 
-                    if (oEndDate && oEndDate < oAgreementDate) {
-                        oEndDatePicker.setValue("");
-                        oEndDatePicker.setValueState("Error");
-                    } else {
-                        oEndDatePicker.setValueState("None");
-                    }
+                //     if (oEndDate && oEndDate < oAgreementDate) {
+                //         oEndDatePicker.setValue("");
+                //         oEndDatePicker.setValueState("Error");
+                //     } else {
+                //         oEndDatePicker.setValueState("None");
+                //     }
 
-                    oStartDatePicker?.setMinDate(oAgreementDate);
-                    oEndDatePicker?.setMinDate(oAgreementDate);
-                }
+                    // oStartDatePicker?.setMinDate(oAgreementDate);
+                    // oEndDatePicker?.setMinDate(oAgreementDate);
+                // }
             },
 
-            CD_validateDate: function (oEvent) {
-                let oModel, oStartDatePicker, oEndDatePicker;
-                if (this.sArgPara === "CreateContractFlag") {
-                    oModel = this.getView().getModel("ContractModelWizart");
-                    oStartDatePicker = this.byId("CD_id_Datestart");
-                    oEndDatePicker = this.byId("CD_id_DateEnd");
-                } else {
-                    oModel = this.getView().getModel("oFilteredContractModel");
-                    oStartDatePicker = this.byId("CU_id_AssignmentStartDate");
-                    oEndDatePicker = this.byId("CU_id_AssignmentEndDate");
-                }
+           CD_validateDate: function (oEvent) {
+    let oModel, oStartDatePicker, oEndDatePicker;
 
-                const oSource = oEvent.getSource();
-                const sId = oSource.getId();
-                const sValue = oSource.getValue();
-                const oDate = this.onFormatDate(sValue); // Convert "dd/MM/yyyy" to Date object
+    if (this.sArgPara === "CreateContractFlag") {
+        oModel = this.getView().getModel("ContractModelWizart");
+        oStartDatePicker = this.byId("CD_id_Datestart");
+        oEndDatePicker = this.byId("CD_id_DateEnd");
+    } else {
+        oModel = this.getView().getModel("oFilteredContractModel");
+        oStartDatePicker = this.byId("CU_id_AssignmentStartDate");
+        oEndDatePicker = this.byId("CU_id_AssignmentEndDate");
+    }
 
-                if (!isNaN(oDate?.getTime?.())) {
-                    if (sId === oStartDatePicker.getId()) {
-                        oEndDatePicker.setMinDate(oDate); // Start Date changed — set minDate on End Date
-                    } else if (sId === oEndDatePicker.getId()) {
-                        oStartDatePicker.setMaxDate(oDate); // End Date changed — set maxDate on Start Date
-                    }
-                }
-                utils._LCvalidateDate(oEvent);
-                if (this.sArgPara === "CreateContractFlag") {
-                    this.validateStep(); // Only run in create flow
-                }
-            },
+    const oSource = oEvent.getSource();
+    const sId = oSource.getId();
+    const sValue = oSource.getValue();
+    const oDate = this.onFormatDate(sValue);
+
+    if (!isNaN(oDate?.getTime?.())) {
+
+        // Start Date changed
+        if (sId === oStartDatePicker.getId()) {
+
+            // Set minimum date for End Date
+            oEndDatePicker.setMinDate(oDate);
+
+            // Clear End Date
+            oEndDatePicker.setValue("");
+
+            // Clear model property
+            oModel.setProperty("/AssignmentEndDate", "");
+
+        } else if (sId === oEndDatePicker.getId()) {
+
+            // Set maximum date for Start Date
+            oStartDatePicker.setMaxDate(oDate);
+        }
+    }
+
+    utils._LCvalidateDate(oEvent);
+
+    if (this.sArgPara === "CreateContractFlag") {
+        this.validateStep();
+    }
+},
 
             CD_validateName: function (oEvent) {
                 const oSource = oEvent.getSource();

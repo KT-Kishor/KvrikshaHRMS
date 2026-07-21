@@ -132,6 +132,22 @@
                                 scale="K"/>
                         </TileContent>
                     </GenericTile>
+
+                    <GenericTile
+                        class="tileLayout tileReceived"
+                        header="Current Trend"
+                        subheader="Current Month Performance"
+                        press="onTrendTilePress">
+                        <TileContent footer="{InvoiceDashboardModel>/TrendMonthLabel}">
+                            <NumericContent
+                                value="{path:'InvoiceDashboardModel>/TrendAmount', formatter:'.Formatter.fromatNumberinvoice'}"
+                                icon="{InvoiceDashboardModel>/TrendIcon}"
+                                indicator="{InvoiceDashboardModel>/TrendIndicator}"
+                                valueColor="{InvoiceDashboardModel>/TrendColor}"
+                                withMargin="false"
+                                scale="K"/>
+                        </TileContent>
+                    </GenericTile>
                 </FlexBox>
                
 				<layout:Grid defaultSpan="XL6 L6 M12 S12" hSpacing="1" vSpacing="1">
