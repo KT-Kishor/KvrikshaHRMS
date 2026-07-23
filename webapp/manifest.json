@@ -1000,7 +1000,14 @@
           "target": [
             "TargetCandidateQuestionDetail"
           ]
-        } 
+        },
+        {
+          "name": "RouteGeneratePDF",
+          "pattern": "GenerateLetterhead",
+          "target" : [
+            "TargetGeneratePDF"
+          ]
+        }
       ],
       "targets": {
         "TargetView1": {
@@ -1610,6 +1617,13 @@
           "clearControlAggregation": false,
           "viewId": "CandidateQuestionDetailPage",
           "viewName": "CandidateQuestionDetailPage"
+        },
+        "TargetGeneratePDF": {
+          "viewType": "XML",
+          "transition": "slide",
+          "clearControlAggregation": false,
+          "viewId": "GeneratePDF",
+          "viewName": "GenerateLetterhead"
         }
       }
     },

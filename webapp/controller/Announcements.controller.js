@@ -677,62 +677,110 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
                 oUploader.setValue("");
             }
         },
-        ANC_onAttachmentPress:async function(oEvent) {
-            var oContext = oEvent.getSource().getBindingContext("Announcements");
+  ANC_onAttachmentPress: async function (oEvent) {
 
-            if (!oContext) return MessageToast.show("Binding Context not found.");
-            this.getBusyDialog();
-           let data = await this.ajaxReadWithJQuery("AnnouncementAttachment", {
-                        "AnnouncementID": oContext.getProperty("AnnouncementID")
-                    });
-            // Decompress if stored in compressed format
-            this.closeBusyDialog();
-            var sBase64 = (data && data?.data && data?.data[0]?.AnnouncementAttachment) || "";
-            if (this.isCompressedBase64(sBase64)) sBase64 = this.decompressBase64(sBase64);
+    var oContext = oEvent.getSource().getBindingContext("Announcements");
 
-            // Remove Data URL prefix if present
-            if (sBase64.startsWith("data:")) sBase64 = sBase64.split(",")[1];
+    if (!oContext) {
+        MessageToast.show("Binding Context not found.");
+        return;
+    }
 
-            // Remove whitespace
-            sBase64 = sBase64.replace(/\s/g, "");
+    this.getBusyDialog();
+
+    try {
+
+        let data = await this.ajaxReadWithJQuery("AnnouncementAttachment", {
+            AnnouncementID: oContext.getProperty("AnnouncementID")
+        });
+
+        this.closeBusyDialog();
+
+        const oAttachment = data?.data?.[0];
+
+        if (!oAttachment || !oAttachment.AnnouncementAttachment) {
+            MessageToast.show("No attachment found.");
+            return;
+        }
+
+        let sBase64 = oAttachment.AnnouncementAttachment;
+        let sFileName = oAttachment.AnnouncementAttachmentName || "Attachment";
+
+        // Decompress if required
+        if (this.isCompressedBase64(sBase64)) {
+            sBase64 = this.decompressBase64(sBase64);
+        }
+
+        // Remove data url
+        if (sBase64.startsWith("data:")) {
+            sBase64 = sBase64.split(",")[1];
+        }
+
+        sBase64 = sBase64.replace(/\s/g, "");
+
+        // Store for download
+        this.SelectedData = {
+            Attachment: sBase64,
+            AttachmentName: sFileName
+        };
+
+        if (!this._oPreviewDialog) {
+            this._oPreviewDialog = await Fragment.load({
+                id: this.getView().getId(),
+                name: "sap.kt.com.minihrsolution.fragment.DocumentPreview",
+                controller: this
+            });
+
+            this.getView().addDependent(this._oPreviewDialog);
+        }
+
+        var oDialog = this.byId("previewDialog");
+        var oImage = this.byId("previewImage");
+        var oHtml = this.byId("previewHtml");
+
+        oDialog.setTitle(sFileName);
+
+        oImage.setVisible(false);
+        oHtml.setVisible(false);
+        oHtml.setContent("");
+
+        var sExt = sFileName.split(".").pop().toLowerCase();
+
+        // IMAGE
+        if (["jpg", "jpeg", "png", "gif", "bmp", "webp"].includes(sExt)) {
+
+            var sMimeType = "image/jpeg";
+
+            switch (sExt) {
+                case "png":
+                    sMimeType = "image/png";
+                    break;
+                case "gif":
+                    sMimeType = "image/gif";
+                    break;
+                case "bmp":
+                    sMimeType = "image/bmp";
+                    break;
+                case "webp":
+                    sMimeType = "image/webp";
+                    break;
+            }
+
+            oImage.setSrc("data:" + sMimeType + ";base64," + sBase64);
+            oImage.setVisible(true);
+            oDialog.open();
+            return;
+        }
+
+        // PDF
+        if (sExt === "pdf") {
 
             this._ANC_revokeCurrentPdfBlobUrl();
 
-            try {
-                this._sCurrentPdfBlobUrl = this._ANC_base64ToBlobUrl(sBase64,"application/pdf");
-            } catch (e) {
-                return MessageToast.show(this.getI18nText("LoadError"));
-            }
-
-            if (!this._oPreviewDialog) {
-
-                Fragment.load({
-                    id: this.getView().getId(),
-                    name: "sap.kt.com.minihrsolution.fragment.DocumentPreview",
-                    controller: this
-                }).then(function(oDialog) {
-
-                    this._oPreviewDialog = oDialog;
-                    this.getView().addDependent(oDialog);
-
-                    this._showPdfPreview();
-                    this._oPreviewDialog.open();
-
-                }.bind(this));
-
-            } else {
-
-                this._showPdfPreview();
-                this._oPreviewDialog.open();
-            }
-        },
-        _showPdfPreview: function() {
-
-            var oImage = this.byId("previewImage");
-            var oHtml = this.byId("previewHtml");
-
-            oImage.setVisible(false);
-            oHtml.setVisible(true);
+            this._sCurrentPdfBlobUrl = this._ANC_base64ToBlobUrl(
+                sBase64,
+                "application/pdf"
+            );
 
             const sBlobUrl = this._sCurrentPdfBlobUrl;
 
@@ -746,7 +794,21 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
                 "</iframe>";
 
             oHtml.setContent(sIframe);
-        },
+            oHtml.setVisible(true);
+            oDialog.open();
+            return;
+        }
+
+        MessageToast.show("Unsupported file type.");
+
+    } catch (e) {
+
+        this.closeBusyDialog();
+        console.error("Attachment Error:", e);
+        MessageToast.show(e.message || "Error loading attachment.");
+    }
+},
+       
         onClosePreview: function() {
 
             if (this._oPreviewDialog) {
@@ -755,19 +817,54 @@ sap.ui.define(["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/F
 
             this._ANC_revokeCurrentPdfBlobUrl();
         },
-        onDownloadPreview: function() {
+     onDownloadPreview: function () {
 
-            if (!this._sCurrentPdfBlobUrl) {
-                return;
-            }
+    if (!this.SelectedData || !this.SelectedData.Attachment) {
+        MessageToast.show("No attachment available.");
+        return;
+    }
 
-            var oLink = document.createElement("a");
-            oLink.href = this._sCurrentPdfBlobUrl;
-            oLink.download = "Announcement.pdf";
-            document.body.appendChild(oLink);
-            oLink.click();
-            document.body.removeChild(oLink);
-        },
+    const sBase64 = this.SelectedData.Attachment;
+    const sFileName = this.SelectedData.AttachmentName;
+
+    const sExt = sFileName.split(".").pop().toLowerCase();
+
+    let sMimeType = "application/octet-stream";
+
+    switch (sExt) {
+        case "pdf":
+            sMimeType = "application/pdf";
+            break;
+        case "png":
+            sMimeType = "image/png";
+            break;
+        case "jpg":
+        case "jpeg":
+            sMimeType = "image/jpeg";
+            break;
+        case "gif":
+            sMimeType = "image/gif";
+            break;
+        case "bmp":
+            sMimeType = "image/bmp";
+            break;
+        case "webp":
+            sMimeType = "image/webp";
+            break;
+    }
+
+    const sBlobUrl = this._ANC_base64ToBlobUrl(sBase64, sMimeType);
+
+    const oLink = document.createElement("a");
+    oLink.href = sBlobUrl;
+    oLink.download = sFileName;
+
+    document.body.appendChild(oLink);
+    oLink.click();
+    document.body.removeChild(oLink);
+
+    URL.revokeObjectURL(sBlobUrl);
+},
         // =================== VIEW / MAXIMIZE DETAIL ===================
         ANC_onViewBackground: function(oEvent) {
             var oButton = oEvent.getSource();

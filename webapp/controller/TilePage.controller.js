@@ -5,11 +5,12 @@ sap.ui.define(
         "../utils/validation",
         "sap/ui/model/json/JSONModel",
         "sap/m/MessageBox",
+      
     ],
     function (BaseController, MessageToast, utils, JSONModel, MessageBox) {
         "use strict";
         const $C = (id) => sap.ui.getCore().byId(id);
-
+       
         return BaseController.extend(
             "sap.kt.com.minihrsolution.controller.TilePage", {
             onInit: function () {
@@ -999,7 +1000,10 @@ sap.ui.define(
             }.bind(this)
         }
     );
-}
+},
+TileV_onpressGeneratePDF: function (){
+                this.getRouter().navTo("RouteGeneratePDF");
+            },
 
 
         });

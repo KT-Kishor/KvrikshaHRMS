@@ -781,7 +781,7 @@ fromatNumberexpense: function (currencyOrValue, totalAmount, amountInINR) {
 
     return oFloatFormat.format(numericValue) + " INR";
 },
-formatPaymentSubtitle: function (fPending, fReimbursement) {
+formatPaymentSubtitle: function (fPending, fReimbursement,fOpenamount) {
 
     var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
         groupingBaseSize: 3,
@@ -792,9 +792,28 @@ formatPaymentSubtitle: function (fPending, fReimbursement) {
 
     var sPending = oFormat.format(fPending || 0);
     var sReimbursement = oFormat.format(fReimbursement || 0);
+    var sOpenamount = oFormat.format(fOpenamount || 0);
 
-    return "Pending: " + sPending + " INR | Reimbursement: " + sReimbursement + " INR";
+    return "Open Expense: " + sOpenamount + " INR | Pending Expense: " + sPending + " INR | Paid Expense: " + sReimbursement + " INR";
 }
+,
+formatAssignedAndReturnDate: function (sAssignedDate, sReturnDate, sStatus) {
 
+    const formatDate = function (sDate) {
+        if (!sDate) {
+            return "";
+        }
+
+        return new Date(sDate).toLocaleDateString("en-GB");
+    };
+
+    const sAssigned = formatDate(sAssignedDate);
+
+    if (sStatus === "Returned" && sReturnDate) {
+        return sAssigned + " - " + formatDate(sReturnDate);
+    }
+
+    return sAssigned;
+}
     };
 });

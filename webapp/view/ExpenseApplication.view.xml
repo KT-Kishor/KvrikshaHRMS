@@ -250,8 +250,8 @@
                         demandPopin="true"
                     >
                         <Label
-                            text="{i18n>expReimbursementAmountExp}"
-                            tooltip="{i18n>expReimbursementAmount}"
+                            text="{i18n>paidamount}"
+                            tooltip="{i18n>paidamount}"
                         />
                     </Column>
                 </columns>

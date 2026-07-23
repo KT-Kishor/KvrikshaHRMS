@@ -42,115 +42,49 @@
 					</fb:filterGroupItems>
 				</fb:FilterBar>
 
-                 <FlexBox
-                    wrap="Wrap"
-                    justifyContent="Center"
-                    alignItems="Start"
-                    class="invoiceTileContainer sapUiSmallMarginBottom">
- 
-                    <GenericTile
-                        class="tileLayout tileTotal"
-                        header="{i18n>totalAmount}"
-                        subheader="{i18n>All_Invoices}"
-                       >
-                        <TileContent footer="{= 'Total Invoices : ' + ${InvoiceDashboardModel>/TileData/TotalCount}}">
-                            <NumericContent
-                                 value="{path:'InvoiceDashboardModel>/TileData/TotalAmount',
-                            formatter:'.Formatter.fromatNumberinvoice'}"
-                                icon="sap-icon://money-bills"
-                                indicator="Up"
-                                valueColor="Good"
-                                withMargin="false"
-                                scale="K" 
-                               />
-                        </TileContent>
-                    </GenericTile>
- 
-                    <GenericTile
-                        class="tileLayout tileReceived"
-                        header="{i18n>invoiceReceivedAmount}"
-                        subheader="{i18n>Payments_Received}"
-                       >
-                        <TileContent footer="{= 'Paid Invoices : ' + ${InvoiceDashboardModel>/TileData/ReceivedCount}}">
-                            <NumericContent
-                                value="{path:'InvoiceDashboardModel>/TileData/ReceivedAmount',
-                            formatter:'.Formatter.fromatNumberinvoice'}"
-                                icon="sap-icon://payment-approval"
-                                indicator="Up"
-                                valueColor="Good"
-                                withMargin="false"
-                                scale="K" />
-                        </TileContent>
-                    </GenericTile>
- 
-                    <GenericTile
-                        class="tileLayout tilePending"
-                        header="{i18n>Pending_Amount}"
-                        subheader="{i18n>Outstanding}"
-                        >
-                        <TileContent footer="{= 'Pending Invoices : ' + ${InvoiceDashboardModel>/TileData/PendingCount}}">
-                            <NumericContent
-                                value="{path:'InvoiceDashboardModel>/TileData/PendingAmount',
-                            formatter:'.Formatter.fromatNumberinvoice'}"
-                                icon="sap-icon://pending"
-                                indicator="Down"
-                                valueColor="Critical"
-                                withMargin="false"
-                                scale="K"/>
-                        </TileContent>
-                    </GenericTile>
- 
-                    <GenericTile
-                        class="tileLayout tileOverdue"
-                        header="{i18n>Overdue_Amount}"
-                        subheader="{i18n>Past_Due}"
-                       >
-                        <TileContent footer="{= 'Overdue Invoices : ' + ${InvoiceDashboardModel>/TileData/OverdueCount}}">
-                            <NumericContent
-                                 value="{path:'InvoiceDashboardModel>/TileData/OverdueAmount',
-                            formatter:'.Formatter.fromatNumberinvoice'}"
-                                icon="sap-icon://alert"
-                                indicator="Down"
-                                valueColor="Error"
-                                scale="K"/>
-                        </TileContent>
-                    </GenericTile>
+                 <HBox 
+                    id="invoiceTileContainer" 
+                    class="dashTileGrid sapUiSmallMarginBottom" 
+                    wrap="Wrap">
                     
-                    <GenericTile
-                        class="tileLayout tileReceived"
-                        header="Total Credit Notes"
-                        subheader="All Credit Notes"
-                        >
-                        <TileContent footer="{= 'Credit Notes : ' + ${InvoiceDashboardModel>/CreditNoteCount}}">
-                            <NumericContent
-                                value="{path:'InvoiceDashboardModel>/CreditNoteTotalAmount',
-                            formatter:'.Formatter.fromatNumberinvoice'}"
-                                icon="sap-icon://payment-approval"
-                                indicator="Up"
-                                valueColor="Good"
-                                withMargin="false"
-                                scale="K"/>
+                    <GenericTile class="dashTile dashTileTotal" header="{i18n>totalAmount}" subheader="{i18n>All_Invoices}">
+                        <TileContent footer="{= 'Total Invoices : ' + ${InvoiceDashboardModel>/TileData/TotalCount}}">
+                            <NumericContent value="{path:'InvoiceDashboardModel>/TileData/TotalAmount', formatter:'.Formatter.fromatNumberinvoice'}" icon="sap-icon://money-bills" indicator="Up" valueColor="Good" withMargin="false" scale="K" />
                         </TileContent>
                     </GenericTile>
 
-                    <GenericTile
-                        class="tileLayout tileReceived"
-                        header="Current Trend"
-                        subheader="Current Month Performance"
-                        press="onTrendTilePress">
-                        <TileContent footer="{InvoiceDashboardModel>/TrendMonthLabel}">
-                            <NumericContent
-                                value="{path:'InvoiceDashboardModel>/TrendAmount', formatter:'.Formatter.fromatNumberinvoice'}"
-                                icon="{InvoiceDashboardModel>/TrendIcon}"
-                                indicator="{InvoiceDashboardModel>/TrendIndicator}"
-                                valueColor="{InvoiceDashboardModel>/TrendColor}"
-                                withMargin="false"
-                                scale="K"/>
+                    <GenericTile class="dashTile dashTileReceived" header="{i18n>invoiceReceivedAmount}" subheader="{i18n>Payments_Received}">
+                        <TileContent footer="{= 'Paid Invoices : ' + ${InvoiceDashboardModel>/TileData/ReceivedCount}}">
+                            <NumericContent value="{path:'InvoiceDashboardModel>/TileData/ReceivedAmount', formatter:'.Formatter.fromatNumberinvoice'}" icon="sap-icon://payment-approval" indicator="Up" valueColor="Good" withMargin="false" scale="K" />
                         </TileContent>
                     </GenericTile>
-                </FlexBox>
+
+                    <GenericTile class="dashTile dashTilePending" header="{i18n>Pending_Amount}" subheader="{i18n>Outstanding}">
+                        <TileContent footer="{= 'Pending Invoices : ' + ${InvoiceDashboardModel>/TileData/PendingCount}}">
+                            <NumericContent value="{path:'InvoiceDashboardModel>/TileData/PendingAmount', formatter:'.Formatter.fromatNumberinvoice'}" icon="sap-icon://pending" indicator="Down" valueColor="Critical" withMargin="false" scale="K" />
+                        </TileContent>
+                    </GenericTile>
+
+                    <GenericTile class="dashTile dashTileOverdue" header="{i18n>Overdue_Amount}" subheader="{i18n>Past_Due}">
+                        <TileContent footer="{= 'Overdue Invoices : ' + ${InvoiceDashboardModel>/TileData/OverdueCount}}">
+                            <NumericContent value="{path:'InvoiceDashboardModel>/TileData/OverdueAmount', formatter:'.Formatter.fromatNumberinvoice'}" icon="sap-icon://alert" indicator="Down" valueColor="Error" scale="K" />
+                        </TileContent>
+                    </GenericTile>
+
+                    <GenericTile class="dashTile dashTileReceived" header="Total Credit Notes" subheader="All Credit Notes">
+                        <TileContent footer="{= 'Credit Notes : ' + ${InvoiceDashboardModel>/CreditNoteCount}}">
+                            <NumericContent value="{path:'InvoiceDashboardModel>/CreditNoteTotalAmount', formatter:'.Formatter.fromatNumberinvoice'}" icon="sap-icon://payment-approval" indicator="Up" valueColor="Good" withMargin="false" scale="K" />
+                        </TileContent>
+                    </GenericTile>
+
+                    <GenericTile class="dashTile dashTileReceived" header="Current Trend" subheader="Current Month Performance" press="onTrendTilePress">
+                        <TileContent footer="{InvoiceDashboardModel>/TrendMonthLabel}">
+                            <NumericContent value="{path:'InvoiceDashboardModel>/TrendAmount', formatter:'.Formatter.fromatNumberinvoice'}" icon="{InvoiceDashboardModel>/TrendIcon}" indicator="{InvoiceDashboardModel>/TrendIndicator}" valueColor="{InvoiceDashboardModel>/TrendColor}" withMargin="false" scale="K" />
+                        </TileContent>
+                    </GenericTile>
+                </HBox>
                
-				<layout:Grid defaultSpan="XL6 L6 M12 S12" hSpacing="1" vSpacing="1">
+				<layout:Grid defaultSpan="XL6 L6 M12 S12" hSpacing="1" vSpacing="1" class="sapUiSmallMarginTop">
 					<layout:content>
 						<!-- 1. Status Distribution Chart -->
 						<f:Card>

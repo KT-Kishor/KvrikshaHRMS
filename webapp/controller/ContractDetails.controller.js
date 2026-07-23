@@ -152,7 +152,7 @@ sap.ui.define([
                         this.getView().byId("C_id_PageCreate").setVisible(false);
                         this.getView().byId("CUF_id_Contractpage").setVisible(true);
                         this.pdfData = this.getView().getModel("oFilteredContractModel").getData();
-                        this.onChangeAggrementDate();
+                     
                         this.CU_CommonID();
                         this.closeBusyDialog(); // Close BusyDialog
                          this._applyCountryStateCityFilters();
@@ -247,34 +247,6 @@ sap.ui.define([
                 const sAgreementDate = oAgreementDatePicker.getDateValue();
 
                 if (sAgreementDate) {
-                    // const sStartDate = oStartDatePicker?.getDateValue();
-                    // const sEndDate = oEndDatePicker?.getDateValue();
-
-                    // Validate Start Date
-                    // if (sStartDate && sStartDate < sAgreementDate) {
-                    //     oStartDatePicker.setDateValue(null);
-                    //     oStartDatePicker.setValue("");
-                    //     oStartDatePicker.setValueState("Error");
-                    //     oStartDatePicker.setValueStateText("Start Date must be after Agreement Date");
-                    // } else {
-                    //     oStartDatePicker.setValueState("None");
-                    // }
-
-                    // Validate End Date
-                    // if (sEndDate && sEndDate < sAgreementDate) {
-                    //     oEndDatePicker.setDateValue(null);
-                    //     oEndDatePicker.setValue("");
-                    //     oEndDatePicker.setValueState("Error");
-                    //     oEndDatePicker.setValueStateText("End Date must be after Agreement Date");
-                    // } else {
-                    //     oEndDatePicker.setValueState("None");
-                    // }
-
-                    // oStartDatePicker.setMinDate(sAgreementDate);
-                    // oStartDatePicker.setMaxDate(null); // 👈 clear any previously set maxDate
-
-                    // oEndDatePicker.setMinDate(sAgreementDate);
-                    // oEndDatePicker.setMaxDate(null); // 👈 clear any previously set maxDate
                     this._forceRevalidate(oStartDatePicker);
                     this._forceRevalidate(oEndDatePicker);
                 }
@@ -317,34 +289,7 @@ sap.ui.define([
                 }
             },
 
-            onChangeAggrementDate: function () {
-                const oAgreementDatePicker = this.byId("CU_id_AgreementDate");
-                const oStartDatePicker = this.byId("CU_id_AssignmentStartDate");
-                // const oEndDatePicker = this.byId("CU_id_AssignmentEndDate");
-                const oAgreementDate = oAgreementDatePicker?.getDateValue();
-
-                // if (oAgreementDate) {
-                //     const oStartDate = oStartDatePicker?.getDateValue();
-                //     const oEndDate = oEndDatePicker?.getDateValue();
-
-                //     if (oStartDate && oStartDate < oAgreementDate) {
-                //         oStartDatePicker.setValue("");
-                //         oStartDatePicker.setValueState("Error");
-                //     } else {
-                //         oStartDatePicker.setValueState("None");
-                //     }
-
-                //     if (oEndDate && oEndDate < oAgreementDate) {
-                //         oEndDatePicker.setValue("");
-                //         oEndDatePicker.setValueState("Error");
-                //     } else {
-                //         oEndDatePicker.setValueState("None");
-                //     }
-
-                    // oStartDatePicker?.setMinDate(oAgreementDate);
-                    // oEndDatePicker?.setMinDate(oAgreementDate);
-                // }
-            },
+          
 
            CD_validateDate: function (oEvent) {
     let oModel, oStartDatePicker, oEndDatePicker;

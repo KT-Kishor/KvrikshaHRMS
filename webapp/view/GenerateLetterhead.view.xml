@@ -1,0 +1,86 @@
+<mvc:View
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:fb="sap.ui.comp.filterbar"
+    controllerName="sap.kt.com.minihrsolution.controller.GenerateLetterhead"
+    displayBlock="true"
+    height="100%">
+
+    <Page id="GP_id_Page">
+
+        <!-- Header -->
+        <customHeader>
+            <core:Fragment
+                fragmentName="sap.kt.com.minihrsolution.fragment.Header"
+                type="XML"/>
+        </customHeader>
+
+        <content>
+
+            <!-- ================= Filter Bar ================= -->
+
+            <fb:FilterBar
+                id="GP_id_FilterBar"
+                class="sapUiTinyMargin CommonRoundedTable"
+                persistencyKey="GPFilterPersKey"
+                useToolbar="false"
+                showClearOnFB="true"
+                showFilterConfiguration="false"
+                search=".GP_onSearch"
+                clear=".GP_onClear">
+
+                <fb:filterGroupItems>
+
+                    <fb:FilterGroupItem
+                        name="employeeName"
+                        label="{i18n>employeeName}"
+                        groupName="General"
+                        visibleInFilterBar="true">
+
+                        <fb:control>
+                            <Input
+                                id="GP_id_EmployeeName"
+                                placeholder="{i18n>searchEmployeeName}"
+                                showClearIcon="true"/>
+                        </fb:control>
+
+                    </fb:FilterGroupItem>
+
+                </fb:filterGroupItems>
+
+            </fb:FilterBar>
+
+        
+
+        
+
+        </content>
+
+        <!-- Footer -->
+        <footer>
+
+             <Bar>
+
+        <contentLeft>
+            <core:Fragment
+                fragmentName="sap.kt.com.minihrsolution.fragment.Footer"
+                type="XML"/>
+        </contentLeft>
+
+        <contentRight>
+            <Button
+                id="GP_id_BtnGeneratePDF"
+                text="{i18n>GeneratePDF}"
+                icon="sap-icon://pdf-attachment"
+                type="Transparent"
+                press=".GP_onOpenGeneratePDFDialog"/>
+        </contentRight>
+
+    </Bar>
+
+        </footer>
+
+    </Page>
+
+</mvc:View>

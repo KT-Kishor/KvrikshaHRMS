@@ -334,9 +334,24 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
       this.handleBaseLocationChange(
         oEvent,
         "BaseLocationModel", // Source model
-        "sEmployeeModel", // Target model
-        "/0/CompanyCode" // Path in target model
+        "sEmployeeModel" // Target model
       );
+
+      var oEmployeeModel = this.getView().getModel("sEmployeeModel");
+
+    // Clear Company Branch
+    oEmployeeModel.setProperty("/0/CompanyCode", "");
+
+    // Clear Branch Name
+    oEmployeeModel.setProperty("/0/Branch", "");
+
+    // Clear Company ComboBox UI
+    var oCompanyCombo = this.byId("SS_id_CompanyCode");
+    oCompanyCombo.setSelectedKey("");
+    oCompanyCombo.setValue("");
+
+    // Clear Branch Input UI (optional, model binding already does this)
+    this.byId("SS_id_branch2").setValue("");
     },
 
     updateFunctionForSelf: function (oPayload, ID) {

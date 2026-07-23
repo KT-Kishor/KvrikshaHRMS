@@ -83,7 +83,7 @@
 
         <!-- Total Spend -->
         <GenericTile
-                                    class="tileLayout customTileWidth blueTile"
+                                    class="tileLayout customTileWidth1  blueTile"
                                     header="{= 'Previous FY : ' + ${DashboardModel>/PreFinancialYear} }"
                                     frameType="TwoByOne"
                                     press="onPressManageJobs"
@@ -93,21 +93,30 @@
                                             <content>
                                                 <c:ComparisonMicroChart
                                                     view="Wide"
-                                                    size="Responsive"
-                                                    scale=""
+                                                    size="L"
+                                                    class="custommicrochat"
                                                 >
-                                                    <c:data>    
-                                                        <c:ComparisonMicroChartData
-                                                             value="{DashboardModel>/PreTotalAmount}"
-                                                            title="Total Expense"
-                                                             displayValue="{
-                                path:'DashboardModel>/PreTotalAmount',
+                                                    <c:data>   
+                                                    <c:ComparisonMicroChartData
+                                                            title="Open"
+                                                            value="{DashboardModel>/PreOpenAmount}"
+                                                           displayValue="{
+                                path:'DashboardModel>/PreOpenAmount',
                                 formatter:'.Formatter.CurrencyInINRExpense'
                             }"
-                                                            color="Neutral"
-                                                         />
+                                                            color="Error"
+                                                        /> 
+                                                         <c:ComparisonMicroChartData
+                                                            title="Pending"
+                                                            value="{DashboardModel>/PrePendingAmount}"
+                                                           displayValue="{
+                                path:'DashboardModel>/PrePendingAmount',
+                                formatter:'.Formatter.CurrencyInINRExpense'
+                            }"
+                                                            color="Error"
+                                                        />
                                                         <c:ComparisonMicroChartData
-                                                            title="Total Reimbursement"
+                                                            title="Paid"
                                                              value="{DashboardModel>/PreReimbursementAmount}"
                                                             displayValue="{
                                 path:'DashboardModel>/PreReimbursementAmount',
@@ -116,38 +125,65 @@
                                                             color="Good"
                                                         />
                                                         <c:ComparisonMicroChartData
-                                                            title="Total Pending"
-                                                            value="{DashboardModel>/PrePendingAmount}"
-                                                           displayValue="{
-                                path:'DashboardModel>/PrePendingAmount',
+                                                             value="{DashboardModel>/PreTotalAmount}"
+                                                            title="Total"
+                                                             displayValue="{
+                                path:'DashboardModel>/PreTotalAmount',
                                 formatter:'.Formatter.CurrencyInINRExpense'
                             }"
-                                                            color="Error"
-                                                        />
+                                                            color="Neutral"
+                                                         />
+                                                        
+                                                       
+                                                        
+                                                       
                                                     </c:data>
                                                 </c:ComparisonMicroChart>
                                             </content>
                                         </TileContent>
                                     </tileContent>
                                 </GenericTile>
-
-        <GenericTile
-            class="tileLayout customTileWidth blueTile "
-            header="{i18n>totalexpense}"
-            subheader="{= ${DashboardModel>/TotalExpenseCount} + ' Open Claims' }"
-            press="onTotalExpenseTilePress">
+<GenericTile
+            class="tileLayout dashTile blueTile"
+            header="{i18n>openexpense}"
+            subheader="{= ${DashboardModel>/First4Card/OpenCount} + ' Open Claims' }"
+            press="onOpenexpenseTilePress">
 
             <tileContent>
                 <TileContent >
                     <content>
                         <NumericContent
-                        class="sapUiSmallMarginTop "
-                           value="{path:'DashboardModel>/First4Card/TotalAmount',
+                        class="sapUiSmallMarginTop" 
+                           value="{path:'DashboardModel>/First4Card/OpenAmount',
                             formatter:'.formatter.fromatNumberinvoice'}"
-                            scale="K" 
-                            icon="sap-icon://money-bills"
-                            indicator="Up"
-                            valueColor="Good"/>
+                            valueColor="Error"
+                            indicator="Down"
+                            icon="sap-icon://batch-payments"
+                            scale="K" />
+                    </content>
+                </TileContent>
+            </tileContent>
+        </GenericTile>
+
+
+          <!-- Pending -->
+        <GenericTile
+            class="tileLayout dashTile redTile"
+            header="{i18n>pendingExpense}"
+            subheader="{= ${DashboardModel>/PendingCount} + ' Open Claims' }"
+            press="onPendingTilePress">
+
+            <tileContent>
+                <TileContent >
+                    <content>
+                        <NumericContent
+                        class="sapUiSmallMarginTop" 
+                           value="{path:'DashboardModel>/First4Card/PendingAmount',
+                            formatter:'.formatter.fromatNumberinvoice'}"
+                            valueColor="Error"
+                            indicator="Down"
+                            icon="sap-icon://pending"
+                            scale="K" />
                     </content>
                 </TileContent>
             </tileContent>
@@ -155,8 +191,8 @@
 
         <!-- Reimbursement -->
         <GenericTile
-            class="tileLayout customTileWidth greenTile "
-            header="{i18n>reimbursement}"
+            class="tileLayout dashTile greenTile "
+            header="{i18n>paidexpense}"
             subheader="{= ${DashboardModel>/ReimbursementCount} + ' Open Claims' }"
             press="onReimbursementTilePress">
 
@@ -176,28 +212,29 @@
             </tileContent>
         </GenericTile>
 
-        <!-- Pending -->
-        <GenericTile
-            class="tileLayout customTileWidth redTile"
-            header="{i18n>pending}"
-            subheader="{= ${DashboardModel>/PendingCount} + ' Open Claims' }"
-            press="onPendingTilePress">
+      
+         <GenericTile
+            class="tileLayout dashTile blueTile "
+            header="{i18n>totalexpense}"
+            subheader="{= ${DashboardModel>/First4Card/TotalClaims} + ' Open Claims' }"
+            press="onTotalExpenseTilePress">
 
             <tileContent>
                 <TileContent >
                     <content>
                         <NumericContent
-                        class="sapUiSmallMarginTop" 
-                           value="{path:'DashboardModel>/First4Card/PendingAmount',
+                        class="sapUiSmallMarginTop"
+                           value="{path:'DashboardModel>/First4Card/TotalAmount',
                             formatter:'.formatter.fromatNumberinvoice'}"
-                            valueColor="Error"
-                            indicator="Down"
-                            icon="sap-icon://pending"
-                            scale="K" />
+                            scale="K" 
+                            icon="sap-icon://money-bills"
+                            indicator="Up"
+                            valueColor="Good"/>
                     </content>
                 </TileContent>
             </tileContent>
         </GenericTile>
+        
 
     </FlexBox>
     
@@ -270,7 +307,8 @@
            subtitle="{
     parts: [
         { path: 'DashboardModel>/PaymentPendingAmount' },
-        { path: 'DashboardModel>/PaymentReimbursementAmount' }
+        { path: 'DashboardModel>/PaymentReimbursementAmount' },
+        { path: 'DashboardModel>/PaymentOpenAmount' }
     ],
     formatter: '.formatter.formatPaymentSubtitle'
 }"/>
@@ -425,9 +463,10 @@
 
                     <!-- Category + Progress -->
                     <VBox width="70%" class="sapUiSmallMarginBottom">
-                        <Title
+                        <Text
                             text="{DashboardModel>ItemType}"
-                            level="H5"/>
+                           
+                           />
 
                         <ProgressIndicator
                             percentValue="{DashboardModel>Percentage}"
@@ -468,7 +507,7 @@
                                 items="{DashboardModel>/Top10Expenses}"
                                 sticky="HeaderToolbar,ColumnHeaders" >
                                 <headerToolbar>
-    <Toolbar height="auto">
+    <Toolbar >
         <FlexBox
             width="100%"
             wrap="Wrap"
@@ -521,7 +560,7 @@
                 </Column>
                 <Column minScreenWidth="Tablet"
                                                                 demandPopin="true">
-                    <Text text="{i18n>expReimbursementAmountExp}"/>
+                    <Text text="{i18n>paidamount}"/>
                 </Column>
 
               
@@ -545,7 +584,7 @@
                                     text="{DashboardModel>EmployeeName}"
                                     wrapping="false"/>
                                 <ObjectIdentifier
-                                    title="{DashboardModel>EmployeeID}"/>
+                                    text="{DashboardModel>EmployeeID}"/>
                             </VBox>
 
                         </HBox>

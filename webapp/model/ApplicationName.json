@@ -199,8 +199,12 @@
         "ID": 48,
         "AppName": "Announcements"
     },
-     { 
+    {
         "ID": 49,
+        "AppName": "Generate Letterhead"
+    },
+     { 
+        "ID": 50,
         "AppName": "Others"
     }
 ]

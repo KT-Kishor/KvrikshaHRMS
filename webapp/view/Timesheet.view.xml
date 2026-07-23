@@ -116,6 +116,7 @@
                 <FlexBox class="TraineeButtons"  wrap="Wrap"
     justifyContent="End"
     alignItems="Center">
+    <!-- <Button text="Download Timesheet"  press="onDownloadTimesheetPress" type="Transparent"/> -->
                     <Button text="{i18n>submit}" press="TS_onSubmitTimesheet" type="Transparent"  id="TS_id_Submited" enabled="{viewModel>/canSubmit}"/>
                     <Button text="{i18n>delete}" press="TS_onDeleteTimesheet" type="Transparent"  id="TS_id_Delete" enabled="{viewModel>/canDelete}"/>
                     </FlexBox>

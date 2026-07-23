@@ -4383,6 +4383,25 @@ color: #fff !important;
    width: 20rem !important;   /* Increase as needed */
     min-width: 20rem !important;
 }
+.custommicrochat{
+ width: 90% !important;   /* Increase as needed */
+}
+.customTileWidth1{
+   width: 20rem !important;   /* Increase as needed */
+    min-width: 20rem !important;
+    
+    box-sizing: border-box;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+    
+    /* Calculate size so 6 tiles fit per row nicely */
+    flex: 0 0 calc(16.66% - 1rem) !important;
+    height: auto !important;
+    min-height: 8.5rem;
+    padding-bottom: 0.5rem;
+    margin: 0 !important;
+}
 .tileReceived {
     border-top: 4px solid #3b6d11;
     background-color: #eaf3de;
@@ -4522,8 +4541,6 @@ color: #fff !important;
 }
 
 .categoryAmount{
-    font-weight:bold;
-    font-size:1.1rem;
      min-width: 250px;
     text-align: right;
 }
@@ -4969,3 +4986,70 @@ color: #fff !important;
 .textannouncement{
   left:20px;
 }
+
+/* ── Centered Flexible Container ── */
+#invoiceTileContainer.dashTileGrid,
+#invoiceTileContainer .sapFGridContainerContent,
+.dashTileGrid {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important; /* Keeps row centered */
+    align-items: center !important;
+    gap: 1rem !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+}
+
+/* ── Default Tile Dimensions (6 items in 1 row for Desktop) ── */
+.dashTile {
+    box-sizing: border-box;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+    
+    /* Calculate size so 6 tiles fit per row nicely */
+    flex: 0 0 calc(16.66% - 1rem) !important;
+    min-width: 11rem !important;
+    height: auto !important;
+    min-height: 8.5rem;
+    padding-bottom: 0.5rem;
+    margin: 0 !important;
+}
+
+/* Hover Effect */
+.dashTile:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.13);
+    transform: translateY(-2px);
+    cursor: pointer;
+}
+
+/* ── Media Query: Wrap into 3×3 Grid on Medium Screens ── */
+@media screen and (max-width: 1280px) {
+    .dashTile {
+        /* Force 3 items per row (3x3 grid for 6 tiles) */
+        flex: 0 0 calc(33.33% - 1rem) !important;
+        max-width: 14rem !important;
+    }
+}
+
+/* ── Media Query: Responsive Mobile Support (2x3 or 1x6) ── */
+@media screen and (max-width: 600px) {
+    .dashTile {
+        /* Force 1 full-width item per row on phones */
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+    }
+}
+
+/* ── Status Colors ── */
+.dashTileTotal { border-top: 4px solid #185fa5; background-color: #eef4ff; }
+.dashTileReceived { border-top: 4px solid #3b6d11; background-color: #eaf3de; }
+.dashTilePending { border-top: 4px solid #854f0b; background-color: #faeeda; }
+.dashTileOverdue { border-top: 4px solid #a32d2d; background-color: #fcebeb; }
+
+/* ── Text Styles ── */
+.dashTile .sapMGTHdrTxt { font-size: 1rem !important; font-weight: 700 !important; }
+.dashTile .sapMGTSubHdrTxt { font-size: 0.78rem !important; }
+.dashTile .sapMNCValue { font-size: 1.6rem !important; font-weight: 600 !important; }
+.dashTile .sapMNCIconImage { font-size: 1.4rem !important; }

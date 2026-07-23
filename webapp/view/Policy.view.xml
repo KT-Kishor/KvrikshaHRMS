@@ -119,14 +119,14 @@
                     <subSections>
                         <ObjectPageSubSection id="PL_id_PolicySubSection">
                             <blocks>
-                                <m:VBox class="sapUiResponsiveContentPadding">
+                                <m:VBox >
                                     <!-- TITLE -->
                                   
                                     <!-- POLICY FLEX -->
                                     <m:FlexBox
                                         id="PL_id_PolicyFlexBox"
                                         wrap="Wrap"
-                                        justifyContent="Start"
+                                        justifyContent="Center"
                                         alignItems="Stretch"
                                         renderType="Bare"
                                         class="policyFlex sapUiMediumMarginBottom"
@@ -144,7 +144,7 @@
                                                     <m:FlexItemData
                                                         growFactor="0"
                                                         shrinkFactor="1"
-                                                        baseSize="24%"
+                                                        baseSize="20%"
                                                     />
                                                 </m:layoutData>
                                                 <!-- CARD HEADER -->
@@ -172,7 +172,7 @@
 
         <m:HBox class="sapUiTinyMarginTop" alignItems="Center">
    <m:Text 
-    text="{= ${i18n>version} + ': ' + ${policyModel>currentVersion} }"
+    text="{= ${i18n>version} + ' : ' + ${policyModel>currentVersion} }"
 />
 </m:HBox>
 

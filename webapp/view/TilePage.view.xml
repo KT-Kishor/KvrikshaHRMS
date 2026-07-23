@@ -208,14 +208,31 @@
                                                         id="TV_id_PolicyTile"
                                                         class="sapUiSmallMargin glassTile blue"
                                                         visible="{= ${AppVisibilityModel>/Policy} !== '0' }"
-                                                        header="{i18n>policyTitle}"
-                                                        press="TileV_onpressPolicy"
-                                                    >
+                                                        header="{= ${LoginModel>/Role} === 'HR' || ${LoginModel>/Role} === 'Admin' || ${LoginModel>/Role} === 'HR Manager'
+                                                            ? ${i18n>policyTitle}
+                                                            : ${i18n>policyTileCompany} }"                                                        
+                                                            press="TileV_onpressPolicy">
+                                                        
                                                         <TileContent
                                                             unit="{i18n>policyUnit}"
                                                         >
                                                             <ImageContent
                                                                 src="sap-icon://insurance-house"
+                                                            />
+                                                        </TileContent>
+                                                    </GenericTile>
+
+                                                    <GenericTile
+                                                        visible="{= ${AppVisibilityModel>/GeneratePDF} === '1' ? true : false}"
+                                                        class="sapUiSmallMargin glassTile blue"
+                                                        header="{i18n>headerGeneratePDF}"
+                                                        press="TileV_onpressGeneratePDF"
+                                                    >
+                                                        <TileContent
+                                                            unit="{i18n>tileGeneratePDF}"
+                                                        >
+                                                            <ImageContent
+                                                                src="sap-icon://pdf-attachment"
                                                             />
                                                         </TileContent>
                                                     </GenericTile>
@@ -879,7 +896,7 @@
                                     titleUppercase="false"
                                     title="Asset"
                                     class="roomHeaderTitle1"
-                                    visible="{= ${TileAccessModel>/ManageAsset} === '1' ? true : false}"
+                                    visible="{= ${TileAccessModel>/} === '1' ? true : false}"
                                 >
                                     <ux:subSections>
                                         <ux:ObjectPageSubSection

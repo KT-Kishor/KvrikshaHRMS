@@ -92,7 +92,7 @@
                     class="invoiceTileContainer sapUiTinyMarginBottom"
                 >
                 <GenericTile
-                                    class="tileLayout customTileWidth blueTile"
+                                    class="tileLayout customTileWidth1 blueTile"
                                    header="{= 'Previous FY - ' + ${EE_ExpenseModel>/PreFinancialYear} }"
                                     frameType="TwoByOne"
                                     press="onPressManageJobs"
@@ -102,31 +102,21 @@
                                             <content>
                                                 <c:ComparisonMicroChart
                                                     view="Wide"
-                                                    size="Responsive"
+                                                    size="L"
+                                                    class="custommicrochat"
                                                 >
                                                     <c:data>    
-                                                        <c:ComparisonMicroChartData
-                                                            title="Total Expense"
-                                                            value="{EE_ExpenseModel>/PreTotalAmount}"
+                                                     <c:ComparisonMicroChartData
+                                                            title="Open"
+                                                            value="{EE_ExpenseModel>/PreOpenAmount}"
                                                             displayValue="{
-                                path:'EE_ExpenseModel>/PreTotalAmount',
+                                path:'EE_ExpenseModel>/PreOpenAmount',
                                 formatter:'.Formatter.CurrencyInINRExpense'
                             }"
-                                                            color="Neutral"
-                                                             
+                                                            color="Error"
                                                         />
-                                                        <c:ComparisonMicroChartData
-                                                            title="Total Reimbursement"
-                                                            value="{EE_ExpenseModel>/PreReimbursementAmount}"
-                                                            displayValue="{
-                                path:'EE_ExpenseModel>/PreReimbursementAmount',
-                                formatter:'.Formatter.CurrencyInINRExpense'
-                            }"
-                                                            color="Good"
-                                                            
-                                                        />
-                                                        <c:ComparisonMicroChartData
-                                                            title="Total Pending"
+                                                         <c:ComparisonMicroChartData
+                                                            title="Pending"
                                                             value="{EE_ExpenseModel>/PrePendingAmount}"
                                                             displayValue="{
                                 path:'EE_ExpenseModel>/PrePendingAmount',
@@ -135,22 +125,45 @@
                                                             color="Error"
                                                            
                                                         />
+                                                         <c:ComparisonMicroChartData
+                                                            title="Paid"
+                                                            value="{EE_ExpenseModel>/PreReimbursementAmount}"
+                                                            displayValue="{
+                                path:'EE_ExpenseModel>/PreReimbursementAmount',
+                                formatter:'.Formatter.CurrencyInINRExpense'
+                            }"
+                                                            color="Good"
+                                                            
+                                                        />
+                              
+                                                        <c:ComparisonMicroChartData
+                                                            title="Total"
+                                                            value="{EE_ExpenseModel>/PreTotalAmount}"
+                                                            displayValue="{
+                                path:'EE_ExpenseModel>/PreTotalAmount',
+                                formatter:'.Formatter.CurrencyInINRExpense'
+                            }"
+                                                            color="Neutral"
+                                                             
+                                                        />
+                                                                                
+                                                       
                                                     </c:data>
                                                 </c:ComparisonMicroChart>
                                             </content>
                                         </TileContent>
                                     </tileContent>
                                 </GenericTile>
-                    <GenericTile
-                        class="tileLayout customTileWidth blueTile"
-                        header="{i18n>totalExpense}"
-                          subheader="{= ${EE_ExpenseModel>/totalExpenseCount} + ' Open Claims' }"
+                                  <GenericTile
+                        class="tileLayout dashTile blueTile"
+                        header="{i18n>openexpense}"
+                        subheader="{= ${EE_ExpenseModel>/OpenamountCount} + ' Open Claims' }"
                         press="onTilePress"
                     >
                         <customData>
                             <core:CustomData
                                 key="type"
-                                value="TOTAL"
+                                value="OPENCOUNT"
                             />
                         </customData>
                         <tileContent>
@@ -158,22 +171,54 @@
                                 <content>
                                     <NumericContent
                                         value="{
-        path:'EE_ExpenseModel>/totalExpense',
+        path:'EE_ExpenseModel>/OpenAmount',
         formatter:'.formatter.fromatNumberinvoice'
     }"
                                         scale="K"
-                                        indicator="Up"
-                                        icon="sap-icon://money-bills"
-                                        valueColor="Good"
+                                        indicator="Down"
+                                        icon="sap-icon://batch-payments"
+                                        valueColor="Error"
+                                    />
+                                </content>
+                            </TileContent>
+                        </tileContent>
+                    </GenericTile>
+
+
+                    <GenericTile
+                        class="tileLayout dashTile redTile"
+                        header="{i18n>pendingExpense}"
+                        subheader="{= ${EE_ExpenseModel>/pendingExpenseCount} + ' Open Claims' }"
+                        press="onTilePress"
+                    >
+                        <customData>
+                            <core:CustomData
+                                key="type"
+                                value="PENDING"
+                            />
+                        </customData>
+                        <tileContent>
+                            <TileContent >
+                                <content>
+                                    <NumericContent
+                                        value="{
+        path:'EE_ExpenseModel>/pendingExpense',
+        formatter:'.formatter.fromatNumberinvoice'
+    }"
+                                        scale="K"
+                                        indicator="Down"
+                                        icon="sap-icon://pending"
+                                        valueColor="Error"
                                     />
                                 </content>
                             </TileContent>
                         </tileContent>
                     </GenericTile>
                     
+                    
                     <GenericTile
-                        class="tileLayout customTileWidth greenTile"
-                        header="{i18n>reimbursementAmount}"
+                        class="tileLayout dashTile greenTile"
+                        header="{i18n>paidexpense}"
                           subheader="{= ${EE_ExpenseModel>/reimbursementExpenseCount} + ' Open Claims' }"
                         press="onTilePress"
                     >
@@ -200,16 +245,18 @@
                             </TileContent>
                         </tileContent>
                     </GenericTile>
-                     <GenericTile
-                        class="tileLayout customTileWidth redTile"
-                        header="{i18n>pendingExpense}"
-                        subheader="{= ${EE_ExpenseModel>/pendingExpenseCount} + ' Open Claims' }"
+                     
+                   
+                    <GenericTile
+                        class="tileLayout dashTile  blueTile"
+                        header="{i18n>totalExpense}"
+                          subheader="{= ${EE_ExpenseModel>/totalExpenseCount} + ' Open Claims' }"
                         press="onTilePress"
                     >
                         <customData>
                             <core:CustomData
                                 key="type"
-                                value="PENDING"
+                                value="TOTAL"
                             />
                         </customData>
                         <tileContent>
@@ -217,13 +264,13 @@
                                 <content>
                                     <NumericContent
                                         value="{
-        path:'EE_ExpenseModel>/pendingExpense',
+        path:'EE_ExpenseModel>/totalExpense',
         formatter:'.formatter.fromatNumberinvoice'
     }"
                                         scale="K"
-                                        indicator="Down"
-                                        icon="sap-icon://pending"
-                                        valueColor="Error"
+                                        indicator="Up"
+                                        icon="sap-icon://money-bills"
+                                        valueColor="Good"
                                     />
                                 </content>
                             </TileContent>
@@ -300,7 +347,8 @@
                                     subtitle="{
     parts: [
         { path: 'EE_ExpenseModel>/pendingExpense' },
-        { path: 'EE_ExpenseModel>/reimbursementAmount' }
+        { path: 'EE_ExpenseModel>/reimbursementAmount' },
+        { path: 'EE_ExpenseModel>/OpenAmount' }
     ],
     formatter: '.formatter.formatPaymentSubtitle'
 }"
@@ -410,11 +458,6 @@
                                             type="Dimension"
                                             values="Trip Type"
                                         />
-                                        <vizFeeds:FeedItem
-                                            uid="color"
-                                            type="Dimension"
-                                            values="Trip Type"
-                                        />
                                     </viz:feeds>
                                 </viz:VizFrame>
                             </f:content>
@@ -472,9 +515,9 @@
                                                     width="70%"
                                                     class="sapUiTinyMarginBottom"
                                                 >
-                                                    <Title
+                                                    <Text
                                                         text="{EE_ExpenseChartModel>ItemType}"
-                                                        level="H5"
+                                                      
                                                     />
                                                     <ProgressIndicator
                                                         percentValue="{EE_ExpenseChartModel>Percentage}"

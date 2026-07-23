@@ -1,77 +1,87 @@
-sap.ui.define(["./BaseController", "sap/m/MessageToast", "sap/ui/model/json/JSONModel", "sap/ui/model/Filter", "sap/ui/model/FilterOperator", "sap/kt/com/minihrsolution/model/formatter"], function(BaseController, MessageToast, JSONModel, Filter, FilterOperator, formatter, ) {
+sap.ui.define(["./BaseController", "sap/m/MessageToast", "sap/ui/model/json/JSONModel", "sap/ui/model/Filter", "sap/ui/model/FilterOperator", "sap/kt/com/minihrsolution/model/formatter"], function (BaseController, MessageToast, JSONModel, Filter, FilterOperator, formatter,) {
     "use strict";
     return BaseController.extend("sap.kt.com.minihrsolution.controller.EmployeeExpense", {
         formatter: formatter,
-        cleanRecords: function(arr) {
-            return (arr || []).filter(function(item) {
+        cleanRecords: function (arr) {
+            return (arr || []).filter(function (item) {
                 return item && typeof item === "object" && item.ExpenseID && item.ExpenseID.trim() !== "" && item.TotalAmount !== null && item.TotalAmount !== undefined;
             });
         },
-        onInit: function() {
+        onInit: function () {
             this.getRouter().getRoute("RouteEmployeeExpense").attachMatched(this._onRouteMatched, this);
             sap.viz.ui5.format.ChartFormatter.getInstance().registerCustomFormatter(
-    "INR_FORMAT",
-    function (value) {
-        if (value == null) {
-            return "";
-        }
-        return Number(value).toLocaleString("en-IN") + " INR";
-    }
-);
-
-sap.viz.ui5.api.env.Format.numericFormatter(
-    sap.viz.ui5.format.ChartFormatter.getInstance()
-);
-        },
-       _applyExpenseChartColors: function () {
-    var oChart = this.byId("EE_id_ExpenseTypeChart");
-
-    oChart.setVizProperties({
-        plotArea: {
-            dataLabel: {
-                visible: true,
-                type: "value",
-                formatString: "INR_FORMAT"
-            },
-            dataPointStyle: {
-                rules: [
-                    {
-                        dataContext: {
-                            "Expense Type": this.i18n.getText("pendingExpense")
-                        },
-                        properties: {
-                            color: "#BB0000"
-                        },
-                        displayName: this.i18n.getText("pendingExpense")
-                    },
-                    {
-                        dataContext: {
-                            "Expense Type": this.i18n.getText("reimbursementAmount")
-                        },
-                        properties: {
-                            color: "#107E3E"
-                        },
-                        displayName: this.i18n.getText("reimbursementAmount")
+                "INR_FORMAT",
+                function (value) {
+                    if (value == null) {
+                        return "";
                     }
-                ]
-            }
+                    return Number(value).toLocaleString("en-IN") + " INR";
+                }
+            );
+
+            sap.viz.ui5.api.env.Format.numericFormatter(
+                sap.viz.ui5.format.ChartFormatter.getInstance()
+            );
         },
-        valueAxis: {
-            label: {
-                formatString: "INR_FORMAT"
-            }
-        }
-    });
-},
-        _applyTripTypeChartColors: function() {
-            var oChart = this.byId("EE_id_TripTypeChart");
+        _applyExpenseChartColors: function () {
+            var oChart = this.byId("EE_id_ExpenseTypeChart");
+
             oChart.setVizProperties({
                 plotArea: {
-                    colorPalette: ["#107E3E", "#0A6ED1"]
+                    dataLabel: {
+                        visible: true,
+                        type: "value",
+                        formatString: "INR_FORMAT"
+                    },
+                    dataPointStyle: {
+                        rules: [
+                            {
+                                dataContext: {
+                                    "Expense Type": this.i18n.getText("openexpense")
+                                },
+                                properties: {
+                                    color: "#168eff"
+                                },
+                                displayName: this.i18n.getText("openexpense")
+                            },
+                            {
+                                dataContext: {
+                                    "Expense Type": this.i18n.getText("pendingExpense")
+                                },
+                                properties: {
+                                    color: "#c62828"
+                                },
+                                displayName: this.i18n.getText("pendingExpense")
+                            },
+                            {
+                                dataContext: {
+                                    "Expense Type": this.i18n.getText("reimbursementAmount")
+                                },
+                                properties: {
+                                    color: "#43A047"
+                                },
+                                displayName: this.i18n.getText("paidexpense")
+                            }
+                            
+                        ]
+                    }
+                },
+                valueAxis: {
+                    label: {
+                        formatString: "INR_FORMAT"
+                    }
                 }
             });
         },
-        _onRouteMatched: async function() {
+        _applyTripTypeChartColors: function () {
+            var oChart = this.byId("EE_id_TripTypeChart");
+            oChart.setVizProperties({
+                plotArea: {
+                    colorPalette: ["#43A047", "#0A6ED1"]
+                }
+            });
+        },
+        _onRouteMatched: async function () {
             try {
                 const LoginFUnction = await this.commonLoginFunction("Expense");
                 if (!LoginFUnction) {
@@ -88,7 +98,7 @@ sap.viz.ui5.api.env.Format.numericFormatter(
                 console.error("Login Error:", e);
             }
         },
-        EE_onGoPress: async function() {
+        EE_onGoPress: async function () {
             const oView = this.getView();
             const oDateRange = this.byId("EE_id_ExpenseDate");
             const oStartDate = oDateRange.getDateValue();
@@ -117,22 +127,29 @@ sap.viz.ui5.api.env.Format.numericFormatter(
                     totalExpense: oFirst4Card.TotalAmount || 0,
                     pendingExpense: oFirst4Card.PendingAmount || 0,
                     reimbursementAmount: oFirst4Card.ReimbursementAmount || 0,
+                    OpenAmount: oFirst4Card.OpenAmount || 0,
 
 
-                     totalExpenseCount: (oFirst4Card.TotalRecords || []).length,
-    pendingExpenseCount: (oFirst4Card.PendingRecords || []).length,
-    reimbursementExpenseCount: (oFirst4Card.ReimbursementRecords || []).length,
+                    totalExpenseCount: (oFirst4Card.TotalRecords || []).length,
+                    pendingExpenseCount: (oFirst4Card.PendingRecords || []).length,
+                    reimbursementExpenseCount: (oFirst4Card.ReimbursementRecords || []).length,
+                    OpenamountCount: oFirst4Card.OpenCount,
 
-                     PreFinancialYear: oPreviousFY.FinancialYear || "",
-    PreTotalAmount: oPreviousFY.TotalAmount || 0,
-    PreReimbursementAmount: oPreviousFY.ReimbursementAmount || 0,
-    PrePendingAmount: oPreviousFY.PendingAmount || 0,
+                    PreFinancialYear: oPreviousFY.FinancialYear || "",
+                    PreTotalAmount: oPreviousFY.TotalAmount || 0,
+                    PreReimbursementAmount: oPreviousFY.ReimbursementAmount || 0,
+                    PrePendingAmount: oPreviousFY.PendingAmount || 0,
+                    PreOpenAmount: oPreviousFY.OpenAmount || 0,
+
 
                 }), "EE_ExpenseModel");
+
                 const aExpenseTypeChart = [];
+
                 const iPending = oResponse?.PaymentBreakdown?.PendingAmount || 0;
                 const iReimbursement = oResponse?.PaymentBreakdown?.ReimbursementAmount || 0;
-                
+                const iOpenAmount = oFirst4Card.OpenAmount || 0;
+
                 if (iPending > 0) {
                     aExpenseTypeChart.push({
                         ExpenseTypeKey: "PENDING",
@@ -149,6 +166,15 @@ sap.viz.ui5.api.env.Format.numericFormatter(
                         color: "#107E3E"
                     });
                 }
+                if (iOpenAmount > 0) {
+                    aExpenseTypeChart.push({
+                        ExpenseTypeKey: "OPENEXPENSE",
+                        ExpenseType: this.i18n.getText("openexpense"),
+                        Amount: iOpenAmount,
+                        color: "#168eff"
+                    });
+                }
+
                 this.getView().setModel(new JSONModel({
                     typeChart: aExpenseTypeChart,
                     monthly: oResponse.MonthlyTrend || [],
@@ -167,52 +193,52 @@ sap.viz.ui5.api.env.Format.numericFormatter(
                 this.closeBusyDialog();
             }
         },
-       _applyCommonChartSettings: function (sChartId) {
-    var oChart = this.byId(sChartId);
-    if (!oChart) {
-        return;
-    }
+        _applyCommonChartSettings: function (sChartId) {
+            var oChart = this.byId(sChartId);
+            if (!oChart) {
+                return;
+            }
 
-    oChart.setVizProperties({
-        title: {
-            visible: false
+            oChart.setVizProperties({
+                title: {
+                    visible: false
+                },
+                legend: {
+                    visible: true
+                },
+                interaction: {
+                    selectability: {
+                        mode: "SINGLE"
+                    }
+                },
+                plotArea: {
+                    dataLabel: {
+                        visible: true,
+                        type: "value",
+                        formatString: "INR_FORMAT"
+                    }
+                },
+                valueAxis: {
+                    label: {
+                        formatString: "INR_FORMAT"
+                    }
+                }
+            });
         },
-        legend: {
-            visible: true
-        },
-        interaction: {
-            selectability: {
-                mode: "SINGLE"
-            }
-        },
-        plotArea: {
-            dataLabel: {
-                visible: true,
-                type: "value",
-                formatString: "INR_FORMAT"
-            }
-        },
-        valueAxis: {
-            label: {
-                formatString: "INR_FORMAT"
-            }
-        }
-    });
-},
-        onNavBack: function() {
+        onNavBack: function () {
             if (this._sSource === "RouteEmployeeExpense") {
                 this.getRouter().navTo("RouteEmployeeExpense");
             } else {
                 this.getRouter().navTo("RouteTilePage");
             }
         },
-        EE_onClearPress: function() {
+        EE_onClearPress: function () {
             this.byId("EE_id_ExpenseDate").setDateValue(null);
             this.byId("EE_id_ExpenseDate").setSecondDateValue(null);
         },
-        _openExpenseDialog: async function(sTitle, aItems) {
+        _openExpenseDialog: async function (sTitle, aItems) {
             aItems = Array.isArray(aItems) ? aItems : [];
-            var fGrandTotal = aItems.reduce(function(sum, item) {
+            var fGrandTotal = aItems.reduce(function (sum, item) {
                 var value = parseFloat(
                     (item.TotalAmount || "0").toString().replace(/,/g, ""));
                 return sum + (isNaN(value) ? 0 : value);
@@ -232,7 +258,7 @@ sap.viz.ui5.api.env.Format.numericFormatter(
             }
             this._oExpenseDialog.open();
         },
-        onExpenseChartSelect: function(oEvent) {
+        onExpenseChartSelect: function (oEvent) {
             const oCtx = oEvent.getParameter("data")[0].data;
             const sType = oCtx["Expense Type"] || oCtx.ExpenseType;
             const oResponse = this._oFullExpenseData;
@@ -243,24 +269,26 @@ sap.viz.ui5.api.env.Format.numericFormatter(
                 aRecords = oResponse?.PaymentBreakdown?.PendingRecords || [];
             } else if (sType === this.i18n.getText("reimbursementAmount")) {
                 aRecords = oResponse?.PaymentBreakdown?.ReimbursementRecords || [];
+            } else if (sType === this.i18n.getText("openexpense")) {
+                aRecords = oResponse?.PaymentBreakdown?.OpenRecords || [];
             }
             this._openExpenseDialog(this.i18n.getText("paymentBreakdown"), aRecords);
         },
-        onMonthlyChartSelect: function(oEvent) {
+        onMonthlyChartSelect: function (oEvent) {
             const oCtx = oEvent.getParameter("data")[0].data;
             const sMonth = oCtx.Month;
             const aMonthly = this._oFullExpenseData?.MonthlyTrend || [];
             const oSelected = aMonthly.find(item => item.Month === sMonth);
             this._openExpenseDialog(this.i18n.getText("monthlyExpenseTrend"), oSelected?.Records || []);
         },
-        onTripChartSelect: function(oEvent) {
+        onTripChartSelect: function (oEvent) {
             const oCtx = oEvent.getParameter("data")[0].data;
             const sTrip = oCtx["Trip Type"];
             const aTrip = this._oFullExpenseData?.TripTypeData || [];
             const oSelected = aTrip.find(item => item.TripType === sTrip);
             this._openExpenseDialog(this.i18n.getText("tripTypeAnalysis"), oSelected?.Records || []);
         },
-        onTilePress: async function(oEvent) {
+        onTilePress: async function (oEvent) {
             if (!this._oExpenseDialog) {
                 this._oExpenseDialog = await sap.ui.core.Fragment.load({
                     id: this.getView().getId(),
@@ -290,6 +318,11 @@ sap.viz.ui5.api.env.Format.numericFormatter(
                     fGrandTotal = oData?.ReimbursementAmount || 0;
                     sTitle = this.i18n.getText("reimbursementExpenseDetails");
                     break;
+                case "OPENCOUNT":
+                    aRecords = oData?.OpenRecords || [];
+                    fGrandTotal = oData?.OpenAmount || 0;
+                    sTitle = this.i18n.getText("OpenExpenseDetails");
+                    break;
                 default:
                     aRecords = [];
                     fGrandTotal = 0;
@@ -303,7 +336,7 @@ sap.viz.ui5.api.env.Format.numericFormatter(
             }), "detailModel");
             this._oExpenseDialog.open();
         },
-        _navigateToExpenseDetails: function(sExpenseID) {
+        _navigateToExpenseDetails: function (sExpenseID) {
             if (!sExpenseID) {
                 MessageToast.show("Expense ID missing");
                 return;
@@ -316,16 +349,16 @@ sap.viz.ui5.api.env.Format.numericFormatter(
                 dash: "EmpExpense"
             });
         },
-        EDF_onExpenseTableRowPress: function(oEvent) {
+        EDF_onExpenseTableRowPress: function (oEvent) {
             const oRowData = oEvent.getSource().getBindingContext("detailModel").getObject();
             this._navigateToExpenseDetails(oRowData.ExpenseID);
         },
-        onTopExpenseRowPress: function(oEvent) {
+        onTopExpenseRowPress: function (oEvent) {
             const oItem = oEvent.getParameter("listItem");
             const oRowData = oItem.getBindingContext("EE_ExpenseChartModel").getObject();
             this._navigateToExpenseDetails(oRowData.ExpenseID);
         },
-        EE_onGlobalSearch: function(oEvent) {
+        EE_onGlobalSearch: function (oEvent) {
             var sQuery = oEvent.getParameter("newValue") || "";
             var oTable = this.byId("EE_id_TopExpenseTable");
             if (!oTable) {
@@ -351,17 +384,17 @@ sap.viz.ui5.api.env.Format.numericFormatter(
                 and: false
             }));
         },
-        onCloseDialog: function() {
+        onCloseDialog: function () {
             if (this._oExpenseDialog) {
                 this._oExpenseDialog.close();
             }
         },
-        EE_onPress: function() {
+        EE_onPress: function () {
             this.getRouter().navTo("RouteExpensePage", {
                 FileName: "ExpenseApplication"
             });
         },
-        onLogout: function() {
+        onLogout: function () {
             this.CommonLogoutFunction();
         }
     });

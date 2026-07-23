@@ -6,7 +6,7 @@ sap.ui.define([
     "sap/m/MessageBox",
     "sap/ui/model/FilterOperator",
     "sap/ui/model/Filter",
-     "sap/viz/ui5/format/ChartFormatter",
+    "sap/viz/ui5/format/ChartFormatter",
     "sap/viz/ui5/api/env/Format"
 
 ], function (BaseController, JSONModel, formatter, Fragment, MessageBox, FilterOperator, Filter, ChartFormatter,
@@ -19,9 +19,9 @@ sap.ui.define([
             this.getRouter().getRoute("RouteExpensedashboard").attachMatched(this._onRouteMatched, this);
             Format.numericFormatter(ChartFormatter.getInstance());
 
-ChartFormatter.getInstance().registerCustomFormatter("INR_FORMAT", function (value) {
-    return Number(value).toLocaleString("en-IN") + " INR";
-});
+            ChartFormatter.getInstance().registerCustomFormatter("INR_FORMAT", function (value) {
+                return Number(value).toLocaleString("en-IN") + " INR";
+            });
         },
 
         _onRouteMatched: async function () {
@@ -30,15 +30,6 @@ ChartFormatter.getInstance().registerCustomFormatter("INR_FORMAT", function (val
             const oLoginModel = this.getOwnerComponent().getModel("LoginModel");
             this.i18nModel = this.getView().getModel("i18n").getResourceBundle();
             this.getView().getModel("LoginModel").setProperty("/HeaderName", this.i18nModel.getText("expensedashboard"));
-    //          var iCurrentYear = new Date().getFullYear();
-
-    // // Previous Financial Year
-    // var sPreviousFY = (iCurrentYear - 1) + "-" + iCurrentYear;
-
-    // this.getView().setModel(new JSONModel({
-    //     previousFYHeader: "Previous FY : " + sPreviousFY
-    // }), "fyModel");
-
             await this._loadFinancialYearData();
         },
 
@@ -76,19 +67,21 @@ ChartFormatter.getInstance().registerCustomFormatter("INR_FORMAT", function (val
                 var oData = {
                     First4Card: oResponse.First4Card,
                     PaymentBreakdown: oResponse.PaymentBreakdown,
-                    PreviousFinancialYearCard:oResponse.PreviousFinancialYearCard,
+                    PreviousFinancialYearCard: oResponse.PreviousFinancialYearCard,
                     ByExpenseType: oResponse.ByExpenseType,
                     MonthlyTrend: oResponse.MonthlyTrend,
                     Top10Expenses: oResponse.Top10Expenses,
                     TripTypeData: oResponse.TripTypeData,
 
-                   PaymentReimbursementAmount: oResponse.PaymentBreakdown.ReimbursementAmount,
-                     PaymentPendingAmount: oResponse.PaymentBreakdown.PendingAmount,
-                    
-                        PreFinancialYear:oResponse.PreviousFinancialYearCard.FinancialYear,
-                     PreTotalAmount:oResponse.PreviousFinancialYearCard.TotalAmount,
-                     PreReimbursementAmount:oResponse.PreviousFinancialYearCard.ReimbursementAmount,
-                     PrePendingAmount:oResponse.PreviousFinancialYearCard.PendingAmount,
+                    PaymentReimbursementAmount: oResponse.PaymentBreakdown.ReimbursementAmount,
+                    PaymentPendingAmount: oResponse.PaymentBreakdown.PendingAmount,
+                    PaymentOpenAmount: oResponse.First4Card.OpenAmount,
+
+                    PreFinancialYear: oResponse.PreviousFinancialYearCard.FinancialYear,
+                    PreTotalAmount: oResponse.PreviousFinancialYearCard.TotalAmount,
+                    PreReimbursementAmount: oResponse.PreviousFinancialYearCard.ReimbursementAmount,
+                    PrePendingAmount: oResponse.PreviousFinancialYearCard.PendingAmount,
+                    PreOpenAmount: oResponse.PreviousFinancialYearCard.OpenAmount,
 
                     TotalExpenseCount: (oResponse.First4Card.TotalAmountRecords || []).length,
                     PendingCount: (oResponse.First4Card.PendingRecords || []).length,
@@ -104,13 +97,19 @@ ChartFormatter.getInstance().registerCustomFormatter("INR_FORMAT", function (val
                 // Donut Chart Model
                 let aPaymentData = [
                     {
-                        Type: "Reimbursement",
-                        Amount: oResponse.PaymentBreakdown.ReimbursementAmount
+                        Type: "Open Expense",
+                        Amount: oResponse.PaymentBreakdown.openAmount
+
                     },
                     {
-                        Type: "Pending",
+                        Type: "Pending Expense",
                         Amount: oResponse.PaymentBreakdown.PendingAmount
+                    },
+                    {
+                        Type: "Paid Expense",
+                        Amount: oResponse.PaymentBreakdown.ReimbursementAmount
                     }
+
                 ];
 
                 this.getView().setModel(
@@ -118,7 +117,9 @@ ChartFormatter.getInstance().registerCustomFormatter("INR_FORMAT", function (val
                         PaymentData: aPaymentData,
                         Total:
                             oResponse.PaymentBreakdown.ReimbursementAmount +
-                            oResponse.PaymentBreakdown.PendingAmount
+                            oResponse.PaymentBreakdown.PendingAmount +
+                            oResponse.PaymentBreakdown.openAmount
+
                     }),
                     "PaymentChartModel"
                 );
@@ -131,16 +132,16 @@ ChartFormatter.getInstance().registerCustomFormatter("INR_FORMAT", function (val
                             visible: false
                         },
                         plotArea: {
-        dataLabel: {
-            visible: true,
-            formatString: "INR_FORMAT"
-        }
-    },
-    valueAxis: {
-        label: {
-            formatString: "INR_FORMAT"
-        }
-    },
+                            dataLabel: {
+                                visible: true,
+                                formatString: "INR_FORMAT"
+                            }
+                        },
+                        valueAxis: {
+                            label: {
+                                formatString: "INR_FORMAT"
+                            }
+                        },
                         categoryAxis: {
                             title: {
                                 visible: false
@@ -158,24 +159,24 @@ ChartFormatter.getInstance().registerCustomFormatter("INR_FORMAT", function (val
                         title: {
                             visible: false
                         },
-                         plotArea: {
-            dataLabel: {
-                visible: true,
-                formatString: "INR_FORMAT"
-            },
+                        plotArea: {
+                            dataLabel: {
+                                visible: true,
+                                formatString: "INR_FORMAT"
+                            },
                             colorPalette: [
                                 "#43A047",
                                 "#FB8C00"
                             ]
                         },
-                         valueAxis: {
-            title: {
-                visible: false
-            },
-            label: {
-                formatString: "INR_FORMAT"
-            }
-        },
+                        valueAxis: {
+                            title: {
+                                visible: false
+                            },
+                            label: {
+                                formatString: "INR_FORMAT"
+                            }
+                        },
                         categoryAxis: {
                             title: {
                                 visible: false
@@ -189,27 +190,28 @@ ChartFormatter.getInstance().registerCustomFormatter("INR_FORMAT", function (val
 
                 var oPaymentChart = this.byId("paymentDonutChart");
 
-if (oPaymentChart) {
-    oPaymentChart.setVizProperties({
-        title: {
-            visible: false
-        },
-        legend: {
-            visible: true
-        },
-        plotArea: {
-            dataLabel: {
-                visible: true,
-                type: "value",
-                formatString: "INR_FORMAT"
-            },
-            colorPalette: [
-                "#43A047", // Reimbursement
-                "#c62828"  // Pending
-            ]
-        }
-    });
-}
+                if (oPaymentChart) {
+                    oPaymentChart.setVizProperties({
+                        title: {
+                            visible: false
+                        },
+                        legend: {
+                            visible: true
+                        },
+                        plotArea: {
+                            dataLabel: {
+                                visible: true,
+                                type: "value",
+                                formatString: "INR_FORMAT"
+                            },
+                            colorPalette: [
+                                "#43A047", // Reimbursement
+                                "#c62828",  // Pending
+                                "#168eff"
+                            ]
+                        }
+                    });
+                }
 
             } catch (error) {
                 this.closeBusyDialog();
@@ -311,6 +313,9 @@ if (oPaymentChart) {
                 case "Reimbursement":
                     this.onOpenPaymentDialog("REIMBURSEMENT");
                     break;
+                case "Open Expense":
+                    this.onOpenPaymentDialog("OPENAMOUNT");
+                    break;
             }
         },
         onSearchDashboard: async function () {
@@ -345,12 +350,20 @@ if (oPaymentChart) {
 
                 var oDashboardModel = new sap.ui.model.json.JSONModel(oResponse);
                 const oPreviousFY = oResponse.PreviousFinancialYearCard || {};
+                const oFourcard = oResponse.First4Card || {};
 
-oResponse.PreFinancialYear = oPreviousFY.FinancialYear;
-oResponse.PreTotalAmount = oPreviousFY.TotalAmount;
-oResponse.PreReimbursementAmount = oPreviousFY.ReimbursementAmount;
-oResponse.PrePendingAmount = oPreviousFY.PendingAmount;
+                oResponse.PreFinancialYear = oPreviousFY.FinancialYear;
+                oResponse.PreTotalAmount = oPreviousFY.TotalAmount;
+                oResponse.PreReimbursementAmount = oPreviousFY.ReimbursementAmount;
+                oResponse.PrePendingAmount = oPreviousFY.PendingAmount;
+                oResponse.PreOpenAmount = oPreviousFY.OpenAmount;
 
+                 // Record Counts
+        oResponse.PendingCount = (oFourcard.PendingRecords || []).length;
+        oResponse.ReimbursementCount = (oFourcard.ReimbursementRecords || []).length;
+        oResponse.TotalExpenseCount = (oFourcard.TotalExpenseRecords || []).length; // if available
+        oResponse.OpenCount = (oFourcard.OpenRecords || []).length; // if available
+ 
                 this.getView().setModel(oDashboardModel, "DashboardModel");
 
             } catch (oError) {
@@ -425,7 +438,7 @@ oResponse.PrePendingAmount = oPreviousFY.PendingAmount;
                         Title: "Pending",
                         Records: oDashboardModel.getProperty("/PendingRecords"),
                         Amount: oDashboardModel.getProperty("/First4Card/PendingAmount"),
-                        ShowStatus: false
+                        ShowStatus: true
                     });
                     break;
 
@@ -434,7 +447,15 @@ oResponse.PrePendingAmount = oPreviousFY.PendingAmount;
                         Title: "Reimbursement",
                         Records: oDashboardModel.getProperty("/ReimbursementRecords"),
                         Amount: oDashboardModel.getProperty("/First4Card/ReimbursementAmount"),
-                        ShowStatus: false
+                        ShowStatus: true
+                    });
+                    break;
+                case "OPENAMOUNT":
+                    oDialogModel.setData({
+                        Title: "Open Expense",
+                        Records: oDashboardModel.getProperty("/First4Card/OpenRecords"),
+                        Amount: oDashboardModel.getProperty("/First4Card/OpenAmount"),
+                        ShowStatus: true
                     });
                     break;
                 case "TOTAL":
@@ -511,6 +532,9 @@ oResponse.PrePendingAmount = oPreviousFY.PendingAmount;
         onPendingTilePress: function () {
             this.onOpenPaymentDialog("PENDING");
         },
+        onOpenexpenseTilePress: function () {
+            this.onOpenPaymentDialog("OPENAMOUNT");
+        },
         onTotalExpenseTilePress: function () {
             this.onOpenPaymentDialog("TOTAL");
         },
@@ -567,7 +591,7 @@ oResponse.PrePendingAmount = oPreviousFY.PendingAmount;
                 dash: "ExpenseDashboard"
             });
         },
-        
+
         onPressTop10Item: function (oEvent) {
             var ExpenseID = oEvent.getSource().getBindingContext("DashboardModel").getObject().ExpenseID;
             this.getRouter().navTo("RouteExpensDetails", {

@@ -3,6 +3,7 @@
     xmlns:core="sap.ui.core"
     xmlns:l="sap.ui.layout"
     xmlns:suite="sap.suite.ui.commons"
+     xmlns:u="sap.ui.unified"
 >
     <Dialog
         id="FPL_id_PolicyViewDialog"
@@ -94,6 +95,21 @@
                                     width="100%"
                                     class="sapUiSmallMarginBottom"
                                 >
+                                <Label
+                                        id="PL_id_version"
+                                        text="{i18n>version}:"
+                                        design="Bold"
+                                        
+                                    />
+                                     <Text
+                                        id="PL_id_Viewversion"
+                                        text="{policyViewModel>/Version}"
+                                        wrapping="false"
+                                        maxLines="1"
+                                        width="100%"
+                                    />
+
+
                                     <Label
                                         id="PL_id_TitleLabel"
                                         text="{i18n>title}:"
@@ -246,26 +262,78 @@
                                         placeholder="{i18n>enterDescription}"
                                        
                                     />
+
+
+                                </VBox>
+                                 <VBox
+                                    id="PL_id_LogoVBox"
+                                    width="100%"
+                                    class="sapUiSmallMarginBottom"
+                                >
+                                    <Label
+                                        id="PL_id_LogoLabel"
+                                        text="{i18n>uploadLogo}:"
+                                        design="Bold"
+                                       
+                                    />
+                               <Image
+    id="PL_id_LogoPreview"
+    width="100px"
+    height="80px"
+    visible="false"
+    densityAware="false" />
+                            <u:FileUploader
+                                id="PL_id_LogoUpload"
+                                width="100%"
+                                placeholder="{i18n>chooseLogo}"
+                                buttonText="{i18n>browse}"
+                                fileType="jpg,jpeg,png"
+                                maximumFileSize="1"
+                                mimeType="image/png,image/jpeg"
+                                fileSizeExceed="PL_onLogoSizeExceed"
+                                typeMissmatch="PL_onLogoTypeMissmatch"
+                                change="PL_onReLogoUpload"
+                                enabled="{= ${VisibleModel>/EditBtn} !== true}"
+                            />
+                                    
+
+                                </VBox>
+                                <VBox
+                                    id="PL_id_AttachmentVBox"
+                                    width="100%"
+                                    class="sapUiSmallMarginBottom"
+                                >
+                                    <Label
+                                        id="PL_id_AttachmentLabel"
+                                        text="{i18n>uploadAttachment}:"
+                                        design="Bold"
+                                       
+                                    />
+                               
+                            <u:FileUploader
+                            id="PL_id_AttachmentUpload"
+    width="100%"
+    placeholder="{i18n>chooseFile}"
+    buttonText="{i18n>browse}"
+    sameFilenameAllowed="true"
+    fileType="pdf"
+    change="PL_onREFileUpload"
+    visible="{= !${policyDialogModel>/File_Name} }"
+    maximumFileSize="5"
+    fileSizeExceed="FileSizeExceeds"
+                               
+                                enabled="{= ${VisibleModel>/EditBtn} !== true}"
+                            />
+                                    
+
                                 </VBox>
 
-                                <!-- ================= EDIT / SAVE ================= -->
-                                <!-- <Button
-                            
-                                    id="PL_id_EditSaveBtn"
-                                    text="{= ${VisibleModel>/EditBtn} === true ? ${i18n>edit} : ${i18n>save} }"
-                                    tooltip="{= ${VisibleModel>/EditBtn} === true ? ${i18n>editPolicyDetails} : ${i18n>savePolicyDetails} }"
-                                    press="PL_onPressEditAndSave"
-                                    visible="{= ${visibilityModel>/showAdminControls} === true }"
-                                   
-                                    width="100%"
-                                    class="sapUiSmallMarginTop sapUiSmallMarginBottom"
-                                /> -->
 
                             </VBox>
                         </VBox>
                     </l:SplitPane>
                     <!-- ================= RIGHT PANE: PDF VIEWER ================= -->
-                    <!-- ================= RIGHT PANE: PDF VIEWER ================= -->
+                    
 <l:SplitPane requiredParentWidth="600">
     <l:layoutData>
         <l:SplitterLayoutData
@@ -293,7 +361,7 @@
 
         <!-- ================= FOOTER ================= -->
         <footer>
-            <OverflowToolbar
+          <OverflowToolbar
                 id="PL_id_FooterBar"
                 class="policyFooterToolbar"
             >
@@ -323,7 +391,7 @@
                     type="Emphasized"
                 />
                 <ToolbarSpacer width="0.5rem" />
-            </OverflowToolbar>
+        </OverflowToolbar>
         </footer>
     </Dialog>
 </core:FragmentDefinition>

@@ -42,6 +42,15 @@
 						</fb:control>
 					</fb:FilterGroupItem>
 
+					<fb:FilterGroupItem name="Type" label="{i18n>WorkflowStatus}" groupName="Group1" visibleInFilterBar="true">
+						<fb:control>
+							<ComboBox id="idWorkflowStatusFilter" showClearIcon="true">
+								<core:Item key="Save" text="Save" />
+								<core:Item key="Submit" text="Submit" />
+							</ComboBox>
+						</fb:control>
+					</fb:FilterGroupItem>
+
 				<fb:FilterGroupItem name="EmployeeStatus" label="{i18n>status}" groupName="Group1" visibleInFilterBar="true">
 						<fb:control>
 							<ComboBox showSecondaryValues= "true"  items="{StatusEmp>/}" id="ED_id_Status" showClearIcon="true">
@@ -77,11 +86,14 @@
 					<Column minScreenWidth="Desktop" demandPopin="true" width="20%">
 						<Text text="{i18n>email}" />
 					</Column>
-					<Column minScreenWidth="Desktop" demandPopin="true" width="20%">
+					<Column minScreenWidth="Desktop" demandPopin="true">
 						<Text text="{i18n>mobilenumber}" />
 					</Column>
 					<Column  demandPopin="true">
 						<Text text="{i18n>baseLocation}" />
+					</Column>
+					<Column  demandPopin="true" hAlign="Center">
+						<Text text="{i18n>WorkflowStatus}" />
 					</Column>
 					<!-- <Column minScreenWidth="Desktop" demandPopin="true">
 						<Text text="{i18n>status}" />
@@ -97,7 +109,7 @@
 							<Text text="{sEmployeeDetails>CompanyEmailID}"/>
 							<Text text="{sEmployeeDetails>STDCode} {sEmployeeDetails>MobileNo}"/>
 							<Text text="{sEmployeeDetails>Branch}"/>
-							<!-- <ObjectStatus text="{sEmployeeDetails>EmployeeStatus}" state="{path: 'sEmployeeDetails>EmployeeStatus', formatter: '.Formatter.statusState'}" /> -->
+							<Text text="{sEmployeeDetails>Type}"/>
 						</cells>
 					</ColumnListItem>
 				</items>

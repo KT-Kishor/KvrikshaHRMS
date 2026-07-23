@@ -1035,7 +1035,7 @@ sap.ui.define(
                     oField.setValueState("Error");
                     oField.setValueStateText("Date must be within financial year only");
                     return;
-                }   
+                }
                 // -----------------------------
                 // 3. EMPTY VALUE CHECK
                 // -----------------------------
@@ -1457,8 +1457,8 @@ sap.ui.define(
                         role: oObject.role ? oObject.role.split(",").map(r => r.trim()) : (oObject.Role ? oObject.Role.split(",").map(r => r.trim()) : []),
                         Version: oSelectedVersion.Version || "",
                         Start_Date: oSelectedVersion.Start_Date ? new Date(oSelectedVersion.Start_Date).toLocaleDateString("en-GB") : "",
-                        File_Name: oSelectedVersion.File_Name || "Policy.pdf",
-                        File_Type: "application/pdf",
+                        File_Name: oSelectedVersion.File_Name || "",
+                        File_Type: oSelectedVersion.File_Type || "application/pdf",
                         fileUrl: this._policyPdfUrl,
                         fullScreen: false,
                         acknowledged: false,
@@ -1577,30 +1577,98 @@ sap.ui.define(
                         });
                         const oData = Array.isArray(oPolicyResponse.data) ? oPolicyResponse.data[0] : oPolicyResponse.data || {};
 
-                        // ACKNOWLEDGEMENT LOGIC
                         let sAckIds = oData.EmployeeID || "";
                         const aAckIds = String(sAckIds).split(",").map(id => id.trim()).filter(Boolean);
                         const sEmployeeId = String(this.getView().getModel("LoginModel").getProperty("/EmployeeID")).trim();
                         const bAlreadyAcknowledged = aAckIds.includes(sEmployeeId);
+
                         const oModel = this.getView().getModel("policyViewModel");
                         oModel.setProperty("/employeeIds", sAckIds);
                         oModel.setProperty("/alreadyAcknowledged", bAlreadyAcknowledged);
                         oModel.refresh(true);
 
-                        // ACTIVE VERSION
                         const aItems = oData.Items || [];
-                        const oActiveItem = this._getActivePolicyItem(aItems);
+                        const oActiveItem = this._getActivePolicyItem(aItems) || {};
 
-                        // GET BASE64 AND DECOMPRESS (FIX IS HERE)
+                        // =================================
+                        // LOGO DISPLAY
+                        // =================================
+                        const oLogoUploader = this.byId("PL_id_LogoUpload");
+                        const oAttachmentUploader = this.byId("PL_id_AttachmentUpload");
+                        const oLogoImage = this.byId("PL_id_LogoPreview");
+                        const oAttachmentText = this.byId("PL_id_AttachmentName");
+
+                        if (oLogoUploader) {
+                            oLogoUploader.clear();
+                            oLogoUploader.setValue("");
+                        }
+
+
+                        let sLogoBase64 = "";
+                        let sLogoUrl = "";
+
+                        if (oData.Logo) {
+                            if (typeof oData.Logo === "string") {
+                                sLogoBase64 = oData.Logo;
+                            } else if (oData.Logo.data) {
+                                sLogoBase64 = new TextDecoder().decode(new Uint8Array(oData.Logo.data));
+                            }
+
+                            if (sLogoBase64) {
+                                sLogoBase64 = String(sLogoBase64).replace(/^data:.*;base64,/, "").replace(/\s/g, "");
+                                sLogoUrl = "data:image/png;base64," + sLogoBase64;
+                            }
+                        }
+
+                        if (sLogoUrl) {
+                            if (oLogoImage) {
+                                oLogoImage.setSrc(sLogoUrl);
+                                oLogoImage.setVisible(true);
+                            }
+                            if (oLogoUploader) {
+                                oLogoUploader.setValue(oData.Logo_File_Name || "Existing Logo");
+                            }
+                        } else {
+                            if (oLogoImage) {
+                                oLogoImage.setSrc("");
+                                oLogoImage.setVisible(false);
+                            }
+                        }
+
+                        // =================================
+                        // ATTACHMENT DISPLAY
+                        // =================================
+                        const sAttachmentFileName =
+                            oActiveItem.File_Name ||
+                            oData.File_Name ||
+                            oModel.getProperty("/File_Name") ||
+                            "";
+
+                        if (oAttachmentUploader) {
+                            oAttachmentUploader.setValue(" ");
+                            oAttachmentUploader.setValue(sAttachmentFileName);
+                        }
+
+                        if (oAttachmentText) {
+                            oAttachmentText.setText(sAttachmentFileName);
+                            oAttachmentText.setVisible(!!sAttachmentFileName);
+                        }
+
+                        // =================================
+                        // PDF PREVIEW
+                        // =================================
                         let sBase64 = oActiveItem?.File_Content || "";
+                        if (typeof sBase64 !== "string" && oActiveItem?.File_Content?.data) {
+                            const uint8Array = new Uint8Array(oActiveItem.File_Content.data);
+                            sBase64 = btoa(Array.from(uint8Array).map(byte => String.fromCharCode(byte)).join(""));
+                        }
+
                         sBase64 = String(sBase64).replace(/^data:.*;base64,/, "").replace(/\s/g, "");
 
-                        // DECOMPRESS IF NEEDED
                         if (this.isCompressedBase64 && this.isCompressedBase64(sBase64)) {
                             sBase64 = this.decompressBase64(sBase64);
                         }
 
-                        // Store as data URL for _createPdfIframe to convert to Blob
                         this._policyPdfUrl = "data:application/pdf;base64," + sBase64;
                         oModel.setProperty("/fileUrl", this._policyPdfUrl);
 
@@ -1824,6 +1892,74 @@ sap.ui.define(
                 this.getView().setModel(oModel, "FilteredRoleModel");
                 this.getView().getModel("FilteredRoleModel").refresh(true);
             },
+          PL_onREFileUpload: function (oEvent) {
+    const oFile = oEvent.getParameter("files") && oEvent.getParameter("files")[0];
+    if (!oFile) {
+        return;
+    }
+
+    const oReader = new FileReader();
+    oReader.onload = function (e) {
+        const sResult = e.target.result || "";
+        const sBase64 = String(sResult).split(",")[1] || "";
+        const oModel = this.getView().getModel("policyViewModel");
+
+        oModel.setProperty("/File_Content", sBase64);
+        oModel.setProperty("/File_Name", oFile.name);
+        oModel.setProperty("/File_Type", oFile.type);
+
+        const oAttachmentUploader = this.byId("PL_id_AttachmentUpload");
+        if (oAttachmentUploader) {
+            oAttachmentUploader.setValue(oFile.name);
+            oAttachmentUploader.setValueState("None");
+        }
+
+        const oAttachmentText = this.byId("PL_id_AttachmentName");
+        if (oAttachmentText) {
+            oAttachmentText.setText(oFile.name);
+            oAttachmentText.setVisible(true);
+        }
+
+        // Show PDF immediately on right side
+        if (oFile.type === "application/pdf") {
+            const sPdfUrl = "data:application/pdf;base64," + sBase64;
+            oModel.setProperty("/fileUrl", sPdfUrl);
+            this._policyPdfUrl = sPdfUrl;
+            oModel.refresh(true);
+            this._createPdfIframe();
+        } else {
+            oModel.refresh(true);
+        }
+    }.bind(this);
+
+    oReader.readAsDataURL(oFile);
+},
+           PL_onReLogoUpload: function (oEvent) {
+    const oFile = oEvent.getParameter("files")[0];
+    if (!oFile) {
+        return;
+    }
+
+    const oReader = new FileReader();
+
+    oReader.onload = function (e) {
+
+        const sBase64 = e.target.result.split(",")[1];
+
+        const oModel = this.getView().getModel("policyViewModel");
+
+        oModel.setProperty("/Logo", sBase64);
+        oModel.setProperty("/Logo_File_Name", oFile.name);
+        oModel.refresh(true);
+
+        this.byId("PL_id_LogoPreview").setSrc(e.target.result);
+        this.byId("PL_id_LogoPreview").setVisible(true);
+
+       
+    }.bind(this);
+
+    oReader.readAsDataURL(oFile);
+},
             onPressEdit: function () {
                 // SWITCH TO EDIT MODE
                 this.getView().getModel("VisibleModel").setProperty("/EditBtn", false);
@@ -1844,6 +1980,13 @@ sap.ui.define(
             },
             onPressSave: async function () {
                 // TITLE VALIDATION
+                const oModel = this.getView().getModel("policyViewModel");
+                const oData = oModel.getData();
+                const oLogoUploader = this.byId("PL_id_LogoUpload");
+                const oAttachmentUploader = this.byId("PL_id_AttachmentUpload");
+                const sLogoName = oData.Logo_File_Name || "";
+                const sAttachmentName = oData.File_Name || "";
+
                 if (!Validation._LCvalidateMandatoryField(this.byId("PL_id_ViewTitle"), "ID")) {
                     this.byId("PL_id_ViewTitle").setValueState("Error");
                     this.byId("PL_id_ViewTitle").setValueStateText("Policy title is required");
@@ -1877,23 +2020,52 @@ sap.ui.define(
                     oRoleControl.setValueState("None");
                     oRoleControl.setValueStateText("");
                 }
+
+                // if (!sLogoName) {
+                //     if (oLogoUploader) {
+                //         oLogoUploader.setValueState("Error");
+                //     }
+                //     MessageBox.error("Please upload logo");
+                //     return;
+                // } else if (oLogoUploader) {
+                //     oLogoUploader.setValueState("None");
+                // }
+
+                if (!sAttachmentName) {
+                    if (oAttachmentUploader) {
+                        oAttachmentUploader.setValueState("Error");
+                    }
+                    MessageBox.error("Please upload attachment");
+                    return;
+                } else if (oAttachmentUploader) {
+                    oAttachmentUploader.setValueState("None");
+                }
                 // MODEL DATA
-                const oModel = this.getView().getModel("policyViewModel");
-                const oData = oModel.getData();
+
+
                 const sRole = Array.isArray(oData.role) ? oData.role.join(",") : (oData.role || "").toString();
                 // UPDATE PAYLOAD
-                const oPayload = {
-                    filters: {
-                        ID: this._selectedPolicyId,
-                    },
-                    data: {
-                        Start_Date: oData.Start_Date,
-                        PolicyName: oData.title,
-                        PolicyDesc: oData.description,
-                        Department: oData.department,
-                        Role: sRole,
-                    },
-                };
+               const oUpdateData = {
+    Start_Date: oData.Start_Date,
+    PolicyName: oData.title,
+    PolicyDesc: oData.description,
+    Department: oData.department,
+    Role: sRole,
+    File_Content: oData.File_Content || "",
+    File_Name: oData.File_Name || "",
+    File_Type: oData.File_Type || ""
+};
+
+if (oData.Logo) {
+    oUpdateData.Logo = oData.Logo;
+}
+
+const oPayload = {
+    filters: {
+        ID: this._selectedPolicyId
+    },
+    data: oUpdateData
+};
                 try {
                     // BUSY START
                     this.getBusyDialog();

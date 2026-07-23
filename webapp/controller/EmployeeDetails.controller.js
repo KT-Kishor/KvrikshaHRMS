@@ -258,6 +258,11 @@ sap.ui.define([
                         property: "Branch",
                         type: "string"
                     },
+                    {
+                        label: this.i18nModel.getText("WorkflowStatus"),
+                        property: "Type",
+                        type: "string"
+                    }
                 ];
                 const oSettings = {
                     workbook: {

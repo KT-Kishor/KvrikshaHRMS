@@ -480,7 +480,7 @@
                                             <core:ListItem
                                                 key="{CompanyCodeDetailsModel>companyCode}"
                                                 text="{CompanyCodeDetailsModel>companyCode}"
-                                                additionalText="{CompanyCodeDetailsModel>branchCode}"
+                                                additionalText="{CompanyCodeDetailsModel>branchCode} - {CompanyCodeDetailsModel>branch}"
                                             />
                                         </m:ComboBox>
                                         <m:Label
@@ -1630,11 +1630,15 @@
                                             />
                                         </m:cells> -->
                                         <m:cells>
-                                            <m:Text
-                                                text="{path: 'MyAssets>AssignedDate',
-                             formatter: '.Formatter.formatDate'
-                             }"
-                                            />
+                                           <m:Text
+    text="{
+        parts: [
+            { path: 'MyAssets>AssignedDate' },
+            { path: 'MyAssets>ReturnDate' },
+            { path: 'MyAssets>Status' }
+        ],
+        formatter: '.Formatter.formatAssignedAndReturnDate'
+    }"/>
                                         </m:cells>
                                         <m:cells>
                                             <m:Text
@@ -1696,3 +1700,4 @@
         </m:footer>
     </m:Page>
 </mvc:View>
+s
