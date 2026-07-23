@@ -223,8 +223,8 @@ sap.ui.define([
                         "Policy": "/Policy",
                         "HiringDashboard": "/HiringDashboard",
                         "CandidateQuestion": "/CandidateQuestion",
-                        "Announcement": "/Announcement"
-
+                        "Announcement": "/Announcement",
+                        "LetterHead":"/LetterHead"
                     };
 
                     const modelPath = tileMap[value];

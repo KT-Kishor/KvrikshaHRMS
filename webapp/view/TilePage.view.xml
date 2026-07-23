@@ -223,7 +223,7 @@
                                                     </GenericTile>
 
                                                     <GenericTile
-                                                        visible="{= ${AppVisibilityModel>/GeneratePDF} === '1' ? true : false}"
+                                                        visible="{= ${AppVisibilityModel>/LetterHead} === '1' ? true : false}"
                                                         class="sapUiSmallMargin glassTile blue"
                                                         header="{i18n>headerGeneratePDF}"
                                                         press="TileV_onpressGeneratePDF"
