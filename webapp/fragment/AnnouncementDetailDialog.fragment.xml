@@ -75,7 +75,6 @@
             <Link
                 text="{i18n>viewAttachment}"
                 class="footer-CoName"
-                visible="{path:'Announcements>AnnouncementAttachment', formatter:'.ANC_hasValue'}"
                 press="ANC_onAttachmentPress"/>
         </HBox>
 
