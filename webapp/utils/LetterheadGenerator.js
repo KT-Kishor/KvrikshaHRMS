@@ -50,25 +50,85 @@ sap.ui.define(["../fonts/Montserrat"], function (Montserrat) {
             console.error("Watermark render failed:", e);
         }
     }
-// Ensures any tables pasted into the rich-text content (e.g. from Word/Markdown)
-// actually show borders in the exported PDF. Rich-text editors usually render
-// table borders via their own internal stylesheet, which does NOT travel with
-// the raw HTML — so without this, html2canvas captures a borderless table.
-function _applyTableBorders(oContainer) {
-    var aTables = oContainer.querySelectorAll("table");
-    aTables.forEach(function (oTable) {
-        oTable.style.borderCollapse = "collapse";
-        oTable.style.width = oTable.style.width || "100%";
-        oTable.style.border = "1px solid #333";
 
-        var aCells = oTable.querySelectorAll("th, td");
-        aCells.forEach(function (oCell) {
-            oCell.style.border = "1px solid #333";
-            oCell.style.padding = "6px 8px";
-            oCell.style.fontSize = oCell.style.fontSize || "14px";
+    // 4. Inside _applyTableBorders, use it instead of the hardcoded blue
+    function _applyTableBorders(oContainer, sCompanyColor) {
+        var sHeaderBg = sCompanyColor || "rgb(18, 138, 223)";
+        var sHeaderTextColor = _getContrastTextColor(sHeaderBg);
+        var sLightTint = _lightenColor(sHeaderBg, 0.85);
+
+        var aTables = oContainer.querySelectorAll("table");
+        aTables.forEach(function (oTable) {
+            oTable.style.borderCollapse = "collapse";
+            oTable.style.width = oTable.style.width || "100%";
+            oTable.style.border = "1px solid rgba(17, 17, 17, 0.99)";
+            oTable.style.backgroundColor = "#ffffff";
+
+            oTable.querySelectorAll("th, td").forEach(function (oCell) {
+                oCell.style.border = "1px solid rgba(26, 25, 25, 0.98)";
+                oCell.style.padding = "6px 8px";
+                oCell.style.fontSize = oCell.style.fontSize || "14px";
+                oCell.style.backgroundColor = "#ffffff";
+            });
+
+            var aHeaderCells = oTable.querySelectorAll("th");
+            if (aHeaderCells.length > 0) {
+                aHeaderCells.forEach(function (oCell) {
+                    oCell.style.backgroundColor = sHeaderBg;      // ← dynamic company color
+                    oCell.style.color = sHeaderTextColor;          // ← auto black/white text
+                    oCell.style.fontWeight = "bold";
+                });
+            } else {
+                var oHeaderRow = oTable.querySelector("thead tr") || oTable.querySelector("tr");
+                if (oHeaderRow) {
+                    oHeaderRow.querySelectorAll("td, th").forEach(function (oCell) {
+                        oCell.style.backgroundColor = sLightTint;   // ← lighter tint of same color
+                        oCell.style.fontWeight = "bold";
+                    });
+                }
+            }
         });
-    });
-}
+    }
+    function _hexToRgb(sHex) {
+        if (!sHex) {
+            return null;
+        }
+        sHex = sHex.replace("#", "");
+        if (sHex.length === 3) {
+            sHex = sHex.split("").map(function (c) { return c + c; }).join("");
+        }
+        var nNum = parseInt(sHex, 16);
+        if (isNaN(nNum)) {
+            return null;
+        }
+        return {
+            r: (nNum >> 16) & 255,
+            g: (nNum >> 8) & 255,
+            b: nNum & 255
+        };
+    }
+
+    // Lightens a hex color by mixing it toward white; falls back to a default tint if parsing fails
+    function _lightenColor(sColor, nAmount) {
+        var oRgb = sColor && sColor.indexOf("#") === 0 ? _hexToRgb(sColor) : null;
+        if (!oRgb) {
+            return "#D6EAF8";
+        }
+        var r = Math.round(oRgb.r + (255 - oRgb.r) * nAmount);
+        var g = Math.round(oRgb.g + (255 - oRgb.g) * nAmount);
+        var b = Math.round(oRgb.b + (255 - oRgb.b) * nAmount);
+        return "rgb(" + r + "," + g + "," + b + ")";
+    }
+
+    // Picks black or white text depending on the background's brightness for readability
+    function _getContrastTextColor(sColor) {
+        var oRgb = sColor && sColor.indexOf("#") === 0 ? _hexToRgb(sColor) : null;
+        if (!oRgb) {
+            return "#ffffff";
+        }
+        var nBrightness = (oRgb.r * 299 + oRgb.g * 587 + oRgb.b * 114) / 1000;
+        return nBrightness > 150 ? "#111111" : "#ffffff";
+    }
     function _sliceCanvas(oSourceCanvas, nSrcYPx, nSrcHeightPx) {
         var oSlice = document.createElement("canvas");
         oSlice.width = oSourceCanvas.width;
@@ -108,7 +168,7 @@ function _applyTableBorders(oContainer) {
                     oContainer.style.boxSizing = "border-box";
                     var sLogoHtml = sLogoSrc ? '<img src="' + sLogoSrc + '" style="width:125px; height:125px; object-fit:contain; border:none; outline:none; box-shadow:none; background:transparent; display:block;" />' : '';
                     var sSubjectValue = mData.subject || "";
-                    var sToValue = mData.to || "";
+                    var sToValue = (mData.to || "").replace(/\r\n|\n/g, "<br>");
 
                     var sToSubjectRowHtml = "";
 
@@ -132,7 +192,7 @@ function _applyTableBorders(oContainer) {
                     }
                     oContainer.innerHTML = '<div style="width:100%; position:relative;">' + '<div style="position:relative; z-index:1; padding:35px ' + nSidePaddingPx + 'px;">' + '<div style="display:flex; align-items:flex-start; gap:16px; margin-bottom:4px;">' + sLogoHtml + '<div><div style="font-family:' + sFontFamily + '; font-size:' + sTitleFontSize + '; font-weight:bold; transform:scaleY(1.5); text-transform:uppercase; margin-top:' + sTitleMarginTop + '; text-align:center; color:' + sCompanyColor + ';">' + sCompanyName + '</div>' + '<div style="font-family:' + sFontFamily + '; font-size:' + sAddressFontSize + '; line-height:1.5; margin-top:' + sAddressMarginTop + '; color:#333; text-align:center; width:500px; word-wrap:break-word; white-space:normal;">' + sCompanyAddress + '</div></div></div>' + '<div style="border-top:1.5px solid #333; margin: 5px 0 20px 0;"></div>' + '<div style="display:flex; justify-content:space-between; margin-bottom:22px; font-size:18px;">' + '<div>Ref No: ' + (mData.referenceNumber || "-") + '</div><div>Date: ' + (mData.date || "-") + '</div></div>' + '<div style="margin-top:34px;"></div>' + '<div style="margin-top:34px;"></div>' + sToSubjectRowHtml + '<div style="font-size:18px; line-height:1.6; text-align:justify; margin-bottom:70px;">' + (mData.content || "") + '</div>' + '</div></div>';
                     _ensureMontserratFontFace();
-                    _applyTableBorders(oContainer);
+                    _applyTableBorders(oContainer, sCompanyColor);
                     document.body.appendChild(oContainer);
                     var aImages = oContainer.querySelectorAll("img");
                     var iPending = aImages.length;
@@ -192,17 +252,24 @@ function _applyTableBorders(oContainer) {
                                 nRemainingMm -= nLastSliceHeightMm;
                                 bFirstPage = false;
                             }
-                            // Footer: For / Signature / Director - anchored on the last content page
+                     
                             oPdf.setPage(oPdf.getNumberOfPages());
                             var nCanvasScale = 2;
                             var nFooterLeft = nMarginMm + (nSidePaddingPx * nCanvasScale) / nPxPerMm;
-                            var nFooterHeight = 30;
-                            var nFooterY = nMarginMm + nLastSliceHeightMm - 10;
-                            if (nFooterY + nFooterHeight > (nPageHeight - nMarginMm)) {
+                            var nFooterBlockHeight = 30; // "For" text + signature image + "Director" text
+                            var nContentEndY = nMarginMm + nLastSliceHeightMm;
+                            var nFooterGap = 10; // small gap after the content before the footer starts
+
+                            
+                            var nFooterY = nContentEndY + nFooterGap;
+
+                          
+                            if (nFooterY + nFooterBlockHeight > (nPageHeight - nMarginMm)) {
                                 oPdf.addPage();
                                 _drawCircularWatermark(oPdf, sBackgroundLogoSrc, nPageWidth, nPageHeight, nWatermarkWidth, nWatermarkHeight, nWatermarkOpacity);
-                                nFooterY = nMarginMm;
+                                nFooterY = nMarginMm; // ← starts at the top, same as content's top margin
                             }
+
                             oPdf.setFont("Montserrat", "normal");
                             oPdf.setFontSize(13);
                             oPdf.text("For: " + sCompanyName, nFooterLeft, nFooterY);

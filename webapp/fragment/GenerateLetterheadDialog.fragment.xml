@@ -89,14 +89,17 @@
                 liveChange=".GP_onFileNameLiveChange" />
         </VBox>
         <!-- ================= Row 3 ================= -->
-          <VBox>
-            <Label text="{i18n>to}" />
+        <VBox>
+    <Label text="{i18n>to}" />
 
-            <Input
-                id="GPD_id_To"
-                width="100%"
-                placeholder="{i18n>enterTo}" />
-        </VBox>
+    <TextArea
+        id="GPD_id_To"
+        width="100%"
+        rows="2"
+        growing="true"
+        growingMaxLines="2"
+        placeholder="{i18n>enterTo}" />
+</VBox>
         <VBox>
 
             <Label text="{i18n>subject}" />
