@@ -17,14 +17,14 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
 
       // Financial Year: 1 Apr - 31 Mar
       if (iMonth >= 3) { // April to December
-          oFYStart = new Date(iYear, 3, 1);      // 1 Apr current year
-          oFYEnd = new Date(iYear + 1, 2, 31);   // 31 Mar next year
+        oFYStart = new Date(iYear, 3, 1);      // 1 Apr current year
+        oFYEnd = new Date(iYear + 1, 2, 31);   // 31 Mar next year
       } else { // January to March
-          oFYStart = new Date(iYear - 1, 3, 1);  // 1 Apr previous year
-          oFYEnd = new Date(iYear, 2, 31);       // 31 Mar current year
+        oFYStart = new Date(iYear - 1, 3, 1);  // 1 Apr previous year
+        oFYEnd = new Date(iYear, 2, 31);       // 31 Mar current year
       }
       var oDateModel = new sap.ui.model.json.JSONModel();
-      oDateModel.setData({ maxDate: maxDate18YearsAgo, focusedDate: new Date(2000, 0, 1), minDate: new Date(1950, 0, 1), nextMonthMinDate: nextMonthFirstDate , minDateAppraisal:oFYStart , maxDateAppraisal:oFYEnd});
+      oDateModel.setData({ maxDate: maxDate18YearsAgo, focusedDate: new Date(2000, 0, 1), minDate: new Date(1950, 0, 1), nextMonthMinDate: nextMonthFirstDate, minDateAppraisal: oFYStart, maxDateAppraisal: oFYEnd });
       this.getView().setModel(oDateModel, "controller");
       this.getRouter().getRoute("SelfService").attachMatched(this._onRouteMatched, this);
       // this.getRouter().navTo("SelfService", { sPath: "SelfService" });
@@ -339,19 +339,19 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
 
       var oEmployeeModel = this.getView().getModel("sEmployeeModel");
 
-    // Clear Company Branch
-    oEmployeeModel.setProperty("/0/CompanyCode", "");
+      // Clear Company Branch
+      oEmployeeModel.setProperty("/0/CompanyCode", "");
 
-    // Clear Branch Name
-    oEmployeeModel.setProperty("/0/Branch", "");
+      // Clear Branch Name
+      oEmployeeModel.setProperty("/0/Branch", "");
 
-    // Clear Company ComboBox UI
-    var oCompanyCombo = this.byId("SS_id_CompanyCode");
-    oCompanyCombo.setSelectedKey("");
-    oCompanyCombo.setValue("");
+      // Clear Company ComboBox UI
+      var oCompanyCombo = this.byId("SS_id_CompanyCode");
+      oCompanyCombo.setSelectedKey("");
+      oCompanyCombo.setValue("");
 
-    // Clear Branch Input UI (optional, model binding already does this)
-    this.byId("SS_id_branch2").setValue("");
+      // Clear Branch Input UI (optional, model binding already does this)
+      this.byId("SS_id_branch2").setValue("");
     },
 
     updateFunctionForSelf: function (oPayload, ID) {
@@ -416,7 +416,7 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
           Max: new Date(),
           TraineeRole: false,
           Letter: false,
-          Asset:true,
+          Asset: true,
           ResignationVisible: false,
           CanWithdrawResignation: false,
           ShowStatusControl: false,
@@ -2728,7 +2728,7 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
       if (CTCType === "Percentage") {
         utils._LCvalidateTraineeAmount(oEvent);
       } else {
-        utils._LCvalidateCTC(oEvent);
+        utils._LCvalidateAmount(oEvent);
       }
       this.CommonCalculation();
     },
@@ -2945,6 +2945,7 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
 
     onSelectChange: function (oEvent) {
       oEvent.getSource().getSelectedItem().getText() === "Percentage" ? utils._LCvalidateTraineeAmount(sap.ui.getCore().byId("AF_id_CTC"), "ID") : utils._LCvalidateAmount(sap.ui.getCore().byId("AF_id_CTC"), "ID");
+      this.CommonCalculation();
     },
 
     onPressAppraisalSave: async function () {
@@ -4611,18 +4612,18 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
         }
 
         if (oAsset.ReturnDate) {
-    addEvent(
-        "RETURNED",
-        oAsset.ReturnDate,
-        "Asset Returned",
-        [
-            "Returned By: " + (oAsset.ReturnEmpName || "-") + " (" + (oAsset.ReturnEmpID || "-") + ")",
-            "Branch: " + (oAsset.AssignBranch || "-"),
-            "Asset Condition: " + (oAsset.AssetCondition || "-")
-        ],
-        oAsset.AssignBranch
-    );
-}
+          addEvent(
+            "RETURNED",
+            oAsset.ReturnDate,
+            "Asset Returned",
+            [
+              "Returned By: " + (oAsset.ReturnEmpName || "-") + " (" + (oAsset.ReturnEmpID || "-") + ")",
+              "Branch: " + (oAsset.AssignBranch || "-"),
+              "Asset Condition: " + (oAsset.AssetCondition || "-")
+            ],
+            oAsset.AssignBranch
+          );
+        }
 
         // ---- TRANSFER by employee ----
         if (oAsset.TransferDate && oAsset.TransferDate !== "1899-11-30T00:00:00.000Z" && oAsset.TransferByID === sEmpId) {
@@ -4762,13 +4763,13 @@ sap.ui.define(["./BaseController", "../model/formatter", "../utils/validation", 
 
         // Type badge
         // Type text only (no badge background)
-doc.setFont("helvetica", "bold");
-doc.setFontSize(9);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(9);
 
-// Use the event color for the text
-doc.setTextColor(0,0,0);
+        // Use the event color for the text
+        doc.setTextColor(0, 0, 0);
 
-doc.text(event.type, margin + 12, y + 12);
+        doc.text(event.type, margin + 12, y + 12);
         // doc.setFillColor(60, 60, 60);
         // doc.roundedRect(margin + 12, y + 6, 32, 8, 2, 2, "F");
         // doc.setTextColor(255, 255, 255);
@@ -4826,20 +4827,20 @@ doc.text(event.type, margin + 12, y + 12);
       this.ID = oRowData.ID
       this.getBusyDialog()
       var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
-    pattern: "yyyy-MM-dd"
-});
+        pattern: "yyyy-MM-dd"
+      });
 
-var oToday = new Date();
+      var oToday = new Date();
 
-var sStartDate = oDateFormat.format(oToday);
+      var sStartDate = oDateFormat.format(oToday);
 
-var oLastDate = new Date(
-    oToday.getFullYear(),
-    oToday.getMonth() + 1,
-    0
-);
+      var oLastDate = new Date(
+        oToday.getFullYear(),
+        oToday.getMonth() + 1,
+        0
+      );
 
-var sEndDate = oDateFormat.format(oLastDate);
+      var sEndDate = oDateFormat.format(oLastDate);
 
       var filter = {
         BranchCode: LoginModel.BranchCode,

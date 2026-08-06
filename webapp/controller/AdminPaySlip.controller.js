@@ -137,7 +137,7 @@ sap.ui.define(
                     endDate: oDate.getSecondDateValue(),
                     fromDetail: true
                 });
-                this.that.getBusyDialog();
+                // this.that.getBusyDialog();
                 var sPath = oEvent.getSource().getBindingContext("PaySlip").getPath();
                 this.oModel.setProperty("/isCreate", false);
                 this.oModel.setProperty("/isIdSelected", true);

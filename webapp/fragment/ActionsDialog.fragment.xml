@@ -13,4 +13,5 @@
 	<Button id="SOW" text="{i18n>sowSendEmail}" type="Transparent" press="MsaE_onSendEmailMSA" enabled="{simpleForm>/BtnEnable}"/>
 	<Button id="MsaE_id_SowMergeBut" text="{i18n>GeneratePDF}" type="Transparent" press="MsaE_onPressMergeSow" enabled="{simpleForm>/BtnEnable}"/>
 	<Button text="{i18n>edit}" type="Transparent" id="MsaE_id_UpdateSow" press="MsaE_onPressUpdateSOW" enabled="{simpleForm>/BtnEnable}"/>
+	<Button text="{i18n>GeneratePDFTemplate}" type="Transparent" id="MsaE_id_PDFCondition" press="MsaE_onPressPDFCondition"/>
 </ActionSheet>

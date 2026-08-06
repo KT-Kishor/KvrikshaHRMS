@@ -22,15 +22,27 @@
                 emptySpanM="0"
                 emptySpanS="0">
 
-                <core:Title text="Selection"/>
-
                 <Label text="Employee" required="true"/>
                 <!-- <ComboBox id="employeeSelect" showClearIcon="true" width="100%" items="{EmployeeFilterModel>/}" value="{DownloadTimesheetModel>/SelectedEmployee}">
                     <core:ListItem key="{EmployeeFilterModel>EmployeeID}" text="{EmployeeFilterModel>EmployeeID}" additionalText="{EmployeeFilterModel>EmployeeName}"/>
                 </ComboBox> -->
-                <ComboBox showSecondaryValues= "true" id="employeeSelect" showClearIcon="true" items="{path:'EmployeeFilterModel>/'}" value="{DownloadTimesheetModel>/SelectedEmployee}">
+                <ComboBox showSecondaryValues= "true" id="employeeSelect" showClearIcon="true" items="{path:'EmployeeFilterModel>/'}" selectedKey="{DownloadTimesheetModel>/SelectedEmployee}"
+    selectionChange="onEmployeeChange" >
 						<core:ListItem key="{EmployeeFilterModel>EmployeeID}" text="{EmployeeFilterModel>EmployeeID}" additionalText="{EmployeeFilterModel>EmployeeName}" />
 					</ComboBox>   
+
+                     <Label text="{i18n>assigntasktitle}" required="true"/>
+                <ComboBox
+    id="Taskid1"
+    items="{TaskFilterModel>/}"
+        selectedKey="{DownloadTimesheetModel>/SelectedTask}"
+    showClearIcon="true">
+
+    <core:ListItem
+        key="{TaskFilterModel>TaskID}"
+        text="{TaskFilterModel>TaskName}"
+        additionalText="{TaskFilterModel>Date}" />
+</ComboBox>
                 <Label text="Month" required="true"/>
                 <ComboBox id="monthSelect" showClearIcon="true" width="100%" items="{DownloadTimesheetModel>/MonthList}" value="{DownloadTimesheetModel>/SelectedMonth}">
                     <core:Item key="{DownloadTimesheetModel>MonthKey}" text="{DownloadTimesheetModel>MonthLabel}"/>

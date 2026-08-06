@@ -57,7 +57,7 @@
 <!--  KPI Tiles  -->
 <VBox class="sapUiSmallMargin">
 
-    <fb:FilterBar id="Expdashboardfilter"  useToolbar="false" clear="onClearFilters" showClearOnFB="true" search="onSearchDashboard" class="CommonRoundedTable" showFilterConfiguration="false">
+    <fb:FilterBar id="Expdashboardfilter"  useToolbar="false" clear="onClearFilters" showClearOnFB="true" search="onSearchDashboard" class="sapUiTinyMargin CommonRoundedTable" showFilterConfiguration="false">
 					<fb:filterGroupItems>
 						<fb:FilterGroupItem name="daterange" label="Date Range" groupName="Group1" visibleInFilterBar="true">
 							<fb:control>
@@ -428,7 +428,7 @@
 
 </f:Card>
 <!-- 4. category Distribution Chart -->
-						<f:Card  class="sapUiTinyMarginBottom"  >
+						<f:Card class="sapUiTinyMarginBottom">
                         
     <f:header>
         <card:Header
@@ -492,7 +492,11 @@
 					</layout:content>
 				</layout:Grid>
 
-                
+            
+                <VBox
+    id="employeeTableBox"
+    visible="{= !${viewModel>/showGraph}}"
+    class="flipCard">
               <f:Card class="sapUiSmallMarginBeginEnd sapUiTinyMarginBottom" width="auto"  >
 
 
@@ -504,7 +508,7 @@
                             <Table
                             id="idTop10ExpensesTable"
                                 width="100%"
-                                items="{DashboardModel>/Top10Expenses}"
+                                items="{DashboardModel>/EmployeeExpenses}"
                                 sticky="HeaderToolbar,ColumnHeaders" >
                                 <headerToolbar>
     <Toolbar >
@@ -517,11 +521,23 @@
             <Title
                 text="{i18n>top10expense}"
                 level="H4" />
+                <ToolbarSpacer />
+        <HBox
+            alignItems="Center"
+            justifyContent="End"
+            renderType="Bare">
+
+            <Button
+                text="{= ${viewModel>/showGraph} ? ${i18n>Table} : ${i18n>Graph}}"
+                press="ED_onClickEmpExp"
+                class="sapUiTinyMarginEnd"/>
 
             <SearchField
                 width="20rem"
                 liveChange="onGlobalSearch"
                 placeholder="{i18n>search}" />
+
+        </HBox>
 
         </FlexBox>
     </Toolbar>
@@ -534,82 +550,31 @@
                     <Text text="{i18n>employee}"/>
                 </Column>
 
-                <Column minScreenWidth="Tablet" width="15rem"
-                                                                demandPopin="true">
-                    <Text text="{i18n>expExpenseName}"/>
-                </Column>
-
                 <Column minScreenWidth="Tablet"
                                                                 demandPopin="true">
-                    <Text text="{i18n>triptype}"/>
-                </Column>
-
-                <Column minScreenWidth="Tablet"
-                                                                demandPopin="true">
-                    <Text text="{i18n>expSource}"/>
-                </Column>
-
-                <Column minScreenWidth="Tablet"
-                                                                demandPopin="true">
-                    <Text text="{i18n>expDestination}"/>
-                </Column>
-
-                <Column minScreenWidth="Tablet"
-                                                                demandPopin="true">
-                    <Text text="{i18n>amount}"/>
+                    <Text text="{i18n>expDetExpenseAmount}"/>
                 </Column>
                 <Column minScreenWidth="Tablet"
                                                                 demandPopin="true">
-                    <Text text="{i18n>paidamount}"/>
+                    <Text text="{i18n>view}"/>
                 </Column>
 
               
             </columns>
 
             <items>
-                <ColumnListItem  type="Navigation" press="onPressTop10Item">
+                <ColumnListItem   press="onPressTop10Item">
 
                     <cells>
-
-                        <!-- Employee -->
-                        <HBox alignItems="Center">
-
-                            <Avatar
-                                displayShape="Circle"
-                                initials="{= ${DashboardModel>EmployeeName}.substring(0,2).toUpperCase() }"
-                                class="sapUiTinyMarginEnd"/>
-
-                            <VBox>
-                                <Text
-                                    text="{DashboardModel>EmployeeName}"
-                                    wrapping="false"/>
-                                <ObjectIdentifier
-                                    text="{DashboardModel>EmployeeID}"/>
-                            </VBox>
-
-                        </HBox>
-
                         <!-- Expense -->
-                        <Text text="{DashboardModel>ExpenseName}"/>
-
-                        <!-- Trip Type -->
-                        <Text
-                            text="{DashboardModel>TripType}"
-                            />
-
-                        <!-- Source -->
-                        <Text text="{DashboardModel>Source}"/>
-
-                        <!-- Destination -->
-                        <Text text="{DashboardModel>Destination}"/>
-
+                       <ObjectIdentifier
+                                    title="{DashboardModel>EmployeeName}" 
+                                    text="{DashboardModel>EmployeeID}"/>
                         <!-- Amount -->
                         <Text
                             text="{path: 'DashboardModel>TotalAmount', formatter: '.formatter.fromatNumberexpense'}"
                             />
-                        <Text
-                            text="{path: 'DashboardModel>ReimbursementAmount', formatter: '.formatter.fromatNumberexpense'}"
-                            />
+                        <Button text="{i18n>View}" press="ED_onShowEmployeeExp" />
 
                        
 
@@ -623,11 +588,124 @@
 
                         </ScrollContainer>
 
-                    
-
     </f:content>
 
 </f:Card>
+</VBox>
+
+<VBox
+    id="employeeChartBox"
+    visible="{viewModel>/showGraph}"
+    class="flipCard">
+
+    <HBox
+        justifyContent="SpaceBetween"
+        fitContainer="true"
+        renderType="Bare">
+
+        <!-- Donut Chart Card -->
+        <f:Card
+            width="49%"
+            class="sapUiSmallMarginBeginEnd sapUiTinyMarginBottom">
+           <f:header>
+    <card:Header
+        title="Employee Wise Expense Distribution"
+       >
+
+        <card:toolbar>
+            <OverflowToolbar>
+
+                <ToolbarSpacer/>
+
+                <Button
+                class="expBTN"
+                    text="{i18n>Table}"
+                    type="Transparent"
+                    press="ED_onClickEmpExp"/>
+
+            </OverflowToolbar>
+        </card:toolbar>
+
+    </card:Header>
+</f:header>
+
+            <f:content>
+                <viz:VizFrame id="employeeDonutChart" vizType="donut" width="100%" height="350px" uiConfig="{applicationSet:'fiori'}" selectData="ED_onShowEmployeeExp"> 
+                <viz:dataset> 
+                <vizData:FlattenedDataset data="{DashboardModel>/EmployeeExpenses}" > <vizData:dimensions> 
+                <vizData:DimensionDefinition name="Employee" value="{DashboardModel>EmployeeName}" /> 
+                </vizData:dimensions> 
+                <vizData:measures>
+                 <vizData:MeasureDefinition name="Expense Amount" value="{DashboardModel>TotalAmount}" /> 
+                
+                </vizData:measures> 
+                </vizData:FlattenedDataset> 
+                </viz:dataset> 
+                </viz:VizFrame>
+            </f:content>
+
+        </f:Card>
+
+        <!-- Line Chart Card -->
+        <f:Card
+            width="49%"
+            class="sapUiSmallMarginEnd sapUiTinyMarginBottom"
+            >
+           <f:header>
+    <card:Header
+        title="Employee Wise Expense Distribution"
+       >
+
+        <card:toolbar>
+            <OverflowToolbar>
+
+                <ToolbarSpacer/>
+
+                <Button
+                class="expBTN"
+                    text="{i18n>Table}"
+                    type="Transparent"
+                    press="ED_onClickEmpExp"/>
+
+            </OverflowToolbar>
+        </card:toolbar>
+
+    </card:Header>
+</f:header>
+
+            <f:content>
+                <viz:VizFrame
+                    id="employeeLineChart"
+                    vizType="line"
+                    width="100%"
+                    height="350px"
+                    selectData="ED_onShowEmployeeExp"
+                    uiConfig="{applicationSet:'fiori'}">
+
+                    <viz:dataset>
+                        <vizData:FlattenedDataset data="{DashboardModel>/EmployeeExpenses}">
+                            <vizData:dimensions>
+                                <vizData:DimensionDefinition
+                                    name="Employee"
+                                    value="{DashboardModel>EmployeeName}" />
+                            </vizData:dimensions>
+
+                            <vizData:measures>
+                                <vizData:MeasureDefinition
+                                    name="Expense Amount"
+                                    value="{DashboardModel>TotalAmount}" />
+                            </vizData:measures>
+                        </vizData:FlattenedDataset>
+                    </viz:dataset>
+
+                </viz:VizFrame>
+            </f:content>
+
+        </f:Card>
+
+    </HBox>
+
+</VBox>
 
 
 </content>

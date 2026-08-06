@@ -5,19 +5,18 @@
     xmlns:fb="sap.ui.comp.filterbar"
     controllerName="sap.kt.com.minihrsolution.controller.GenerateLetterhead"
     displayBlock="true"
-    height="100%">
-
+    height="100%"
+>
     <Page id="GP_id_Page">
-
         <!-- Header -->
         <customHeader>
             <core:Fragment
                 fragmentName="sap.kt.com.minihrsolution.fragment.Header"
-                type="XML"/>
+                type="XML"
+            />
         </customHeader>
 
         <content>
-
             <!-- ================= Filter Bar ================= -->
 
             <fb:FilterBar
@@ -25,62 +24,143 @@
                 class="sapUiTinyMargin CommonRoundedTable"
                 persistencyKey="GPFilterPersKey"
                 useToolbar="false"
+                showGoOnFB="true"
                 showClearOnFB="true"
                 showFilterConfiguration="false"
                 search=".GP_onSearch"
-                clear=".GP_onClear">
-
+                clear=".GP_onClear"
+            >
                 <fb:filterGroupItems>
-
                     <fb:FilterGroupItem
                         name="employeeName"
-                        label="{i18n>employeeName}"
+                        label="{i18n>LetterheadName}"
                         groupName="General"
-                        visibleInFilterBar="true">
-
+                        visibleInFilterBar="true"
+                    >
                         <fb:control>
                             <Input
                                 id="GP_id_EmployeeName"
-                                placeholder="{i18n>searchEmployeeName}"
-                                showClearIcon="true"/>
+                                placeholder="{i18n>searchLetterheadName}"
+                                showClearIcon="true"
+                                liveChange=".GP_onLiveSearch"
+                            />
                         </fb:control>
-
                     </fb:FilterGroupItem>
-
                 </fb:filterGroupItems>
-
             </fb:FilterBar>
 
-        
+            <!-- ================= Table ================= -->
 
-        
+            <Table
+                id="GP_id_LetterheadTable"
+                items="{LetterheadModel>/}"
+                inset="false"
+                mode="SingleSelectLeft"
+                selectionChange=".GP_onRowSelectionChange"
+                class="sapUiTinyMargin CommonRoundedTable"
+                alternateRowColors="true"
+                width="auto"
+                growing="true"
+                growingThreshold="20"
+                growingScrollToLoad="false"
+            >
+                <headerToolbar>
+                    <OverflowToolbar>
+                        <Title
+                            text="Letterhead List"
+                            level="H2"
+                        />
+                        <ToolbarSpacer />
 
+                        <Text
+                            text="{= ${LetterheadModel>/data}.length + ' Records' }"
+                        />
+                    </OverflowToolbar>
+                </headerToolbar>
+
+                <columns>
+                    <Column
+                        width="20%"
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                    >
+                        <Text text="Reference Number" />
+                    </Column>
+                    <Column width="30%">
+                        <Text text="Letterhead File Name" />
+                    </Column>
+
+                    <Column
+                        width="20%"
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                    >
+                        <Text text="Date" />
+                    </Column>
+
+                    <Column
+                        width="35%"
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                    >
+                        <Text text="Subject" />
+                    </Column>
+
+                    <Column
+                        width="20%"
+                        minScreenWidth="Tablet"
+                        demandPopin="true"
+                    >
+                        <Text text="Signature" />
+                    </Column>
+                </columns>
+
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <Text text="{LetterheadModel>ReferenceNumber}" />
+                            <Text text="{LetterheadModel>LetterheadFileName}" />
+
+                            <Text
+                                text="{
+        path:'LetterheadModel>Date',
+        formatter: '.formatter.formatDate'
+    }"
+                            />
+
+                            <Text text="{LetterheadModel>LetterheadSubject}" />
+
+                            <ObjectStatus
+                                text="{= ${LetterheadModel>SignatureCheckbox} === 1 ? 'Yes' : 'No'}"
+                                state="{= ${LetterheadModel>SignatureCheckbox} === 1 ? 'Success' : 'None'}"
+                            />
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
         </content>
 
         <!-- Footer -->
+
         <footer>
+            <Bar>
+                <contentLeft>
+                    <core:Fragment
+                        fragmentName="sap.kt.com.minihrsolution.fragment.Footer"
+                        type="XML"
+                    />
+                </contentLeft>
 
-             <Bar>
-
-        <contentLeft>
-            <core:Fragment
-                fragmentName="sap.kt.com.minihrsolution.fragment.Footer"
-                type="XML"/>
-        </contentLeft>
-
-        <contentRight>
-            <Button
-                id="GP_id_BtnGeneratePDF"
-                text="{i18n>GeneratePDF}"
-                icon="sap-icon://pdf-attachment"
-                type="Transparent"
-                press=".GP_onOpenGeneratePDFDialog"/>
-        </contentRight>
-
-    </Bar>
-
+                <contentRight>
+                    <Button
+                        id="GP_id_BtnGeneratePDF"
+                        text="{i18n>GeneratePDF}"
+                        icon="sap-icon://pdf-attachment"
+                        type="Transparent"
+                        press=".GP_onOpenGeneratePDFDialog"
+                    />
+                </contentRight>
+            </Bar>
         </footer>
-
     </Page>
-
 </mvc:View>

@@ -1071,6 +1071,13 @@
                         />
                     </contentLeft>
                     <contentRight>
+                    <Button
+                        id="idSendTimesheetReminder"
+                        text="Send Timesheet Reminder"
+                        
+                        visible="{= ${LoginModel>/Role} === 'Admin' || ${LoginModel>/Role} === 'HR' || ${LoginModel>/Role} === 'HR Manager' }"
+                        tooltip="Send monthly timesheet reminder email to all active employees"
+                        press="onPressSendTimesheetReminder" />
                         <Button
                             text="{i18n>updatepassword2}"
                             press="TP_onupdatepress"

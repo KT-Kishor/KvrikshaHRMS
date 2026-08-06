@@ -162,7 +162,7 @@
                                         visible="{= ${VisibleModel>/EditBtn} !== true}"
                                         selectionChange="PL_onDepartmentChange"
                                         items="{path:'DepartmentModel>/'}"
-                                        placeholder="{i18n>selectDepartment}"
+                                        placeholder="{i18n>SelectDepartment}"
                                     >
                                         <core:Item
                                             key="{DepartmentModel>department}"
@@ -269,6 +269,7 @@
                                     id="PL_id_LogoVBox"
                                     width="100%"
                                     class="sapUiSmallMarginBottom"
+                                    visible="{= ${visibilityModel>/showAdminControls} === true }"
                                 >
                                     <Label
                                         id="PL_id_LogoLabel"
@@ -302,6 +303,7 @@
                                     id="PL_id_AttachmentVBox"
                                     width="100%"
                                     class="sapUiSmallMarginBottom"
+                                    visible="{= ${visibilityModel>/showAdminControls} === true }"
                                 >
                                     <Label
                                         id="PL_id_AttachmentLabel"

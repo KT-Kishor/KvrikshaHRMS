@@ -1,8 +1,8 @@
-sap.ui.define([], function() {
+sap.ui.define([], function () {
     "use strict";
     return {
         // Validate mobile number
-        _LCvalidateMobileNumber: function(oEvent, type) {
+        _LCvalidateMobileNumber: function (oEvent, type) {
             var oField = type === "ID" ? oEvent : oEvent.getSource();
             if (!oField) return false;
             var oValue = oField.getValue().replace(/[^0-9]/g, "").slice(0, 10);
@@ -18,9 +18,9 @@ sap.ui.define([], function() {
         },
 
         // Validate mobile number
-        _LCvalidateMobileNumberWithSTD: function(oEventOrControl, sStdCode) {
-        var oField = (typeof oEventOrControl.getSource === "function")
-        ? oEventOrControl.getSource() : oEventOrControl;              
+        _LCvalidateMobileNumberWithSTD: function (oEventOrControl, sStdCode) {
+            var oField = (typeof oEventOrControl.getSource === "function")
+                ? oEventOrControl.getSource() : oEventOrControl;
             var oValue = oField.getValue().replace(/[^0-9]/g, "");
             oField.setValue(oValue);
             var isValid = true;
@@ -43,7 +43,7 @@ sap.ui.define([], function() {
         },
 
         // Email validation function
-        _LCvalidateEmail: function(oEvent, type) {
+        _LCvalidateEmail: function (oEvent, type) {
             var oField = type === "ID" ? oEvent : oEvent.getSource();
             if (!oField) return false;
             var sValue = oField.getValue();
@@ -64,7 +64,7 @@ sap.ui.define([], function() {
             }
         },
 
-        _LCvalidateName: function(oEvent, type) {
+        _LCvalidateName: function (oEvent, type) {
             var oField = type === "ID" ? oEvent : oEvent.getSource();
             if (!oField) return false;
             var oValue = oField.getValue().trim();
@@ -90,7 +90,7 @@ sap.ui.define([], function() {
         },
 
         // Amount validation function
-        _LCvalidateAmount: function(oEvent, type) {
+        _LCvalidateAmount: function (oEvent, type) {
             var oInput = type === "ID" ? (oInput = oEvent) : (oInput = oEvent.getSource());
             var value = oInput.getValue();
             var cleanedValue = value.replace(/[^0-9.]/g, "");
@@ -112,7 +112,7 @@ sap.ui.define([], function() {
             }
         },
 
-        _LCvalidateAmountZeroTaking: function(oEvent, type) {
+        _LCvalidateAmountZeroTaking: function (oEvent, type) {
             var oInput = type === "ID" ? (oInput = oEvent) : (oInput = oEvent.getSource());
             var value = oInput.getValue();
             var cleanedValue = value.replace(/[^0-9.]/g, "");
@@ -128,7 +128,7 @@ sap.ui.define([], function() {
             }
         },
 
-        _LCvalidateJoiningBonus: function(oEvent, type) {
+        _LCvalidateJoiningBonus: function (oEvent, type) {
             var oInput = type === "ID" ? oEvent : oEvent.getSource();
             var value = oInput.getValue();
             var cleanedValue = value.replace(/[^0-9.]/g, "");
@@ -149,7 +149,7 @@ sap.ui.define([], function() {
         },
 
         // PAN card validation function
-        _LCvalidatePanCard: function(oEvent, type) {
+        _LCvalidatePanCard: function (oEvent, type) {
             var oField = type === "ID" ? oEvent : oEvent.getSource();
             if (!oField) return false;
             oField.setValue(oField.getValue().trim().toUpperCase());
@@ -164,7 +164,7 @@ sap.ui.define([], function() {
         },
 
         // IFSC code validation
-        _LCvalidateIfcCode: function(oEvent, type) {
+        _LCvalidateIfcCode: function (oEvent, type) {
             var oField = type === "ID" ? oEvent : oEvent.getSource();
             if (!oField) return false;
             oField.setValue(oField.getValue().trim().toUpperCase());
@@ -179,7 +179,7 @@ sap.ui.define([], function() {
         },
 
         // Aadhar card validation
-        _LCvalidateAadharCard: function(oEvent, type) {
+        _LCvalidateAadharCard: function (oEvent, type) {
             var oField = type === "ID" ? oEvent : oEvent.getSource();
             if (!oField) return false;
             var oValue = oField.getValue().replace(/[^0-9]/g, "").slice(0, 12);
@@ -195,7 +195,7 @@ sap.ui.define([], function() {
         },
 
         // Voter ID validation
-        _LCvalidateVoterId: function(oEvent, type) {
+        _LCvalidateVoterId: function (oEvent, type) {
             var oField = type === "ID" ? oEvent : oEvent.getSource();
             if (!oField) return false;
             var value = oField.getValue().trim().toUpperCase();
@@ -211,7 +211,7 @@ sap.ui.define([], function() {
         },
 
         // Passport validation
-        _LCvalidatePassport: function(oEvent, type) {
+        _LCvalidatePassport: function (oEvent, type) {
             var oField = type === "ID" ? oEvent : oEvent.getSource();
             if (!oField) return false;
             var value = oField.getValue().trim().toUpperCase();
@@ -227,7 +227,7 @@ sap.ui.define([], function() {
         },
 
         // Account No Validation
-        _LCvalidateAccountNo: function(oEvent, type) {
+        _LCvalidateAccountNo: function (oEvent, type) {
             var oField = type === "ID" ? oEvent : oEvent.getSource();
             if (!oField) return false;
             var oValue = oField.getValue().replace(/[^0-9]/g, "").slice(0, 18);
@@ -242,66 +242,66 @@ sap.ui.define([], function() {
             }
         },
         _clearAllFilters: function (oView, id) {
-    var oFilterBar = oView.byId(id);
+            var oFilterBar = oView.byId(id);
 
-    var aControls = oFilterBar.findAggregatedObjects(true, function (oControl) {
-        return oControl.isA("sap.m.ComboBox") ||
-               oControl.isA("sap.m.MultiComboBox") ||
-               oControl.isA("sap.m.Input") ||
-               oControl.isA("sap.m.DateRangeSelection");
-    });
+            var aControls = oFilterBar.findAggregatedObjects(true, function (oControl) {
+                return oControl.isA("sap.m.ComboBox") ||
+                    oControl.isA("sap.m.MultiComboBox") ||
+                    oControl.isA("sap.m.Input") ||
+                    oControl.isA("sap.m.DateRangeSelection");
+            });
 
-    aControls.forEach(function (oControl) {
-        if (oControl.setSelectedKey) {
-            oControl.setSelectedKey("");
-        }
-        if (oControl.setValue) {
-            oControl.setValue("");
-        }
-        if (oControl.setDateValue) {
-            oControl.setDateValue(null);
-        }
-        if (oControl.setSecondDateValue) {
-            oControl.setSecondDateValue(null);
-        }
-    });
-},
+            aControls.forEach(function (oControl) {
+                if (oControl.setSelectedKey) {
+                    oControl.setSelectedKey("");
+                }
+                if (oControl.setValue) {
+                    oControl.setValue("");
+                }
+                if (oControl.setDateValue) {
+                    oControl.setDateValue(null);
+                }
+                if (oControl.setSecondDateValue) {
+                    oControl.setSecondDateValue(null);
+                }
+            });
+        },
         _LCgenerateStrongPassword: function () {
 
-    var charsUpper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    var charsLower = "abcdefghijklmnopqrstuvwxyz";
-    var charsDigits = "0123456789";
-    var charsSpecial = "!@#$%^&*()_-+=";
+            var charsUpper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            var charsLower = "abcdefghijklmnopqrstuvwxyz";
+            var charsDigits = "0123456789";
+            var charsSpecial = "!@#$%^&*()_-+=";
 
-    function pick(set) {
-        return set[Math.floor(Math.random() * set.length)];
-    }
+            function pick(set) {
+                return set[Math.floor(Math.random() * set.length)];
+            }
 
-    var pwdArr = [];
+            var pwdArr = [];
 
-    // ensure rule compliance
-    pwdArr.push(pick(charsUpper));
-    pwdArr.push(pick(charsLower));
-    pwdArr.push(pick(charsDigits));
-    pwdArr.push(pick(charsDigits));
-    pwdArr.push(pick(charsSpecial));
-    pwdArr.push(pick(charsSpecial));
+            // ensure rule compliance
+            pwdArr.push(pick(charsUpper));
+            pwdArr.push(pick(charsLower));
+            pwdArr.push(pick(charsDigits));
+            pwdArr.push(pick(charsDigits));
+            pwdArr.push(pick(charsSpecial));
+            pwdArr.push(pick(charsSpecial));
 
-    var all = charsUpper + charsLower + charsDigits + charsSpecial;
+            var all = charsUpper + charsLower + charsDigits + charsSpecial;
 
-    // fill remaining length randomly
-    while (pwdArr.length < 12) {
-        pwdArr.push(pick(all));
-    }
+            // fill remaining length randomly
+            while (pwdArr.length < 12) {
+                pwdArr.push(pick(all));
+            }
 
-    // shuffle
-    pwdArr.sort(() => Math.random() - 0.5);
+            // shuffle
+            pwdArr.sort(() => Math.random() - 0.5);
 
-    // 🔒 FINAL SAFETY NET — ABSOLUTE
-    return pwdArr.join("").replace(/\s/g, "");
-},
+            // 🔒 FINAL SAFETY NET — ABSOLUTE
+            return pwdArr.join("").replace(/\s/g, "");
+        },
         // Date validation function
-        _LCvalidateDate: function(oEvent, type) {
+        _LCvalidateDate: function (oEvent, type) {
             var oField = type === "ID" ? oEvent : oEvent.getSource();
             if (!oField) return false;
             var value = oField.getValue().trim();
@@ -331,7 +331,7 @@ sap.ui.define([], function() {
         },
 
         // GST Number Validation
-        _LCvalidateGstNumber: function(oEvent, type) {
+        _LCvalidateGstNumber: function (oEvent, type) {
             var oField = type === "ID" ? oEvent : oEvent.getSource();
             if (!oField) return false;
             oField.setValue(oField.getValue().toUpperCase());
@@ -346,7 +346,7 @@ sap.ui.define([], function() {
         },
 
         // Mandatory Field Validation
-        _LCvalidateMandatoryField: function(oEvent, type) {
+        _LCvalidateMandatoryField: function (oEvent, type) {
             var oField = type === "ID" ? oEvent : oEvent.getSource();
             if (!oField) return false;
             var oValue = oField.getValue().trim();
@@ -360,7 +360,7 @@ sap.ui.define([], function() {
             }
         },
 
-        _LCvalidateCTC: function(oEvent, type) {
+        _LCvalidateCTC: function (oEvent, type) {
             var oInput = type === "ID" ? oEvent : oEvent.getSource();
             var value = oInput.getValue().replace(/[^0-9.]/g, "");
             var parts = value.split(".");
@@ -378,7 +378,7 @@ sap.ui.define([], function() {
         },
 
         // Pin Code Validation (NEW FUNCTION ADDED)
-        _LCvalidatePinCode: function(oEvent, type) {
+        _LCvalidatePinCode: function (oEvent, type) {
             var oField = type === "ID" ? oEvent : oEvent.getSource();
             if (!oField) return false;
             var oValue = oField.getValue().replace(/[^0-9]/g, "").slice(0, 6);
@@ -396,7 +396,7 @@ sap.ui.define([], function() {
             }
         },
 
-        _LCvalidatePassword: function(oEvent, type) {
+        _LCvalidatePassword: function (oEvent, type) {
             var oField = type === "ID" ? oEvent : oEvent.getSource();
             if (!oField) return false;
 
@@ -413,7 +413,7 @@ sap.ui.define([], function() {
         },
 
         // LUT Number Validation
-        _LCvalidateLutNumber: function(oEvent, type) {
+        _LCvalidateLutNumber: function (oEvent, type) {
             var oField = type === "ID" ? oEvent : oEvent.getSource();
             if (!oField) return false;
             oField.setValue(oField.getValue().toUpperCase());
@@ -427,7 +427,7 @@ sap.ui.define([], function() {
             }
         },
 
-        _LCvalidateVariablePay: function(oEvent, type) {
+        _LCvalidateVariablePay: function (oEvent, type) {
             var oInput = type === "ID" ? oEvent : oEvent.getSource();
             var value = oInput.getValue();
             var cleanedValue = value.replace(/[^0-9.]/g, "");
@@ -447,10 +447,10 @@ sap.ui.define([], function() {
             }
         },
 
-        _LCvalidationComboBox: function(oEvent, type) {
+        _LCvalidationComboBox: function (oEvent, type) {
             var aSelectedKeys =
                 type === "ID" ?
-                oEvent.getSelectedKeys() : [oEvent.getParameter("value")];
+                    oEvent.getSelectedKeys() : [oEvent.getParameter("value")];
             var oField = type === "ID" ? oEvent : oEvent.getSource();
             aSelectedKeys =
                 aSelectedKeys[0] === "" ? aSelectedKeys.slice(1) : aSelectedKeys;
@@ -463,31 +463,31 @@ sap.ui.define([], function() {
                 return true;
             }
         },
-       _LCvalidationMultiComboBox: function (oControlOrEvent, type) {
+        _LCvalidationMultiComboBox: function (oControlOrEvent, type) {
 
-    var oField;
+            var oField;
 
-    if (type === "ID") {
-        oField = oControlOrEvent;
-    } else {
-        oField = oControlOrEvent.getSource
-            ? oControlOrEvent.getSource()
-            : oControlOrEvent;
-    }
+            if (type === "ID") {
+                oField = oControlOrEvent;
+            } else {
+                oField = oControlOrEvent.getSource
+                    ? oControlOrEvent.getSource()
+                    : oControlOrEvent;
+            }
 
-    var aSelectedKeys = oField.getSelectedKeys();
+            var aSelectedKeys = oField.getSelectedKeys();
 
-    if (!aSelectedKeys || aSelectedKeys.length === 0) {
-        oField.setValueState(sap.ui.core.ValueState.Error);
-        oField.setValueStateText("Please select at least one option");
-        return false;
-    } else {
-        oField.setValueState(sap.ui.core.ValueState.None);
-        return true;
-    }
-},
+            if (!aSelectedKeys || aSelectedKeys.length === 0) {
+                oField.setValueState(sap.ui.core.ValueState.Error);
+                oField.setValueStateText("Please select at least one option");
+                return false;
+            } else {
+                oField.setValueState(sap.ui.core.ValueState.None);
+                return true;
+            }
+        },
 
-        _LCvalidateGrade: function(oEventOrField, type, sGradeTypeId) {
+        _LCvalidateGrade: function (oEventOrField, type, sGradeTypeId) {
             var oField = (type === "ID") ? oEventOrField : oEventOrField.getSource();
             if (!oField) return false;
 
@@ -530,7 +530,7 @@ sap.ui.define([], function() {
             }
         },
 
-        _LCvalidateTimeLimit: function(oEvent, type) {
+        _LCvalidateTimeLimit: function (oEvent, type) {
             var oField = type === "ID" ? oEvent : oEvent.getSource();
             if (!oField) return false;
             var value = parseFloat(oField.getValue());
@@ -543,7 +543,7 @@ sap.ui.define([], function() {
             }
         },
 
-        _LCvalidateTraineeAmount: function(oEvent, type) {
+        _LCvalidateTraineeAmount: function (oEvent, type) {
             var oInput = type === "ID" ? oEvent : oEvent.getSource();
             var value = oInput.getValue().trim();
 
@@ -566,7 +566,7 @@ sap.ui.define([], function() {
             }
         },
 
-        _LCvalidateMultipleDecimal: function(oEvent, type) {
+        _LCvalidateMultipleDecimal: function (oEvent, type) {
             var oInput = type === "ID" ? oEvent : oEvent.getSource();
             var value = oInput.getValue().trim();
 
@@ -592,7 +592,7 @@ sap.ui.define([], function() {
             return true;
         },
 
-        _LCstrictValidationComboBox: function(oEvent, type) {
+        _LCstrictValidationComboBox: function (oEvent, type) {
             var oComboBox = type === "ID" ? oEvent : oEvent.getSource();
             var sValue = oComboBox.getValue();
             if (!sValue) {
@@ -600,7 +600,7 @@ sap.ui.define([], function() {
                 return false;
             }
             var aItems = oComboBox.getItems();
-            var bValid = aItems.some(function(oItem) {
+            var bValid = aItems.some(function (oItem) {
                 return oItem.getText() === sValue || oItem.getKey() === sValue;
             });
             if (!bValid) {

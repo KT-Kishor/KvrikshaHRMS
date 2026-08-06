@@ -32,98 +32,112 @@
             </Bar>
         </customHeader>
 
-        <content>
-            <l:Grid
-                defaultSpan="XL6 L6 M6 S12"
-                hSpacing="1"
-                vSpacing="1"
-                class="sapUiSmallMargin"
-            >
-                <VBox>
-                    <Label text="{i18n>referenceNumber}" />
+     <content>
+    <l:Grid
+        defaultSpan="XL6 L6 M6 S12"
+        hSpacing="1"
+        vSpacing="1"
+        class="sapUiSmallMargin">
 
-                    <Input
-                        id="GPD_id_ReferenceNumber"
-                        width="100%"
-                        placeholder="{i18n>enterReferenceNumber}"
-                    />
-                </VBox>
+        <!-- ================= Row 1 ================= -->
 
-                <VBox>
-                    <Label
-                        text="{i18n>date}"
-                        required="true"
-                    />
+        <VBox>
+            <Label
+                text="{i18n>referenceNumber}" />
 
-                    <DatePicker
-                        id="GPD_id_Date"
-                    
-                        required="true"
-                        displayFormat="dd/MM/yyyy"
-                        valueFormat="dd/MM/yyyy"
-                        placeholder="{i18n>selectDate}"
-                        valueStateText="{i18n>dateMandatory}"
-                        change=".GP_onDateChange"
-                    />
-                </VBox>
+            <Input
+                id="GPD_id_ReferenceNumber"
+                width="100%"
+                placeholder="{i18n>enterReferenceNumber}" />
+        </VBox>
 
-                <!-- Subject -->
-                <VBox>
-                    <Label
-                        text="{i18n>subject}"
-                      
-                    />
+        <VBox>
+            <Label
+                text="{i18n>date}"
+                required="true" />
 
-                    <Input
-                        id="GPD_id_Subject"
-                       
-                        placeholder="{i18n>enterSubject}"
-                        change=".GP_onMandatoryChange"
-                        valueStateText="{i18n>subjectMandatory}"
-                        liveChange=".GP_onSubjectLiveChange"
-                    />
-                </VBox>
+            <DatePicker
+                id="GPD_id_Date"
+                displayFormat="dd/MM/yyyy"
+                valueFormat="dd/MM/yyyy"
+                placeholder="{i18n>selectDate}"
+                change=".GP_onDateChange" 
+                
+                />
+        </VBox>
 
-                <!-- Include Signature -->
-                <VBox justifyContent="End">
-                    <Label text="{i18n>signature}" />
+        <!-- ================= Row 2 ================= -->
 
-                    <CheckBox
-                        id="GPD_id_IncludeSignature"
-                        text="{i18n>includeSignature}"
-                        selected="true"
-                    />
-                </VBox>
+        <VBox>
+            <Label text="{i18n>signature}" />
 
-                <VBox>
-                    <layoutData>
-                        <l:GridData span="XL12 L12 M12 S12" />
-                    </layoutData>
+            <CheckBox
+                id="GPD_id_IncludeSignature"
+                text="{i18n>includeSignature}"
+                selected="true" />
+        </VBox>
 
-                    <Label
-                        text="{i18n>content}"
-                        required="true"
-                    />
+        <VBox>
+            <Label text="{i18n>LetterheadName}" 
+            required="true"/>
 
-                    <richeditor:RichTextEditor
-                        id="GPD_id_Content"
-                        width="100%"
-                        height="18rem"
-                        editorType="TinyMCE6"
-                        value=""
-                        showGroupClipboard="true"
-                        showGroupFont="true"
-                        showGroupInsert="true"
-                        showGroupLink="true"
-                        showGroupStructure="true"
-                        showGroupTextAlign="true"
-                        showGroupUndo="true"
-                        editable="true"
-                        change=".GP_onContentChange"
-                    />
-                </VBox>
-            </l:Grid>
-        </content>
+            <Input
+                id="GPD_id_FileName"
+                width="100%"
+                required="true"
+                placeholder="{i18n>EnterLetterheadName}"
+                liveChange=".GP_onFileNameLiveChange" />
+        </VBox>
+        <!-- ================= Row 3 ================= -->
+          <VBox>
+            <Label text="{i18n>to}" />
+
+            <Input
+                id="GPD_id_To"
+                width="100%"
+                placeholder="{i18n>enterTo}" />
+        </VBox>
+        <VBox>
+
+            <Label text="{i18n>subject}" />
+
+            <Input
+                id="GPD_id_Subject"
+                width="100%"
+                placeholder="{i18n>enterSubject}"
+                liveChange=".GP_onSubjectLiveChange" />
+        </VBox>
+
+        <!-- ================= Row 4 ================= -->
+
+        <VBox>
+            <layoutData>
+                <l:GridData span="XL12 L12 M12 S12"/>
+            </layoutData>
+
+            <Label
+                text="{i18n>content}"
+                required="true" />
+
+            <richeditor:RichTextEditor
+                id="GPD_id_Content"
+                width="100%"
+                height="18rem"
+                editorType="TinyMCE6"
+                value=""
+                showGroupClipboard="true"
+                showGroupFont="true"
+                showGroupInsert="true"
+                showGroupLink="true"
+                showGroupStructure="true"
+                showGroupTextAlign="true"
+                showGroupUndo="true"
+                editable="true"
+                change=".GP_onContentChange"/>
+        </VBox>
+
+    </l:Grid>
+</content>
 
         <buttons>
             <Button
@@ -140,7 +154,7 @@
                 icon="sap-icon://save"
                 type="Transparent"
                 press=".GP_onSaveGeneratePDF"
-                 visible="false"
+                visible="true"
             />
         </buttons>
     </Dialog>

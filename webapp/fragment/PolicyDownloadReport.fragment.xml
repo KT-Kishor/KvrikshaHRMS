@@ -1,0 +1,91 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
+>
+    <Dialog
+        id="PL_id_DownloadReportDialog"
+        title="{i18n>downloadPolicyReport}"
+        contentWidth="35rem"
+        draggable="true"
+        resizable="true"
+    >
+        <content>
+            <form:SimpleForm
+                id="PL_id_DownloadReportForm"
+                editable="true"
+                layout="ResponsiveGridLayout"
+                labelSpanXL="3"
+                labelSpanL="3"
+                labelSpanM="4"
+                labelSpanS="12"
+                adjustLabelSpan="false"
+                emptySpanXL="1"
+                emptySpanL="1"
+                emptySpanM="0"
+                emptySpanS="0"
+                columnsXL="1"
+                columnsL="1"
+                columnsM="1"
+                singleContainerFullSize="true"
+            >
+                <!-- Policy -->
+                <Label
+                    text="{i18n>policyName}"
+                    required="true"
+                />
+
+                <Select
+                    id="PL_id_ReportPolicyTitle"
+                    width="100%"
+                    selectedKey="{reportModel>/SelectedPolicy}"
+                    change=".PL_onReportPolicyChange"
+                    forceSelection="false"
+                    items="{
+        path: 'reportModel>/policies'
+    }"
+                >
+                    <core:Item
+                        key="{reportModel>ID}"
+                        text="{reportModel>name}"
+                    />
+                </Select>
+
+                <!-- Version -->
+                <Label
+                    text="{i18n>version}"
+                    required="true"
+                />
+
+                <Select
+                    id="PL_id_ReportVersion"
+                    width="100%"
+                    selectedKey="{reportModel>/SelectedVersion}"
+                    forceSelection="true"
+                    enabled="{= ${reportModel>/SelectedPolicy} !== '' }"
+                    items="{reportModel>/versions}"
+                >
+                    <core:Item
+                        key="{reportModel>Version}"
+                        text="{reportModel>Version}"
+                    />
+                </Select>
+            </form:SimpleForm>
+        </content>
+        <beginButton>
+            <Button
+                id="PL_id_ReportDownloadBtn"
+                text="{i18n>downloadexcel}"
+                type="Transparent"
+                press=".PL_onDownloadReportExcel"
+            />
+        </beginButton>
+        <endButton>
+            <Button
+                id="PL_id_ReportCloseBtn"
+                text="{i18n>close}"
+                press=".PL_onCloseDownloadReport"
+            />
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

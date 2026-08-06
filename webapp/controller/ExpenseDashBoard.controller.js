@@ -29,6 +29,9 @@ sap.ui.define([
             if (!LoginFUnction) return;
             const oLoginModel = this.getOwnerComponent().getModel("LoginModel");
             this.i18nModel = this.getView().getModel("i18n").getResourceBundle();
+            this.getView().setModel(new JSONModel({
+        showGraph: false
+    }), "viewModel");
             this.getView().getModel("LoginModel").setProperty("/HeaderName", this.i18nModel.getText("expensedashboard"));
             await this._loadFinancialYearData();
         },
@@ -70,7 +73,7 @@ sap.ui.define([
                     PreviousFinancialYearCard: oResponse.PreviousFinancialYearCard,
                     ByExpenseType: oResponse.ByExpenseType,
                     MonthlyTrend: oResponse.MonthlyTrend,
-                    Top10Expenses: oResponse.Top10Expenses,
+                    EmployeeExpenses: oResponse.EmployeeExpenses,
                     TripTypeData: oResponse.TripTypeData,
 
                     PaymentReimbursementAmount: oResponse.PaymentBreakdown.ReimbursementAmount,
@@ -205,9 +208,10 @@ sap.ui.define([
                                 formatString: "INR_FORMAT"
                             },
                             colorPalette: [
-                                "#43A047", // Reimbursement
+                                "#168eff",
                                 "#c62828",  // Pending
-                                "#168eff"
+                                "#43A047", // Reimbursement
+                                
                             ]
                         }
                     });
@@ -404,6 +408,36 @@ sap.ui.define([
                     visible: true
                 }
             });
+            this.byId("employeeDonutChart").addFeed(
+    new sap.viz.ui5.controls.common.feeds.FeedItem({
+        uid: "size",
+        type: "Measure",
+        values: ["Expense Amount"]
+    })
+);
+
+this.byId("employeeDonutChart").addFeed(
+    new sap.viz.ui5.controls.common.feeds.FeedItem({
+        uid: "color",
+        type: "Dimension",
+        values: ["Employee"]
+    })
+);
+this.byId("employeeLineChart").addFeed(
+    new sap.viz.ui5.controls.common.feeds.FeedItem({
+        uid: "valueAxis",
+        type: "Measure",
+        values: ["Expense Amount"]
+    })
+);
+
+this.byId("employeeLineChart").addFeed(
+    new sap.viz.ui5.controls.common.feeds.FeedItem({
+        uid: "categoryAxis",
+        type: "Dimension",
+        values: ["Employee"]
+    })
+);
 
         },
         getCategoryState: function (sType) {
@@ -566,13 +600,7 @@ sap.ui.define([
 
             var aFilters = [
                 new Filter("EmployeeName", FilterOperator.Contains, sQuery),
-                new Filter("ExpenseName", FilterOperator.Contains, sQuery),
-                new Filter("TripType", FilterOperator.Contains, sQuery),
-                new Filter("Source", FilterOperator.Contains, sQuery),
-                new Filter("Destination", FilterOperator.Contains, sQuery),
                 new Filter("TotalAmount", FilterOperator.Contains, sQuery),
-                new Filter("ReimbursementAmount", FilterOperator.Contains, sQuery),
-                new Filter("Status", FilterOperator.Contains, sQuery)
             ];
 
             oBinding.filter(
@@ -598,6 +626,160 @@ sap.ui.define([
                 sPath: ExpenseID.replaceAll("/", ""),
                 dash: "ExpenseDashboard"
             });
+        },
+      ED_onShowEmployeeExp: function (oEvent) {
+
+    var oEmployee = null;
+
+    // Called from Table Button
+    if (oEvent.getSource().getBindingContext) {
+
+        var oContext = oEvent.getSource().getBindingContext("DashboardModel");
+
+        if (oContext) {
+            oEmployee = oContext.getObject();
         }
+    }
+
+    // Called from VizFrame (Donut/Line)
+    if (!oEmployee && oEvent.getParameter("data")) {
+
+        var aData = oEvent.getParameter("data");
+
+        if (aData.length) {
+
+            var sEmployee = aData[0].data.Employee;
+
+            var aEmployees = this.getView()
+                .getModel("DashboardModel")
+                .getProperty("/EmployeeExpenses");
+
+            oEmployee = aEmployees.find(function (o) {
+                return o.EmployeeName === sEmployee;
+            });
+        }
+    }
+
+    if (!oEmployee) {
+        return;
+    }
+
+    var oDialogModel = this.getView().getModel("DialogModel");
+
+    if (!oDialogModel) {
+        oDialogModel = new JSONModel();
+        this.getView().setModel(oDialogModel, "DialogModel");
+    }
+
+    oDialogModel.setData({
+        Title: oEmployee.EmployeeName + " Expenses",
+        Records: oEmployee.records || [],
+        Amount: oEmployee.TotalAmount,
+        ShowStatus: true
+    });
+
+    this._openPaymentDialog();
+},
+ED_onClickEmpExp: function () {
+
+    var oVM = this.getView().getModel("viewModel");
+    var bShow = oVM.getProperty("/showGraph");
+
+    oVM.setProperty("/showGraph", !bShow);
+
+    if (!bShow) {
+       setTimeout(function () {
+            this._bindEmployeeExpenseCharts();
+        }.bind(this), 100);
+    }
+},
+_bindEmployeeExpenseCharts: function () {
+
+    var FeedItem = sap.viz.ui5.controls.common.feeds.FeedItem;
+
+    // ---------------- Donut ----------------
+    var oDonut = this.byId("employeeDonutChart");
+
+    oDonut.removeAllFeeds();
+
+    oDonut.addFeed(new FeedItem({
+        uid: "size",
+        type: "Measure",
+        values: ["Expense Amount"]
+    }));
+
+    oDonut.addFeed(new FeedItem({
+        uid: "color",
+        type: "Dimension",
+        values: ["Employee"]
+    }));
+
+    oDonut.setVizProperties({
+        title: {
+            visible: false,
+        },
+        legend: {
+            visible: true
+        },
+        plotArea: {
+        dataLabel: {
+            visible: true,
+            type: "value",          // Show value instead of percentage
+            formatString: "INR_FORMAT"
+        }
+    },
+    tooltip: {
+        visible: true,
+        formatString: "INR_FORMAT"
+    }
+    });
+
+    // ---------------- Line ----------------
+    var oLine = this.byId("employeeLineChart");
+
+    oLine.removeAllFeeds();
+
+    oLine.addFeed(new FeedItem({
+        uid: "valueAxis",
+        type: "Measure",
+        values: ["Expense Amount"]
+    }));
+
+    oLine.addFeed(new FeedItem({
+        uid: "categoryAxis",
+        type: "Dimension",
+        values: ["Employee"]
+    }));
+
+    oLine.setVizProperties({
+        title: {
+            visible: false,
+            
+        },
+        plotArea: {
+            dataLabel: {
+                visible: true,
+                 formatString: "INR_FORMAT"
+            }
+        },
+         tooltip: {
+        visible: true,
+        formatString: "INR_FORMAT"
+    },
+        valueAxis: {
+            title: {
+                visible: true,
+                text: "Amount"
+            }
+        },
+        categoryAxis: {
+            title: {
+                visible: true,
+                text: "Employee"
+            }
+        }
+    });
+
+}
     });
 });

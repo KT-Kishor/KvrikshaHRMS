@@ -53,7 +53,6 @@ sap.ui.define(
                 }
                 const oLoginModel = this.getView().getModel("LoginModel");
                 const sEmployeeID = oLoginModel.getProperty("/EmployeeID");
-
                 this._employeePromise = this.ajaxReadWithJQuery("EmployeeDetails", {
                     EmployeeID: sEmployeeID
                 }).then((oResponse) => {
@@ -62,7 +61,7 @@ sap.ui.define(
                     if (oResponse && oResponse.success && oResponse.data && oResponse.data.length > 0) {
                         const oEmployee = oResponse.data[0];
                         sDepartment = (oEmployee.Department || "").toLowerCase().trim();
-                        sRole = (oEmployee.Role || "").toLowerCase().trim();
+                        sRole = (oEmployee.Role || "");
                     }
                     this._employeeCache = {
                         department: sDepartment,
@@ -179,7 +178,14 @@ sap.ui.define(
                     const oView = this.getView();
                     const oLoginModel = oView.getModel("LoginModel");
                     this.i18nModel = this.getOwnerComponent().getModel("i18n").getResourceBundle();
-                    oLoginModel.setProperty("/HeaderName", this.i18nModel.getText("policyTitle"));
+                    // Get logged-in employee role
+                    var aRole = (oLoginModel.getProperty("/Role") || "").toLowerCase();
+                    // Set header based on role
+                    if (["hr", "hr manager", "admin"].includes(aRole)) {
+                        oLoginModel.setProperty("/HeaderName", this.i18nModel.getText("policyTitle"));
+                    } else {
+                        oLoginModel.setProperty("/HeaderName", this.i18nModel.getText("policyTileCompany"));
+                    }
                     // Load Employee Details First
                     await this._getEmployeeDetails();
                     // Load Role Department
@@ -195,8 +201,10 @@ sap.ui.define(
                     }), "VisibleModel");
                     const sRole = (oLoginModel.getProperty("/Role") || "").toLowerCase().trim();
                     const bShowAdminControls = sRole === "admin" || sRole === "hr manager";
+                    const bShowDownloadReport = sRole === "admin" || sRole === "hr manager";
                     this.getView().setModel(new JSONModel({
-                        showAdminControls: bShowAdminControls
+                        showAdminControls: bShowAdminControls,
+                        showDownloadReport: bShowDownloadReport
                     }), "visibilityModel");
                     sap.ui.getCore().applyChanges();
                     this.closeBusyDialog();
@@ -216,6 +224,196 @@ sap.ui.define(
                     aFilters.push(new sap.ui.model.Filter("role", sap.ui.model.FilterOperator.EQ, sRole));
                 }
                 oBinding.filter(aFilters);
+            },
+            PL_onOpenDownloadReport: async function () {
+                if (!this._oDownloadReportDialog) {
+                    this._oDownloadReportDialog = await Fragment.load({
+                        id: this.getView().getId(),
+                        name: "sap.kt.com.minihrsolution.fragment.PolicyDownloadReport",
+                        controller: this
+                    });
+                    this.getView().addDependent(this._oDownloadReportDialog);
+                }
+                // REUSE EXISTING policyModel DATA — NO EXTRA API CALL
+                const aPolicies = this.getView().getModel("policyModel").getProperty("/policies") || [];
+                this.getView().setModel(new JSONModel({
+                    policies: aPolicies,
+                    versions: [],
+                    SelectedPolicy: "",
+                    SelectedVersion: "",
+                    policyName: ""
+                }), "reportModel");
+                this._oDownloadReportDialog.open();
+            },
+            PL_onReportPolicyChange: async function (oEvent) {
+                const oSelect = oEvent.getSource();
+                const sPolicyId = oSelect.getSelectedKey();
+                const oReportModel = this.getView().getModel("reportModel");
+                // Reset version
+                oReportModel.setProperty("/SelectedPolicy", "");
+                oReportModel.setProperty("/versions", []);
+                oReportModel.setProperty("/SelectedVersion", "");
+                this.byId("PL_id_ReportVersion").setSelectedKey("");
+                // Store selected policy
+                oReportModel.setProperty("/SelectedPolicy", sPolicyId);
+                if (!sPolicyId) {
+                    return;
+                }
+                this.getBusyDialog();
+                try {
+                    const oResponse = await this.ajaxReadWithJQuery("PolicyImage", {
+                        ID: sPolicyId
+                    });
+                    let aVersions = [];
+                    if (oResponse?.data?.Items && Array.isArray(oResponse.data.Items)) {
+                        aVersions = oResponse.data.Items;
+                    } else if (Array.isArray(oResponse?.data)) {
+                        aVersions = oResponse.data;
+                    } else if (oResponse?.data) {
+                        aVersions = [oResponse.data];
+                    }
+                    // Sort latest version first
+                    aVersions.sort(function (a, b) {
+                        return parseFloat(b.Version || 0) - parseFloat(a.Version || 0);
+                    });
+                    oReportModel.setProperty("/versions", aVersions);
+                    oReportModel.setProperty("/policyName", oSelect.getSelectedItem() ? oSelect.getSelectedItem().getText() : "");
+                } catch (oError) {
+                    MessageBox.error(this.i18nModel.getText("versionLoadFailed"));
+                } finally {
+                    this.closeBusyDialog();
+                }
+            },
+                // DOWNLOAD AS EXCEL
+            PL_onDownloadReportExcel: async function () {
+                if (!this.byId("PL_id_ReportPolicyTitle").getSelectedKey()) {
+                    MessageBox.error(this.i18nModel.getText("selectPolicy"));
+                    return;
+                }
+                const oReportModel = this.getView().getModel("reportModel");
+                const sPolicyName = oReportModel.getProperty("/policyName") || "";
+                const aVersions = oReportModel.getProperty("/versions") || [];
+                const sSelectedVersion = this.byId("PL_id_ReportVersion").getSelectedKey();
+                const aExportData = sSelectedVersion ? aVersions.filter(v => v.Version === sSelectedVersion) : aVersions;
+                if (!aExportData.length) {
+                    MessageBox.error(this.i18nModel.getText("noDataToExport"));
+                    return;
+                }
+                try {
+                    this.getBusyDialog();
+                    const oWorkbook = new ExcelJS.Workbook();
+                    const oWorksheet = oWorkbook.addWorksheet(this.i18nModel.getText("policyTitle"));
+                    oWorksheet.columns = [{
+                        header: this.i18nModel.getText("policyName"),
+                        key: "PolicyName",
+                        width: 25
+                    }, {
+                        header: this.i18nModel.getText("version"),
+                        key: "Version",
+                        width: 12
+                    }, {
+                        header: this.i18nModel.getText("startDate"),
+                        key: "StartDate",
+                        width: 18
+                    }, {
+                        header: this.i18nModel.getText("endDate"),
+                        key: "EndDate",
+                        width: 18
+                    }, {
+                        header: this.i18nModel.getText("fileName"),
+                        key: "FileName",
+                        width: 30
+                    }, {
+                        header: this.i18nModel.getText("acknowledgedBy"),
+                        key: "AcknowledgedBy",
+                        width: 20
+                    }, {
+                        header: this.i18nModel.getText("employeeName"),
+                        key: "EmployeeName",
+                        width: 30
+                    }, {
+                        header: this.i18nModel.getText("empRole") || "Role",
+                        key: "EmployeeRole",
+                        width: 20
+                    }];
+                    oWorksheet.getRow(1).font = {
+                        bold: true
+                    };
+                    // Load Employee Master
+                    let aEmployees = [];
+                    try {
+                        const oEmpResponse = await this.ajaxReadWithJQuery("AllLoginDetails");
+                        if (oEmpResponse.success) {
+                            aEmployees = oEmpResponse.data || [];
+                        }
+                    } catch (e) {
+                        console.error("Employee load failed", e);
+                    }
+                    // Create Excel Rows
+                    aExportData.forEach(function (oItem) {
+                        const aIds = (oItem.EmployeeID || "").toString().split(",").map(function (id) {
+                            return id.trim();
+                        }).filter(Boolean);
+                        // No acknowledgement
+                        if (aIds.length === 0) {
+                            oWorksheet.addRow({
+                                PolicyName: "",
+                                Version: "",
+                                StartDate: "",
+                                EndDate: "",
+                                FileName: "",
+                                AcknowledgedBy: "",
+                                EmployeeName: "",
+                                EmployeeRole: ""
+                            });
+                            return;
+                        }
+                        // One row per employee
+                        aIds.forEach(function (sEmpId) {
+                            const oEmployee = aEmployees.find(function (emp) {
+                                return String(emp.EmployeeID).trim() === sEmpId;
+                            });
+                            oWorksheet.addRow({
+                                PolicyName: sPolicyName,
+                                Version: oItem.Version || "",
+                                StartDate: oItem.Start_Date ? new Date(oItem.Start_Date).toLocaleDateString("en-GB") : "",
+                                EndDate: (oItem.End_Date && !String(oItem.End_Date).includes("1899-11-30")) ? new Date(oItem.End_Date).toLocaleDateString("en-GB") : "",
+                                FileName: oItem.File_Name || "",
+                                AcknowledgedBy: sEmpId,
+                                EmployeeName: oEmployee ? (oEmployee.EmployeeName || oEmployee.Name || "") : "",
+                                EmployeeRole: oEmployee ? (oEmployee.Role || oEmployee.Designation || "") : ""
+                            });
+                        });
+                    });
+                    // Download Excel
+                    const aBuffer = await oWorkbook.xlsx.writeBuffer();
+                    const oBlob = new Blob(
+                        [aBuffer], {
+                        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    });
+                    const sBlobUrl = URL.createObjectURL(oBlob);
+                    const oLink = document.createElement("a");
+                    oLink.href = sBlobUrl;
+                    oLink.download = (sPolicyName || "PolicyReport") + "_Report.xlsx";
+                    document.body.appendChild(oLink);
+                    oLink.click();
+                    document.body.removeChild(oLink);
+                    setTimeout(function () {
+                        URL.revokeObjectURL(sBlobUrl);
+                    }, 3000);
+                } catch (e) {
+                    console.error("Excel export error:", e);
+                    MessageBox.error(this.i18nModel.getText("exportFailed"));
+                } finally {
+                    this.closeBusyDialog();
+                }
+            },
+            PL_onCloseDownloadReport: function () {
+                this.byId("PL_id_ReportPolicyTitle").setSelectedKey("");
+                this.byId("PL_id_ReportVersion").setSelectedKey("");
+                if (this._oDownloadReportDialog) {
+                    this._oDownloadReportDialog.close();
+                }
             },
             // LOAD POLICIES
             PL_loadPolicies: async function (aFilters = []) {
@@ -286,7 +484,6 @@ sap.ui.define(
                                         return currentDate < nearestDate ? current : nearest;
                                     });
                                 } else {
-                                    // Existing functionality unchanged
                                     oLatest = aItems.reduce(function (max, item) {
                                         return parseFloat(item.Version || 0) > parseFloat(max.Version || 0) ? item : max;
                                     });
@@ -363,69 +560,58 @@ sap.ui.define(
             PL_onDepartmentChange: function (oEvent) {
                 var oCombo = oEvent.getSource();
                 var sDepartment = oCombo.getSelectedKey() || oCombo.getValue();
-
                 if (sDepartment) {
                     oCombo.setValueState("None");
                     oCombo.setValueStateText("");
                 }
-
                 var oDesignationModel = this.getView().getModel("DesignationModel");
                 if (!oDesignationModel) {
                     console.error("DesignationModel NOT FOUND");
                     return;
                 }
-
                 var aData = oDesignationModel.getData();
-
                 // CLEAR OLD ROLES
                 this.getView().setModel(new JSONModel([]), "FilteredRoleModel");
-
                 if (!aData || aData.length === 0) {
                     console.error("DesignationModel is EMPTY");
                     return;
                 }
-
                 // FILTER ROLES FOR SELECTED DEPARTMENT
                 var aFilteredRoles = aData.filter(function (oItem) {
                     return (oItem.department || "").trim().toLowerCase() === (sDepartment || "").trim().toLowerCase();
                 });
-
                 var oUnique = {};
                 var aUniqueRoles = [];
                 aFilteredRoles.forEach(function (oItem) {
                     var sRole = (oItem.designationName || "").trim();
                     if (sRole && !oUnique[sRole]) {
                         oUnique[sRole] = true;
-                        aUniqueRoles.push({ designationName: sRole });
+                        aUniqueRoles.push({
+                            designationName: sRole
+                        });
                     }
                 });
-
                 this.getView().setModel(new JSONModel(aUniqueRoles), "FilteredRoleModel");
-
                 // RESET: Create dialog role (PL_id_Role)
                 var oRole = this.byId("PL_id_Role");
                 if (oRole) {
                     oRole.setSelectedKeys([]);
                 }
-
                 // RESET: View dialog role (PL_id_ViewRole)
                 var oViewRole = this.byId("PL_id_ViewRole");
                 if (oViewRole) {
                     oViewRole.setSelectedKeys([]);
                 }
-
                 // RESET: FilterBar role (PL_id_RoleFilter)
                 var oRoleFilter = this.byId("PL_id_RoleFilter");
                 if (oRoleFilter) {
                     oRoleFilter.setSelectedKeys([]);
                 }
-
                 // RESET: policyViewModel role
                 var oPolicyViewModel = this.getView().getModel("policyViewModel");
                 if (oPolicyViewModel) {
                     oPolicyViewModel.setProperty("/role", []);
                 }
-
                 // RESET: policyDialogModel role
                 var oDialogModel = this.getView().getModel("policyDialogModel");
                 if (oDialogModel) {
@@ -484,12 +670,10 @@ sap.ui.define(
             },
             __openVersionDialog: async function (oData) {
                 let sNextVersion = "1.0";
-
                 try {
                     const oResponse = await this.ajaxReadWithJQuery("PolicyImage", {
                         ID: oData.ID
                     });
-
                     let aVersions = [];
                     if (oResponse?.data?.Items && Array.isArray(oResponse.data.Items)) {
                         aVersions = oResponse.data.Items;
@@ -498,9 +682,6 @@ sap.ui.define(
                     } else if (oResponse?.data) {
                         aVersions = [oResponse.data];
                     }
-
-                    console.log("Versions Found:", aVersions);
-
                     if (aVersions.length > 0) {
                         let fMaxVersion = 0;
                         aVersions.forEach(function (oItem) {
@@ -511,11 +692,9 @@ sap.ui.define(
                         });
                         sNextVersion = (Math.round((fMaxVersion + 0.1) * 10) / 10).toFixed(1);
                     }
-
                 } catch (e) {
                     console.error("Version Error:", e);
                 }
-
                 const oModel = this.getView().getModel("policyDialogModel");
                 oModel.setData({
                     policyId: oData.ID,
@@ -527,7 +706,6 @@ sap.ui.define(
                     isEdit: true,
                     isVersionMode: true
                 });
-
                 oModel.refresh(true);
                 this._oVersionDialog.open();
             },
@@ -536,15 +714,12 @@ sap.ui.define(
                 this.getBusyDialog();
                 const oContext = oEvent.getSource().getBindingContext("policyModel");
                 const oData = oContext.getObject();
-
                 let sNextVersion = "1.0";
                 this._latestStartDate = null;
-
                 try {
                     const oResponse = await this.ajaxReadWithJQuery("PolicyImage", {
                         ID: oData.ID
                     });
-
                     // ── safely extract versions array ──
                     let aVersions = [];
                     if (oResponse?.data?.Items && Array.isArray(oResponse.data.Items)) {
@@ -554,14 +729,10 @@ sap.ui.define(
                     } else if (oResponse?.data) {
                         aVersions = [oResponse.data];
                     }
-
-                    console.log("Versions Found:", aVersions);
-
                     if (aVersions.length > 0) {
                         // find highest version number
                         let fMaxVersion = 0;
                         let oLatestItem = null;
-
                         aVersions.forEach(function (oItem) {
                             const fVersion = parseFloat(oItem.Version);
                             if (!isNaN(fVersion) && fVersion > fMaxVersion) {
@@ -569,59 +740,44 @@ sap.ui.define(
                                 oLatestItem = oItem;
                             }
                         });
-
                         // add 0.1 and keep 1 decimal place
                         sNextVersion = (Math.round((fMaxVersion + 0.1) * 10) / 10).toFixed(1);
-
                         // store latest start date for date picker min
                         if (oLatestItem && oLatestItem.Start_Date) {
                             this._latestStartDate = new Date(oLatestItem.Start_Date);
                         }
                     }
-
                 } catch (e) {
                     console.error("Version fetch error:", e);
                     sNextVersion = "1.0";
                 }
-
                 // ── load fragment if not loaded ──
                 if (!this._oVersionDialog) {
-                    this._oVersionDialog = sap.ui.xmlfragment(
-                        "sap.kt.com.minihrsolution.fragment.PolicyVersionDialog",
-                        this
-                    );
+                    this._oVersionDialog = sap.ui.xmlfragment("sap.kt.com.minihrsolution.fragment.PolicyVersionDialog", this);
                     this.getView().addDependent(this._oVersionDialog);
                 }
-
                 // ── set model data with computed next version ──
-                this.getView().setModel(
-                    new JSONModel({
-                        Parent_Policy_ID: oData.ID,
-                        PolicyName: oData.name,
-                        PolicyDesc: oData.desc,
-                        Version: sNextVersion,          // ← computed correctly
-                        Start_Date: sap.ui.core.format.DateFormat
-                            .getDateInstance({ pattern: "dd/MM/yyyy" })
-                            .format(new Date()),
-                        Version_File_Content: "",
-                        Version_File_Name: "",
-                        Version_File_Type: ""
-                    }),
-                    "policyDialogModel"
-                );
-
+                this.getView().setModel(new JSONModel({
+                    Parent_Policy_ID: oData.ID,
+                    PolicyName: oData.name,
+                    PolicyDesc: oData.desc,
+                    Version: sNextVersion, // ← computed correctly
+                    Start_Date: sap.ui.core.format.DateFormat.getDateInstance({
+                        pattern: "dd/MM/yyyy"
+                    }).format(new Date()),
+                    Version_File_Content: "",
+                    Version_File_Name: "",
+                    Version_File_Type: ""
+                }), "policyDialogModel");
                 this.getView().getModel("policyDialogModel").refresh(true);
-
                 // ── clear file uploader ──
                 const oUploader = sap.ui.getCore().byId("PL_id_NewVersionFile");
                 if (oUploader) {
                     oUploader.clear();
                     oUploader.setValueState("None");
                 }
-
                 this.closeBusyDialog();
                 this._oVersionDialog.open();
-
                 // ── apply min date on date picker after dialog renders ──
                 setTimeout(() => {
                     const oDatePicker = sap.ui.getCore().byId("PLV_id_StartDate");
@@ -632,7 +788,6 @@ sap.ui.define(
                         oDatePicker.setValueState("None");
                         oDatePicker.setValueStateText("");
                     }
-
                     // ── clear version field errors ──
                     const oVersionInput = sap.ui.getCore().byId("PL_id_Version");
                     if (oVersionInput) {
@@ -749,7 +904,8 @@ sap.ui.define(
                     Start_Date: this._formatDateForDB(oData.Start_Date),
                     UploadDate: this._formatDateForDB(new Date()),
                     End_Date: null,
-                    Version: oData.Version || "1.0"
+                    Version: oData.Version || "1.0",
+                    EmployeeID: ""
                 };
                 try {
                     this.getBusyDialog();
@@ -824,38 +980,31 @@ sap.ui.define(
             },
             onDownloadVersionPdf: function (oEvent) {
                 const oData = oEvent.getSource().getBindingContext("versionModel").getObject();
-
                 if (!oData.File_Content) {
                     MessageBox.error(this.i18nModel.getText("noPdfFound"));
                     return;
                 }
-
                 try {
                     // 1. Clean the base64 string
-                    let sBase64 = String(oData.File_Content)
-                        .replace(/^data:.*;base64,/, "")
-                        .replace(/\s/g, "");
-
+                    let sBase64 = String(oData.File_Content).replace(/^data:.*;base64,/, "").replace(/\s/g, "");
                     // 2. DECOMPRESS if stored compressed (CRITICAL - this was missing)
                     if (this.isCompressedBase64 && this.isCompressedBase64(sBase64)) {
                         sBase64 = this.decompressBase64(sBase64);
                     }
-
                     // 3. Validate it's actually a PDF
                     if (!sBase64.startsWith("JVBER")) {
                         MessageBox.error("Invalid PDF file. Cannot download.");
                         return;
                     }
-
                     // 4. Decode base64 → binary → Blob
                     const sBinary = atob(sBase64);
                     const aBytes = new Uint8Array(sBinary.length);
                     for (let i = 0; i < sBinary.length; i++) {
                         aBytes[i] = sBinary.charCodeAt(i);
                     }
-
-                    const oBlob = new Blob([aBytes], { type: "application/pdf" });
-
+                    const oBlob = new Blob([aBytes], {
+                        type: "application/pdf"
+                    });
                     // 5. Create Blob URL and trigger download
                     const sBlobUrl = URL.createObjectURL(oBlob);
                     const oLink = document.createElement("a");
@@ -864,12 +1013,10 @@ sap.ui.define(
                     document.body.appendChild(oLink);
                     oLink.click();
                     document.body.removeChild(oLink);
-
                     // 6. Release memory
                     setTimeout(function () {
                         URL.revokeObjectURL(sBlobUrl);
                     }, 3000);
-
                 } catch (e) {
                     console.error("PDF download error:", e);
                     MessageBox.error("Failed to download PDF. The file may be corrupted.");
@@ -877,21 +1024,19 @@ sap.ui.define(
             },
             _createBlobUrlFromBase64: function (sBase64, sMimeType) {
                 try {
-                    sBase64 = sBase64
-                        .replace(/^data:.*;base64,/, "")
-                        .replace(/\s/g, "");
-
+                    sBase64 = sBase64.replace(/^data:.*;base64,/, "").replace(/\s/g, "");
                     // Decompress if needed
                     if (this.isCompressedBase64 && this.isCompressedBase64(sBase64)) {
                         sBase64 = this.decompressBase64(sBase64);
                     }
-
                     const sBinary = atob(sBase64);
                     const aBytes = new Uint8Array(sBinary.length);
                     for (let i = 0; i < sBinary.length; i++) {
                         aBytes[i] = sBinary.charCodeAt(i);
                     }
-                    const oBlob = new Blob([aBytes], { type: sMimeType || "application/pdf" });
+                    const oBlob = new Blob([aBytes], {
+                        type: sMimeType || "application/pdf"
+                    });
                     return URL.createObjectURL(oBlob);
                 } catch (e) {
                     console.error("Blob URL creation failed:", e);
@@ -1119,11 +1264,9 @@ sap.ui.define(
                     //     return;
                     // }
                     // PAYLOAD
-                    const sEmployeeId = String(
-                        this.getView().getModel("LoginModel").getProperty("/EmployeeID") || ""
-                    ).trim();
+                    // const sEmployeeId = String(this.getView().getModel("LoginModel").getProperty("/EmployeeID") || "").trim();
                     const oPayloadData = {
-                        EmployeeID: sEmployeeId || "",
+                        EmployeeID: "",
                         PolicyName: oData.title,
                         PolicyDesc: oData.description,
                         Department: oData.department || "",
@@ -1421,16 +1564,11 @@ sap.ui.define(
                         MessageBox.error(this.i18nModel.getText("pdfEmpty"));
                         return;
                     }
-
-                    sBase64 = String(sBase64)
-                        .replace(/^data:.*;base64,/, "")
-                        .replace(/\s/g, "");
-
+                    sBase64 = String(sBase64).replace(/^data:.*;base64,/, "").replace(/\s/g, "");
                     // Decompress if stored using compressBase64()
                     if (this.isCompressedBase64(sBase64)) {
                         sBase64 = this.decompressBase64(sBase64);
                     }
-
                     // Validate PDF after decompression
                     if (!sBase64.startsWith("JVBER")) {
                         this.closeBusyDialog();
@@ -1439,16 +1577,16 @@ sap.ui.define(
                     }
                     this._policyPdfUrl = "data:application/pdf;base64," + sBase64;
                     // ACKNOWLEDGEMENT 
+                    // ACKNOWLEDGEMENT — now tracked per VERSION, not per policy
                     const sEmployeeId = String(this.getView().getModel("LoginModel").getProperty("/EmployeeID")).trim();
-                    let sAckIds = "";
-                    if (Array.isArray(oPolicyResponse.data)) {
-                        sAckIds = oPolicyResponse.data[0]?.EmployeeID || "";
-                    } else {
-                        sAckIds = oPolicyResponse.data?.EmployeeID || "";
-                    }
-                    const aAckIds = String(sAckIds).split(",").map(id => id.trim()).filter(Boolean);
+                    let sAckIds = oSelectedVersion.EmployeeID || "";
+                    const aAckIds = String(sAckIds).split(",").map(id => id.trim()).filter(id => id && id !== "0"); // "0" is the DB default meaning "nobody yet"
                     const bAlreadyAcknowledged = aAckIds.includes(sEmployeeId);
-                    //  MODEL
+                    // remember which version row this is, by composite key (no ID column exists on Policy_Item)
+                    this._selectedVersionKey = {
+                        Policy_Parent_ID: oObject.ID,
+                        Version: oSelectedVersion.Version
+                    }; //  MODEL
                     const oViewModel = new JSONModel({
                         title: oObject.name,
                         description: oObject.desc,
@@ -1480,13 +1618,11 @@ sap.ui.define(
             onPressAcknowledge: function () {
                 const sEmployeeId = String(this.getView().getModel("LoginModel").getProperty("/EmployeeID")).trim();
                 const oViewModel = this.getView().getModel("policyViewModel");
-                // EXISTING IDS
                 let sExistingIds = oViewModel.getProperty("/employeeIds") || "";
                 let aIds = sExistingIds ? sExistingIds.split(",") : [];
                 aIds = aIds.map(function (id) {
                     return id.trim();
                 }).filter(Boolean);
-                // ADD EMPLOYEE ONLY ONCE
                 if (!aIds.includes(sEmployeeId)) {
                     aIds.push(sEmployeeId);
                 }
@@ -1504,22 +1640,23 @@ sap.ui.define(
                             return;
                         }
                         this.getBusyDialog();
-                        this.ajaxUpdateWithJQuery("Policy", {
+                        const oPayload = {
                             filters: {
-                                ID: this._selectedPolicyId
+                                Policy_Parent_ID: this._selectedVersionKey.Policy_Parent_ID,
+                                Version: this._selectedVersionKey.Version
                             },
                             data: {
                                 EmployeeID: sFinalIds
                             }
-                        }).then(async function () {
-                            // UPDATE LOCAL MODEL
+                        };
+                        this.ajaxUpdateWithJQuery("PolicyItems", oPayload).then(async function (oResponse) {
                             oViewModel.setProperty("/employeeIds", sFinalIds);
                             oViewModel.setProperty("/alreadyAcknowledged", true);
                             oViewModel.setProperty("/acknowledged", false);
                             oViewModel.refresh(true);
-                            // VERIFY DATABASE VALUE
-                            const oCheck = await this.ajaxReadWithJQuery("Policy", {
-                                ID: this._selectedPolicyId
+                            const oCheck = await this.ajaxReadWithJQuery("PolicyItems", {
+                                Policy_Parent_ID: this._selectedVersionKey.Policy_Parent_ID,
+                                Version: this._selectedVersionKey.Version
                             });
                             this.closeBusyDialog();
                             MessageToast.show(this.i18nModel.getText("policyAcknowledgeSuccess"));
@@ -1528,6 +1665,27 @@ sap.ui.define(
                             }
                         }.bind(this)).catch(function (oError) {
                             this.closeBusyDialog();
+                            console.error("========== UPDATE FAILED ==========");
+                            console.error(oError);
+                            if (oError.responseText) {
+                                console.error("Response Text:");
+                                console.error(oError.responseText);
+                            }
+                            if (oError.responseJSON) {
+                                console.error("Response JSON:");
+                                console.error(oError.responseJSON);
+                            }
+                            if (oError.status) {
+                                console.error("Status:", oError.status);
+                            }
+                            if (oError.statusText) {
+                                console.error("Status Text:", oError.statusText);
+                            }
+                            if (oError.message) {
+                                console.error("Message:", oError.message);
+                            }
+                            console.error("Complete Error Object:");
+                            console.dir(oError);
                             MessageBox.error(this.i18nModel.getText("policyAcknowledgeFailed"));
                         }.bind(this));
                     }.bind(this)
@@ -1536,31 +1694,20 @@ sap.ui.define(
             _createPdfIframe: function () {
                 const oModel = this.getView().getModel("policyViewModel");
                 const sDataUrl = oModel.getProperty("/fileUrl"); // data:application/pdf;base64,...
-
                 // Revoke any previous blob URL to free memory
                 if (this._pdfBlobUrl) {
                     URL.revokeObjectURL(this._pdfBlobUrl);
                     this._pdfBlobUrl = null;
                 }
-
                 // Convert data URL → Blob URL (avoids browser block + UI freeze)
                 const sBlobUrl = this._createBlobUrlFromBase64(sDataUrl, "application/pdf");
-
                 if (!sBlobUrl) {
                     sap.m.MessageBox.error("Failed to render PDF.");
                     return;
                 }
-
                 this._pdfBlobUrl = sBlobUrl; // store for cleanup
-
                 const oHtml = this.byId("pdfFrame");
-                oHtml.setContent(
-                    "<iframe " +
-                    "src='" + sBlobUrl + "#toolbar=0&navpanes=0&scrollbar=0&view=FitH' " +
-                    "style='width:100%;height:100vh;border:none;display:block;margin:0;padding:0;' " +
-                    ">" +
-                    "</iframe>"
-                );
+                oHtml.setContent("<iframe " + "src='" + sBlobUrl + "#toolbar=0&navpanes=0&scrollbar=0&view=FitH' " + "style='width:100%;height:100vh;border:none;display:block;margin:0;padding:0;' " + ">" + "</iframe>");
             },
             PL_openViewDialog: function () {
                 this.getView().getModel("VisibleModel").setProperty("/EditBtn", true);
@@ -1572,24 +1719,24 @@ sap.ui.define(
                 }.bind(this);
                 const fnRefreshPolicyData = async function () {
                     try {
-                        const oPolicyResponse = await this.ajaxReadWithJQuery("Policy", {
+                        const oPolicyResponse = await this.ajaxReadWithJQuery("PolicyImage", {
                             ID: this._selectedPolicyId,
                         });
                         const oData = Array.isArray(oPolicyResponse.data) ? oPolicyResponse.data[0] : oPolicyResponse.data || {};
-
-                        let sAckIds = oData.EmployeeID || "";
-                        const aAckIds = String(sAckIds).split(",").map(id => id.trim()).filter(Boolean);
+                        const aItems = oData.Items || [];
+                        const oActiveItem = this._getActivePolicyItem(aItems) || {};
+                        let sAckIds = oActiveItem.EmployeeID || "";
+                        this._selectedVersionKey = {
+                            Policy_Parent_ID: this._selectedPolicyId,
+                            Version: oActiveItem.Version
+                        };
+                        const aAckIds = String(sAckIds).split(",").map(id => id.trim()).filter(id => id && id !== "0");
                         const sEmployeeId = String(this.getView().getModel("LoginModel").getProperty("/EmployeeID")).trim();
                         const bAlreadyAcknowledged = aAckIds.includes(sEmployeeId);
-
                         const oModel = this.getView().getModel("policyViewModel");
                         oModel.setProperty("/employeeIds", sAckIds);
                         oModel.setProperty("/alreadyAcknowledged", bAlreadyAcknowledged);
                         oModel.refresh(true);
-
-                        const aItems = oData.Items || [];
-                        const oActiveItem = this._getActivePolicyItem(aItems) || {};
-
                         // =================================
                         // LOGO DISPLAY
                         // =================================
@@ -1597,29 +1744,23 @@ sap.ui.define(
                         const oAttachmentUploader = this.byId("PL_id_AttachmentUpload");
                         const oLogoImage = this.byId("PL_id_LogoPreview");
                         const oAttachmentText = this.byId("PL_id_AttachmentName");
-
                         if (oLogoUploader) {
                             oLogoUploader.clear();
                             oLogoUploader.setValue("");
                         }
-
-
                         let sLogoBase64 = "";
                         let sLogoUrl = "";
-
                         if (oData.Logo) {
                             if (typeof oData.Logo === "string") {
                                 sLogoBase64 = oData.Logo;
                             } else if (oData.Logo.data) {
                                 sLogoBase64 = new TextDecoder().decode(new Uint8Array(oData.Logo.data));
                             }
-
                             if (sLogoBase64) {
                                 sLogoBase64 = String(sLogoBase64).replace(/^data:.*;base64,/, "").replace(/\s/g, "");
                                 sLogoUrl = "data:image/png;base64," + sLogoBase64;
                             }
                         }
-
                         if (sLogoUrl) {
                             if (oLogoImage) {
                                 oLogoImage.setSrc(sLogoUrl);
@@ -1634,26 +1775,18 @@ sap.ui.define(
                                 oLogoImage.setVisible(false);
                             }
                         }
-
                         // =================================
                         // ATTACHMENT DISPLAY
                         // =================================
-                        const sAttachmentFileName =
-                            oActiveItem.File_Name ||
-                            oData.File_Name ||
-                            oModel.getProperty("/File_Name") ||
-                            "";
-
+                        const sAttachmentFileName = oActiveItem.File_Name || oData.File_Name || oModel.getProperty("/File_Name") || "";
                         if (oAttachmentUploader) {
                             oAttachmentUploader.setValue(" ");
                             oAttachmentUploader.setValue(sAttachmentFileName);
                         }
-
                         if (oAttachmentText) {
                             oAttachmentText.setText(sAttachmentFileName);
                             oAttachmentText.setVisible(!!sAttachmentFileName);
                         }
-
                         // =================================
                         // PDF PREVIEW
                         // =================================
@@ -1662,16 +1795,12 @@ sap.ui.define(
                             const uint8Array = new Uint8Array(oActiveItem.File_Content.data);
                             sBase64 = btoa(Array.from(uint8Array).map(byte => String.fromCharCode(byte)).join(""));
                         }
-
                         sBase64 = String(sBase64).replace(/^data:.*;base64,/, "").replace(/\s/g, "");
-
                         if (this.isCompressedBase64 && this.isCompressedBase64(sBase64)) {
                             sBase64 = this.decompressBase64(sBase64);
                         }
-
                         this._policyPdfUrl = "data:application/pdf;base64," + sBase64;
                         oModel.setProperty("/fileUrl", this._policyPdfUrl);
-
                     } catch (e) {
                         console.error("fnRefreshPolicyData error:", e);
                     }
@@ -1892,74 +2021,59 @@ sap.ui.define(
                 this.getView().setModel(oModel, "FilteredRoleModel");
                 this.getView().getModel("FilteredRoleModel").refresh(true);
             },
-          PL_onREFileUpload: function (oEvent) {
-    const oFile = oEvent.getParameter("files") && oEvent.getParameter("files")[0];
-    if (!oFile) {
-        return;
-    }
-
-    const oReader = new FileReader();
-    oReader.onload = function (e) {
-        const sResult = e.target.result || "";
-        const sBase64 = String(sResult).split(",")[1] || "";
-        const oModel = this.getView().getModel("policyViewModel");
-
-        oModel.setProperty("/File_Content", sBase64);
-        oModel.setProperty("/File_Name", oFile.name);
-        oModel.setProperty("/File_Type", oFile.type);
-
-        const oAttachmentUploader = this.byId("PL_id_AttachmentUpload");
-        if (oAttachmentUploader) {
-            oAttachmentUploader.setValue(oFile.name);
-            oAttachmentUploader.setValueState("None");
-        }
-
-        const oAttachmentText = this.byId("PL_id_AttachmentName");
-        if (oAttachmentText) {
-            oAttachmentText.setText(oFile.name);
-            oAttachmentText.setVisible(true);
-        }
-
-        // Show PDF immediately on right side
-        if (oFile.type === "application/pdf") {
-            const sPdfUrl = "data:application/pdf;base64," + sBase64;
-            oModel.setProperty("/fileUrl", sPdfUrl);
-            this._policyPdfUrl = sPdfUrl;
-            oModel.refresh(true);
-            this._createPdfIframe();
-        } else {
-            oModel.refresh(true);
-        }
-    }.bind(this);
-
-    oReader.readAsDataURL(oFile);
-},
-           PL_onReLogoUpload: function (oEvent) {
-    const oFile = oEvent.getParameter("files")[0];
-    if (!oFile) {
-        return;
-    }
-
-    const oReader = new FileReader();
-
-    oReader.onload = function (e) {
-
-        const sBase64 = e.target.result.split(",")[1];
-
-        const oModel = this.getView().getModel("policyViewModel");
-
-        oModel.setProperty("/Logo", sBase64);
-        oModel.setProperty("/Logo_File_Name", oFile.name);
-        oModel.refresh(true);
-
-        this.byId("PL_id_LogoPreview").setSrc(e.target.result);
-        this.byId("PL_id_LogoPreview").setVisible(true);
-
-       
-    }.bind(this);
-
-    oReader.readAsDataURL(oFile);
-},
+            PL_onREFileUpload: function (oEvent) {
+                const oFile = oEvent.getParameter("files") && oEvent.getParameter("files")[0];
+                if (!oFile) {
+                    return;
+                }
+                const oReader = new FileReader();
+                oReader.onload = function (e) {
+                    const sResult = e.target.result || "";
+                    const sBase64 = String(sResult).split(",")[1] || "";
+                    const oModel = this.getView().getModel("policyViewModel");
+                    oModel.setProperty("/File_Content", sBase64);
+                    oModel.setProperty("/File_Name", oFile.name);
+                    oModel.setProperty("/File_Type", oFile.type);
+                    const oAttachmentUploader = this.byId("PL_id_AttachmentUpload");
+                    if (oAttachmentUploader) {
+                        oAttachmentUploader.setValue(oFile.name);
+                        oAttachmentUploader.setValueState("None");
+                    }
+                    const oAttachmentText = this.byId("PL_id_AttachmentName");
+                    if (oAttachmentText) {
+                        oAttachmentText.setText(oFile.name);
+                        oAttachmentText.setVisible(true);
+                    }
+                    // Show PDF immediately on right side
+                    if (oFile.type === "application/pdf") {
+                        const sPdfUrl = "data:application/pdf;base64," + sBase64;
+                        oModel.setProperty("/fileUrl", sPdfUrl);
+                        this._policyPdfUrl = sPdfUrl;
+                        oModel.refresh(true);
+                        this._createPdfIframe();
+                    } else {
+                        oModel.refresh(true);
+                    }
+                }.bind(this);
+                oReader.readAsDataURL(oFile);
+            },
+            PL_onReLogoUpload: function (oEvent) {
+                const oFile = oEvent.getParameter("files")[0];
+                if (!oFile) {
+                    return;
+                }
+                const oReader = new FileReader();
+                oReader.onload = function (e) {
+                    const sBase64 = e.target.result.split(",")[1];
+                    const oModel = this.getView().getModel("policyViewModel");
+                    oModel.setProperty("/Logo", sBase64);
+                    oModel.setProperty("/Logo_File_Name", oFile.name);
+                    oModel.refresh(true);
+                    this.byId("PL_id_LogoPreview").setSrc(e.target.result);
+                    this.byId("PL_id_LogoPreview").setVisible(true);
+                }.bind(this);
+                oReader.readAsDataURL(oFile);
+            },
             onPressEdit: function () {
                 // SWITCH TO EDIT MODE
                 this.getView().getModel("VisibleModel").setProperty("/EditBtn", false);
@@ -1986,7 +2100,6 @@ sap.ui.define(
                 const oAttachmentUploader = this.byId("PL_id_AttachmentUpload");
                 const sLogoName = oData.Logo_File_Name || "";
                 const sAttachmentName = oData.File_Name || "";
-
                 if (!Validation._LCvalidateMandatoryField(this.byId("PL_id_ViewTitle"), "ID")) {
                     this.byId("PL_id_ViewTitle").setValueState("Error");
                     this.byId("PL_id_ViewTitle").setValueStateText("Policy title is required");
@@ -2020,7 +2133,6 @@ sap.ui.define(
                     oRoleControl.setValueState("None");
                     oRoleControl.setValueStateText("");
                 }
-
                 // if (!sLogoName) {
                 //     if (oLogoUploader) {
                 //         oLogoUploader.setValueState("Error");
@@ -2030,7 +2142,6 @@ sap.ui.define(
                 // } else if (oLogoUploader) {
                 //     oLogoUploader.setValueState("None");
                 // }
-
                 if (!sAttachmentName) {
                     if (oAttachmentUploader) {
                         oAttachmentUploader.setValueState("Error");
@@ -2041,31 +2152,31 @@ sap.ui.define(
                     oAttachmentUploader.setValueState("None");
                 }
                 // MODEL DATA
-
-
                 const sRole = Array.isArray(oData.role) ? oData.role.join(",") : (oData.role || "").toString();
+                var sStartDate = oData.Start_Date;
+                if (!sStartDate) {
+                    sStartDate = this._originalStartDate;
+                }
                 // UPDATE PAYLOAD
-               const oUpdateData = {
-    Start_Date: oData.Start_Date,
-    PolicyName: oData.title,
-    PolicyDesc: oData.description,
-    Department: oData.department,
-    Role: sRole,
-    File_Content: oData.File_Content || "",
-    File_Name: oData.File_Name || "",
-    File_Type: oData.File_Type || ""
-};
-
-if (oData.Logo) {
-    oUpdateData.Logo = oData.Logo;
-}
-
-const oPayload = {
-    filters: {
-        ID: this._selectedPolicyId
-    },
-    data: oUpdateData
-};
+                const oUpdateData = {
+                    Start_Date: this._formatDateForDB(sStartDate),
+                    PolicyName: oData.title,
+                    PolicyDesc: oData.description,
+                    Department: oData.department,
+                    Role: sRole,
+                    File_Content: oData.File_Content || "",
+                    File_Name: oData.File_Name || "",
+                    File_Type: oData.File_Type || ""
+                };
+                if (oData.Logo) {
+                    oUpdateData.Logo = oData.Logo;
+                }
+                const oPayload = {
+                    filters: {
+                        ID: this._selectedPolicyId
+                    },
+                    data: oUpdateData
+                };
                 try {
                     // BUSY START
                     this.getBusyDialog();

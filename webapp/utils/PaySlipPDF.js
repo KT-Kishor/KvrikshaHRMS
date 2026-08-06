@@ -11,8 +11,7 @@ sap.ui.define(["../model/formatter"], function (formatter) {
                 unit: "mm",
                 format: "a4",
             });
-
-            const pageHeight = doc.internal.pageSize.getHeight();
+            const pageHeight = doc.internal.pageSize.getHeight(); 
             const pageWidth = doc.internal.pageSize.getWidth();
             const backImgX = (pageWidth - 100) / 2; // Center horizontally
             const backImgY = (pageHeight - 100) / 2; // Center vertically

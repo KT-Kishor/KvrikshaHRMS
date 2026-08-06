@@ -10,8 +10,8 @@ sap.ui.define([
             },
 
             _onRouteMatched: async function (oEvent) {
-                this.getBusyDialog();
                 if (!this.that) this.that = this.getOwnerComponent().getModel("ThisModel")?.getData().that;
+                this.that.getBusyDialog();
                 this.scrollToSection("APD_id_NavAdmin", "APD_id_First");
                 var LoginFunction = await this.commonLoginFunction("PaySlip");
                 if (!LoginFunction) return;
@@ -23,7 +23,7 @@ sap.ui.define([
                     this.oModel.setProperty("/isRouteLOP", false);
                     this.flagID = false;
                 }
-                this.closeBusyDialog();
+                this.that.closeBusyDialog();
             },
 
             APD_onPressBack: function () {

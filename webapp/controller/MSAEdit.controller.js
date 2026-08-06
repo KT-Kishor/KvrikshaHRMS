@@ -1467,6 +1467,9 @@ sap.ui.define(["./BaseController", "../utils/validation", "sap/ui/model/json/JSO
             this.PORTE_oDialog.close();
         },
 
+        MsaE_onPressPDFCondition:function(oEvent){
+            this.getRouter().navTo("RoutePDFCondition");
+        }
         // MsaE_onPressMergePO: async function (htmlContent) {
         //   var oPDFModel = this.getView().getModel("PDFData");
         //   await this._fetchCommonData("CompanyCodeDetails", "CompanyCodeDetailsModel", {

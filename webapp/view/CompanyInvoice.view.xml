@@ -52,6 +52,7 @@
 					  <OverflowToolbar >
 						<Title id="CI_id_Title" text="{i18n>invoiceapp} ({= ${CompanyInvoiceModel>/}.length})"/>
 						 <ToolbarSpacer/>
+						 <Button text="Invoice Dashboard" type="Transparent" icon="sap-icon://sales-order" press="onPressInvoiceDashboard" />
 						<Button text="{i18n>download}" type="Transparent" tooltip="{i18n>invoicedownload}" press="CI_onPressDownload" />
 
 						<Button text="{i18n>InvoiceAddBtn}" type="Transparent" tooltip="{i18n>addInvoice}" press="CI_onPressAddInvoice" />

@@ -1,0 +1,93 @@
+<mvc:View
+    controllerName="sap.kt.com.minihrsolution.controller.PDFCondition"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    displayBlock="true">
+
+    <Page
+        id="pdfConditionPage"
+        title="{i18n>appTitle}"
+        showFooter="true"
+        busy="{view>/busy}"
+        busyIndicatorDelay="0"
+        class="pdfConditionPage">
+
+        <content>
+            <List
+                id="conditionsList"
+                items="{view>/conditions}"
+                noDataText="{i18n>noPointsFound}"
+                showSeparators="None"
+                class="sapUiResponsiveMargin">
+
+                <CustomListItem>
+                    <Panel
+                        headerText="{view>Title}"
+                        expandable="true"
+                        expanded="true"
+                        class="pdfConditionPanel sapUiResponsiveMargin">
+
+                        <content>
+                            <VBox class="pdfConditionBody">
+                                <Label text="{i18n>titleContentLabel}" class="pdfSectionLabel" />
+                                <TextArea
+                                    value="{view>TitleContent}"
+                                    editable="true"
+                                    growing="true"
+                                    growingMaxLines="8"
+                                    width="100%"
+                                    class="pdfTitleContentArea" />
+
+                                <Title text="{i18n>pointsHeader}" level="H3" class="pdfPointsHeading" />
+
+                                <List
+                                    items="{view>Points}"
+                                    showSeparators="None"
+                                    class="pdfPointsList">
+
+                                    <CustomListItem>
+                                        <HBox class="pdfPointItem" width="100%">
+                                            <VBox class="pdfPointBadgeWrap">
+                                                <Text text="{view>PointNo}" class="pdfPointBadge" />
+                                            </VBox>
+                                            <VBox class="pdfPointContent" width="100%">
+                                                <Text text="{view>PointTitle}" class="pdfPointTitle" />
+                                                <TextArea
+                                                    value="{view>PointDesc}"
+                                                    editable="true"
+                                                    growing="true"
+                                                    growingMaxLines="6"
+                                                    width="100%"
+                                                    class="pdfPointDesc" />
+                                            </VBox>
+                                        </HBox>
+                                    </CustomListItem>
+                                </List>
+                            </VBox>
+                        </content>
+                    </Panel>
+                </CustomListItem>
+            </List>
+        </content>
+
+        <footer>
+            <OverflowToolbar>
+                <ToolbarSpacer />
+                <Button
+                    id="saveButton"
+                    text="{i18n>saveButton}"
+                    type="Emphasized"
+                    icon="sap-icon://save"
+                    press=".onSave" />
+                <Button
+                    id="generatePdfButton"
+                    text="{i18n>generatePdfButton}"
+                    type="Default"
+                    icon="sap-icon://pdf-attachment"
+                    press=".onGeneratePDF" />
+            </OverflowToolbar>
+        </footer>
+
+    </Page>
+</mvc:View>

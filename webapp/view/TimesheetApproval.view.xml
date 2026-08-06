@@ -17,7 +17,7 @@
                     <fb:FilterGroupItem name="EmployeeID" label="{i18n>employeeID}" groupName="Group1" visibleInFilterBar="true" >
                         <fb:control>
                     <ComboBox showSecondaryValues= "true" id="TSA_id_Employee" showClearIcon="true" items="{path:'EmployeeFilterModel>/'}" >
-						<core:ListItem key="{EmployeeFilterModel>EmployeeID}" text="{EmployeeFilterModel>EmployeeID}" additionalText="{EmployeeFilterModel>EmployeeName}" />
+						<core:ListItem key="{EmployeeFilterModel>EmployeeID}" text="{EmployeeFilterModel>EmployeeName}" additionalText="{EmployeeFilterModel>EmployeeID}" />
 					</ComboBox>                        
                         </fb:control>
                     </fb:FilterGroupItem>

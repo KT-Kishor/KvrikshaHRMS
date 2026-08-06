@@ -28,7 +28,7 @@
             showClearOnFB="true"
             showGoOnFB="true"
             showFilterConfiguration="false"
-            class="sapUiResponsiveContentPadding sapUiSmallMargin policyFilterBar"
+            class="sapUiTinyMargin policyFilterBar"
         >
             <fb:filterGroupItems>
                 <!-- SEARCH -->
@@ -230,6 +230,15 @@
         </m:contentLeft>
 
         <m:contentRight>
+       <m:Button
+    id="PL_id_DownloadReport"
+    text="{i18n>downloadexcel}"
+    
+    type="Transparent"
+    visible="{visibilityModel>/showDownloadReport}"
+    press=".PL_onOpenDownloadReport"
+    class="sapUiTinyMarginEnd"/>
+
             <m:Button
                 id="PL_id_AddButton"
                 text="{i18n>create}"

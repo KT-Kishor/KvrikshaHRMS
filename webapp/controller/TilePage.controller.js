@@ -1,16 +1,16 @@
 sap.ui.define(
     [
-      "./BaseController",
+        "./BaseController",
         "sap/m/MessageToast",
         "../utils/validation",
         "sap/ui/model/json/JSONModel",
         "sap/m/MessageBox",
-      
+
     ],
     function (BaseController, MessageToast, utils, JSONModel, MessageBox) {
         "use strict";
         const $C = (id) => sap.ui.getCore().byId(id);
-       
+
         return BaseController.extend(
             "sap.kt.com.minihrsolution.controller.TilePage", {
             onInit: function () {
@@ -24,7 +24,7 @@ sap.ui.define(
                 }
             },
             _onRouteMatched: async function () {
-                var model = new JSONModel({ RaiseVisible: false });
+                var model = new JSONModel({ RaiseVisible: false, UpdateEmployee: false, ReminderTimesheet: false });
                 this.getView().setModel(model, "VisibleModel");
                 if (!this.that)
                     this.that = this.getOwnerComponent().getModel("ThisModel")?.getData().that;
@@ -47,7 +47,7 @@ sap.ui.define(
                 this.getOwnerComponent().setModel(oEndingSoonModel, "EndingSoonModel");
 
                 // Check role
-               const sRole = LoginModel.getProperty("/Role");
+                const sRole = LoginModel.getProperty("/Role");
                 const sEmployeeID = LoginModel.getProperty("/EmployeeID");
 
                 if (
@@ -118,7 +118,7 @@ sap.ui.define(
                     const firstEntry = Array.isArray(oData.data) ? oData.data[0] : oData.data;
                     this.getOwnerComponent().setModel(new JSONModel(firstEntry), "AppVisibilityModel");
 
-                    const tileNames = ["Home", "Timesheet", "Payslip", "OfferGeneration", "Invoice", "Quotation", "Expense", "ManageAsset", "Recruitment", "Approvals","Hiring","AnnouncementsandEvents"];
+                    const tileNames = ["Home", "Timesheet", "Payslip", "OfferGeneration", "Invoice", "Quotation", "Expense", "ManageAsset", "Recruitment", "Approvals", "Hiring", "AnnouncementsandEvents"];
 
                     const tileKeys = firstEntry.TileKey?.split(",") || [];
                     const tileMapping = tileNames.reduce((map, name, i) => {
@@ -240,29 +240,62 @@ sap.ui.define(
                         }
                     });
             },
-            TP_onupdatepress: function () {
+            TP_onupdatepress: function (oEvent) {
+                this.getView().getModel("VisibleModel").setProperty("/ReminderTimesheet", oEvent === "ReminderTimeSheet" ? true : false);
+                this.getView().getModel("VisibleModel").setProperty("/UpdateEmployee", oEvent !== "ReminderTimeSheet" ? true : false);
+                this.getView().getModel("VisibleModel").setProperty("/SelectAll", false); // 👈 ADD
+
                 var oView = this.getView();
-                // Ensure user selection is reset before opening
                 var oFragmentModel = this.getView().getModel("FragmentModel");
                 if (oFragmentModel) {
-                    oFragmentModel.setData({
-                        EmployeeID: "",
-                        EmployeeName: ""
-                    });
+                    oFragmentModel.setData({ EmployeeID: "", EmployeeName: "" });
                 }
                 if (!this.oUpdatePass) {
                     sap.ui.core.Fragment.load({
                         name: "sap.kt.com.minihrsolution.fragment.ResetPassword",
                         controller: this,
-                    }).then(
-                        function (oUpdatePass) {
-                            this.oUpdatePass = oUpdatePass;
-                            oView.addDependent(this.oUpdatePass);
-                            this.oUpdatePass.open();
-                        }.bind(this)
-                    );
+                    }).then(function (oUpdatePass) {
+                        this.oUpdatePass = oUpdatePass;
+                        oView.addDependent(this.oUpdatePass);
+                        var oMultiComboBox = sap.ui.getCore().byId("RP_id_Activeuserid");
+                        oMultiComboBox.setSelectedKeys([]);
+                        oMultiComboBox.setValue("");
+                        this.oUpdatePass.open();
+                        oMultiComboBox.setFilterFunction(function (sValue, oItem) {
+                            sValue = sValue.toLowerCase();
+                            return (
+                                (oItem.getKey() || "").toLowerCase().includes(sValue) ||
+                                (oItem.getText() || "").toLowerCase().includes(sValue) ||
+                                (oItem.getAdditionalText() || "").toLowerCase().includes(sValue)
+                            );
+                        });
+                    }.bind(this));
                 } else {
                     this.oUpdatePass.open();
+                    var oMultiComboBox = sap.ui.getCore().byId("RP_id_Activeuserid");
+                    oMultiComboBox.setSelectedKeys([]);
+                    oMultiComboBox.setValue("");
+                    oMultiComboBox.setFilterFunction(function (sValue, oItem) {
+                        sValue = sValue.toLowerCase();
+                        return (
+                            (oItem.getKey() || "").toLowerCase().includes(sValue) ||
+                            (oItem.getText() || "").toLowerCase().includes(sValue) ||
+                            (oItem.getAdditionalText() || "").toLowerCase().includes(sValue)
+                        );
+                    });
+                }
+            },
+            onSelectAllEmployees: function (oEvent) {
+                var bSelected = oEvent.getParameter("selected");
+                var oMCB = sap.ui.getCore().byId("RP_id_Activeuserid");
+                if (bSelected) {
+                    var aData = this.getView().getModel("EmpModel").getData();
+                    var aKeys = aData.map(function (oEmp) {
+                        return oEmp.EmployeeID;
+                    });
+                    oMCB.setSelectedKeys(aKeys);
+                } else {
+                    oMCB.setSelectedKeys([]);
                 }
             },
             RP_onPressCanclePW: function () {
@@ -549,7 +582,7 @@ sap.ui.define(
             TileV_onpressPolicy: function () {
                 this.getRouter().navTo("RoutePolicy");
             },
-            TileV_onpressAnnouncements: function() {
+            TileV_onpressAnnouncements: function () {
                 this.getRouter().navTo("NameRouteAnnouncements");
             },
             TileV_onpressHiringDashboard: function () {
@@ -933,78 +966,128 @@ sap.ui.define(
                 oRaiseBugModel.setProperty("/attachments", aAttachments);
                 oRaiseBugModel.setProperty("/tokens", aTokens);
             },
-       AA_acceptrequest: async function (oEvent) {
+            AA_acceptrequest: async function (oEvent) {
 
-           
-    sap.m.MessageBox.confirm(
-        "Are you sure you want to accept this return request?",
-        {
-            title: "Confirmation",
-            actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
-            // emphasizedAction: sap.m.MessageBox.Action.YES,
 
-            onClose: async function (sAction) {
+                sap.m.MessageBox.confirm(
+                    "Are you sure you want to accept this return request?",
+                    {
+                        title: "Confirmation",
+                        actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+                        // emphasizedAction: sap.m.MessageBox.Action.YES,
 
-                if (sAction !== sap.m.MessageBox.Action.YES) {
-                    return;
-                }
+                        onClose: async function (sAction) {
 
-                try {
+                            if (sAction !== sap.m.MessageBox.Action.YES) {
+                                return;
+                            }
 
-                    var oContext = oEvent.getSource().getBindingContext("Returntilemodel");
-                    var oData = oContext.getObject();
-                    var sPath = oContext.getPath();
+                            try {
 
-                    var sID = oData.ID;
+                                var oContext = oEvent.getSource().getBindingContext("Returntilemodel");
+                                var oData = oContext.getObject();
+                                var sPath = oContext.getPath();
 
-                    let data = await this.ajaxReadWithJQuery("ReturnSlots", {
-                        EmployeeID: this.getView().getModel("LoginModel").getProperty("/EmployeeID")
-                    });
+                                var sID = oData.ID;
 
-                    var sLocation = data.data[0].Location;
+                                let data = await this.ajaxReadWithJQuery("ReturnSlots", {
+                                    EmployeeID: this.getView().getModel("LoginModel").getProperty("/EmployeeID")
+                                });
 
-                  
-                       var oPayload = {
-                        Status: "Accepted",
-                        ReturnLocation:sLocation,
-                        Type:oData.Type,
-                        Model:oData.Model,
-                        AssignEmployeeID:oData.AssignEmployeeID,
-                        AssignEmployeeName:oData.AssignEmployeeName,
-                        AcceptReqEmpID:this.getView().getModel("LoginModel").getProperty("/EmployeeID"),
-                        AcceptrequestEmpName:this.getView().getModel("LoginModel").getProperty("/EmployeeName"),
-                        ReturnRequestDate:oData.ReturnRequestDate,
-                        ReturnSlot:oData.ReturnSlot
+                                var sLocation = data.data[0].Location;
 
-                    };
-                    this.getBusyDialog()
-                    await this.ajaxUpdateWithJQuery("IncomeAsset", {
-                        filters: {
-                            ID: sID
-                        },
-                        data: oPayload
-                    });
 
-                    var oModel = this.getView().getModel("Returntilemodel");
-                    oModel.setProperty(sPath + "/Status", "Accepted");
-                    this.closeBusyDialog()
+                                var oPayload = {
+                                    Status: "Accepted",
+                                    ReturnLocation: sLocation,
+                                    Type: oData.Type,
+                                    Model: oData.Model,
+                                    AssignEmployeeID: oData.AssignEmployeeID,
+                                    AssignEmployeeName: oData.AssignEmployeeName,
+                                    AcceptReqEmpID: this.getView().getModel("LoginModel").getProperty("/EmployeeID"),
+                                    AcceptrequestEmpName: this.getView().getModel("LoginModel").getProperty("/EmployeeName"),
+                                    ReturnRequestDate: oData.ReturnRequestDate,
+                                    ReturnSlot: oData.ReturnSlot
 
-                    sap.m.MessageToast.show("Request Accepted");
+                                };
+                                this.getBusyDialog()
+                                await this.ajaxUpdateWithJQuery("IncomeAsset", {
+                                    filters: {
+                                        ID: sID
+                                    },
+                                    data: oPayload
+                                });
 
-                } catch (oError) {
+                                var oModel = this.getView().getModel("Returntilemodel");
+                                oModel.setProperty(sPath + "/Status", "Accepted");
+                                this.closeBusyDialog()
 
-                    sap.m.MessageBox.error("Failed to accept request");
-                    console.error(oError);
-                }
+                                sap.m.MessageToast.show("Request Accepted");
 
-            }.bind(this)
-        }
-    );
-},
-TileV_onpressGeneratePDF: function (){
+                            } catch (oError) {
+
+                                sap.m.MessageBox.error("Failed to accept request");
+                                console.error(oError);
+                            }
+
+                        }.bind(this)
+                    }
+                );
+            },
+            TileV_onpressGeneratePDF: function () {
                 this.getRouter().navTo("RouteGeneratePDF");
             },
 
+            onPressSendTimesheetReminder: function () {
+
+                this.TP_onupdatepress("ReminderTimeSheet");
+            },
+
+            _sendTimesheetReminderEmail: async function () {
+                var that = this;
+                var aEmployeeIDs = sap.ui.getCore().byId("RP_id_Activeuserid").getSelectedKeys();
+
+                var fnSendEmail = async function (EmployeeID) {
+                    try {
+                        that.getBusyDialog();
+                        var response = await that.ajaxCreateWithJQuery("SendTimesheetReminderEmail", {
+                            data: EmployeeID
+                        });
+
+                        sap.m.MessageToast.show(response.message || "Timesheet reminder email sent successfully.");
+                        that.closeBusyDialog();
+                        that.RP_onPressCanclePW();
+                    } catch (oError) {
+                        sap.m.MessageBox.error(oError.responseJSON?.message || "Failed to send the timesheet reminder email.");
+                        that.closeBusyDialog();
+                        that.RP_onPressCanclePW
+                    }
+                };
+
+                // No employee selected
+                if (aEmployeeIDs.length === 0) {
+
+                    sap.m.MessageBox.confirm(
+                        "No employees are selected.\n\nAre you sure you want to send the monthly timesheet reminder email to all active employees?",
+                        {
+                            title: "Confirmation",
+                            actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+                            emphasizedAction: sap.m.MessageBox.Action.YES,
+                            onClose: async function (sAction) {
+                                if (sAction === sap.m.MessageBox.Action.YES) {
+                                    await fnSendEmail("");
+                                }
+                            }
+                        }
+                    );
+
+                    return;
+                }
+
+                // Selected employees
+                var EmployeeID = aEmployeeIDs.join(",");
+                await fnSendEmail(EmployeeID);
+            }
 
         });
     });

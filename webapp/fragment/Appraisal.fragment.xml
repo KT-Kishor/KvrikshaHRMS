@@ -19,9 +19,7 @@
 							<f:content>
 								<!-- CTC Entry -->
 								<Label text="{i18n>ctcValue}" required="true" />
-								<Input value="{AppraisalModel>/CtcPercentage}" id="AF_id_CTC"
-									placeholder="{i18n>placeCtc}" change="EOD_validateAmount"
-									maxLength="15" valueStateText="{i18n>ctcAndVariblePay}" />
+								<Input value="{AppraisalModel>/CtcPercentage}" id="AF_id_CTC" placeholder="{i18n>placeCtc}" change="EOD_validateAmount" maxLength="15" valueStateText="{i18n>ctcAndVariblePay}" />
 								<!-- Type Selection -->
 								<Select forceSelection="false" selectedKey="1" id="ED_Frg_idAppraisalType" change="onSelectChange">
 									<core:Item key="0" text="{i18n>ctc}" />

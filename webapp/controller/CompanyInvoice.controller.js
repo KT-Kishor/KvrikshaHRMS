@@ -266,8 +266,9 @@ sap.ui.define(
               oSheet.destroy();
             });
 
+        },
+        onPressInvoiceDashboard:function(){
+          this.getRouter().navTo("RouteInvoiceDashboard");
         }
-      }
-    );
-  }
-);
+      });
+  });

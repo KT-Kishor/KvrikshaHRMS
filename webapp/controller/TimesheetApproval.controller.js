@@ -41,11 +41,15 @@ sap.ui.define([
             }), "DownloadTimesheetModel");
 
             const ManagerID = this.getView().getModel("LoginModel").getProperty("/EmployeeID");
+            this.sEmployeeName = this.getView().getModel("LoginModel").getProperty("/EmployeeName");
             this.branch = this.getView().getModel("LoginModel").getProperty("/BranchCode");
 
             await this.readTimesheetsForManager(ManagerID);
             await this._initializeCalendarAndLegend();
-
+ this.getView().setModel(
+        new JSONModel([]),
+        "TaskFilterModel"
+    );
             this.TSA_onClear(true); // Call clear but mark it as initial load
             this.byId("TSA_id_Status").setValue("Submitted"); // Set default status
             this._applyAllFilters(); // Apply the default filter
@@ -506,15 +510,20 @@ sap.ui.define([
             var sEmployeeId = oDownloadModel.getProperty("/SelectedEmployee");
             var sMonthKey = oDownloadModel.getProperty("/SelectedMonth");
             var sFormat = oDownloadModel.getProperty("/SelectedFormat");
-
+             var sTaskId = oDownloadModel.getProperty("/SelectedTask");
             if (!sEmployeeId) {
-                MessageBox.warning(this.i18nModel.getText("selectEmployeeWarning") || "Please select an Employee.");
+                MessageBox.warning("Please select an Employee");
                 return;
             }
+                if (!sTaskId) {
+    MessageBox.warning("Please select a Task");
+    return;
+}
             if (!sMonthKey) {
-                MessageBox.warning(this.i18nModel.getText("selectMonthWarning") || "Please select a Month.");
+                MessageBox.warning("Please select a Month");
                 return;
             }
+         
 
             var oDateRange = this._getMonthDateRange(sMonthKey);
 
@@ -527,20 +536,35 @@ sap.ui.define([
                 });
 
                 var aRecords = Array.isArray(oData.data) ? oData.data : (oData.data ? [oData.data] : []);
+            // Filter by Task
+if (sTaskId !== "ALL") {
+    aRecords = aRecords.filter(function (oItem) {
+        return oItem.TaskID === sTaskId;
+    });
+}
+
+// Exclude records with Save status from download
+aRecords = aRecords.filter(function (oItem) {
+    return oItem.Status &&
+        oItem.Status.toLowerCase() !== "saved";
+});
 
                 if (aRecords.length === 0) {
                     MessageBox.information("No timesheet data found for the selected Employee and Month.");
                     return;
                 }
 
+               
                 var aFlattenedRecords = this._flattenTimesheetData(aRecords);
+
+
 
                 if (sFormat === 0) {
                     this._exportToPDF(aFlattenedRecords, sEmployeeId, sMonthKey);
                 } else {
                     this._exportToExcel(aFlattenedRecords, sEmployeeId, sMonthKey);
                 }
-
+oDownloadModel.setProperty("/SelectedTask", "");
                 this._oDownloadDialog.close();
 
             } catch (error) {
@@ -567,7 +591,8 @@ sap.ui.define([
                     EmployeeID: oRec.EmployeeID,
                     EmployeeName: oRec.EmployeeName,
                     TaskName: oRec.TaskName,
-                    Date: oRec.Date ? new Date(oRec.Date).toLocaleDateString() : "",
+                    // Date: oRec.Date ? new Date(oRec.Date).toLocaleDateString() : "",
+                    Date: oRec.Date || "",
                     Day: oRec.Day,
                     HoursWorked: oRec.HoursWorked,
                     Status: oRec.Status,
@@ -579,45 +604,160 @@ sap.ui.define([
             });
         },
 
-        _exportToExcel: function (aData, sEmployeeId, sMonthKey) {
-            var aCols = [
-                { label: "Employee ID", property: "EmployeeID", type: "String" },
-                { label: "Employee Name", property: "EmployeeName", type: "String" },
-                { label: "Task", property: "TaskName", type: "String" },
-                { label: "Date", property: "Date", type: "String" },
-                { label: "Day", property: "Day", type: "String" },
-                { label: "Hours Worked", property: "HoursWorked", type: "Number" },
-                { label: "Status", property: "Status", type: "String" },
-                { label: "Manager", property: "ManagerName", type: "String" },
-                // { label: "Employee Comments", property: "EmployeeComments", type: "String" },
-                // { label: "Manager Comments", property: "ManagerComments", type: "String" },
-                // { label: "All Comments", property: "AllComments", type: "String" }
-            ];
+      _exportToExcel: async function (aData, sEmployeeId, sMonthKey) {
 
-            var oSettings = {
-                workbook: {
-                    columns: aCols,
-                    context: { sheetName: "Timesheet" }
-                },
-                dataSource: aData,
-                fileName: "Timesheet_" + sEmployeeId + "_" + sMonthKey + ".xlsx"
+    // Sort by Date
+    aData.sort(function (a, b) {
+        return new Date(a.Date) - new Date(b.Date);
+    });
+
+    // Group by Date
+    const oGrouped = {};
+
+    aData.forEach(function (oItem) {
+
+        const sDate = sap.ui.core.format.DateFormat.getDateInstance({
+            pattern: "dd-MMM-yyyy"
+        }).format(new Date(oItem.Date));
+
+        if (!oGrouped[sDate]) {
+            oGrouped[sDate] = [];
+        }
+
+        // Clean Comments
+        var sComments = (oItem.AllComments || "")
+            .split("|")
+            .map(function (comment) {
+                return comment
+                    .replace(/^\[[^\]]+\]\s*[^:]+:\s*/, "")
+                    .trim();
+            })
+            .filter(function (comment) {
+                return comment !== "";
+            })
+            .filter(function (comment, index, array) {
+                return array.indexOf(comment) === index;
+            })
+            .join("\n");
+
+        oGrouped[sDate].push({
+            Date: sDate,
+            EmployeeID: oItem.EmployeeID,
+            EmployeeName: oItem.EmployeeName,
+            TaskName: oItem.TaskName,
+            Day: oItem.Day,
+            HoursWorked: oItem.HoursWorked,
+            Status: oItem.Status,
+            ManagerName: oItem.ManagerName,
+            AllComments: sComments
+        });
+
+    });
+
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Timesheet");
+
+    sheet.columns = [
+        { header: "Employee ID", key: "EmployeeID", width: 15 },
+        { header: "Employee Name", key: "EmployeeName", width: 25 },
+        { header: "Date", key: "Date", width: 18 },
+        { header: "Task", key: "TaskName", width: 30 },
+        { header: "Hours Worked", key: "HoursWorked", width: 15 },
+        { header: "Status", key: "Status", width: 15 },
+        { header: "Approval Manager", key: "ManagerName", width: 25 },
+        { header: "All Comments", key: "AllComments", width: 50 }
+    ];
+
+    // Header Style
+    sheet.getRow(1).font = {
+        bold: true
+    };
+
+    sheet.getRow(1).alignment = {
+        vertical: "middle",
+        horizontal: "center"
+    };
+
+    let currentRow = 2;
+
+    Object.keys(oGrouped).forEach(function (sDate) {
+
+        const aRows = oGrouped[sDate];
+        const startRow = currentRow;
+
+        aRows.forEach(function (oRow) {
+
+            sheet.addRow({
+                EmployeeID: oRow.EmployeeID,
+                EmployeeName: oRow.EmployeeName,
+                Date: oRow.Date,
+                TaskName: oRow.TaskName,
+                HoursWorked: oRow.HoursWorked,
+                Status: oRow.Status,
+                ManagerName: oRow.ManagerName,
+                AllComments: oRow.AllComments
+            });
+
+            currentRow++;
+
+        });
+
+        const endRow = currentRow - 1;
+
+        // Merge Date Column
+      // Merge Date Column (Column C)
+if (endRow > startRow) {
+    sheet.mergeCells(`C${startRow}:C${endRow}`);
+}
+
+sheet.getCell(`C${startRow}`).alignment = {
+    vertical: "middle",
+    horizontal: "center"
+};
+
+    });
+
+    // Apply Border & Alignment
+    sheet.eachRow(function (row) {
+
+        row.eachCell(function (cell) {
+
+            cell.border = {
+                top: { style: "thin" },
+                left: { style: "thin" },
+                bottom: { style: "thin" },
+                right: { style: "thin" }
             };
 
-            sap.ui.require(["sap/ui/export/Spreadsheet"], function (Spreadsheet) {
-                var oSheet = new Spreadsheet(oSettings);
-                oSheet.build()
-                    .then(function () {
-                        MessageToast.show("Excel file downloaded successfully.");
-                    })
-                    .catch(function (oError) {
-                        MessageBox.error("Excel export failed.");
-                        console.error(oError);
-                    })
-                    .finally(function () {
-                        oSheet.destroy();
-                    });
-            });
-        },
+            cell.alignment = {
+                vertical: "middle",
+                horizontal: "center",
+                wrapText: true
+            };
+
+        });
+
+    });
+
+    // Download
+    const buffer = await workbook.xlsx.writeBuffer();
+
+    const blob = new Blob([buffer], {
+        type: "application/octet-stream"
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Timesheet_" + sEmployeeId + "_" + sMonthKey + ".xlsx";
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+    sap.m.MessageToast.show("Excel file downloaded successfully.");
+
+},
 
         _exportToPDF: function (aData, sEmployeeId, sMonthKey) {
             // Requires pdfmake to be loaded (via CDN script tags in index.html):
@@ -668,11 +808,45 @@ sap.ui.define([
             };
 
             window.pdfMake.createPdf(oDocDefinition).download(
-                "Timesheet_" + sEmployeeId + "_" + sMonthKey + ".pdf"
+                "Timesheet_" + this.sEmployeeName + "_" + sMonthKey + ".pdf"
             );
 
             MessageToast.show("PDF file downloaded successfully.");
+        },
+        onEmployeeChange: function (oEvent) {
+
+    var sEmployeeID = oEvent.getSource().getSelectedKey();
+
+    // Clear previously selected task
+    this.getView().getModel("DownloadTimesheetModel")
+        .setProperty("/SelectedTask", "");
+
+    var aTasks = this._fullApprovalData.filter(function (oItem) {
+        return oItem.EmployeeID === sEmployeeID;
+    });
+
+    // Remove duplicate tasks
+    var oTaskMap = {};
+    var aUniqueTasks = [];
+
+    aTasks.forEach(function (oItem) {
+        if (!oTaskMap[oItem.TaskID]) {
+            oTaskMap[oItem.TaskID] = true;
+            aUniqueTasks.push({
+                TaskID: oItem.TaskID,
+                TaskName: oItem.TaskName
+            });
         }
+    });
+
+    // Optional: Add "All" at the top
+    aUniqueTasks.unshift({
+        TaskID: "ALL",
+        TaskName: "All"
+    });
+
+    this.getView().getModel("TaskFilterModel").setData(aUniqueTasks);
+}
 
     });
 });

@@ -7,7 +7,7 @@
 >
      <Dialog
     id="FPL_id_PolicyDialog"
-    title="{= ${policyDialogModel>/isEdit} ? ${i18n>updatePolicy} : ${i18n>createPolicy} }"
+    title="{= ${policyDialogModel>/isEdit} ? ${i18n>updatePolicy} : ${i18n>createPolicyTitle} }"
    contentWidth="{= ${device>/system/phone} ? '100%' : '70%' }"
 
 stretch="{device>/system/phone}"
@@ -231,7 +231,7 @@ resizable="{= !${device>/system/phone} }"
                             width="{= ${device>/system/phone} ? '100%' : '48%' }"
                             class="sapUiTinyMarginBottom"
                         >
-                            <Label text="{i18n>uploadedDate}" />
+                            <Label text="{i18n>createdDate}" />
                             <DatePicker
                                 id="PL_id_UploadDate"
                                 width="100%"

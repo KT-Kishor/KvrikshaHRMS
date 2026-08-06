@@ -55,7 +55,7 @@
                         id="PL_id_NewVersionFile"
                         width="100%"
                         placeholder="{i18n>chooseFile}"
-                        buttonText="{i18n>browse}"
+                        buttonText="{i18n>Browse}"
                         sameFilenameAllowed="true"
                         fileType="pdf"
                         change="PL_onVersionFileUpload"

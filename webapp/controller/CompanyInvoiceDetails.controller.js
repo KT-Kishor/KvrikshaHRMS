@@ -51,7 +51,7 @@ sap.ui.define([
                     if (this.getView().getModel("CompanyInvoiceModel").getData().length === 0) {
                         var LastInvoiceDate = new Date()
                     } else {
-                        var LastInvoiceDate = new Date(this.getView().getModel("CompanyInvoiceModel").getData()[0].InvoiceDate)
+                        var LastInvoiceDate = new Date(this.getView().getModel("CompanyInvoiceModel")?.getData()[0]?.InvoiceDate || new Date())
                     }
                 }
                 oView.setModel(new JSONModel({
