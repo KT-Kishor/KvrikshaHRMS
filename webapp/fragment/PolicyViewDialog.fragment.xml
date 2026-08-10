@@ -374,6 +374,7 @@
                     selected="{policyViewModel>/acknowledged}"
                     select="onAcknowledgeCheck"
                     visible="{= ${policyViewModel>/alreadyAcknowledged} === false }"
+                    class="sapUiSmallMarginEnd"
                 />
                 <ToolbarSpacer />
                   <Button
@@ -382,7 +383,9 @@
             tooltip="{= ${VisibleModel>/EditBtn} === true ? ${i18n>editPolicyDetails} : ${i18n>savePolicyDetails} }"
             press="PL_onPressEditAndSave"
             visible="{= ${visibilityModel>/showAdminControls} === true }"
+            
         />
+         <ToolbarSpacer width="0.6rem" />
                 <Button
                     id="PL_id_AcknowledgeBtn"
                     text="{i18n>acknowledge}"

@@ -5167,3 +5167,56 @@ color: #fff !important;
     font-family: inherit;
     line-height: 1.4;
 }
+
+
+@media only screen and (max-width: 600px) {
+
+    .GPDMobileFooter {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 1rem !important;
+    }
+
+    .GPDMobileFooter .sapMTBSpacer {
+        display: none !important;
+    }
+
+    .GPDMobileFooter .sapMBtn {
+        flex: 1 1 0 !important;
+        min-width: 0 !important;
+        width: 50% !important;
+        margin: 0 0.25rem !important;
+    }
+
+    .GPDMobileFooter .sapMBtnInner {
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .GPGeneratePDFDialog .sapMDialogFooter {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .GPDMobileFooter {
+        display: flex !important;
+        visibility: visible !important;
+        overflow: visible !important;
+    }
+     .GPGeneratePDFDialog .sapMDialogScrollCont {
+        padding-left: 0.75rem !important;
+    }
+
+    .GPGeneratePDFDialog .sapUiRespGrid {
+        padding-left: 0.75rem !important;
+        margin-top: 1rem !important;
+    }
+    .GPGeneratePDFDialog .sapMLabel,
+    .GPGeneratePDFDialog .sapMInputBase,
+    .GPGeneratePDFDialog .sapMTextArea,
+    .GPGeneratePDFDialog .sapUiRTE {
+        margin-left: 0.1rem !important;
+    }
+}
+

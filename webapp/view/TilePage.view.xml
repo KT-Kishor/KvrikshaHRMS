@@ -1071,6 +1071,7 @@
                         />
                     </contentLeft>
                     <contentRight>
+                    
                     <Button
                         id="idSendTimesheetReminder"
                         text="Send Timesheet Reminder"

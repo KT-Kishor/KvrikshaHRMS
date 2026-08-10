@@ -1,10 +1,10 @@
 sap.ui.define(
-    ["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/Fragment", "sap/m/MessageBox", "sap/m/MessageToast", "../utils/validation", "../model/formatter",],
-    function (BaseController, JSONModel, Fragment, MessageBox, MessageToast, Validation, formatter) {
+    ["./BaseController", "sap/ui/model/json/JSONModel", "sap/ui/core/Fragment", "sap/m/MessageBox", "sap/m/MessageToast", "../utils/validation", "../model/formatter", ],
+    function(BaseController, JSONModel, Fragment, MessageBox, MessageToast, Validation, formatter) {
         "use strict";
         return BaseController.extend("sap.kt.com.minihrsolution.controller.Policy", {
             Formatter: formatter,
-            onInit: function () {
+            onInit: function() {
                 this.getRouter().getRoute("RoutePolicy").attachMatched(this.PL_onRouteMatched, this);
                 this._employeeCache = null;
                 this._employeePromise = null;
@@ -27,7 +27,7 @@ sap.ui.define(
                     showAdminControls: bShowAdminControls
                 }), "visibilityModel");
             },
-            _applyStartDateStyle: function () {
+            _applyStartDateStyle: function() {
                 const oView = this.getView();
                 if (!oView) return;
                 const oModel = oView.getModel("VisibleModel");
@@ -44,7 +44,7 @@ sap.ui.define(
                     oText.addStyleClass("sapUiTinyMarginTop");
                 }
             },
-            _getEmployeeDetails: async function () {
+            _getEmployeeDetails: async function() {
                 if (this._employeeCache) {
                     return this._employeeCache;
                 }
@@ -81,7 +81,7 @@ sap.ui.define(
                 });
                 return this._employeePromise;
             },
-            PL_loadRoleDepartment: async function () {
+            PL_loadRoleDepartment: async function() {
                 const oView = this.getView();
                 const oLoginModel = oView.getModel("LoginModel");
                 const sEmpId = oLoginModel.getProperty("/EmployeeID");
@@ -90,7 +90,7 @@ sap.ui.define(
                 });
                 let aData = [];
                 if (oResponse && oResponse.success) {
-                    aData = oResponse.data.map(function (item) {
+                    aData = oResponse.data.map(function(item) {
                         return {
                             department: item.Department || "",
                             // NEW FIELD
@@ -103,7 +103,7 @@ sap.ui.define(
                 this.getView().setModel(new JSONModel(aData), "DesignationModel");
                 const oDepartmentMap = {};
                 const aDepartments = [];
-                aData.forEach(function (oItem) {
+                aData.forEach(function(oItem) {
                     const sDepartment = (oItem.department || "").trim();
                     if (sDepartment && !oDepartmentMap[sDepartment.toLowerCase()]) {
                         oDepartmentMap[sDepartment.toLowerCase()] = true;
@@ -115,7 +115,7 @@ sap.ui.define(
                 this.getView().setModel(new JSONModel(aDepartments), "DepartmentModel");
                 const oRoleMap = {};
                 const aRoles = [];
-                aData.forEach(function (oItem) {
+                aData.forEach(function(oItem) {
                     const sRole = (oItem.role || "").trim();
                     const sDepartment = (oItem.department || "").trim();
                     const sKey = sDepartment.toLowerCase() + "_" + sRole.toLowerCase();
@@ -134,11 +134,11 @@ sap.ui.define(
                 this.getView().setModel(new JSONModel([]), "FilteredRoleModel");
             },
             // POLICY VISIBILITY FILTER
-            PL_filterPoliciesByAccess: async function (aPolicies) {
+            PL_filterPoliciesByAccess: async function(aPolicies) {
                 const oEmp = await this._getEmployeeDetails();
                 const sEmployeeDepartment = (oEmp.department || "").toLowerCase().trim();
                 const sEmployeeRole = (oEmp.role || "").toLowerCase().trim();
-                const aFilteredPolicies = aPolicies.filter(function (oPolicy, iIndex) {
+                const aFilteredPolicies = aPolicies.filter(function(oPolicy, iIndex) {
                     const sPolicyDepartment = (oPolicy.Department || oPolicy.department || "").toLowerCase().trim();
                     const aPolicyRoles = (oPolicy.Role || oPolicy.role || "").toLowerCase().split(",").map(r => r.trim());
                     // ADMIN / HR MANAGER
@@ -166,7 +166,7 @@ sap.ui.define(
                 return aFilteredPolicies;
             },
             // ROUTE MATCHED
-            PL_onRouteMatched: async function () {
+            PL_onRouteMatched: async function() {
                 try {
                     this._employeeCache = null;
                     this._employeePromise = null;
@@ -213,7 +213,7 @@ sap.ui.define(
                     MessageBox.error(oError.message || "Failed to load policies");
                 }
             },
-            PL_applyFilter: function (sDepartment, sRole) {
+            PL_applyFilter: function(sDepartment, sRole) {
                 const oTable = this.byId("PL_id_PolicyTable");
                 const oBinding = oTable.getBinding("items");
                 let aFilters = [];
@@ -225,7 +225,7 @@ sap.ui.define(
                 }
                 oBinding.filter(aFilters);
             },
-            PL_onOpenDownloadReport: async function () {
+            PL_onOpenDownloadReport: async function() {
                 if (!this._oDownloadReportDialog) {
                     this._oDownloadReportDialog = await Fragment.load({
                         id: this.getView().getId(),
@@ -245,7 +245,7 @@ sap.ui.define(
                 }), "reportModel");
                 this._oDownloadReportDialog.open();
             },
-            PL_onReportPolicyChange: async function (oEvent) {
+            PL_onReportPolicyChange: async function(oEvent) {
                 const oSelect = oEvent.getSource();
                 const sPolicyId = oSelect.getSelectedKey();
                 const oReportModel = this.getView().getModel("reportModel");
@@ -273,7 +273,7 @@ sap.ui.define(
                         aVersions = [oResponse.data];
                     }
                     // Sort latest version first
-                    aVersions.sort(function (a, b) {
+                    aVersions.sort(function(a, b) {
                         return parseFloat(b.Version || 0) - parseFloat(a.Version || 0);
                     });
                     oReportModel.setProperty("/versions", aVersions);
@@ -284,8 +284,8 @@ sap.ui.define(
                     this.closeBusyDialog();
                 }
             },
-                // DOWNLOAD AS EXCEL
-            PL_onDownloadReportExcel: async function () {
+            // DOWNLOAD AS EXCEL
+            PL_onDownloadReportExcel: async function() {
                 if (!this.byId("PL_id_ReportPolicyTitle").getSelectedKey()) {
                     MessageBox.error(this.i18nModel.getText("selectPolicy"));
                     return;
@@ -350,8 +350,8 @@ sap.ui.define(
                         console.error("Employee load failed", e);
                     }
                     // Create Excel Rows
-                    aExportData.forEach(function (oItem) {
-                        const aIds = (oItem.EmployeeID || "").toString().split(",").map(function (id) {
+                    aExportData.forEach(function(oItem) {
+                        const aIds = (oItem.EmployeeID || "").toString().split(",").map(function(id) {
                             return id.trim();
                         }).filter(Boolean);
                         // No acknowledgement
@@ -369,8 +369,8 @@ sap.ui.define(
                             return;
                         }
                         // One row per employee
-                        aIds.forEach(function (sEmpId) {
-                            const oEmployee = aEmployees.find(function (emp) {
+                        aIds.forEach(function(sEmpId) {
+                            const oEmployee = aEmployees.find(function(emp) {
                                 return String(emp.EmployeeID).trim() === sEmpId;
                             });
                             oWorksheet.addRow({
@@ -389,8 +389,8 @@ sap.ui.define(
                     const aBuffer = await oWorkbook.xlsx.writeBuffer();
                     const oBlob = new Blob(
                         [aBuffer], {
-                        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    });
+                            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        });
                     const sBlobUrl = URL.createObjectURL(oBlob);
                     const oLink = document.createElement("a");
                     oLink.href = sBlobUrl;
@@ -398,7 +398,7 @@ sap.ui.define(
                     document.body.appendChild(oLink);
                     oLink.click();
                     document.body.removeChild(oLink);
-                    setTimeout(function () {
+                    setTimeout(function() {
                         URL.revokeObjectURL(sBlobUrl);
                     }, 3000);
                 } catch (e) {
@@ -408,7 +408,7 @@ sap.ui.define(
                     this.closeBusyDialog();
                 }
             },
-            PL_onCloseDownloadReport: function () {
+            PL_onCloseDownloadReport: function() {
                 this.byId("PL_id_ReportPolicyTitle").setSelectedKey("");
                 this.byId("PL_id_ReportVersion").setSelectedKey("");
                 if (this._oDownloadReportDialog) {
@@ -416,12 +416,12 @@ sap.ui.define(
                 }
             },
             // LOAD POLICIES
-            PL_loadPolicies: async function (aFilters = []) {
+            PL_loadPolicies: async function(aFilters = []) {
                 try {
                     const oResponse = await this.ajaxReadWithJQuery("Policy", aFilters && aFilters.length ? aFilters[0] : {});
                     let aPolicies = [];
                     if (oResponse && oResponse.success && oResponse.data) {
-                        aPolicies = oResponse.data.map(function (oItem, index) {
+                        aPolicies = oResponse.data.map(function(oItem, index) {
                             // IMAGE 
                             let sImageUrl = "sap-icon://person-placeholder";
                             if (oItem.Logo) {
@@ -438,7 +438,7 @@ sap.ui.define(
                             // Remove time part
                             today.setHours(0, 0, 0, 0);
                             // ACTIVE VERSION 
-                            let aActiveVersions = aItems.filter(function (v) {
+                            let aActiveVersions = aItems.filter(function(v) {
                                 if (!v.Start_Date) {
                                     return false;
                                 }
@@ -458,7 +458,7 @@ sap.ui.define(
                             let oLatest = null;
                             // Active version exists
                             if (aActiveVersions.length > 0) {
-                                oLatest = aActiveVersions.reduce(function (max, item) {
+                                oLatest = aActiveVersions.reduce(function(max, item) {
                                     return parseFloat(item.Version || 0) > parseFloat(max.Version || 0) ? item : max;
                                 });
                             }
@@ -466,7 +466,7 @@ sap.ui.define(
                             // No active version
                             else if (aItems.length > 0) {
                                 // Future versions only
-                                const aFutureVersions = aItems.filter(function (v) {
+                                const aFutureVersions = aItems.filter(function(v) {
                                     if (!v.Start_Date) {
                                         return false;
                                     }
@@ -476,7 +476,7 @@ sap.ui.define(
                                 });
                                 // If all versions are future dated
                                 if (aFutureVersions.length === aItems.length) {
-                                    oLatest = aFutureVersions.reduce(function (nearest, current) {
+                                    oLatest = aFutureVersions.reduce(function(nearest, current) {
                                         const nearestDate = new Date(nearest.Start_Date);
                                         nearestDate.setHours(0, 0, 0, 0);
                                         const currentDate = new Date(current.Start_Date);
@@ -484,7 +484,7 @@ sap.ui.define(
                                         return currentDate < nearestDate ? current : nearest;
                                     });
                                 } else {
-                                    oLatest = aItems.reduce(function (max, item) {
+                                    oLatest = aItems.reduce(function(max, item) {
                                         return parseFloat(item.Version || 0) > parseFloat(max.Version || 0) ? item : max;
                                     });
                                 }
@@ -518,7 +518,7 @@ sap.ui.define(
                     MessageBox.error("Failed to load policies");
                 }
             },
-            _getLatestVersionStartDate: function (aItems) {
+            _getLatestVersionStartDate: function(aItems) {
                 if (!Array.isArray(aItems) || aItems.length === 0) {
                     return null;
                 }
@@ -529,7 +529,7 @@ sap.ui.define(
                 });
                 return oLatest.Start_Date ? new Date(oLatest.Start_Date) : null;
             },
-            _getActivePolicyVersion: function (aItems) {
+            _getActivePolicyVersion: function(aItems) {
                 const today = new Date();
                 let oActive = aItems.find(v => {
                     const dStart = v.Start_Date ? new Date(v.Start_Date) : null;
@@ -557,7 +557,7 @@ sap.ui.define(
                 return oActive || {};
             },
             // FILTER ROLE BASED ON DEPARTMENT
-            PL_onDepartmentChange: function (oEvent) {
+            PL_onDepartmentChange: function(oEvent) {
                 var oCombo = oEvent.getSource();
                 var sDepartment = oCombo.getSelectedKey() || oCombo.getValue();
                 if (sDepartment) {
@@ -577,12 +577,12 @@ sap.ui.define(
                     return;
                 }
                 // FILTER ROLES FOR SELECTED DEPARTMENT
-                var aFilteredRoles = aData.filter(function (oItem) {
+                var aFilteredRoles = aData.filter(function(oItem) {
                     return (oItem.department || "").trim().toLowerCase() === (sDepartment || "").trim().toLowerCase();
                 });
                 var oUnique = {};
                 var aUniqueRoles = [];
-                aFilteredRoles.forEach(function (oItem) {
+                aFilteredRoles.forEach(function(oItem) {
                     var sRole = (oItem.designationName || "").trim();
                     if (sRole && !oUnique[sRole]) {
                         oUnique[sRole] = true;
@@ -618,7 +618,7 @@ sap.ui.define(
                     oDialogModel.setProperty("/role", []);
                 }
             },
-            PL_onRemovePdf: function () {
+            PL_onRemovePdf: function() {
                 const oModel = this.getView().getModel("policyDialogModel");
                 oModel.setProperty("/File_Content", "");
                 oModel.setProperty("/File_Name", "");
@@ -627,7 +627,7 @@ sap.ui.define(
                 // Optional: reset value state
                 this.byId("PL_id_FileUploader").setValueState("None");
             },
-            PL_onRemoveLogo: function () {
+            PL_onRemoveLogo: function() {
                 const oModel = this.getView().getModel("policyDialogModel");
                 oModel.setProperty("/logoBase64", "");
                 oModel.setProperty("/logoType", "");
@@ -635,7 +635,7 @@ sap.ui.define(
                 oModel.setProperty("/Logo_Name", "");
                 this.byId("PL_id_LogoUploader").clear();
             },
-            PL_onFileUpload: function (oEvent) {
+            PL_onFileUpload: function(oEvent) {
                 const oFile = oEvent.getParameter("files")[0];
                 if (!oFile) {
                     return; // User clicked Cancel -> keep existing file
@@ -658,7 +658,7 @@ sap.ui.define(
                 }
                 // READ FILE
                 const oReader = new FileReader();
-                oReader.onload = function (e) {
+                oReader.onload = function(e) {
                     const base64 = e.target.result.split(",")[1];
                     const compressedBase64 = this.compressBase64(base64);
                     const oModel = this.getView().getModel("policyDialogModel");
@@ -668,7 +668,7 @@ sap.ui.define(
                 }.bind(this);
                 oReader.readAsDataURL(oFile);
             },
-            __openVersionDialog: async function (oData) {
+            __openVersionDialog: async function(oData) {
                 let sNextVersion = "1.0";
                 try {
                     const oResponse = await this.ajaxReadWithJQuery("PolicyImage", {
@@ -684,7 +684,7 @@ sap.ui.define(
                     }
                     if (aVersions.length > 0) {
                         let fMaxVersion = 0;
-                        aVersions.forEach(function (oItem) {
+                        aVersions.forEach(function(oItem) {
                             const fVersion = parseFloat(oItem.Version);
                             if (!isNaN(fVersion) && fVersion > fMaxVersion) {
                                 fMaxVersion = fVersion;
@@ -710,7 +710,7 @@ sap.ui.define(
                 this._oVersionDialog.open();
             },
             // version
-            PL_onNewVersion: async function (oEvent) {
+            PL_onNewVersion: async function(oEvent) {
                 this.getBusyDialog();
                 const oContext = oEvent.getSource().getBindingContext("policyModel");
                 const oData = oContext.getObject();
@@ -733,7 +733,7 @@ sap.ui.define(
                         // find highest version number
                         let fMaxVersion = 0;
                         let oLatestItem = null;
-                        aVersions.forEach(function (oItem) {
+                        aVersions.forEach(function(oItem) {
                             const fVersion = parseFloat(oItem.Version);
                             if (!isNaN(fVersion) && fVersion > fMaxVersion) {
                                 fMaxVersion = fVersion;
@@ -796,17 +796,17 @@ sap.ui.define(
                     }
                 }, 100);
             },
-            _getNextVersion: function (sVersion) {
+            _getNextVersion: function(sVersion) {
                 if (!sVersion) {
                     return "1.0";
                 }
                 const fVersion = parseFloat(sVersion);
                 return (Math.round((fVersion + 0.1) * 10) / 10).toFixed(1);
             },
-            FileSizeExceeds: function () {
+            FileSizeExceeds: function() {
                 MessageBox.error(this.i18nModel.getText("fileSizeExceeded") || "File size exceeds the limit of 5MB. Please upload a smaller file.");
             },
-            PL_onVersionFileUpload: function (oEvent) {
+            PL_onVersionFileUpload: function(oEvent) {
                 const oFile = oEvent.getParameter("files")[0];
                 const oModel = this.getView().getModel("policyDialogModel");
                 if (!oFile) {
@@ -821,7 +821,7 @@ sap.ui.define(
                     return;
                 }
                 const oReader = new FileReader();
-                oReader.onload = function (e) {
+                oReader.onload = function(e) {
                     const base64 = e.target.result.split(",")[1];
                     const compressedBase64 = this.compressBase64(base64);
                     oModel.setProperty("/Version_File_Content", compressedBase64);
@@ -830,7 +830,7 @@ sap.ui.define(
                 }.bind(this);
                 oReader.readAsDataURL(oFile);
             },
-            PL_onRemoveVersionPdf: function () {
+            PL_onRemoveVersionPdf: function() {
                 const oModel = this.getView().getModel("policyDialogModel");
                 // Clear model
                 oModel.setProperty("/Version_File_Content", "");
@@ -839,7 +839,7 @@ sap.ui.define(
                 sap.ui.getCore().byId("PL_id_NewVersionFile").setValue("");
                 sap.ui.getCore().byId("PL_id_NewVersionFile").setValueState("None");
             },
-            PL_onSaveNewVersion: async function () {
+            PL_onSaveNewVersion: async function() {
                 const oModel = this.getView().getModel("policyDialogModel");
                 const oData = oModel.getData();
                 const sPolicyId = oData.Parent_Policy_ID;
@@ -890,7 +890,7 @@ sap.ui.define(
                     return;
                 }
                 // SAFE DATE FORMAT 
-                const formatDate = function (d) {
+                const formatDate = function(d) {
                     if (!d) return null;
                     const dt = new Date(d);
                     if (isNaN(dt.getTime())) return null;
@@ -921,7 +921,7 @@ sap.ui.define(
                     this.closeBusyDialog();
                 }
             },
-            PL_onViewVersion: async function (oEvent) {
+            PL_onViewVersion: async function(oEvent) {
                 try {
                     this.getBusyDialog();
                     const oContext = oEvent.getSource().getBindingContext("policyModel");
@@ -973,12 +973,12 @@ sap.ui.define(
                     this.closeBusyDialog();
                 }
             },
-            onCloseVersionHistory: function () {
+            onCloseVersionHistory: function() {
                 if (this._oVersionHistoryDialog) {
                     this._oVersionHistoryDialog.close();
                 }
             },
-            onDownloadVersionPdf: function (oEvent) {
+            onDownloadVersionPdf: function(oEvent) {
                 const oData = oEvent.getSource().getBindingContext("versionModel").getObject();
                 if (!oData.File_Content) {
                     MessageBox.error(this.i18nModel.getText("noPdfFound"));
@@ -1014,7 +1014,7 @@ sap.ui.define(
                     oLink.click();
                     document.body.removeChild(oLink);
                     // 6. Release memory
-                    setTimeout(function () {
+                    setTimeout(function() {
                         URL.revokeObjectURL(sBlobUrl);
                     }, 3000);
                 } catch (e) {
@@ -1022,7 +1022,7 @@ sap.ui.define(
                     MessageBox.error("Failed to download PDF. The file may be corrupted.");
                 }
             },
-            _createBlobUrlFromBase64: function (sBase64, sMimeType) {
+            _createBlobUrlFromBase64: function(sBase64, sMimeType) {
                 try {
                     sBase64 = sBase64.replace(/^data:.*;base64,/, "").replace(/\s/g, "");
                     // Decompress if needed
@@ -1043,7 +1043,7 @@ sap.ui.define(
                     return null;
                 }
             },
-            PL_onCancelNewVersion: function () {
+            PL_onCancelNewVersion: function() {
                 // CLEAR FILE UPLOADER
                 const oUploader = sap.ui.getCore().byId("PL_id_NewVersionFile");
                 if (oUploader) {
@@ -1068,7 +1068,7 @@ sap.ui.define(
                 this.getView().setModel(new JSONModel({}), "policyDialogModel");
             },
             // CREATE
-            PL_onCreatePress: function () {
+            PL_onCreatePress: function() {
                 const oToday = sap.ui.core.format.DateFormat.getDateInstance({
                     pattern: "dd/MM/yyyy"
                 }).format(new Date());
@@ -1097,7 +1097,7 @@ sap.ui.define(
                 this.PL_openDialog();
             },
             // OPEN DIALOG
-            PL_openDialog: function () {
+            PL_openDialog: function() {
                 if (this.FPL_oDialog) {
                     this.FPL_oDialog.open();
                     return;
@@ -1108,7 +1108,7 @@ sap.ui.define(
                     id: this.getView().getId(),
                     name: "sap.kt.com.minihrsolution.fragment.PolicyDialog",
                     controller: this
-                }).then(function (oDialog) {
+                }).then(function(oDialog) {
                     this.FPL_oDialog = oDialog;
                     this.getView().addDependent(oDialog);
                     this._bPolicyDialogLoading = false;
@@ -1125,13 +1125,13 @@ sap.ui.define(
                         this.getView().createId("PL_id_StartDate"),
                         this.getView().createId("PL_id_UploadDate")
                     ]);
-                }.bind(this)).catch(function (oError) {
+                }.bind(this)).catch(function(oError) {
                     this._bPolicyDialogLoading = false;
                 }.bind(this));
             },
             // live validation
             // REMOVE ERROR FOR INPUT
-            PL_onLiveChangeValidation: function (oEvent) {
+            PL_onLiveChangeValidation: function(oEvent) {
                 var oField = oEvent.getSource();
                 var sValue = oField.getValue().trim();
                 if (sValue) {
@@ -1140,7 +1140,7 @@ sap.ui.define(
                 }
             },
             // REMOVE ERROR FOR SELECT
-            PL_onSelectionChangeValidation: function (oEvent) {
+            PL_onSelectionChangeValidation: function(oEvent) {
                 var oField = oEvent.getSource();
                 var sValue;
                 if (oField.isA("sap.m.MultiComboBox")) {
@@ -1155,7 +1155,7 @@ sap.ui.define(
                     oField.setValueStateText("");
                 }
             },
-            _getFinancialYearRange: function () {
+            _getFinancialYearRange: function() {
                 const today = new Date();
                 const year = today.getMonth() >= 3 ? today.getFullYear() : today.getFullYear() - 1;
                 const startDate = new Date(year, 3, 1); // April 1
@@ -1166,7 +1166,7 @@ sap.ui.define(
                 };
             },
             // REMOVE ERROR FOR DATE
-            PL_onDateValidation: function (oEvent) {
+            PL_onDateValidation: function(oEvent) {
                 var oField = oEvent.getSource();
                 var sValue = oField.getValue().trim();
                 const oDate = oEvent.getSource().getDateValue();
@@ -1201,16 +1201,16 @@ sap.ui.define(
                 }
             },
             // SAVE
-            PL_onSavePolicy: async function () {
+            PL_onSavePolicy: async function() {
                 try {
                     // TITLE VALIDATION
-                    if (!Validation._LCvalidateMandatoryField(this.byId("PL_id_Title"), "ID",)) {
+                    if (!Validation._LCvalidateMandatoryField(this.byId("PL_id_Title"), "ID", )) {
                         this.byId("PL_id_Title").setValueState("Error");
                         this.byId("PL_id_Title").setValueStateText("Policy title is required");
                         return;
                     }
                     // DESCRIPTION VALIDATION
-                    if (!Validation._LCvalidateMandatoryField(this.byId("PL_id_Description"), "ID",)) {
+                    if (!Validation._LCvalidateMandatoryField(this.byId("PL_id_Description"), "ID", )) {
                         this.byId("PL_id_Description").setValueState("Error");
                         this.byId("PL_id_Description").setValueStateText("Please enter policy description");
                         return;
@@ -1281,10 +1281,10 @@ sap.ui.define(
                     // BUSY DIALOG
                     this.getBusyDialog();
                     // CLEAR FILE UPLOADERS
-                    var aUploaders = this.getView().findAggregatedObjects(true, function (oControl) {
+                    var aUploaders = this.getView().findAggregatedObjects(true, function(oControl) {
                         return oControl.isA("sap.ui.unified.FileUploader");
                     });
-                    aUploaders.forEach(function (oUploader) {
+                    aUploaders.forEach(function(oUploader) {
                         oUploader.clear();
                     });
                     // UPDATE / CREATE
@@ -1388,7 +1388,7 @@ sap.ui.define(
                 }
             },
             // CANCEL
-            PL_onCancelPolicy: function () {
+            PL_onCancelPolicy: function() {
                 // RESET MODEL
                 this.getView().setModel(new JSONModel({
                     ID: "",
@@ -1422,10 +1422,10 @@ sap.ui.define(
                     oRole.setValue("");
                 }
                 // CLEAR FILE UPLOADERS
-                var aUploaders = this.getView().findAggregatedObjects(true, function (oControl) {
+                var aUploaders = this.getView().findAggregatedObjects(true, function(oControl) {
                     return oControl.isA("sap.ui.unified.FileUploader");
                 });
-                aUploaders.forEach(function (oUploader) {
+                aUploaders.forEach(function(oUploader) {
                     oUploader.clear();
                 });
                 var oLogoUploader = this.byId("PL_id_LogoUploader");
@@ -1438,7 +1438,7 @@ sap.ui.define(
                 }
             },
             // LOGO UPLOAD
-            PL_onLogoUpload: function (oEvent) {
+            PL_onLogoUpload: function(oEvent) {
                 const oModel = this.getView().getModel("policyDialogModel");
                 const aFiles = oEvent.getParameter("files");
                 if (!aFiles || aFiles.length === 0) {
@@ -1460,7 +1460,7 @@ sap.ui.define(
                     return;
                 }
                 const reader = new FileReader();
-                reader.onload = function (e) {
+                reader.onload = function(e) {
                     const base64 = e.target.result.split(",")[1];
                     oModel.setProperty("/logoBase64", base64);
                     oModel.setProperty("/logoType", oFile.type);
@@ -1469,14 +1469,14 @@ sap.ui.define(
                 reader.readAsDataURL(oFile);
             },
             // LOGO TYPE VALIDATION
-            PL_onLogoTypeMissmatch: function () {
+            PL_onLogoTypeMissmatch: function() {
                 MessageBox.error(this.i18nModel.getText("onlyImagesAllowed"));
             },
             // LOGO SIZE EXCEED
-            PL_onLogoSizeExceed: function () {
+            PL_onLogoSizeExceed: function() {
                 MessageBox.error(this.i18nModel.getText("logoSizeExceeded"));
             },
-            PL_onViewPolicy: async function (oEvent) {
+            PL_onViewPolicy: async function(oEvent) {
                 this._applyStartDateStyle();
                 const oObject = oEvent.getSource().getBindingContext("policyModel").getObject();
                 this._selectedPolicyId = oObject.ID;
@@ -1611,16 +1611,16 @@ sap.ui.define(
                     MessageBox.error(this.i18nModel.getText("policyPdfLoadFailed"));
                 }
             },
-            onAcknowledgeCheck: function (oEvent) {
+            onAcknowledgeCheck: function(oEvent) {
                 const bSelected = oEvent.getParameter("selected");
                 this.getView().getModel("policyViewModel").setProperty("/acknowledged", bSelected);
             },
-            onPressAcknowledge: function () {
+            onPressAcknowledge: function() {
                 const sEmployeeId = String(this.getView().getModel("LoginModel").getProperty("/EmployeeID")).trim();
                 const oViewModel = this.getView().getModel("policyViewModel");
                 let sExistingIds = oViewModel.getProperty("/employeeIds") || "";
                 let aIds = sExistingIds ? sExistingIds.split(",") : [];
-                aIds = aIds.map(function (id) {
+                aIds = aIds.map(function(id) {
                     return id.trim();
                 }).filter(Boolean);
                 if (!aIds.includes(sEmployeeId)) {
@@ -1634,7 +1634,7 @@ sap.ui.define(
                         MessageBox.Action.NO
                     ],
                     emphasizedAction: MessageBox.Action.YES,
-                    onClose: function (sAction) {
+                    onClose: function(sAction) {
                         if (sAction !== MessageBox.Action.YES) {
                             oViewModel.setProperty("/acknowledged", false);
                             return;
@@ -1649,7 +1649,7 @@ sap.ui.define(
                                 EmployeeID: sFinalIds
                             }
                         };
-                        this.ajaxUpdateWithJQuery("PolicyItems", oPayload).then(async function (oResponse) {
+                        this.ajaxUpdateWithJQuery("PolicyItems", oPayload).then(async function(oResponse) {
                             oViewModel.setProperty("/employeeIds", sFinalIds);
                             oViewModel.setProperty("/alreadyAcknowledged", true);
                             oViewModel.setProperty("/acknowledged", false);
@@ -1663,7 +1663,7 @@ sap.ui.define(
                             if (this.FPL_oViewDialog) {
                                 this.FPL_oViewDialog.close();
                             }
-                        }.bind(this)).catch(function (oError) {
+                        }.bind(this)).catch(function(oError) {
                             this.closeBusyDialog();
                             console.error("========== UPDATE FAILED ==========");
                             console.error(oError);
@@ -1691,7 +1691,7 @@ sap.ui.define(
                     }.bind(this)
                 });
             },
-            _createPdfIframe: function () {
+            _createPdfIframe: function() {
                 const oModel = this.getView().getModel("policyViewModel");
                 const sDataUrl = oModel.getProperty("/fileUrl"); // data:application/pdf;base64,...
                 // Revoke any previous blob URL to free memory
@@ -1709,15 +1709,15 @@ sap.ui.define(
                 const oHtml = this.byId("pdfFrame");
                 oHtml.setContent("<iframe " + "src='" + sBlobUrl + "#toolbar=0&navpanes=0&scrollbar=0&view=FitH' " + "style='width:100%;height:100vh;border:none;display:block;margin:0;padding:0;' " + ">" + "</iframe>");
             },
-            PL_openViewDialog: function () {
+            PL_openViewDialog: function() {
                 this.getView().getModel("VisibleModel").setProperty("/EditBtn", true);
                 this.getBusyDialog();
-                const fnLoadPdf = function () {
-                    setTimeout(function () {
+                const fnLoadPdf = function() {
+                    setTimeout(function() {
                         this._createPdfIframe();
                     }.bind(this), 0);
                 }.bind(this);
-                const fnRefreshPolicyData = async function () {
+                const fnRefreshPolicyData = async function() {
                     try {
                         const oPolicyResponse = await this.ajaxReadWithJQuery("PolicyImage", {
                             ID: this._selectedPolicyId,
@@ -1737,9 +1737,6 @@ sap.ui.define(
                         oModel.setProperty("/employeeIds", sAckIds);
                         oModel.setProperty("/alreadyAcknowledged", bAlreadyAcknowledged);
                         oModel.refresh(true);
-                        // =================================
-                        // LOGO DISPLAY
-                        // =================================
                         const oLogoUploader = this.byId("PL_id_LogoUpload");
                         const oAttachmentUploader = this.byId("PL_id_AttachmentUpload");
                         const oLogoImage = this.byId("PL_id_LogoPreview");
@@ -1775,9 +1772,6 @@ sap.ui.define(
                                 oLogoImage.setVisible(false);
                             }
                         }
-                        // =================================
-                        // ATTACHMENT DISPLAY
-                        // =================================
                         const sAttachmentFileName = oActiveItem.File_Name || oData.File_Name || oModel.getProperty("/File_Name") || "";
                         if (oAttachmentUploader) {
                             oAttachmentUploader.setValue(" ");
@@ -1787,9 +1781,6 @@ sap.ui.define(
                             oAttachmentText.setText(sAttachmentFileName);
                             oAttachmentText.setVisible(!!sAttachmentFileName);
                         }
-                        // =================================
-                        // PDF PREVIEW
-                        // =================================
                         let sBase64 = oActiveItem?.File_Content || "";
                         if (typeof sBase64 !== "string" && oActiveItem?.File_Content?.data) {
                             const uint8Array = new Uint8Array(oActiveItem.File_Content.data);
@@ -1819,7 +1810,7 @@ sap.ui.define(
                     id: this.getView().getId(),
                     name: "sap.kt.com.minihrsolution.fragment.PolicyViewDialog",
                     controller: this,
-                }).then(function (oDialog) {
+                }).then(function(oDialog) {
                     this.FPL_oViewDialog = oDialog;
                     this.getView().addDependent(oDialog);
                     oDialog.open();
@@ -1844,7 +1835,7 @@ sap.ui.define(
                     });
                 }.bind(this));
             },
-            _getActivePolicyItem: function (aItems) {
+            _getActivePolicyItem: function(aItems) {
                 if (!Array.isArray(aItems) || aItems.length === 0) {
                     return null;
                 }
@@ -1895,7 +1886,7 @@ sap.ui.define(
                 return aItems[0];
             },
             // go button 
-            PL_onSearchPolicy: async function () {
+            PL_onSearchPolicy: async function() {
                 this.getBusyDialog();
                 try {
                     // ✅ READ FILTERS ONLY ONCE
@@ -1960,7 +1951,7 @@ sap.ui.define(
                     this.closeBusyDialog();
                 }
             },
-            PL_onClearPolicy: function () {
+            PL_onClearPolicy: function() {
                 // SEARCH
                 this.byId("PL_id_SearchPolicy").setValue("");
                 // DEPARTMENT
@@ -1968,7 +1959,7 @@ sap.ui.define(
                 // ROLE
                 this.byId("PL_id_RoleFilter").setSelectedKeys([]);
             },
-            PL_onLiveSearchPolicy: function (oEvent) {
+            PL_onLiveSearchPolicy: function(oEvent) {
                 const sValue = (oEvent.getParameter("newValue") || "").toLowerCase().trim();
                 const oModel = this.getView().getModel("policyModel");
                 //  always cache original data BEFORE modifying model
@@ -1986,14 +1977,14 @@ sap.ui.define(
                 if (!sValue) {
                     aFilteredPolicies = this._aAllPolicies;
                 } else {
-                    aFilteredPolicies = this._aAllPolicies.filter(function (oPolicy) {
+                    aFilteredPolicies = this._aAllPolicies.filter(function(oPolicy) {
                         return (
                             (oPolicy.name && oPolicy.name.toLowerCase().includes(sValue)) || (oPolicy.desc && oPolicy.desc.toLowerCase().includes(sValue)));
                     });
                 }
                 oModel.setProperty("/policies", aFilteredPolicies);
             },
-            PL_onPressEditAndSave: function (oEvent) {
+            PL_onPressEditAndSave: function(oEvent) {
                 debugger;
                 if (oEvent.getSource().getText() === "Edit") {
                     this.onPressEdit();
@@ -2001,14 +1992,14 @@ sap.ui.define(
                     this.onPressSave();
                 }
             },
-            _updateRoleModel: function (sDepartment) {
+            _updateRoleModel: function(sDepartment) {
                 var aData = this.getView().getModel("DesignationModel").getData() || [];
-                var aFilteredRoles = aData.filter(function (oItem) {
+                var aFilteredRoles = aData.filter(function(oItem) {
                     return (oItem.department || "").trim().toLowerCase() === sDepartment.toLowerCase();
                 });
                 var oUnique = {};
                 var aUniqueRoles = [];
-                aFilteredRoles.forEach(function (oItem) {
+                aFilteredRoles.forEach(function(oItem) {
                     var sRole = (oItem.designationName || "").trim();
                     if (sRole && !oUnique[sRole]) {
                         oUnique[sRole] = true;
@@ -2021,13 +2012,13 @@ sap.ui.define(
                 this.getView().setModel(oModel, "FilteredRoleModel");
                 this.getView().getModel("FilteredRoleModel").refresh(true);
             },
-            PL_onREFileUpload: function (oEvent) {
+            PL_onREFileUpload: function(oEvent) {
                 const oFile = oEvent.getParameter("files") && oEvent.getParameter("files")[0];
                 if (!oFile) {
                     return;
                 }
                 const oReader = new FileReader();
-                oReader.onload = function (e) {
+                oReader.onload = function(e) {
                     const sResult = e.target.result || "";
                     const sBase64 = String(sResult).split(",")[1] || "";
                     const oModel = this.getView().getModel("policyViewModel");
@@ -2057,13 +2048,13 @@ sap.ui.define(
                 }.bind(this);
                 oReader.readAsDataURL(oFile);
             },
-            PL_onReLogoUpload: function (oEvent) {
+            PL_onReLogoUpload: function(oEvent) {
                 const oFile = oEvent.getParameter("files")[0];
                 if (!oFile) {
                     return;
                 }
                 const oReader = new FileReader();
-                oReader.onload = function (e) {
+                oReader.onload = function(e) {
                     const sBase64 = e.target.result.split(",")[1];
                     const oModel = this.getView().getModel("policyViewModel");
                     oModel.setProperty("/Logo", sBase64);
@@ -2074,7 +2065,7 @@ sap.ui.define(
                 }.bind(this);
                 oReader.readAsDataURL(oFile);
             },
-            onPressEdit: function () {
+            onPressEdit: function() {
                 // SWITCH TO EDIT MODE
                 this.getView().getModel("VisibleModel").setProperty("/EditBtn", false);
                 // GET CURRENT POLICY DATA
@@ -2092,7 +2083,7 @@ sap.ui.define(
                 // APPLY UI STYLE FOR EDIT MODE
                 this._applyStartDateStyle();
             },
-            onPressSave: async function () {
+            onPressSave: async function() {
                 // TITLE VALIDATION
                 const oModel = this.getView().getModel("policyViewModel");
                 const oData = oModel.getData();
@@ -2166,7 +2157,8 @@ sap.ui.define(
                     Role: sRole,
                     File_Content: oData.File_Content || "",
                     File_Name: oData.File_Name || "",
-                    File_Type: oData.File_Type || ""
+                    File_Type: oData.File_Type || "",
+                    Version: oData.Version || ""
                 };
                 if (oData.Logo) {
                     oUpdateData.Logo = oData.Logo;
@@ -2212,22 +2204,47 @@ sap.ui.define(
                 }
             },
             // FORMAT DATE FOR DB
-            _formatDateForDB: function (sDate) {
-                if (!sDate) return null;
-                const d = new Date(sDate);
-                if (isNaN(d.getTime())) {
-                    return null;
-                }
-                return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
-            },
-            onPressback: function () {
+            _formatDateForDB: function(vDate) {
+    if (!vDate) return null;
+
+    // Already a JS Date object (e.g. from DatePicker's getDateValue())
+    if (vDate instanceof Date) {
+        if (isNaN(vDate.getTime())) return null;
+        return vDate.getFullYear() + "-" +
+            String(vDate.getMonth() + 1).padStart(2, "0") + "-" +
+            String(vDate.getDate()).padStart(2, "0");
+    }
+
+    // String in dd/MM/yyyy format (DatePicker valueFormat / toLocaleDateString("en-GB"))
+    if (typeof vDate === "string" && vDate.indexOf("/") !== -1) {
+        var aParts = vDate.split("/");
+        if (aParts.length === 3) {
+            var sDay = aParts[0].trim().padStart(2, "0");
+            var sMonth = aParts[1].trim().padStart(2, "0");
+            var sYear = aParts[2].trim();
+            if (!isNaN(sDay) && !isNaN(sMonth) && !isNaN(sYear) && sYear.length === 4) {
+                return sYear + "-" + sMonth + "-" + sDay;
+            }
+        }
+    }
+
+    // Fallback for ISO strings (yyyy-MM-dd) or anything else
+    const d = new Date(vDate);
+    if (isNaN(d.getTime())) {
+        return null;
+    }
+    return d.getFullYear() + "-" +
+        String(d.getMonth() + 1).padStart(2, "0") + "-" +
+        String(d.getDate()).padStart(2, "0");
+},
+            onPressback: function() {
                 this.getRouter().navTo("RouteTilePage");
             },
-            onLogout: function () {
+            onLogout: function() {
                 this.CommonLogoutFunction();
             },
             // view dialog close
-            PL_onCloseViewDialog: function () {
+            PL_onCloseViewDialog: function() {
                 // REVOKE BLOB URL (MEMORY CLEANUP)
                 if (this._pdfBlobUrl) {
                     URL.revokeObjectURL(this._pdfBlobUrl);
@@ -2254,5 +2271,5 @@ sap.ui.define(
                     this.FPL_oViewDialog.close();
                 }
             },
-        },);
-    },);
+        }, );
+    }, );
