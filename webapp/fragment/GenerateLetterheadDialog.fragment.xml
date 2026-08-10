@@ -1,164 +1,150 @@
 <core:FragmentDefinition
-    xmlns="sap.m"
-    xmlns:core="sap.ui.core"
-    xmlns:l="sap.ui.layout"
-    xmlns:richeditor="sap.ui.richtexteditor"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout"
+	xmlns:richeditor="sap.ui.richtexteditor"
 >
-    <Dialog
+	<Dialog
         id="GPD_id_Dialog"
         contentWidth="100%"
         draggable="true"
         resizable="true"
         verticalScrolling="true"
+         class="GPGeneratePDFDialog"
     >
-        <customHeader>
-            <Bar>
-                <contentLeft>
-                    <Title
+		<customHeader>
+			<Bar>
+				<contentLeft>
+					<Title
                         text="{i18n>GeneratePDF}"
                         level="H2"
                     />
-                </contentLeft>
-
-                <contentRight>
-                    <Button
+				</contentLeft>
+				<contentRight>
+					<Button
                         id="GPD_id_BtnClose"
                         icon="sap-icon://decline"
                         type="Transparent"
                         tooltip="{i18n>close}"
                         press=".GP_onCloseDialog"
                     />
-                </contentRight>
-            </Bar>
-        </customHeader>
-
-     <content>
-    <l:Grid
-        defaultSpan="XL6 L6 M6 S12"
-        hSpacing="1"
-        vSpacing="1"
-        class="sapUiSmallMargin">
-
-        <!-- ================= Row 1 ================= -->
-
-        <VBox>
-            <Label
-                text="{i18n>referenceNumber}" />
-
-            <Input
-                id="GPD_id_ReferenceNumber"
-                width="100%"
-                placeholder="{i18n>enterReferenceNumber}" />
-        </VBox>
-
-        <VBox>
-            <Label
-                text="{i18n>date}"
-                required="true" />
-
-            <DatePicker
-                id="GPD_id_Date"
-                displayFormat="dd/MM/yyyy"
-                valueFormat="dd/MM/yyyy"
-                placeholder="{i18n>selectDate}"
-                change=".GP_onDateChange" 
-                
-                />
-        </VBox>
-
-        <!-- ================= Row 2 ================= -->
-
-        <VBox>
-            <Label text="{i18n>signature}" />
-
-            <CheckBox
-                id="GPD_id_IncludeSignature"
-                text="{i18n>includeSignature}"
-                selected="true" />
-        </VBox>
-
-        <VBox>
-            <Label text="{i18n>LetterheadName}" 
-            required="true"/>
-
-            <Input
-                id="GPD_id_FileName"
-                width="100%"
-                required="true"
-                placeholder="{i18n>EnterLetterheadName}"
-                liveChange=".GP_onFileNameLiveChange" />
-        </VBox>
-        <!-- ================= Row 3 ================= -->
-        <VBox>
-    <Label text="{i18n>to}" />
-
-    <TextArea
-        id="GPD_id_To"
-        width="100%"
-        rows="2"
-        growing="true"
-        growingMaxLines="2"
-        placeholder="{i18n>enterTo}" />
-</VBox>
-        <VBox>
-
-            <Label text="{i18n>subject}" />
-
-            <Input
-                id="GPD_id_Subject"
-                width="100%"
-                placeholder="{i18n>enterSubject}"
-                liveChange=".GP_onSubjectLiveChange" />
-        </VBox>
-
-        <!-- ================= Row 4 ================= -->
-
-        <VBox>
-            <layoutData>
-                <l:GridData span="XL12 L12 M12 S12"/>
-            </layoutData>
-
-            <Label
-                text="{i18n>content}"
-                required="true" />
-
-            <richeditor:RichTextEditor
-                id="GPD_id_Content"
-                width="100%"
-                height="18rem"
-                editorType="TinyMCE6"
-                value=""
-                showGroupClipboard="true"
-                showGroupFont="true"
-                showGroupInsert="true"
-                showGroupLink="true"
-                showGroupStructure="true"
-                showGroupTextAlign="true"
-                showGroupUndo="true"
-                editable="true"
-                change=".GP_onContentChange"/>
-        </VBox>
-
-    </l:Grid>
-</content>
-
-        <buttons>
-            <Button
-                id="GPD_id_BtnGeneratePDF"
-                text="{i18n>GeneratePDF}"
-                icon="sap-icon://pdf-attachment"
-                type="Transparent"
-                press=".GP_onGeneratePDF"
-            />
-
-            <Button
-                id="GPD_id_BtnSaveGeneratePDF"
-                text="{i18n>saveGeneratePdf}"
-                icon="sap-icon://save"
-                type="Transparent"
-                press=".GP_onSaveGeneratePDF"
-                visible="true"
-            />
-        </buttons>
-    </Dialog>
+				</contentRight>
+			</Bar>
+		</customHeader>
+		<content>
+			<l:Grid
+                defaultSpan="XL6 L6 M6 S12"
+                hSpacing="1"
+                vSpacing="1"
+                containerQuery="true"
+                class="sapUiResponsiveMargin sapUiMediumMarginTop"
+            >
+				<VBox>
+					<Label
+                        text="{i18n>referenceNumber}" />
+					<Input
+                        id="GPD_id_ReferenceNumber"
+                        width="100%"
+                        placeholder="{i18n>enterReferenceNumber}" />
+				</VBox>
+				<VBox>
+					<Label
+                        text="{i18n>date}"
+                        required="true" />
+					<DatePicker
+                        id="GPD_id_Date"
+                        width="100%"
+                        displayFormat="dd/MM/yyyy"
+                        valueFormat="dd/MM/yyyy"
+                        placeholder="{i18n>plaeseSelectDate}"
+                        change=".GP_onDateChange"
+                    />
+				</VBox>
+				<VBox>
+					<Label text="{i18n>signature}" />
+					<CheckBox
+                        id="GPD_id_IncludeSignature"
+                        text="{i18n>includeSignature}"
+                        selected="true" />
+				</VBox>
+				<VBox>
+					<Label text="{i18n>LetterheadName}"
+                        required="true" />
+					<Input
+                        id="GPD_id_FileName"
+                        width="100%"
+                        required="true"
+                        placeholder="{i18n>EnterLetterheadName}"
+                        liveChange=".GP_onFileNameLiveChange" />
+				</VBox>
+				<VBox>
+					<Label text="{i18n>to}" />
+					<TextArea
+                        id="GPD_id_To"
+                        width="100%"
+                        rows="2"
+                        growing="true"
+                        growingMaxLines="2"
+                        placeholder="{i18n>enterTo}" />
+				</VBox>
+				<VBox>
+					<Label text="{i18n>subject}" />
+					<Input
+                        id="GPD_id_Subject"
+                        width="100%"
+                        placeholder="{i18n>enterSubject}"
+                        liveChange=".GP_onSubjectLiveChange" />
+				</VBox>
+				<VBox>
+					<layoutData>
+						<l:GridData span="XL12 L12 M12 S12" />
+					</layoutData>
+					<Label
+                        text="{i18n>content}"
+                        required="true" />
+					<richeditor:RichTextEditor
+                        id="GPD_id_Content"
+                        width="100%"
+                        height="18rem"
+                        editorType="TinyMCE6"
+                        value=""
+                        showGroupClipboard="true"
+                        showGroupFont="true"
+                        showGroupInsert="true"
+                        showGroupLink="true"
+                        showGroupStructure="true"
+                        showGroupTextAlign="true"
+                        showGroupUndo="true"
+                        editable="true"
+                        change=".GP_onContentChange" />
+				</VBox>
+			</l:Grid>
+		</content>
+		<footer>
+			<OverflowToolbar class="GPDMobileFooter">
+				<ToolbarSpacer />
+				<Button
+                    id="GPD_id_BtnGeneratePDF"
+                    text="{i18n>download}"
+                    type="Transparent"
+                    press=".GP_onGeneratePDF"
+                >
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow" />
+					</layoutData>
+				</Button>
+				<Button
+                    id="GPD_id_BtnSaveGeneratePDF"
+                    text="{i18n>savedownload}"
+                    type="Transparent"
+                    press=".GP_onSaveGeneratePDF"
+                    visible="true"
+                >
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow" />
+					</layoutData>
+				</Button>
+			</OverflowToolbar>
+		</footer>
+	</Dialog>
 </core:FragmentDefinition>

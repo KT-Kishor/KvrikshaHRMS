@@ -15,10 +15,7 @@
                 type="XML"
             />
         </customHeader>
-
         <content>
-            <!-- ================= Filter Bar ================= -->
-
             <fb:FilterBar
                 id="GP_id_FilterBar"
                 class="sapUiTinyMargin CommonRoundedTable"
@@ -33,7 +30,7 @@
                 <fb:filterGroupItems>
                     <fb:FilterGroupItem
                         name="employeeName"
-                        label="{i18n>LetterheadName}"
+                        label="{i18n>searchLetterheadName}"
                         groupName="General"
                         visibleInFilterBar="true"
                     >
@@ -46,16 +43,35 @@
                             />
                         </fb:control>
                     </fb:FilterGroupItem>
+                    <fb:FilterGroupItem
+                        name="letterheadSelect"
+                        label="{i18n>LetterheadName}"
+                        groupName="General"
+                        visibleInFilterBar="true"
+                    >
+                        <fb:control>
+                            <ComboBox
+                                id="GP_id_LetterheadSelect"
+                                placeholder="Select Letterhead"
+                                showClearIcon="true"
+                                items="{LetterheadNamesModel>/}"
+                                selectionChange=".GP_onLetterheadFilterChange"
+                                change=".GP_onLetterheadFilterChange"
+                            >
+                                <core:Item
+                                    key="{LetterheadNamesModel>key}"
+                                    text="{LetterheadNamesModel>text}"
+                                />
+                            </ComboBox>
+                        </fb:control>
+                    </fb:FilterGroupItem>
                 </fb:filterGroupItems>
             </fb:FilterBar>
-
-            <!-- ================= Table ================= -->
-
             <Table
                 id="GP_id_LetterheadTable"
                 items="{LetterheadModel>/}"
                 inset="false"
-                mode="SingleSelectLeft"
+                mode="MultiSelect"
                 selectionChange=".GP_onRowSelectionChange"
                 class="sapUiTinyMargin CommonRoundedTable"
                 alternateRowColors="true"
@@ -67,17 +83,25 @@
                 <headerToolbar>
                     <OverflowToolbar>
                         <Title
-                            text="Letterhead List"
+                            text="Letterhead List ({= ${GPCountModel>/Count} })"
                             level="H2"
                         />
                         <ToolbarSpacer />
-
-                        <Text
-                            text="{= ${LetterheadModel>/data}.length + ' Records' }"
+                        <Button
+                            id="GP_id_BtnGeneratePDF"
+                            text="{i18n>generateLetterhead}"
+                            type="Transparent"
+                            press=".GP_onOpenGeneratePDFDialog"
+                        />
+                        <Button
+                            id="GP_id_BtnDeleteLetterhead"
+                            text="{i18n>delete}"
+                            tooltip="{i18n>delete}"
+                            type="Transparent"
+                            press=".GP_onDeleteLetterhead"
                         />
                     </OverflowToolbar>
                 </headerToolbar>
-
                 <columns>
                     <Column
                         width="20%"
@@ -89,7 +113,6 @@
                     <Column width="30%">
                         <Text text="Letterhead File Name" />
                     </Column>
-
                     <Column
                         width="20%"
                         minScreenWidth="Tablet"
@@ -97,7 +120,6 @@
                     >
                         <Text text="Date" />
                     </Column>
-
                     <Column
                         width="35%"
                         minScreenWidth="Tablet"
@@ -105,31 +127,25 @@
                     >
                         <Text text="Subject" />
                     </Column>
-
                     <Column
                         width="20%"
-                        minScreenWidth="Tablet"
-                        demandPopin="true"
+                      
                     >
                         <Text text="Signature" />
                     </Column>
                 </columns>
-
                 <items>
                     <ColumnListItem>
                         <cells>
                             <Text text="{LetterheadModel>ReferenceNumber}" />
                             <Text text="{LetterheadModel>LetterheadFileName}" />
-
                             <Text
                                 text="{
         path:'LetterheadModel>Date',
         formatter: '.formatter.formatDate'
     }"
                             />
-
                             <Text text="{LetterheadModel>LetterheadSubject}" />
-
                             <ObjectStatus
                                 text="{= ${LetterheadModel>SignatureCheckbox} === 1 ? 'Yes' : 'No'}"
                                 state="{= ${LetterheadModel>SignatureCheckbox} === 1 ? 'Success' : 'None'}"
@@ -139,9 +155,7 @@
                 </items>
             </Table>
         </content>
-
         <!-- Footer -->
-
         <footer>
             <Bar>
                 <contentLeft>
@@ -150,16 +164,6 @@
                         type="XML"
                     />
                 </contentLeft>
-
-                <contentRight>
-                    <Button
-                        id="GP_id_BtnGeneratePDF"
-                        text="{i18n>GeneratePDF}"
-                        icon="sap-icon://pdf-attachment"
-                        type="Transparent"
-                        press=".GP_onOpenGeneratePDFDialog"
-                    />
-                </contentRight>
             </Bar>
         </footer>
     </Page>
