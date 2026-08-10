@@ -220,7 +220,7 @@
         </ObjectPageLayout>
         <!-- ================= FOOTER ================= -->
     <m:footer>
-    <m:Bar>
+    <m:Bar >
 
         <m:contentLeft>
             <core:Fragment
@@ -230,6 +230,7 @@
         </m:contentLeft>
 
         <m:contentRight>
+        <m:HBox class="GreetingButtons">
        <m:Button
     id="PL_id_DownloadReport"
     text="{i18n>downloadexcel}"
@@ -245,6 +246,7 @@
                 press="PL_onCreatePress"
                 visible="{visibilityModel>/showAdminControls}"
             />
+            </m:HBox>
         </m:contentRight>
 
     </m:Bar>
