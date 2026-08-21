@@ -898,8 +898,10 @@ sap.ui.define([
                 return;
             }
 
-            var fCurrentAmount  = Number(oCurrentMonthData.TotalAmount) || 0;
+            var fCurrentAmount = Number(oCurrentMonthData.TotalAmount) || 0;
             var fPreviousAmount = oPreviousMonthData ? (Number(oPreviousMonthData.TotalAmount) || 0) : 0;
+
+            var fDifference = fCurrentAmount - fPreviousAmount;
 
             var sIndicator = "None";
             var sColor = "Neutral";
@@ -909,23 +911,21 @@ sap.ui.define([
                 sIndicator = "None";
                 sColor = "Neutral";
                 sIcon = "sap-icon://line-chart";
-            } else if (fCurrentAmount > fPreviousAmount) {
+            } else if (fDifference > 0) {
                 sIndicator = "Up";
                 sColor = "Good";
                 sIcon = "sap-icon://trend-up";
-            } else if (fCurrentAmount < fPreviousAmount) {
+            } else if (fDifference < 0) {
                 sIndicator = "Down";
                 sColor = "Error";
                 sIcon = "sap-icon://trend-down";
             }
-            // equal amounts -> stays None / Neutral / line-chart
 
-            oModel.setProperty("/TrendAmount", fCurrentAmount);
+            oModel.setProperty("/TrendAmount", Math.abs(fDifference)); // Difference amount
             oModel.setProperty("/TrendIndicator", sIndicator);
             oModel.setProperty("/TrendColor", sColor);
             oModel.setProperty("/TrendIcon", sIcon);
-            oModel.setProperty("/TrendMonthLabel",
-            oCurrentMonthData.Month + (oPreviousMonthData ? " vs " + oPreviousMonthData.Month : ""));
+            oModel.setProperty("/TrendMonthLabel",oCurrentMonthData.Month + (oPreviousMonthData ? " vs " + oPreviousMonthData.Month : ""));
         },
 
         _setTrendDefaults: function (sLabel) {
@@ -938,4 +938,4 @@ sap.ui.define([
         },
 
     });
-});s
+});
